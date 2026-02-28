@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Mountain, Heart, Footprints, Apple, Sun, ScanSearch, CigaretteOff, HeartPulse } from "lucide-react";
 import MobileNav from "@/components/MobileNav";
 
@@ -28,11 +29,12 @@ export default function TheCausePage() {
 
       {/* Hero */}
       <section className="relative w-full h-[400px] md:h-[480px] lg:h-[560px] overflow-hidden">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Image
           src="https://images.unsplash.com/photo-1648547254224-ea84e019798f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzIyNjA5NTR8&ixlib=rb-4.1.0&q=80&w=1080"
           alt="The Cause"
-          className="absolute inset-0 w-full h-full object-cover"
+          fill
+          className="object-cover"
+          priority
         />
         <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, #1C1F1AEE 0%, #1C1F1A88 60%, #1C1F1A44 100%)" }} />
         <div className="relative flex flex-col justify-center gap-[16px] md:gap-[24px] h-full px-6 md:px-12 lg:px-[120px]">
@@ -48,12 +50,14 @@ export default function TheCausePage() {
 
       {/* Paul's Story */}
       <section className="flex flex-col lg:flex-row gap-[40px] lg:gap-[80px] px-6 md:px-12 lg:px-[120px] py-[48px] md:py-[72px] lg:py-[100px] w-full">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="https://images.unsplash.com/photo-1762445333169-0c7d95a5e6c0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzIyNjA5NzJ8&ixlib=rb-4.1.0&q=80&w=1080"
-          alt="Paul"
-          className="w-full lg:w-[480px] h-[300px] md:h-[400px] lg:h-[580px] object-cover shrink-0"
-        />
+        <div className="relative w-full lg:w-[480px] h-[300px] md:h-[400px] lg:h-[580px] shrink-0">
+          <Image
+            src="https://images.unsplash.com/photo-1762445333169-0c7d95a5e6c0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzIyNjA5NzJ8&ixlib=rb-4.1.0&q=80&w=1080"
+            alt="Paul"
+            fill
+            className="object-cover"
+          />
+        </div>
         <div className="flex flex-col justify-center gap-[28px] flex-1">
           <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">PAUL&apos;S STORY</span>
           <h2 className="font-heading font-semibold text-[28px] md:text-[34px] lg:text-[42px] tracking-[-0.5px] text-[var(--text-primary)]">From Grief to Purpose</h2>
@@ -122,11 +126,11 @@ export default function TheCausePage() {
 
       {/* CTA */}
       <section className="relative w-full h-[360px] md:h-[380px] lg:h-[400px] overflow-hidden">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Image
           src="https://images.unsplash.com/photo-1576479569327-e777337d3606?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzIyNjEwNTB8&ixlib=rb-4.1.0&q=80&w=1080"
           alt="CTA background"
-          className="absolute inset-0 w-full h-full object-cover"
+          fill
+          className="object-cover"
         />
         <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, #1C1F1ADD 0%, #1C1F1ACC 100%)" }} />
         <div className="relative flex flex-col items-center justify-center gap-[20px] md:gap-[28px] h-full px-6 md:px-12 lg:px-[120px]">

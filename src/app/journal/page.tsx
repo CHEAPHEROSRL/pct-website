@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Mountain, Heart, Search, ArrowRight, ChevronRight } from "lucide-react";
 import MobileNav from "@/components/MobileNav";
 
@@ -61,12 +62,14 @@ export default function JournalPage() {
 
       {/* Featured Post */}
       <section className="flex flex-col lg:flex-row gap-[24px] lg:gap-[40px] px-6 md:px-12 lg:px-[120px] py-[32px] md:py-[48px] bg-[var(--bg-white)] w-full">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="https://images.unsplash.com/photo-1764092816494-c165d9a24d70?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzIyNjA0MzV8&ixlib=rb-4.1.0&q=80&w=1080"
-          alt="Featured Post"
-          className="w-full lg:w-[640px] h-[250px] md:h-[320px] lg:h-[400px] object-cover shrink-0"
-        />
+        <div className="relative w-full lg:w-[640px] h-[250px] md:h-[320px] lg:h-[400px] shrink-0">
+          <Image
+            src="https://images.unsplash.com/photo-1764092816494-c165d9a24d70?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzIyNjA0MzV8&ixlib=rb-4.1.0&q=80&w=1080"
+            alt="Featured Post"
+            fill
+            className="object-cover"
+          />
+        </div>
         <div className="flex flex-col justify-center gap-[20px] flex-1">
           <div className="bg-[var(--burnt-orange)] px-[12px] py-[4px] w-fit">
             <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-white)]">FEATURED POST</span>
@@ -149,8 +152,9 @@ function BlogCard({ img, day, date, title, excerpt, tag }: {
   const isGreen = tag === "BLOG" || tag === "PHOTOS";
   return (
     <div className="flex flex-col bg-[var(--bg-white)] border border-[var(--border-subtle)] overflow-hidden">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={img} alt={title} className="w-full h-[200px] object-cover" />
+      <div className="relative w-full h-[200px]">
+        <Image src={img} alt={title} fill className="object-cover" />
+      </div>
       <div className="flex flex-col gap-[10px] p-[20px]">
         <div className="flex items-center gap-[8px]">
           <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--burnt-orange)]">{day}</span>

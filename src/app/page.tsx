@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import {
@@ -21,11 +22,12 @@ export default function Home() {
 
       {/* Hero Section */}
       <section className="relative w-full h-[480px] md:h-[600px] lg:h-[720px] overflow-hidden">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Image
           src="https://images.unsplash.com/photo-1732396768887-33cfea69bbf3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzIyNTk4ODl8&ixlib=rb-4.1.0&q=80&w=1080"
           alt="Pacific Crest Trail"
-          className="absolute inset-0 w-full h-full object-cover"
+          fill
+          className="object-cover"
+          priority
         />
         <div
           className="absolute inset-0"
@@ -138,11 +140,11 @@ export default function Home() {
         <div className="flex flex-col lg:flex-row gap-[24px] lg:gap-[32px] w-full">
           {/* Map Container */}
           <div className="relative w-full lg:w-[720px] h-[300px] md:h-[400px] lg:h-[560px] bg-[#E8E5E0] border border-[var(--border-subtle)] overflow-hidden shrink-0">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src="https://images.unsplash.com/photo-1732396768887-33cfea69bbf3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=720&q=80"
               alt="Trail Map"
-              className="absolute inset-0 w-full h-full object-cover opacity-30"
+              fill
+              className="object-cover opacity-30"
             />
             <div className="absolute inset-0 bg-[#F4F1EC44]" />
             <div className="absolute left-[340px] top-[440px] flex flex-col items-center gap-[4px]">
@@ -194,12 +196,12 @@ export default function Home() {
 
       {/* The Cause */}
       <section className="flex flex-col lg:flex-row w-full bg-[var(--bg-dark)]">
-        <div className="w-full lg:w-[580px] h-[300px] md:h-[400px] lg:h-[700px] shrink-0 overflow-hidden">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+        <div className="relative w-full lg:w-[580px] h-[300px] md:h-[400px] lg:h-[700px] shrink-0 overflow-hidden">
+          <Image
             src="https://images.unsplash.com/photo-1767189522336-1a68f4dbea6c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzIyNTk5OTR8&ixlib=rb-4.1.0&q=80&w=1080"
             alt="The Cause"
-            className="w-full h-full object-cover"
+            fill
+            className="object-cover"
           />
         </div>
         <div className="flex flex-col justify-center gap-[24px] lg:gap-[32px] flex-1 p-6 md:p-12 lg:p-[80px]">
@@ -298,12 +300,14 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[24px] w-full">
           {/* Blog Post 1 */}
           <div className="flex flex-col bg-[var(--bg-white)] border border-[var(--border-subtle)] overflow-hidden">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="https://images.unsplash.com/photo-1621341917840-8aa7744c1108?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzIyNjAwOTV8&ixlib=rb-4.1.0&q=80&w=1080"
-              alt="The First Step"
-              className="w-full h-[220px] object-cover"
-            />
+            <div className="relative w-full h-[220px]">
+              <Image
+                src="https://images.unsplash.com/photo-1621341917840-8aa7744c1108?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzIyNjAwOTV8&ixlib=rb-4.1.0&q=80&w=1080"
+                alt="The First Step"
+                fill
+                className="object-cover"
+              />
+            </div>
             <div className="flex flex-col gap-[12px] p-[24px]">
               <div className="flex items-center gap-[8px]">
                 <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--burnt-orange)]">DAY 1</span>
@@ -322,12 +326,14 @@ export default function Home() {
 
           {/* Blog Post 2 */}
           <div className="flex flex-col bg-[var(--bg-white)] border border-[var(--border-subtle)] overflow-hidden">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="https://images.unsplash.com/photo-1759046258329-24e108c78425?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzIyNjAxMDZ8&ixlib=rb-4.1.0&q=80&w=1080"
-              alt="Through the Desert Wind"
-              className="w-full h-[220px] object-cover"
-            />
+            <div className="relative w-full h-[220px]">
+              <Image
+                src="https://images.unsplash.com/photo-1759046258329-24e108c78425?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzIyNjAxMDZ8&ixlib=rb-4.1.0&q=80&w=1080"
+                alt="Through the Desert Wind"
+                fill
+                className="object-cover"
+              />
+            </div>
             <div className="flex flex-col gap-[12px] p-[24px]">
               <div className="flex items-center gap-[8px]">
                 <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--burnt-orange)]">DAY 15</span>
@@ -345,12 +351,14 @@ export default function Home() {
 
           {/* Blog Post 3 */}
           <div className="flex flex-col bg-[var(--bg-white)] border border-[var(--border-subtle)] overflow-hidden">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="https://images.unsplash.com/photo-1761671600698-597651a68568?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzIyNjAxMTJ8&ixlib=rb-4.1.0&q=80&w=1080"
-              alt="Sierra Nights"
-              className="w-full h-[220px] object-cover"
-            />
+            <div className="relative w-full h-[220px]">
+              <Image
+                src="https://images.unsplash.com/photo-1761671600698-597651a68568?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzIyNjAxMTJ8&ixlib=rb-4.1.0&q=80&w=1080"
+                alt="Sierra Nights"
+                fill
+                className="object-cover"
+              />
+            </div>
             <div className="flex flex-col gap-[12px] p-[24px]">
               <div className="flex items-center gap-[8px]">
                 <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--burnt-orange)]">DAY 30</span>
@@ -370,11 +378,11 @@ export default function Home() {
 
       {/* Donate CTA */}
       <section className="relative w-full h-[420px] md:h-[450px] lg:h-[480px] overflow-hidden">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Image
           src="https://images.unsplash.com/photo-1760685468640-dddb93b7a10b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzIyNjAxMzF8&ixlib=rb-4.1.0&q=80&w=1080"
           alt="Mountain sunset"
-          className="absolute inset-0 w-full h-full object-cover"
+          fill
+          className="object-cover"
         />
         <div
           className="absolute inset-0"
