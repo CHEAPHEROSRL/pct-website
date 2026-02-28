@@ -1,5 +1,17 @@
+"use client";
+
 import Link from "next/link";
-import { Mountain, Heart, MapPin, Plus, Minus } from "lucide-react";
+import dynamic from "next/dynamic";
+import { Mountain, Heart } from "lucide-react";
+
+const TrailMapView = dynamic(() => import("@/components/TrailMapView"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex items-center justify-center w-full h-full bg-[#E8E5E0]">
+      <span className="font-label font-medium text-[14px] text-[var(--text-muted)]">Loading map...</span>
+    </div>
+  ),
+});
 
 export default function TrailMapPage() {
   return (
@@ -76,31 +88,7 @@ export default function TrailMapPage() {
 
         {/* Map Area */}
         <div className="relative flex-1 h-full overflow-hidden bg-[#E8E5E0]">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="https://images.unsplash.com/photo-1732396768887-33cfea69bbf3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80"
-            alt="Trail Map"
-            className="absolute inset-0 w-full h-full object-cover opacity-30"
-          />
-          <div className="absolute inset-0 bg-[#F4F1EC22]" />
-
-          {/* Pin */}
-          <div className="absolute left-[480px] top-[620px] flex flex-col items-center gap-[4px]">
-            <MapPin className="w-[36px] h-[36px] text-[var(--burnt-orange)]" />
-            <div className="bg-[var(--burnt-orange)] px-[14px] py-[6px]">
-              <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-white)]">DAY 3 &middot; CAMPO, CA</span>
-            </div>
-          </div>
-
-          {/* Zoom Controls */}
-          <div className="absolute right-[20px] top-[20px] flex flex-col gap-[2px]">
-            <div className="flex items-center justify-center w-[40px] h-[40px] bg-[var(--bg-white)] border border-[var(--border-subtle)] cursor-pointer">
-              <Plus className="w-[18px] h-[18px] text-[var(--text-secondary)]" />
-            </div>
-            <div className="flex items-center justify-center w-[40px] h-[40px] bg-[var(--bg-white)] border border-[var(--border-subtle)] cursor-pointer">
-              <Minus className="w-[18px] h-[18px] text-[var(--text-secondary)]" />
-            </div>
-          </div>
+          <TrailMapView />
         </div>
       </div>
 
