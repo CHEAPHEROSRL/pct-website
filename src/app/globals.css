@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+:root {
+  --bg-card: #FDFCFA;
+  --bg-dark: #1C1F1A;
+  --bg-warm: #F4F1EC;
+  --bg-white: #FFFFFF;
+  --border-subtle: #D9D7D4;
+  --burnt-orange: #C45C26;
+  --burnt-orange-light: #FEF3EC;
+  --forest-green: #3D7A5A;
+  --forest-green-light: #E8F0EB;
+  --text-muted: #8C8A87;
+  --text-primary: #1C1C1C;
+  --text-secondary: #5C5C5C;
+  --text-white: #FFFFFF;
+  --warm-stone: #EBE8E3;
+}
+
+@layer base {
+  html, body {
+    height: 100%;
+  }
+
+  .font-heading {
+    font-family: "Source Serif 4", "Source Serif Pro", Georgia, serif;
+  }
+
+  .font-label {
+    font-family: "Barlow Semi Condensed", "Barlow", Arial, sans-serif;
+  }
+}
