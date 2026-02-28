@@ -1,43 +1,45 @@
 import Link from "next/link";
 import { Mountain, Heart, Search, ArrowRight, ChevronRight } from "lucide-react";
+import MobileNav from "@/components/MobileNav";
 
 export default function JournalPage() {
   return (
     <div className="flex flex-col w-full bg-[var(--bg-warm)]">
       {/* Header */}
-      <header className="flex items-center justify-between px-[80px] py-[20px] bg-[#FFFFFFEE] w-full">
+      <header className="flex items-center justify-between px-4 md:px-8 lg:px-[80px] py-[16px] md:py-[20px] bg-[#FFFFFFEE] w-full relative z-50">
         <Link href="/" className="flex items-center gap-[12px]">
           <Mountain className="w-[28px] h-[28px] text-[var(--forest-green)]" />
           <span className="font-label font-bold text-[16px] tracking-[3px] text-[var(--text-primary)]">PAUL BARRY</span>
-          <span className="font-label font-medium text-[11px] tracking-[2px] text-[var(--text-muted)]">PCT 2026</span>
+          <span className="font-label font-medium text-[11px] tracking-[2px] text-[var(--text-muted)] hidden sm:inline">PCT 2026</span>
         </Link>
-        <nav className="flex items-center gap-[40px]">
-          <Link href="/" className="font-heading text-[15px] font-semibold text-[var(--text-secondary)]">The Journey</Link>
-          <Link href="/trail-map" className="font-heading text-[15px] font-semibold text-[var(--text-secondary)]">Trail Map</Link>
-          <Link href="/the-cause" className="font-heading text-[15px] font-semibold text-[var(--text-secondary)]">The Cause</Link>
+        <nav className="hidden lg:flex items-center gap-[40px]">
+          <Link href="/" className="font-heading text-[15px] font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)]">The Journey</Link>
+          <Link href="/trail-map" className="font-heading text-[15px] font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Trail Map</Link>
+          <Link href="/the-cause" className="font-heading text-[15px] font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)]">The Cause</Link>
           <span className="font-heading text-[15px] font-semibold text-[var(--burnt-orange)]">Journal</span>
-          <Link href="/donors" className="font-heading text-[15px] font-semibold text-[var(--text-secondary)]">Donors</Link>
-          <Link href="/donate" className="flex items-center gap-[8px] bg-[var(--burnt-orange)] px-[28px] py-[12px]">
+          <Link href="/donors" className="font-heading text-[15px] font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Donors</Link>
+          <Link href="/donate" className="flex items-center gap-[8px] bg-[var(--burnt-orange)] px-[28px] py-[12px] hover:opacity-90 transition-opacity">
             <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-white)]">DONATE NOW</span>
             <Heart className="w-[14px] h-[14px] text-[var(--text-white)]" />
           </Link>
         </nav>
+        <MobileNav activeItem="Journal" />
       </header>
 
       {/* Hero */}
-      <section className="flex flex-col items-center gap-[16px] px-[120px] py-[64px] bg-[var(--bg-white)] w-full">
+      <section className="flex flex-col items-center gap-[16px] px-6 md:px-12 lg:px-[120px] py-[40px] md:py-[52px] lg:py-[64px] bg-[var(--bg-white)] w-full">
         <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">TRAIL JOURNAL</span>
-        <h1 className="font-heading font-semibold text-[48px] tracking-[-0.5px] text-[var(--text-primary)] text-center">
+        <h1 className="font-heading font-semibold text-[28px] md:text-[38px] lg:text-[48px] tracking-[-0.5px] text-[var(--text-primary)] text-center">
           Stories From the Trail
         </h1>
-        <p className="font-heading text-[18px] leading-[1.6] text-[var(--text-secondary)] text-center w-[640px]">
+        <p className="font-heading text-[16px] md:text-[18px] leading-[1.6] text-[var(--text-secondary)] text-center w-full lg:w-[640px]">
           Daily photos, videos, and reflections from Paul&apos;s 2,650-mile PCT journey. Follow along as he walks from Mexico to Canada.
         </p>
       </section>
 
       {/* Filter Bar */}
-      <div className="flex items-center justify-between px-[120px] py-[16px] bg-[var(--bg-white)] border-t border-b border-[var(--border-subtle)] w-full">
-        <div className="flex items-center gap-[8px]">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 md:gap-0 px-6 md:px-12 lg:px-[120px] py-[16px] bg-[var(--bg-white)] border-t border-b border-[var(--border-subtle)] w-full">
+        <div className="flex items-center gap-[8px] flex-wrap">
           <div className="bg-[var(--bg-dark)] px-[20px] py-[8px]">
             <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-white)]">ALL</span>
           </div>
@@ -58,12 +60,12 @@ export default function JournalPage() {
       </div>
 
       {/* Featured Post */}
-      <section className="flex gap-[40px] px-[120px] py-[48px] bg-[var(--bg-white)] w-full">
+      <section className="flex flex-col lg:flex-row gap-[24px] lg:gap-[40px] px-6 md:px-12 lg:px-[120px] py-[32px] md:py-[48px] bg-[var(--bg-white)] w-full">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="https://images.unsplash.com/photo-1764092816494-c165d9a24d70?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzIyNjA0MzV8&ixlib=rb-4.1.0&q=80&w=1080"
           alt="Featured Post"
-          className="w-[640px] h-[400px] object-cover shrink-0"
+          className="w-full lg:w-[640px] h-[250px] md:h-[320px] lg:h-[400px] object-cover shrink-0"
         />
         <div className="flex flex-col justify-center gap-[20px] flex-1">
           <div className="bg-[var(--burnt-orange)] px-[12px] py-[4px] w-fit">
@@ -73,7 +75,7 @@ export default function JournalPage() {
             <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--burnt-orange)]">DAY 1</span>
             <span className="font-label font-medium text-[11px] tracking-[1px] text-[var(--text-muted)]">&middot;&nbsp; MARCH 28, 2026</span>
           </div>
-          <h2 className="font-heading font-semibold text-[32px] tracking-[-0.5px] leading-[1.2] text-[var(--text-primary)]">
+          <h2 className="font-heading font-semibold text-[22px] md:text-[28px] lg:text-[32px] tracking-[-0.5px] leading-[1.2] text-[var(--text-primary)]">
             The First Step: Standing at the Southern Terminus
           </h2>
           <p className="font-heading text-[16px] leading-[1.7] text-[var(--text-secondary)]">
@@ -91,14 +93,12 @@ export default function JournalPage() {
       </section>
 
       {/* Blog Grid */}
-      <section className="flex flex-col gap-[24px] px-[120px] pt-[48px] pb-[80px] bg-[var(--bg-warm)] w-full">
+      <section className="flex flex-col gap-[24px] px-6 md:px-12 lg:px-[120px] pt-[32px] md:pt-[48px] pb-[48px] md:pb-[80px] bg-[var(--bg-warm)] w-full">
         <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--text-muted)]">ALL ENTRIES</span>
-        <div className="flex gap-[24px] w-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[24px] w-full">
           <BlogCard img="https://images.unsplash.com/photo-1609657096517-438da7ed2423?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80" day="DAY 2" date="MARCH 29, 2026" title="Finding My Rhythm" excerpt="20 miles in and my feet are already talking to me. But the desert sunrise was worth every blister." tag="BLOG" />
           <BlogCard img="https://images.unsplash.com/photo-1723995594361-46b69891c6f9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80" day="DAY 5" date="APRIL 1, 2026" title="Water and Gratitude" excerpt="Found a perfect stream today. Sat with my feet in the cold water and thought about Mom's garden." tag="VLOG" />
           <BlogCard img="https://images.unsplash.com/photo-1763058138710-7d8e263223ae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80" day="DAY 8" date="APRIL 4, 2026" title="Stars Like I've Never Seen" excerpt="No light pollution out here. The Milky Way stretches above like a river of light. Dad would have loved this." tag="PHOTOS" />
-        </div>
-        <div className="flex gap-[24px] w-full">
           <BlogCard img="https://images.unsplash.com/photo-1688057951002-a159e26c7f82?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80" day="DAY 15" date="APRIL 11, 2026" title="Through the Desert Wind" excerpt="The heat is relentless, but the sunsets make it all worthwhile. Met a fellow hiker who lost her mother to breast cancer." tag="BLOG" />
           <BlogCard img="https://images.unsplash.com/photo-1759491265362-3bd88910a036?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80" day="DAY 20" date="APRIL 16, 2026" title="Wildflower Season" excerpt="The desert is blooming. Purple, yellow, orange — everywhere. Nature's reminder that beauty follows hardship." tag="PHOTOS" />
           <BlogCard img="https://images.unsplash.com/photo-1759150954328-8b0b005ade84?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80" day="DAY 30" date="APRIL 26, 2026" title="Sierra Nights" excerpt="The stars remind me of camping with my dad. I can feel him walking with me. Tonight's vlog is for him." tag="VLOG" />
@@ -127,7 +127,7 @@ export default function JournalPage() {
       </section>
 
       {/* Footer */}
-      <footer className="flex items-center justify-between px-[120px] py-[32px] bg-[var(--bg-dark)] w-full">
+      <footer className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0 px-6 md:px-12 lg:px-[120px] py-[24px] md:py-[32px] bg-[var(--bg-dark)] w-full">
         <div className="flex items-center gap-[12px]">
           <Mountain className="w-[20px] h-[20px] text-[var(--forest-green)]" />
           <span className="font-label font-bold text-[14px] tracking-[3px] text-[var(--text-white)]">PAUL BARRY</span>
@@ -148,7 +148,7 @@ function BlogCard({ img, day, date, title, excerpt, tag }: {
 }) {
   const isGreen = tag === "BLOG" || tag === "PHOTOS";
   return (
-    <div className="flex flex-col flex-1 bg-[var(--bg-white)] border border-[var(--border-subtle)] overflow-hidden">
+    <div className="flex flex-col bg-[var(--bg-white)] border border-[var(--border-subtle)] overflow-hidden">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={img} alt={title} className="w-full h-[200px] object-cover" />
       <div className="flex flex-col gap-[10px] p-[20px]">

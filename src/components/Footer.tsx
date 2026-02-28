@@ -3,11 +3,11 @@ import { Mountain, Instagram, Youtube, Twitter, Facebook } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="flex flex-col gap-[48px] px-[120px] pt-[60px] pb-[32px] bg-[var(--bg-dark)] w-full">
+    <footer className="flex flex-col gap-8 md:gap-[48px] px-6 md:px-12 lg:px-[120px] pt-[40px] md:pt-[60px] pb-[32px] bg-[var(--bg-dark)] w-full">
       {/* Top */}
-      <div className="flex justify-between w-full">
+      <div className="flex flex-col lg:flex-row justify-between gap-8 lg:gap-0 w-full">
         {/* Brand */}
-        <div className="flex flex-col gap-[16px] w-[360px]">
+        <div className="flex flex-col gap-[16px] w-full lg:w-[360px]">
           <div className="flex items-center gap-[12px]">
             <Mountain className="w-[24px] h-[24px] text-[var(--forest-green)]" />
             <span className="font-label font-bold text-[16px] tracking-[3px] text-[var(--text-white)]">
@@ -17,7 +17,7 @@ export default function Footer() {
               PCT 2026
             </span>
           </div>
-          <p className="font-heading text-[14px] leading-[1.6] text-[#FFFFFF88] w-[340px]">
+          <p className="font-heading text-[14px] leading-[1.6] text-[#FFFFFF88] w-full lg:w-[340px]">
             Walking 2,650 miles for cancer awareness, survivor support, and
             prevention education. Every step counts.
           </p>
@@ -30,7 +30,7 @@ export default function Footer() {
         </div>
 
         {/* Nav columns */}
-        <div className="flex gap-[64px]">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:flex gap-8 lg:gap-[64px]">
           <div className="flex flex-col gap-[16px]">
             <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-muted)]">
               EXPLORE
@@ -65,7 +65,7 @@ export default function Footer() {
       <div className="w-full h-[1px] bg-[#FFFFFF15]" />
 
       {/* Bottom */}
-      <div className="flex items-center justify-between w-full">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0 w-full">
         <span className="font-label font-medium text-[11px] tracking-[0.5px] text-[#FFFFFF55]">
           &copy; 2026 Paul Barry PCT Walk for Cancer. All rights reserved.
         </span>

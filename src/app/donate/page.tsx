@@ -1,37 +1,39 @@
 import Link from "next/link";
 import { Mountain, Heart, Check, Lock } from "lucide-react";
+import MobileNav from "@/components/MobileNav";
 
 export default function DonatePage() {
   return (
     <div className="flex flex-col w-full bg-[var(--bg-warm)]">
       {/* Header */}
-      <header className="flex items-center justify-between px-[80px] py-[20px] bg-[#FFFFFFEE] w-full">
+      <header className="flex items-center justify-between px-4 md:px-8 lg:px-[80px] py-[16px] md:py-[20px] bg-[#FFFFFFEE] w-full relative z-50">
         <Link href="/" className="flex items-center gap-[12px]">
           <Mountain className="w-[28px] h-[28px] text-[var(--forest-green)]" />
           <span className="font-label font-bold text-[16px] tracking-[3px] text-[var(--text-primary)]">PAUL BARRY</span>
-          <span className="font-label font-medium text-[11px] tracking-[2px] text-[var(--text-muted)]">PCT 2026</span>
+          <span className="font-label font-medium text-[11px] tracking-[2px] text-[var(--text-muted)] hidden sm:inline">PCT 2026</span>
         </Link>
-        <nav className="flex items-center gap-[40px]">
-          <Link href="/" className="font-heading text-[15px] font-semibold text-[var(--text-secondary)]">The Journey</Link>
-          <Link href="/trail-map" className="font-heading text-[15px] font-semibold text-[var(--text-secondary)]">Trail Map</Link>
-          <Link href="/the-cause" className="font-heading text-[15px] font-semibold text-[var(--text-secondary)]">The Cause</Link>
-          <Link href="/journal" className="font-heading text-[15px] font-semibold text-[var(--text-secondary)]">Journal</Link>
-          <Link href="/donors" className="font-heading text-[15px] font-semibold text-[var(--text-secondary)]">Donors</Link>
-          <Link href="/donate" className="flex items-center gap-[8px] bg-[var(--burnt-orange)] px-[28px] py-[12px]">
+        <nav className="hidden lg:flex items-center gap-[40px]">
+          <Link href="/" className="font-heading text-[15px] font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)]">The Journey</Link>
+          <Link href="/trail-map" className="font-heading text-[15px] font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Trail Map</Link>
+          <Link href="/the-cause" className="font-heading text-[15px] font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)]">The Cause</Link>
+          <Link href="/journal" className="font-heading text-[15px] font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Journal</Link>
+          <Link href="/donors" className="font-heading text-[15px] font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Donors</Link>
+          <Link href="/donate" className="flex items-center gap-[8px] bg-[var(--burnt-orange)] px-[28px] py-[12px] hover:opacity-90 transition-opacity">
             <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-white)]">DONATE NOW</span>
             <Heart className="w-[14px] h-[14px] text-[var(--text-white)]" />
           </Link>
         </nav>
+        <MobileNav />
       </header>
 
       {/* Main Content */}
-      <section className="flex gap-[64px] px-[120px] py-[64px] bg-[var(--bg-white)] w-full">
+      <section className="flex flex-col lg:flex-row gap-[32px] lg:gap-[64px] px-6 md:px-12 lg:px-[120px] py-[40px] md:py-[52px] lg:py-[64px] bg-[var(--bg-white)] w-full">
         {/* Form Side */}
         <div className="flex flex-col gap-[32px] flex-1">
           {/* Header */}
           <div className="flex flex-col gap-[12px]">
             <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">SUPPORT THE CAUSE</span>
-            <h1 className="font-heading font-semibold text-[40px] tracking-[-0.5px] text-[var(--text-primary)]">Make a Donation</h1>
+            <h1 className="font-heading font-semibold text-[28px] md:text-[34px] lg:text-[40px] tracking-[-0.5px] text-[var(--text-primary)]">Make a Donation</h1>
             <p className="font-heading text-[16px] leading-[1.6] text-[var(--text-secondary)]">
               100% of your donation goes directly to cancer research, patient support, and prevention education programs.
             </p>
@@ -39,9 +41,9 @@ export default function DonatePage() {
 
           {/* Amount Selection */}
           <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-muted)]">CHOOSE AN AMOUNT</span>
-          <div className="flex gap-[12px] w-full">
+          <div className="grid grid-cols-3 md:grid-cols-5 gap-[12px] w-full">
             {["$25", "$50", "$100", "$250", "Other"].map((amt) => (
-              <div key={amt} className={`flex items-center justify-center h-[56px] flex-1 ${amt === "$100" ? "bg-[var(--burnt-orange)]" : "border border-[var(--border-subtle)]"}`}>
+              <div key={amt} className={`flex items-center justify-center h-[48px] md:h-[56px] ${amt === "$100" ? "bg-[var(--burnt-orange)]" : "border border-[var(--border-subtle)]"}`}>
                 <span className={`font-heading ${amt === "Other" ? "text-[16px] font-normal" : "text-[20px] font-semibold"} ${amt === "$100" ? "text-[var(--text-white)]" : amt === "Other" ? "text-[var(--text-secondary)]" : "text-[var(--text-primary)]"}`}>
                   {amt}
                 </span>
@@ -52,7 +54,7 @@ export default function DonatePage() {
           {/* Form Fields */}
           <div className="flex flex-col gap-[20px]">
             <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-muted)]">YOUR INFORMATION</span>
-            <div className="flex gap-[16px] w-full">
+            <div className="flex flex-col sm:flex-row gap-[16px] w-full">
               <div className="flex flex-col gap-[6px] flex-1">
                 <span className="font-heading font-semibold text-[14px] text-[var(--text-primary)]">First Name</span>
                 <input type="text" placeholder="John" className="h-[48px] px-[16px] border border-[var(--border-subtle)] font-heading text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none" />
@@ -88,7 +90,7 @@ export default function DonatePage() {
         </div>
 
         {/* Info Side */}
-        <div className="flex flex-col gap-[24px] w-[420px] shrink-0">
+        <div className="flex flex-col gap-[24px] w-full lg:w-[420px] shrink-0">
           {/* Progress */}
           <div className="flex flex-col gap-[16px] bg-[var(--bg-card)] border border-[var(--border-subtle)] p-[28px]">
             <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--burnt-orange)]">FUNDRAISING PROGRESS</span>
@@ -142,7 +144,7 @@ export default function DonatePage() {
       </section>
 
       {/* Footer */}
-      <footer className="flex items-center justify-between px-[120px] py-[32px] bg-[var(--bg-dark)] w-full">
+      <footer className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0 px-6 md:px-12 lg:px-[120px] py-[24px] md:py-[32px] bg-[var(--bg-dark)] w-full">
         <div className="flex items-center gap-[12px]">
           <Mountain className="w-[20px] h-[20px] text-[var(--forest-green)]" />
           <span className="font-label font-bold text-[14px] tracking-[3px] text-[var(--text-white)]">PAUL BARRY</span>
