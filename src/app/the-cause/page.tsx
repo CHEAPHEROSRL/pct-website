@@ -1,8 +1,15 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { Footprints, Apple, Sun, ScanSearch, CigaretteOff, HeartPulse } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import ShareButton from "@/components/ShareButton";
+
+export const metadata: Metadata = {
+  title: "The Cause — Cancer Prevention & Awareness",
+  description: "Learn why Paul Barry is walking the PCT — supporting cancer survivors, promoting prevention education, and funding life-saving research.",
+};
 
 export default function TheCausePage() {
   return (
@@ -124,9 +131,11 @@ export default function TheCausePage() {
             <Link href="/donate" className="bg-[var(--burnt-orange)] px-[32px] lg:px-[48px] py-[14px] lg:py-[16px] text-center">
               <span className="font-label font-bold text-[13px] lg:text-[14px] tracking-[2px] text-[var(--text-white)]">DONATE NOW</span>
             </Link>
-            <button className="border border-[#FFFFFF66] px-[32px] lg:px-[48px] py-[14px] lg:py-[16px]">
-              <span className="font-label font-bold text-[13px] lg:text-[14px] tracking-[2px] text-[var(--text-white)]">SHARE THE CAUSE</span>
-            </button>
+            <ShareButton
+              className="flex items-center justify-center gap-[10px] border border-[#FFFFFF66] px-[32px] lg:px-[48px] py-[14px] lg:py-[16px] hover:bg-white/10 transition-colors cursor-pointer"
+              label="SHARE THE CAUSE"
+              labelClassName="font-label font-bold text-[13px] lg:text-[14px] tracking-[2px] text-[var(--text-white)]"
+            />
           </div>
         </div>
       </section>

@@ -1,18 +1,67 @@
-import Link from "next/link";
-import { Search, ChevronRight } from "lucide-react";
+"use client";
+
+import { useState, useMemo } from "react";
+import { Search, ChevronRight, ChevronLeft } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
-const donors = [
-  { name: "Robert Williams", amount: "$1,000", date: "Feb 15, 2026", message: "Go Paul! My father fought cancer for 3 years. Walk strong.", color: "#3D7A5A" },
-  { name: "Anonymous", amount: "$2,000", date: "Feb 12, 2026", message: "In memory of Susan. Keep walking.", color: "#5B8EA6" },
-  { name: "Dr. Amanda Brooks", amount: "$750", date: "Feb 10, 2026", message: "As an oncologist, this cause is close to my heart.", color: "#C45C26" },
-  { name: "James O'Connor", amount: "$500", date: "Feb 8, 2026", message: "Walk on, brother. The world needs more people like you.", color: "#7B6B8E" },
-  { name: "Sarah Mitchell", amount: "$250", date: "Feb 5, 2026", message: "For my mom, a 5-year survivor. You're an inspiration.", color: "#A68B5B" },
-  { name: "Tom & Lisa Park", amount: "$300", date: "Feb 1, 2026", message: "We're cheering for you from Oregon!", color: "#6B8E7B" },
+interface Donor {
+  name: string;
+  amount: string;
+  amountNum: number;
+  date: string;
+  message: string;
+  color: string;
+}
+
+const donors: Donor[] = [
+  { name: "Robert Williams", amount: "$1,000", amountNum: 1000, date: "Feb 15, 2026", message: "Go Paul! My father fought cancer for 3 years. Walk strong.", color: "#3D7A5A" },
+  { name: "Anonymous", amount: "$2,000", amountNum: 2000, date: "Feb 12, 2026", message: "In memory of Susan. Keep walking.", color: "#5B8EA6" },
+  { name: "Dr. Amanda Brooks", amount: "$750", amountNum: 750, date: "Feb 10, 2026", message: "As an oncologist, this cause is close to my heart.", color: "#C45C26" },
+  { name: "James O\u2019Connor", amount: "$500", amountNum: 500, date: "Feb 8, 2026", message: "Walk on, brother. The world needs more people like you.", color: "#7B6B8E" },
+  { name: "Sarah Mitchell", amount: "$250", amountNum: 250, date: "Feb 5, 2026", message: "For my mom, a 5-year survivor. You\u2019re an inspiration.", color: "#A68B5B" },
+  { name: "Tom & Lisa Park", amount: "$300", amountNum: 300, date: "Feb 1, 2026", message: "We\u2019re cheering for you from Oregon!", color: "#6B8E7B" },
 ];
 
+type SortKey = "RECENT" | "AMOUNT" | "NAME";
+const PER_PAGE = 6;
+
 export default function DonorsPage() {
+  const [search, setSearch] = useState("");
+  const [sort, setSort] = useState<SortKey>("RECENT");
+  const [page, setPage] = useState(1);
+
+  const processed = useMemo(() => {
+    let result = [...donors];
+
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      result = result.filter(
+        (d) =>
+          d.name.toLowerCase().includes(q) ||
+          d.message.toLowerCase().includes(q)
+      );
+    }
+
+    switch (sort) {
+      case "AMOUNT":
+        result.sort((a, b) => b.amountNum - a.amountNum);
+        break;
+      case "NAME":
+        result.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case "RECENT":
+      default:
+        break;
+    }
+
+    return result;
+  }, [search, sort]);
+
+  const totalPages = Math.max(1, Math.ceil(processed.length / PER_PAGE));
+  const currentPage = Math.min(page, totalPages);
+  const paged = processed.slice((currentPage - 1) * PER_PAGE, currentPage * PER_PAGE);
+
   return (
     <div className="flex flex-col w-full bg-[var(--bg-warm)]">
       <Header activeItem="Donors" />
@@ -62,15 +111,29 @@ export default function DonorsPage() {
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 md:gap-0 px-6 md:px-12 lg:px-[120px] py-[16px] bg-[var(--bg-warm)] w-full">
         <div className="flex items-center gap-[10px] bg-[var(--bg-white)] border border-[var(--border-subtle)] px-[16px] py-[10px] w-full md:w-auto">
           <Search className="w-[16px] h-[16px] text-[var(--text-muted)]" />
-          <span className="font-heading text-[14px] text-[var(--text-muted)]">Search donors...</span>
+          <input
+            type="text"
+            placeholder="Search donors..."
+            value={search}
+            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+            className="font-heading text-[14px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none bg-transparent w-full md:w-[180px]"
+          />
         </div>
         <div className="flex items-center gap-[12px] flex-wrap">
           <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-secondary)]">SORT BY</span>
-          <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-white)] bg-[var(--bg-dark)] px-[16px] py-[8px]">RECENT</span>
-          <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-secondary)] border border-[var(--border-subtle)] px-[16px] py-[8px]">AMOUNT</span>
-          <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-secondary)] border border-[var(--border-subtle)] px-[16px] py-[8px]">NAME</span>
+          {(["RECENT", "AMOUNT", "NAME"] as SortKey[]).map((s) => (
+            <button
+              key={s}
+              onClick={() => { setSort(s); setPage(1); }}
+              className={`font-label font-bold text-[11px] tracking-[2px] px-[16px] py-[8px] cursor-pointer transition-colors ${sort === s ? "text-[var(--text-white)] bg-[var(--bg-dark)]" : "text-[var(--text-secondary)] border border-[var(--border-subtle)] hover:border-[var(--text-secondary)]"}`}
+            >
+              {s}
+            </button>
+          ))}
         </div>
-        <span className="font-label font-semibold text-[11px] tracking-[2px] text-[var(--text-muted)] hidden md:inline">47 DONORS</span>
+        <span className="font-label font-semibold text-[11px] tracking-[2px] text-[var(--text-muted)] hidden md:inline">
+          {processed.length} DONOR{processed.length !== 1 ? "S" : ""}
+        </span>
       </div>
 
       {/* Donor List */}
@@ -83,50 +146,80 @@ export default function DonorsPage() {
           <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">MESSAGE</span>
         </div>
 
-        {/* Desktop Rows */}
-        {donors.map((d, i) => (
-          <div key={i} className={`hidden md:flex items-center px-[20px] py-[16px] border-b border-[var(--border-subtle)] w-full ${i % 2 === 0 ? "bg-[var(--bg-white)]" : "bg-[var(--bg-card)]"}`}>
-            <div className="flex items-center gap-[12px] w-[360px]">
-              <div className="w-[32px] h-[32px] rounded-full shrink-0" style={{ backgroundColor: d.color }} />
-              <span className="font-heading font-semibold text-[15px] text-[var(--text-primary)]">{d.name}</span>
-            </div>
-            <span className="font-heading font-semibold text-[15px] text-[var(--forest-green)] w-[120px]">{d.amount}</span>
-            <span className="font-label font-medium text-[13px] text-[var(--text-muted)] w-[140px]">{d.date}</span>
-            <span className="font-heading italic text-[13px] text-[var(--text-secondary)] flex-1">{d.message}</span>
+        {paged.length === 0 ? (
+          <div className="flex flex-col items-center gap-[12px] py-[48px]">
+            <span className="font-heading text-[18px] text-[var(--text-muted)]">No donors found</span>
+            <button
+              onClick={() => { setSearch(""); setPage(1); }}
+              className="font-label font-bold text-[12px] tracking-[2px] text-[var(--burnt-orange)] cursor-pointer"
+            >
+              CLEAR SEARCH
+            </button>
           </div>
-        ))}
-
-        {/* Mobile Card Layout */}
-        {donors.map((d, i) => (
-          <div key={`mobile-${i}`} className={`flex md:hidden flex-col gap-[8px] p-[16px] border-b border-[var(--border-subtle)] ${i % 2 === 0 ? "bg-[var(--bg-white)]" : "bg-[var(--bg-card)]"}`}>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-[10px]">
-                <div className="w-[32px] h-[32px] rounded-full shrink-0" style={{ backgroundColor: d.color }} />
-                <span className="font-heading font-semibold text-[15px] text-[var(--text-primary)]">{d.name}</span>
+        ) : (
+          <>
+            {/* Desktop Rows */}
+            {paged.map((d, i) => (
+              <div key={d.name + d.date} className={`hidden md:flex items-center px-[20px] py-[16px] border-b border-[var(--border-subtle)] w-full ${i % 2 === 0 ? "bg-[var(--bg-white)]" : "bg-[var(--bg-card)]"}`}>
+                <div className="flex items-center gap-[12px] w-[360px]">
+                  <div className="w-[32px] h-[32px] rounded-full shrink-0" style={{ backgroundColor: d.color }} />
+                  <span className="font-heading font-semibold text-[15px] text-[var(--text-primary)]">{d.name}</span>
+                </div>
+                <span className="font-heading font-semibold text-[15px] text-[var(--forest-green)] w-[120px]">{d.amount}</span>
+                <span className="font-label font-medium text-[13px] text-[var(--text-muted)] w-[140px]">{d.date}</span>
+                <span className="font-heading italic text-[13px] text-[var(--text-secondary)] flex-1">{d.message}</span>
               </div>
-              <span className="font-heading font-semibold text-[15px] text-[var(--forest-green)]">{d.amount}</span>
-            </div>
-            <p className="font-heading italic text-[13px] text-[var(--text-secondary)]">{d.message}</p>
-            <span className="font-label font-medium text-[11px] text-[var(--text-muted)]">{d.date}</span>
-          </div>
-        ))}
+            ))}
+
+            {/* Mobile Card Layout */}
+            {paged.map((d, i) => (
+              <div key={`mobile-${d.name}${d.date}`} className={`flex md:hidden flex-col gap-[8px] p-[16px] border-b border-[var(--border-subtle)] ${i % 2 === 0 ? "bg-[var(--bg-white)]" : "bg-[var(--bg-card)]"}`}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-[10px]">
+                    <div className="w-[32px] h-[32px] rounded-full shrink-0" style={{ backgroundColor: d.color }} />
+                    <span className="font-heading font-semibold text-[15px] text-[var(--text-primary)]">{d.name}</span>
+                  </div>
+                  <span className="font-heading font-semibold text-[15px] text-[var(--forest-green)]">{d.amount}</span>
+                </div>
+                <p className="font-heading italic text-[13px] text-[var(--text-secondary)]">{d.message}</p>
+                <span className="font-label font-medium text-[11px] text-[var(--text-muted)]">{d.date}</span>
+              </div>
+            ))}
+          </>
+        )}
 
         {/* Pagination */}
-        <div className="flex items-center justify-center gap-[8px] pt-[24px] w-full">
-          <div className="flex items-center justify-center w-[40px] h-[40px] bg-[var(--bg-dark)]">
-            <span className="font-label font-bold text-[13px] text-[var(--text-white)]">1</span>
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-[8px] pt-[24px] w-full">
+            {currentPage > 1 && (
+              <button
+                onClick={() => setPage(currentPage - 1)}
+                className="flex items-center gap-[6px] bg-[var(--bg-white)] border border-[var(--border-subtle)] px-[16px] py-[10px] cursor-pointer hover:border-[var(--text-secondary)] transition-colors"
+              >
+                <ChevronLeft className="w-[14px] h-[14px] text-[var(--text-secondary)]" />
+                <span className="font-label font-bold text-[11px] tracking-[1px] text-[var(--text-secondary)]">PREV</span>
+              </button>
+            )}
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+              <button
+                key={p}
+                onClick={() => setPage(p)}
+                className={`flex items-center justify-center w-[40px] h-[40px] cursor-pointer transition-colors ${p === currentPage ? "bg-[var(--bg-dark)]" : "bg-[var(--bg-white)] border border-[var(--border-subtle)] hover:border-[var(--text-secondary)]"}`}
+              >
+                <span className={`font-label font-bold text-[13px] ${p === currentPage ? "text-[var(--text-white)]" : "text-[var(--text-secondary)]"}`}>{p}</span>
+              </button>
+            ))}
+            {currentPage < totalPages && (
+              <button
+                onClick={() => setPage(currentPage + 1)}
+                className="flex items-center gap-[6px] bg-[var(--bg-white)] border border-[var(--border-subtle)] px-[16px] py-[10px] cursor-pointer hover:border-[var(--text-secondary)] transition-colors"
+              >
+                <span className="font-label font-bold text-[11px] tracking-[1px] text-[var(--text-secondary)]">NEXT</span>
+                <ChevronRight className="w-[14px] h-[14px] text-[var(--text-secondary)]" />
+              </button>
+            )}
           </div>
-          <div className="flex items-center justify-center w-[40px] h-[40px] bg-[var(--bg-white)] border border-[var(--border-subtle)]">
-            <span className="font-label font-semibold text-[13px] text-[var(--text-secondary)]">2</span>
-          </div>
-          <div className="flex items-center justify-center w-[40px] h-[40px] bg-[var(--bg-white)] border border-[var(--border-subtle)]">
-            <span className="font-label font-semibold text-[13px] text-[var(--text-secondary)]">3</span>
-          </div>
-          <div className="flex items-center gap-[6px] bg-[var(--bg-white)] border border-[var(--border-subtle)] px-[16px] py-[10px]">
-            <span className="font-label font-bold text-[11px] tracking-[1px] text-[var(--text-secondary)]">NEXT</span>
-            <ChevronRight className="w-[14px] h-[14px] text-[var(--text-secondary)]" />
-          </div>
-        </div>
+        )}
       </section>
 
       <Footer />

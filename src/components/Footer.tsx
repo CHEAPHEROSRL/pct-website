@@ -22,10 +22,10 @@ export default function Footer() {
             prevention education. Every step counts.
           </p>
           <div className="flex gap-[16px]">
-            <Instagram className="w-[20px] h-[20px] text-[var(--text-muted)] hover:text-white cursor-pointer" />
-            <Youtube className="w-[20px] h-[20px] text-[var(--text-muted)] hover:text-white cursor-pointer" />
-            <Twitter className="w-[20px] h-[20px] text-[var(--text-muted)] hover:text-white cursor-pointer" />
-            <Facebook className="w-[20px] h-[20px] text-[var(--text-muted)] hover:text-white cursor-pointer" />
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><Instagram className="w-[20px] h-[20px] text-[var(--text-muted)] hover:text-white cursor-pointer" /></a>
+            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><Youtube className="w-[20px] h-[20px] text-[var(--text-muted)] hover:text-white cursor-pointer" /></a>
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter"><Twitter className="w-[20px] h-[20px] text-[var(--text-muted)] hover:text-white cursor-pointer" /></a>
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><Facebook className="w-[20px] h-[20px] text-[var(--text-muted)] hover:text-white cursor-pointer" /></a>
           </div>
         </div>
 
@@ -53,10 +53,10 @@ export default function Footer() {
             <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-muted)]">
               CONNECT
             </span>
-            <span className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white cursor-pointer">Instagram</span>
-            <span className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white cursor-pointer">YouTube</span>
-            <span className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white cursor-pointer">Contact Paul</span>
-            <span className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white cursor-pointer">Press Kit</span>
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Instagram</a>
+            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">YouTube</a>
+            <a href="mailto:paul@paulbarrypct.com" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Contact Paul</a>
+            <span className="font-heading text-[14px] text-[#FFFFFFAA]">Press Kit</span>
           </div>
         </div>
       </div>
@@ -70,12 +70,12 @@ export default function Footer() {
           &copy; 2026 Paul Barry PCT Walk for Cancer. All rights reserved.
         </span>
         <div className="flex gap-[24px]">
-          <span className="font-label font-medium text-[11px] tracking-[0.5px] text-[#FFFFFF55] hover:text-white cursor-pointer">
+          <Link href="/privacy-policy" className="font-label font-medium text-[11px] tracking-[0.5px] text-[#FFFFFF55] hover:text-white cursor-pointer">
             Privacy Policy
-          </span>
-          <span className="font-label font-medium text-[11px] tracking-[0.5px] text-[#FFFFFF55] hover:text-white cursor-pointer">
+          </Link>
+          <Link href="/terms-of-use" className="font-label font-medium text-[11px] tracking-[0.5px] text-[#FFFFFF55] hover:text-white cursor-pointer">
             Terms of Use
-          </span>
+          </Link>
         </div>
       </div>
     </footer>

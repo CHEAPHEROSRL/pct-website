@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import ShareButton from "@/components/ShareButton";
 import {
   Heart,
   Calendar,
@@ -12,7 +13,6 @@ import {
   Sun,
   ChevronDown,
   ArrowRight,
-  Share2,
 } from "lucide-react";
 
 export default function Home() {
@@ -407,10 +407,11 @@ export default function Home() {
               <span className="font-label font-bold text-[13px] lg:text-[15px] tracking-[2px] text-[var(--text-white)]">DONATE NOW</span>
               <Heart className="w-[18px] h-[18px] text-[var(--text-white)]" />
             </Link>
-            <button className="flex items-center justify-center gap-[10px] border border-[#FFFFFF66] px-[32px] lg:px-[48px] py-[16px] lg:py-[20px] hover:bg-white/10 transition-colors">
-              <span className="font-label font-bold text-[13px] lg:text-[15px] tracking-[2px] text-[var(--text-white)]">SHARE THIS CAUSE</span>
-              <Share2 className="w-[18px] h-[18px] text-[var(--text-white)]" />
-            </button>
+            <ShareButton
+              className="flex items-center justify-center gap-[10px] border border-[#FFFFFF66] px-[32px] lg:px-[48px] py-[16px] lg:py-[20px] hover:bg-white/10 transition-colors cursor-pointer"
+              label="SHARE THIS CAUSE"
+              labelClassName="font-label font-bold text-[13px] lg:text-[15px] tracking-[2px] text-[var(--text-white)]"
+            />
           </div>
           <span className="font-label font-medium text-[13px] tracking-[1px] text-[#FFFFFF88]">$12,450 raised of $50,000 goal</span>
         </div>
