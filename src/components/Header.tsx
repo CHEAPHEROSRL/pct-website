@@ -2,7 +2,19 @@ import Link from "next/link";
 import { Mountain, Heart } from "lucide-react";
 import MobileNav from "./MobileNav";
 
-export default function Header() {
+interface HeaderProps {
+  activeItem?: string;
+}
+
+const navLinks = [
+  { href: "/", label: "The Journey" },
+  { href: "/trail-map", label: "Trail Map" },
+  { href: "/the-cause", label: "The Cause" },
+  { href: "/journal", label: "Journal" },
+  { href: "/donors", label: "Donors" },
+];
+
+export default function Header({ activeItem }: HeaderProps) {
   return (
     <header className="flex items-center justify-between px-4 md:px-8 lg:px-[80px] py-[16px] md:py-[20px] bg-[#FFFFFFEE] w-full relative z-50">
       <Link href="/" className="flex items-center gap-[12px]">
@@ -15,21 +27,17 @@ export default function Header() {
         </span>
       </Link>
       <nav className="hidden lg:flex items-center gap-[40px]">
-        <Link href="/" className="font-heading text-[15px] font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
-          The Journey
-        </Link>
-        <Link href="/trail-map" className="font-heading text-[15px] font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
-          Trail Map
-        </Link>
-        <Link href="/the-cause" className="font-heading text-[15px] font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
-          The Cause
-        </Link>
-        <Link href="/journal" className="font-heading text-[15px] font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
-          Journal
-        </Link>
-        <Link href="/donors" className="font-heading text-[15px] font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
-          Donors
-        </Link>
+        {navLinks.map((link) =>
+          link.label === activeItem ? (
+            <span key={link.label} className="font-heading text-[15px] font-semibold text-[var(--burnt-orange)]">
+              {link.label}
+            </span>
+          ) : (
+            <Link key={link.label} href={link.href} className="font-heading text-[15px] font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
+              {link.label}
+            </Link>
+          )
+        )}
         <Link
           href="/donate"
           className="flex items-center gap-[8px] bg-[var(--burnt-orange)] px-[28px] py-[12px] hover:opacity-90 transition-opacity"
@@ -40,7 +48,7 @@ export default function Header() {
           <Heart className="w-[14px] h-[14px] text-[var(--text-white)]" />
         </Link>
       </nav>
-      <MobileNav />
+      <MobileNav activeItem={activeItem} />
     </header>
   );
 }

@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { Mountain, Heart, Search, ChevronRight } from "lucide-react";
-import MobileNav from "@/components/MobileNav";
+import { Search, ChevronRight } from "lucide-react";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 const donors = [
   { name: "Robert Williams", amount: "$1,000", date: "Feb 15, 2026", message: "Go Paul! My father fought cancer for 3 years. Walk strong.", color: "#3D7A5A" },
@@ -14,26 +15,7 @@ const donors = [
 export default function DonorsPage() {
   return (
     <div className="flex flex-col w-full bg-[var(--bg-warm)]">
-      {/* Header */}
-      <header className="flex items-center justify-between px-4 md:px-8 lg:px-[80px] py-[16px] md:py-[20px] bg-[#FFFFFFEE] w-full relative z-50">
-        <Link href="/" className="flex items-center gap-[12px]">
-          <Mountain className="w-[28px] h-[28px] text-[var(--forest-green)]" />
-          <span className="font-label font-bold text-[16px] tracking-[3px] text-[var(--text-primary)]">PAUL BARRY</span>
-          <span className="font-label font-medium text-[11px] tracking-[2px] text-[var(--text-muted)] hidden sm:inline">PCT 2026</span>
-        </Link>
-        <nav className="hidden lg:flex items-center gap-[40px]">
-          <Link href="/" className="font-heading text-[15px] font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)]">The Journey</Link>
-          <Link href="/trail-map" className="font-heading text-[15px] font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Trail Map</Link>
-          <Link href="/the-cause" className="font-heading text-[15px] font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)]">The Cause</Link>
-          <Link href="/journal" className="font-heading text-[15px] font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Journal</Link>
-          <span className="font-heading text-[15px] font-semibold text-[var(--burnt-orange)]">Donors</span>
-          <Link href="/donate" className="flex items-center gap-[8px] bg-[var(--burnt-orange)] px-[28px] py-[12px] hover:opacity-90 transition-opacity">
-            <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-white)]">DONATE NOW</span>
-            <Heart className="w-[14px] h-[14px] text-[var(--text-white)]" />
-          </Link>
-        </nav>
-        <MobileNav activeItem="Donors" />
-      </header>
+      <Header activeItem="Donors" />
 
       {/* Hero */}
       <section className="flex flex-col items-center gap-[24px] md:gap-[32px] px-6 md:px-12 lg:px-[120px] py-[40px] md:py-[52px] lg:py-[64px] bg-[var(--bg-white)] w-full">
@@ -147,19 +129,7 @@ export default function DonorsPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0 px-6 md:px-12 lg:px-[120px] py-[24px] md:py-[32px] bg-[var(--bg-dark)] w-full">
-        <div className="flex items-center gap-[12px]">
-          <Mountain className="w-[20px] h-[20px] text-[var(--forest-green)]" />
-          <span className="font-label font-bold text-[14px] tracking-[3px] text-[var(--text-white)]">PAUL BARRY</span>
-        </div>
-        <span className="font-label font-medium text-[11px] tracking-[0.5px] text-[#FFFFFF55]">&copy; 2026 Paul Barry PCT Walk for Cancer</span>
-        <div className="flex gap-[16px]">
-          <span className="font-label text-[13px] text-[var(--text-muted)]">IG</span>
-          <span className="font-label text-[13px] text-[var(--text-muted)]">YT</span>
-          <span className="font-label text-[13px] text-[var(--text-muted)]">X</span>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

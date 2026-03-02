@@ -1,31 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Mountain, Heart, Footprints, Apple, Sun, ScanSearch, CigaretteOff, HeartPulse } from "lucide-react";
-import MobileNav from "@/components/MobileNav";
+import { Footprints, Apple, Sun, ScanSearch, CigaretteOff, HeartPulse } from "lucide-react";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 export default function TheCausePage() {
   return (
     <div className="flex flex-col w-full bg-[var(--bg-warm)]">
-      {/* Header */}
-      <header className="flex items-center justify-between px-4 md:px-8 lg:px-[80px] py-[16px] md:py-[20px] bg-[#FFFFFFEE] w-full relative z-50">
-        <Link href="/" className="flex items-center gap-[12px]">
-          <Mountain className="w-[28px] h-[28px] text-[var(--forest-green)]" />
-          <span className="font-label font-bold text-[16px] tracking-[3px] text-[var(--text-primary)]">PAUL BARRY</span>
-          <span className="font-label font-medium text-[11px] tracking-[2px] text-[var(--text-muted)] hidden sm:inline">PCT 2026</span>
-        </Link>
-        <nav className="hidden lg:flex items-center gap-[40px]">
-          <Link href="/" className="font-heading text-[15px] font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)]">The Journey</Link>
-          <Link href="/trail-map" className="font-heading text-[15px] font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Trail Map</Link>
-          <span className="font-heading text-[15px] font-semibold text-[var(--burnt-orange)]">The Cause</span>
-          <Link href="/journal" className="font-heading text-[15px] font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Journal</Link>
-          <Link href="/donors" className="font-heading text-[15px] font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Donors</Link>
-          <Link href="/donate" className="flex items-center gap-[8px] bg-[var(--burnt-orange)] px-[28px] py-[12px] hover:opacity-90 transition-opacity">
-            <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-white)]">DONATE NOW</span>
-            <Heart className="w-[14px] h-[14px] text-[var(--text-white)]" />
-          </Link>
-        </nav>
-        <MobileNav activeItem="The Cause" />
-      </header>
+      <Header activeItem="The Cause" />
 
       {/* Hero */}
       <section className="relative w-full h-[400px] md:h-[480px] lg:h-[560px] overflow-hidden">
@@ -149,16 +131,7 @@ export default function TheCausePage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0 px-6 md:px-12 lg:px-[80px] py-[24px] bg-[var(--bg-dark)] w-full">
-        <span className="font-label text-[13px] text-[#FFFFFF80]">2026 Paul Barry &middot; Walking for a Cause</span>
-        <div className="flex items-center gap-[24px] md:gap-[32px]">
-          <Link href="/" className="font-label font-medium text-[13px] text-[#FFFFFF80]">Home</Link>
-          <Link href="/trail-map" className="font-label font-medium text-[13px] text-[#FFFFFF80]">Trail Map</Link>
-          <Link href="/donate" className="font-label font-medium text-[13px] text-[#FFFFFFCC]">Donate</Link>
-          <Link href="/journal" className="font-label font-medium text-[13px] text-[#FFFFFF80]">Journal</Link>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
