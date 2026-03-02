@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import { Search, ArrowRight, ChevronRight, ChevronLeft } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import type { JournalPostPublic } from "@/lib/types";
 
 const filterOptions = ["ALL", "BLOG", "VLOG", "PHOTOS"] as const;
 type Filter = (typeof filterOptions)[number];
@@ -18,7 +19,26 @@ interface JournalEntry {
   tag: "BLOG" | "VLOG" | "PHOTOS";
 }
 
-const featuredPost: JournalEntry = {
+function mapPostToEntry(post: JournalPostPublic): JournalEntry {
+  return {
+    img:
+      post.coverImage ||
+      "https://images.unsplash.com/photo-1609657096517-438da7ed2423?w=1080",
+    day: `DAY ${post.dayNumber}`,
+    date: new Date(post.date + "T12:00:00")
+      .toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      })
+      .toUpperCase(),
+    title: post.title,
+    excerpt: post.excerpt,
+    tag: (post.tags[0] as "BLOG" | "VLOG" | "PHOTOS") || "BLOG",
+  };
+}
+
+const fallbackFeaturedPost: JournalEntry = {
   img: "https://images.unsplash.com/photo-1764092816494-c165d9a24d70?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzIyNjA0MzV8&ixlib=rb-4.1.0&q=80&w=1080",
   day: "DAY 1",
   date: "MARCH 28, 2026",
@@ -27,7 +47,7 @@ const featuredPost: JournalEntry = {
   tag: "BLOG",
 };
 
-const allEntries: JournalEntry[] = [
+const fallbackEntries: JournalEntry[] = [
   { img: "https://images.unsplash.com/photo-1609657096517-438da7ed2423?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80", day: "DAY 2", date: "MARCH 29, 2026", title: "Finding My Rhythm", excerpt: "20 miles in and my feet are already talking to me. But the desert sunrise was worth every blister.", tag: "BLOG" },
   { img: "https://images.unsplash.com/photo-1723995594361-46b69891c6f9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80", day: "DAY 5", date: "APRIL 1, 2026", title: "Water and Gratitude", excerpt: "Found a perfect stream today. Sat with my feet in the cold water and thought about Mom\u2019s garden.", tag: "VLOG" },
   { img: "https://images.unsplash.com/photo-1763058138710-7d8e263223ae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80", day: "DAY 8", date: "APRIL 4, 2026", title: "Stars Like I've Never Seen", excerpt: "No light pollution out here. The Milky Way stretches above like a river of light. Dad would have loved this.", tag: "PHOTOS" },
@@ -42,6 +62,24 @@ export default function JournalPage() {
   const [activeFilter, setActiveFilter] = useState<Filter>("ALL");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [dynamicFeatured, setDynamicFeatured] = useState<JournalEntry | null>(null);
+  const [dynamicEntries, setDynamicEntries] = useState<JournalEntry[] | null>(null);
+
+  useEffect(() => {
+    fetch("/api/journal")
+      .then((res) => res.json())
+      .then((posts: JournalPostPublic[]) => {
+        if (posts.length > 0) {
+          const entries = posts.map(mapPostToEntry);
+          setDynamicFeatured(entries[0]);
+          setDynamicEntries(entries.slice(1));
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const featuredPost = dynamicFeatured ?? fallbackFeaturedPost;
+  const allEntries = dynamicEntries ?? fallbackEntries;
 
   const filtered = useMemo(() => {
     let entries = allEntries;
@@ -58,7 +96,7 @@ export default function JournalPage() {
       );
     }
     return entries;
-  }, [activeFilter, search]);
+  }, [activeFilter, search, allEntries]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
   const currentPage = Math.min(page, totalPages);

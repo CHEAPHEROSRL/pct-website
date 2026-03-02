@@ -4842,93 +4842,384 @@
         },
         {
           "type": "frame",
-          "id": "zHep5",
-          "name": "Footer",
+          "id": "Xo1CD",
+          "name": "jFooter",
           "width": "fill_container",
           "fill": "$bg-dark",
+          "layout": "vertical",
+          "gap": 48,
           "padding": [
+            60,
+            120,
             32,
             120
           ],
-          "justifyContent": "space_between",
-          "alignItems": "center",
           "children": [
             {
               "type": "frame",
-              "id": "Em9IR",
-              "name": "jfLeft",
-              "gap": 12,
-              "alignItems": "center",
+              "id": "V27VQ",
+              "name": "footerTop",
+              "width": "fill_container",
+              "justifyContent": "space_between",
               "children": [
                 {
-                  "type": "icon_font",
-                  "id": "5N42i",
-                  "name": "jfIcon",
-                  "width": 20,
-                  "height": 20,
-                  "iconFontName": "mountain",
-                  "iconFontFamily": "lucide",
-                  "fill": "$forest-green"
+                  "type": "frame",
+                  "id": "cYsxv",
+                  "name": "footerBrand",
+                  "width": 360,
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "yl7XS",
+                      "name": "footerLogoRow",
+                      "gap": 12,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "8yEE8",
+                          "name": "footerLogoIcon",
+                          "width": 24,
+                          "height": 24,
+                          "iconFontName": "mountain",
+                          "iconFontFamily": "lucide",
+                          "fill": "$forest-green"
+                        },
+                        {
+                          "type": "text",
+                          "id": "K1Pe3",
+                          "name": "footerLogoText",
+                          "fill": "$text-white",
+                          "content": "PAUL BARRY",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 16,
+                          "fontWeight": "700",
+                          "letterSpacing": 3
+                        },
+                        {
+                          "type": "text",
+                          "id": "gM5Oy",
+                          "name": "footerLogoSub",
+                          "fill": "$text-muted",
+                          "content": "PCT 2026",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 11,
+                          "fontWeight": "500",
+                          "letterSpacing": 2
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "3T3aa",
+                      "name": "footerTagline",
+                      "fill": "#FFFFFF88",
+                      "textGrowth": "fixed-width",
+                      "width": 340,
+                      "content": "Walking 2,650 miles for cancer awareness, survivor support, and prevention education. Every step counts.",
+                      "lineHeight": 1.6,
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "fSVoP",
+                      "name": "footerSocials",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "p2chQ",
+                          "name": "socialIG",
+                          "width": 20,
+                          "height": 20,
+                          "iconFontName": "instagram",
+                          "iconFontFamily": "lucide",
+                          "fill": "$text-muted"
+                        },
+                        {
+                          "type": "icon_font",
+                          "id": "lcBel",
+                          "name": "socialYT",
+                          "width": 20,
+                          "height": 20,
+                          "iconFontName": "youtube",
+                          "iconFontFamily": "lucide",
+                          "fill": "$text-muted"
+                        },
+                        {
+                          "type": "icon_font",
+                          "id": "L0sGu",
+                          "name": "socialTW",
+                          "width": 20,
+                          "height": 20,
+                          "iconFontName": "twitter",
+                          "iconFontFamily": "lucide",
+                          "fill": "$text-muted"
+                        },
+                        {
+                          "type": "icon_font",
+                          "id": "50KHg",
+                          "name": "socialFB",
+                          "width": 20,
+                          "height": 20,
+                          "iconFontName": "facebook",
+                          "iconFontFamily": "lucide",
+                          "fill": "$text-muted"
+                        }
+                      ]
+                    }
+                  ]
                 },
                 {
-                  "type": "text",
-                  "id": "lp9L4",
-                  "name": "jfName",
-                  "fill": "$text-white",
-                  "content": "PAUL BARRY",
-                  "fontFamily": "Barlow Semi Condensed",
-                  "fontSize": 14,
-                  "fontWeight": "700",
-                  "letterSpacing": 3
+                  "type": "frame",
+                  "id": "MEOPF",
+                  "name": "footerNav",
+                  "gap": 64,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "ssyAv",
+                      "name": "fnCol1",
+                      "layout": "vertical",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "09XpA",
+                          "name": "fnCol1Title",
+                          "fill": "$text-muted",
+                          "content": "EXPLORE",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 11,
+                          "fontWeight": "700",
+                          "letterSpacing": 2
+                        },
+                        {
+                          "type": "text",
+                          "id": "KL8Wj",
+                          "name": "fnCol1L1",
+                          "fill": "#FFFFFFAA",
+                          "content": "The Journey",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "0Eq9m",
+                          "name": "fnCol1L2",
+                          "fill": "#FFFFFFAA",
+                          "content": "Trail Map",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "0psaC",
+                          "name": "fnCol1L3",
+                          "fill": "#FFFFFFAA",
+                          "content": "Blog & Vlog",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "S8MgI",
+                          "name": "fnCol1L4",
+                          "fill": "#FFFFFFAA",
+                          "content": "Donor Wall",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "L6qmM",
+                      "name": "fnCol2",
+                      "layout": "vertical",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "wN8b5",
+                          "name": "fnCol2Title",
+                          "fill": "$text-muted",
+                          "content": "THE CAUSE",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 11,
+                          "fontWeight": "700",
+                          "letterSpacing": 2
+                        },
+                        {
+                          "type": "text",
+                          "id": "GBQb5",
+                          "name": "fnCol2L1",
+                          "fill": "#FFFFFFAA",
+                          "content": "Cancer Prevention",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "a27gs",
+                          "name": "fnCol2L2",
+                          "fill": "#FFFFFFAA",
+                          "content": "Survivor Support",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "iMZfr",
+                          "name": "fnCol2L3",
+                          "fill": "#FFFFFFAA",
+                          "content": "Healthy Lifestyles",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "02Wwh",
+                          "name": "fnCol2L4",
+                          "fill": "#FFFFFFAA",
+                          "content": "Donate",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "PF7Fc",
+                      "name": "fnCol3",
+                      "layout": "vertical",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "6ziif",
+                          "name": "fnCol3Title",
+                          "fill": "$text-muted",
+                          "content": "CONNECT",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 11,
+                          "fontWeight": "700",
+                          "letterSpacing": 2
+                        },
+                        {
+                          "type": "text",
+                          "id": "Kew2b",
+                          "name": "fnCol3L1",
+                          "fill": "#FFFFFFAA",
+                          "content": "Instagram",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "g5DQf",
+                          "name": "fnCol3L2",
+                          "fill": "#FFFFFFAA",
+                          "content": "YouTube",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "HX53G",
+                          "name": "fnCol3L3",
+                          "fill": "#FFFFFFAA",
+                          "content": "Contact Paul",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "EufYw",
+                          "name": "fnCol3L4",
+                          "fill": "#FFFFFFAA",
+                          "content": "Press Kit",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
                 }
               ]
             },
             {
-              "type": "text",
-              "id": "HsX0W",
-              "name": "jfCopy",
-              "fill": "#FFFFFF55",
-              "content": "© 2026 Paul Barry PCT Walk for Cancer",
-              "fontFamily": "Barlow Semi Condensed",
-              "fontSize": 11,
-              "fontWeight": "500",
-              "letterSpacing": 0.5
+              "type": "frame",
+              "id": "GF1UN",
+              "name": "footerDivider",
+              "width": "fill_container",
+              "height": 1,
+              "fill": "#FFFFFF15"
             },
             {
               "type": "frame",
-              "id": "rQj2N",
-              "name": "jfSocials",
-              "gap": 16,
+              "id": "jdgVU",
+              "name": "footerBottom",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "center",
               "children": [
                 {
-                  "type": "icon_font",
-                  "id": "zO6Dz",
-                  "name": "jfIG",
-                  "width": 18,
-                  "height": 18,
-                  "iconFontName": "instagram",
-                  "iconFontFamily": "lucide",
-                  "fill": "$text-muted"
+                  "type": "text",
+                  "id": "EAKeR",
+                  "name": "footerCopy",
+                  "fill": "#FFFFFF55",
+                  "content": "© 2026 Paul Barry PCT Walk for Cancer. All rights reserved.",
+                  "fontFamily": "Barlow Semi Condensed",
+                  "fontSize": 11,
+                  "fontWeight": "500",
+                  "letterSpacing": 0.5
                 },
                 {
-                  "type": "icon_font",
-                  "id": "aTAaT",
-                  "name": "jfYT",
-                  "width": 18,
-                  "height": 18,
-                  "iconFontName": "youtube",
-                  "iconFontFamily": "lucide",
-                  "fill": "$text-muted"
-                },
-                {
-                  "type": "icon_font",
-                  "id": "qwGD1",
-                  "name": "jfTW",
-                  "width": 18,
-                  "height": 18,
-                  "iconFontName": "twitter",
-                  "iconFontFamily": "lucide",
-                  "fill": "$text-muted"
+                  "type": "frame",
+                  "id": "EwDDn",
+                  "name": "footerLegal",
+                  "gap": 24,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Q5M8y",
+                      "name": "footerPrivacy",
+                      "fill": "#FFFFFF55",
+                      "content": "Privacy Policy",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 11,
+                      "fontWeight": "500",
+                      "letterSpacing": 0.5
+                    },
+                    {
+                      "type": "text",
+                      "id": "9Y8xH",
+                      "name": "footerTerms",
+                      "fill": "#FFFFFF55",
+                      "content": "Terms of Use",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 11,
+                      "fontWeight": "500",
+                      "letterSpacing": 0.5
+                    }
+                  ]
                 }
               ]
             }
@@ -6178,93 +6469,384 @@
         },
         {
           "type": "frame",
-          "id": "GMzI6",
-          "name": "Footer",
+          "id": "nHi40",
+          "name": "donorsFooter",
           "width": "fill_container",
           "fill": "$bg-dark",
+          "layout": "vertical",
+          "gap": 48,
           "padding": [
+            60,
+            120,
             32,
             120
           ],
-          "justifyContent": "space_between",
-          "alignItems": "center",
           "children": [
             {
               "type": "frame",
-              "id": "Ne7ts",
-              "name": "dfLeft",
-              "gap": 12,
-              "alignItems": "center",
+              "id": "sKJFm",
+              "name": "footerTop",
+              "width": "fill_container",
+              "justifyContent": "space_between",
               "children": [
                 {
-                  "type": "icon_font",
-                  "id": "fAhwz",
-                  "name": "dfIcon",
-                  "width": 20,
-                  "height": 20,
-                  "iconFontName": "mountain",
-                  "iconFontFamily": "lucide",
-                  "fill": "$forest-green"
+                  "type": "frame",
+                  "id": "7YdLF",
+                  "name": "footerBrand",
+                  "width": 360,
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "1xR5Z",
+                      "name": "footerLogoRow",
+                      "gap": 12,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "rKEH1",
+                          "name": "footerLogoIcon",
+                          "width": 24,
+                          "height": 24,
+                          "iconFontName": "mountain",
+                          "iconFontFamily": "lucide",
+                          "fill": "$forest-green"
+                        },
+                        {
+                          "type": "text",
+                          "id": "TmvFj",
+                          "name": "footerLogoText",
+                          "fill": "$text-white",
+                          "content": "PAUL BARRY",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 16,
+                          "fontWeight": "700",
+                          "letterSpacing": 3
+                        },
+                        {
+                          "type": "text",
+                          "id": "jk9ER",
+                          "name": "footerLogoSub",
+                          "fill": "$text-muted",
+                          "content": "PCT 2026",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 11,
+                          "fontWeight": "500",
+                          "letterSpacing": 2
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "UOq5z",
+                      "name": "footerTagline",
+                      "fill": "#FFFFFF88",
+                      "textGrowth": "fixed-width",
+                      "width": 340,
+                      "content": "Walking 2,650 miles for cancer awareness, survivor support, and prevention education. Every step counts.",
+                      "lineHeight": 1.6,
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "gyQl4",
+                      "name": "footerSocials",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "ylOJS",
+                          "name": "socialIG",
+                          "width": 20,
+                          "height": 20,
+                          "iconFontName": "instagram",
+                          "iconFontFamily": "lucide",
+                          "fill": "$text-muted"
+                        },
+                        {
+                          "type": "icon_font",
+                          "id": "b42Jh",
+                          "name": "socialYT",
+                          "width": 20,
+                          "height": 20,
+                          "iconFontName": "youtube",
+                          "iconFontFamily": "lucide",
+                          "fill": "$text-muted"
+                        },
+                        {
+                          "type": "icon_font",
+                          "id": "7jFYd",
+                          "name": "socialTW",
+                          "width": 20,
+                          "height": 20,
+                          "iconFontName": "twitter",
+                          "iconFontFamily": "lucide",
+                          "fill": "$text-muted"
+                        },
+                        {
+                          "type": "icon_font",
+                          "id": "xM3K6",
+                          "name": "socialFB",
+                          "width": 20,
+                          "height": 20,
+                          "iconFontName": "facebook",
+                          "iconFontFamily": "lucide",
+                          "fill": "$text-muted"
+                        }
+                      ]
+                    }
+                  ]
                 },
                 {
-                  "type": "text",
-                  "id": "Kfp1D",
-                  "name": "dfName",
-                  "fill": "$text-white",
-                  "content": "PAUL BARRY",
-                  "fontFamily": "Barlow Semi Condensed",
-                  "fontSize": 14,
-                  "fontWeight": "700",
-                  "letterSpacing": 3
+                  "type": "frame",
+                  "id": "bu4ox",
+                  "name": "footerNav",
+                  "gap": 64,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "APLKe",
+                      "name": "fnCol1",
+                      "layout": "vertical",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "7CqKb",
+                          "name": "fnCol1Title",
+                          "fill": "$text-muted",
+                          "content": "EXPLORE",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 11,
+                          "fontWeight": "700",
+                          "letterSpacing": 2
+                        },
+                        {
+                          "type": "text",
+                          "id": "MBo74",
+                          "name": "fnCol1L1",
+                          "fill": "#FFFFFFAA",
+                          "content": "The Journey",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "PiUjQ",
+                          "name": "fnCol1L2",
+                          "fill": "#FFFFFFAA",
+                          "content": "Trail Map",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "SJoMN",
+                          "name": "fnCol1L3",
+                          "fill": "#FFFFFFAA",
+                          "content": "Blog & Vlog",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "tldSx",
+                          "name": "fnCol1L4",
+                          "fill": "#FFFFFFAA",
+                          "content": "Donor Wall",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "pk0Tl",
+                      "name": "fnCol2",
+                      "layout": "vertical",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "ZqNzG",
+                          "name": "fnCol2Title",
+                          "fill": "$text-muted",
+                          "content": "THE CAUSE",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 11,
+                          "fontWeight": "700",
+                          "letterSpacing": 2
+                        },
+                        {
+                          "type": "text",
+                          "id": "TUyUp",
+                          "name": "fnCol2L1",
+                          "fill": "#FFFFFFAA",
+                          "content": "Cancer Prevention",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "i7V7o",
+                          "name": "fnCol2L2",
+                          "fill": "#FFFFFFAA",
+                          "content": "Survivor Support",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "2cw61",
+                          "name": "fnCol2L3",
+                          "fill": "#FFFFFFAA",
+                          "content": "Healthy Lifestyles",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "y0e7H",
+                          "name": "fnCol2L4",
+                          "fill": "#FFFFFFAA",
+                          "content": "Donate",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "V39sI",
+                      "name": "fnCol3",
+                      "layout": "vertical",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "I3p6E",
+                          "name": "fnCol3Title",
+                          "fill": "$text-muted",
+                          "content": "CONNECT",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 11,
+                          "fontWeight": "700",
+                          "letterSpacing": 2
+                        },
+                        {
+                          "type": "text",
+                          "id": "TdHxg",
+                          "name": "fnCol3L1",
+                          "fill": "#FFFFFFAA",
+                          "content": "Instagram",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "tGbhn",
+                          "name": "fnCol3L2",
+                          "fill": "#FFFFFFAA",
+                          "content": "YouTube",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "4TWmj",
+                          "name": "fnCol3L3",
+                          "fill": "#FFFFFFAA",
+                          "content": "Contact Paul",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "a75x7",
+                          "name": "fnCol3L4",
+                          "fill": "#FFFFFFAA",
+                          "content": "Press Kit",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
                 }
               ]
             },
             {
-              "type": "text",
-              "id": "8XKC7",
-              "name": "dfCopy",
-              "fill": "#FFFFFF55",
-              "content": "© 2026 Paul Barry PCT Walk for Cancer",
-              "fontFamily": "Barlow Semi Condensed",
-              "fontSize": 11,
-              "fontWeight": "500",
-              "letterSpacing": 0.5
+              "type": "frame",
+              "id": "BDvj7",
+              "name": "footerDivider",
+              "width": "fill_container",
+              "height": 1,
+              "fill": "#FFFFFF15"
             },
             {
               "type": "frame",
-              "id": "ozLM7",
-              "name": "dfSocials",
-              "gap": 16,
+              "id": "HR9qd",
+              "name": "footerBottom",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "center",
               "children": [
                 {
-                  "type": "icon_font",
-                  "id": "xVtoq",
-                  "name": "dfIG",
-                  "width": 18,
-                  "height": 18,
-                  "iconFontName": "instagram",
-                  "iconFontFamily": "lucide",
-                  "fill": "$text-muted"
+                  "type": "text",
+                  "id": "9ba7B",
+                  "name": "footerCopy",
+                  "fill": "#FFFFFF55",
+                  "content": "© 2026 Paul Barry PCT Walk for Cancer. All rights reserved.",
+                  "fontFamily": "Barlow Semi Condensed",
+                  "fontSize": 11,
+                  "fontWeight": "500",
+                  "letterSpacing": 0.5
                 },
                 {
-                  "type": "icon_font",
-                  "id": "6oW2B",
-                  "name": "dfYT",
-                  "width": 18,
-                  "height": 18,
-                  "iconFontName": "youtube",
-                  "iconFontFamily": "lucide",
-                  "fill": "$text-muted"
-                },
-                {
-                  "type": "icon_font",
-                  "id": "vqyZ6",
-                  "name": "dfTW",
-                  "width": 18,
-                  "height": 18,
-                  "iconFontName": "twitter",
-                  "iconFontFamily": "lucide",
-                  "fill": "$text-muted"
+                  "type": "frame",
+                  "id": "YghPv",
+                  "name": "footerLegal",
+                  "gap": 24,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "YX6UQ",
+                      "name": "footerPrivacy",
+                      "fill": "#FFFFFF55",
+                      "content": "Privacy Policy",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 11,
+                      "fontWeight": "500",
+                      "letterSpacing": 0.5
+                    },
+                    {
+                      "type": "text",
+                      "id": "8gWbg",
+                      "name": "footerTerms",
+                      "fill": "#FFFFFF55",
+                      "content": "Terms of Use",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 11,
+                      "fontWeight": "500",
+                      "letterSpacing": 0.5
+                    }
+                  ]
                 }
               ]
             }
@@ -7392,57 +7974,386 @@
         },
         {
           "type": "frame",
-          "id": "bkYQu",
-          "name": "Footer",
+          "id": "b1WfY",
+          "name": "donateFooter",
           "width": "fill_container",
           "fill": "$bg-dark",
+          "layout": "vertical",
+          "gap": 48,
           "padding": [
+            60,
+            120,
             32,
             120
           ],
-          "justifyContent": "space_between",
-          "alignItems": "center",
           "children": [
             {
               "type": "frame",
-              "id": "sX4LL",
-              "name": "donFLeft",
-              "gap": 12,
-              "alignItems": "center",
+              "id": "MEQgk",
+              "name": "footerTop",
+              "width": "fill_container",
+              "justifyContent": "space_between",
               "children": [
                 {
-                  "type": "icon_font",
-                  "id": "KMQRs",
-                  "name": "donFIcon",
-                  "width": 20,
-                  "height": 20,
-                  "iconFontName": "mountain",
-                  "iconFontFamily": "lucide",
-                  "fill": "$forest-green"
+                  "type": "frame",
+                  "id": "mg5n5",
+                  "name": "footerBrand",
+                  "width": 360,
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "fPeLV",
+                      "name": "footerLogoRow",
+                      "gap": 12,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "mbbHB",
+                          "name": "footerLogoIcon",
+                          "width": 24,
+                          "height": 24,
+                          "iconFontName": "mountain",
+                          "iconFontFamily": "lucide",
+                          "fill": "$forest-green"
+                        },
+                        {
+                          "type": "text",
+                          "id": "PSErt",
+                          "name": "footerLogoText",
+                          "fill": "$text-white",
+                          "content": "PAUL BARRY",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 16,
+                          "fontWeight": "700",
+                          "letterSpacing": 3
+                        },
+                        {
+                          "type": "text",
+                          "id": "60HeX",
+                          "name": "footerLogoSub",
+                          "fill": "$text-muted",
+                          "content": "PCT 2026",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 11,
+                          "fontWeight": "500",
+                          "letterSpacing": 2
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "HTwDm",
+                      "name": "footerTagline",
+                      "fill": "#FFFFFF88",
+                      "textGrowth": "fixed-width",
+                      "width": 340,
+                      "content": "Walking 2,650 miles for cancer awareness, survivor support, and prevention education. Every step counts.",
+                      "lineHeight": 1.6,
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "kXLCG",
+                      "name": "footerSocials",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "eIrcY",
+                          "name": "socialIG",
+                          "width": 20,
+                          "height": 20,
+                          "iconFontName": "instagram",
+                          "iconFontFamily": "lucide",
+                          "fill": "$text-muted"
+                        },
+                        {
+                          "type": "icon_font",
+                          "id": "WT8hj",
+                          "name": "socialYT",
+                          "width": 20,
+                          "height": 20,
+                          "iconFontName": "youtube",
+                          "iconFontFamily": "lucide",
+                          "fill": "$text-muted"
+                        },
+                        {
+                          "type": "icon_font",
+                          "id": "pwViS",
+                          "name": "socialTW",
+                          "width": 20,
+                          "height": 20,
+                          "iconFontName": "twitter",
+                          "iconFontFamily": "lucide",
+                          "fill": "$text-muted"
+                        },
+                        {
+                          "type": "icon_font",
+                          "id": "o3rAM",
+                          "name": "socialFB",
+                          "width": 20,
+                          "height": 20,
+                          "iconFontName": "facebook",
+                          "iconFontFamily": "lucide",
+                          "fill": "$text-muted"
+                        }
+                      ]
+                    }
+                  ]
                 },
                 {
-                  "type": "text",
-                  "id": "xsTLC",
-                  "name": "donFName",
-                  "fill": "$text-white",
-                  "content": "PAUL BARRY",
-                  "fontFamily": "Barlow Semi Condensed",
-                  "fontSize": 14,
-                  "fontWeight": "700",
-                  "letterSpacing": 3
+                  "type": "frame",
+                  "id": "auU5J",
+                  "name": "footerNav",
+                  "gap": 64,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "rTkOc",
+                      "name": "fnCol1",
+                      "layout": "vertical",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "EE5bG",
+                          "name": "fnCol1Title",
+                          "fill": "$text-muted",
+                          "content": "EXPLORE",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 11,
+                          "fontWeight": "700",
+                          "letterSpacing": 2
+                        },
+                        {
+                          "type": "text",
+                          "id": "3vFn3",
+                          "name": "fnCol1L1",
+                          "fill": "#FFFFFFAA",
+                          "content": "The Journey",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "DKFDj",
+                          "name": "fnCol1L2",
+                          "fill": "#FFFFFFAA",
+                          "content": "Trail Map",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "A2AML",
+                          "name": "fnCol1L3",
+                          "fill": "#FFFFFFAA",
+                          "content": "Blog & Vlog",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "4srJt",
+                          "name": "fnCol1L4",
+                          "fill": "#FFFFFFAA",
+                          "content": "Donor Wall",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Do1DX",
+                      "name": "fnCol2",
+                      "layout": "vertical",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "1z0dr",
+                          "name": "fnCol2Title",
+                          "fill": "$text-muted",
+                          "content": "THE CAUSE",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 11,
+                          "fontWeight": "700",
+                          "letterSpacing": 2
+                        },
+                        {
+                          "type": "text",
+                          "id": "EMlak",
+                          "name": "fnCol2L1",
+                          "fill": "#FFFFFFAA",
+                          "content": "Cancer Prevention",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "uIHPf",
+                          "name": "fnCol2L2",
+                          "fill": "#FFFFFFAA",
+                          "content": "Survivor Support",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "RTYHp",
+                          "name": "fnCol2L3",
+                          "fill": "#FFFFFFAA",
+                          "content": "Healthy Lifestyles",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "uFR3P",
+                          "name": "fnCol2L4",
+                          "fill": "#FFFFFFAA",
+                          "content": "Donate",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "7mJAf",
+                      "name": "fnCol3",
+                      "layout": "vertical",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "xi6md",
+                          "name": "fnCol3Title",
+                          "fill": "$text-muted",
+                          "content": "CONNECT",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 11,
+                          "fontWeight": "700",
+                          "letterSpacing": 2
+                        },
+                        {
+                          "type": "text",
+                          "id": "jyApD",
+                          "name": "fnCol3L1",
+                          "fill": "#FFFFFFAA",
+                          "content": "Instagram",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "DYBgc",
+                          "name": "fnCol3L2",
+                          "fill": "#FFFFFFAA",
+                          "content": "YouTube",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "lAzrr",
+                          "name": "fnCol3L3",
+                          "fill": "#FFFFFFAA",
+                          "content": "Contact Paul",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "LBQOo",
+                          "name": "fnCol3L4",
+                          "fill": "#FFFFFFAA",
+                          "content": "Press Kit",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
                 }
               ]
             },
             {
-              "type": "text",
-              "id": "470ql",
-              "name": "donFCopy",
-              "fill": "#FFFFFF55",
-              "content": "© 2026 Paul Barry PCT Walk for Cancer",
-              "fontFamily": "Barlow Semi Condensed",
-              "fontSize": 11,
-              "fontWeight": "500",
-              "letterSpacing": 0.5
+              "type": "frame",
+              "id": "KSwkE",
+              "name": "footerDivider",
+              "width": "fill_container",
+              "height": 1,
+              "fill": "#FFFFFF15"
+            },
+            {
+              "type": "frame",
+              "id": "hptdB",
+              "name": "footerBottom",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "QICSS",
+                  "name": "footerCopy",
+                  "fill": "#FFFFFF55",
+                  "content": "© 2026 Paul Barry PCT Walk for Cancer. All rights reserved.",
+                  "fontFamily": "Barlow Semi Condensed",
+                  "fontSize": 11,
+                  "fontWeight": "500",
+                  "letterSpacing": 0.5
+                },
+                {
+                  "type": "frame",
+                  "id": "12wRw",
+                  "name": "footerLegal",
+                  "gap": 24,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "9F3g5",
+                      "name": "footerPrivacy",
+                      "fill": "#FFFFFF55",
+                      "content": "Privacy Policy",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 11,
+                      "fontWeight": "500",
+                      "letterSpacing": 0.5
+                    },
+                    {
+                      "type": "text",
+                      "id": "eklvB",
+                      "name": "footerTerms",
+                      "fill": "#FFFFFF55",
+                      "content": "Terms of Use",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 11,
+                      "fontWeight": "500",
+                      "letterSpacing": 0.5
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
@@ -8371,73 +9282,384 @@
         },
         {
           "type": "frame",
-          "id": "Kg44S",
+          "id": "9CRyJ",
           "name": "tmFooter",
           "width": "fill_container",
           "fill": "$bg-dark",
+          "layout": "vertical",
+          "gap": 48,
           "padding": [
-            24,
-            80
+            60,
+            120,
+            32,
+            120
           ],
-          "justifyContent": "space_between",
-          "alignItems": "center",
           "children": [
             {
-              "type": "text",
-              "id": "Bn8Hx",
-              "name": "footLeft",
-              "fill": "#FFFFFF80",
-              "content": "2026 Paul Barry · Walking for a Cause",
-              "fontFamily": "Barlow Semi Condensed",
-              "fontSize": 13,
-              "fontWeight": "normal"
+              "type": "frame",
+              "id": "yzNbn",
+              "name": "footerTop",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "fY9MR",
+                  "name": "footerBrand",
+                  "width": 360,
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "x5R0P",
+                      "name": "footerLogoRow",
+                      "gap": 12,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "hS2UP",
+                          "name": "footerLogoIcon",
+                          "width": 24,
+                          "height": 24,
+                          "iconFontName": "mountain",
+                          "iconFontFamily": "lucide",
+                          "fill": "$forest-green"
+                        },
+                        {
+                          "type": "text",
+                          "id": "g9Qwy",
+                          "name": "footerLogoText",
+                          "fill": "$text-white",
+                          "content": "PAUL BARRY",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 16,
+                          "fontWeight": "700",
+                          "letterSpacing": 3
+                        },
+                        {
+                          "type": "text",
+                          "id": "TJ4po",
+                          "name": "footerLogoSub",
+                          "fill": "$text-muted",
+                          "content": "PCT 2026",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 11,
+                          "fontWeight": "500",
+                          "letterSpacing": 2
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "O2D1E",
+                      "name": "footerTagline",
+                      "fill": "#FFFFFF88",
+                      "textGrowth": "fixed-width",
+                      "width": 340,
+                      "content": "Walking 2,650 miles for cancer awareness, survivor support, and prevention education. Every step counts.",
+                      "lineHeight": 1.6,
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "KmXTe",
+                      "name": "footerSocials",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "AXgEJ",
+                          "name": "socialIG",
+                          "width": 20,
+                          "height": 20,
+                          "iconFontName": "instagram",
+                          "iconFontFamily": "lucide",
+                          "fill": "$text-muted"
+                        },
+                        {
+                          "type": "icon_font",
+                          "id": "XWMkq",
+                          "name": "socialYT",
+                          "width": 20,
+                          "height": 20,
+                          "iconFontName": "youtube",
+                          "iconFontFamily": "lucide",
+                          "fill": "$text-muted"
+                        },
+                        {
+                          "type": "icon_font",
+                          "id": "5CBKm",
+                          "name": "socialTW",
+                          "width": 20,
+                          "height": 20,
+                          "iconFontName": "twitter",
+                          "iconFontFamily": "lucide",
+                          "fill": "$text-muted"
+                        },
+                        {
+                          "type": "icon_font",
+                          "id": "EJn9Z",
+                          "name": "socialFB",
+                          "width": 20,
+                          "height": 20,
+                          "iconFontName": "facebook",
+                          "iconFontFamily": "lucide",
+                          "fill": "$text-muted"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "BOwMc",
+                  "name": "footerNav",
+                  "gap": 64,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "Infes",
+                      "name": "fnCol1",
+                      "layout": "vertical",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "3I5OY",
+                          "name": "fnCol1Title",
+                          "fill": "$text-muted",
+                          "content": "EXPLORE",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 11,
+                          "fontWeight": "700",
+                          "letterSpacing": 2
+                        },
+                        {
+                          "type": "text",
+                          "id": "0FG9U",
+                          "name": "fnCol1L1",
+                          "fill": "#FFFFFFAA",
+                          "content": "The Journey",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "VhU8E",
+                          "name": "fnCol1L2",
+                          "fill": "#FFFFFFAA",
+                          "content": "Trail Map",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "8VocI",
+                          "name": "fnCol1L3",
+                          "fill": "#FFFFFFAA",
+                          "content": "Blog & Vlog",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "jrVsT",
+                          "name": "fnCol1L4",
+                          "fill": "#FFFFFFAA",
+                          "content": "Donor Wall",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bKeSg",
+                      "name": "fnCol2",
+                      "layout": "vertical",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "ENtAu",
+                          "name": "fnCol2Title",
+                          "fill": "$text-muted",
+                          "content": "THE CAUSE",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 11,
+                          "fontWeight": "700",
+                          "letterSpacing": 2
+                        },
+                        {
+                          "type": "text",
+                          "id": "ZNWed",
+                          "name": "fnCol2L1",
+                          "fill": "#FFFFFFAA",
+                          "content": "Cancer Prevention",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "zd23m",
+                          "name": "fnCol2L2",
+                          "fill": "#FFFFFFAA",
+                          "content": "Survivor Support",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "ZOWrl",
+                          "name": "fnCol2L3",
+                          "fill": "#FFFFFFAA",
+                          "content": "Healthy Lifestyles",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "UI9kv",
+                          "name": "fnCol2L4",
+                          "fill": "#FFFFFFAA",
+                          "content": "Donate",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "GHyN3",
+                      "name": "fnCol3",
+                      "layout": "vertical",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "jFMKi",
+                          "name": "fnCol3Title",
+                          "fill": "$text-muted",
+                          "content": "CONNECT",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 11,
+                          "fontWeight": "700",
+                          "letterSpacing": 2
+                        },
+                        {
+                          "type": "text",
+                          "id": "IzrkA",
+                          "name": "fnCol3L1",
+                          "fill": "#FFFFFFAA",
+                          "content": "Instagram",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "iqPcc",
+                          "name": "fnCol3L2",
+                          "fill": "#FFFFFFAA",
+                          "content": "YouTube",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "PcKyd",
+                          "name": "fnCol3L3",
+                          "fill": "#FFFFFFAA",
+                          "content": "Contact Paul",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Bf0x0",
+                          "name": "fnCol3L4",
+                          "fill": "#FFFFFFAA",
+                          "content": "Press Kit",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
             },
             {
               "type": "frame",
-              "id": "GikbU",
-              "name": "footRight",
-              "gap": 32,
+              "id": "FWIi8",
+              "name": "footerDivider",
+              "width": "fill_container",
+              "height": 1,
+              "fill": "#FFFFFF15"
+            },
+            {
+              "type": "frame",
+              "id": "xLNuG",
+              "name": "footerBottom",
+              "width": "fill_container",
+              "justifyContent": "space_between",
               "alignItems": "center",
               "children": [
                 {
                   "type": "text",
-                  "id": "fW5e3",
-                  "name": "footLink1",
-                  "fill": "#FFFFFF80",
-                  "content": "Home",
+                  "id": "LBlsr",
+                  "name": "footerCopy",
+                  "fill": "#FFFFFF55",
+                  "content": "© 2026 Paul Barry PCT Walk for Cancer. All rights reserved.",
                   "fontFamily": "Barlow Semi Condensed",
-                  "fontSize": 13,
-                  "fontWeight": "500"
+                  "fontSize": 11,
+                  "fontWeight": "500",
+                  "letterSpacing": 0.5
                 },
                 {
-                  "type": "text",
-                  "id": "JJWnB",
-                  "name": "footLink2",
-                  "fill": "#FFFFFF80",
-                  "content": "Journal",
-                  "fontFamily": "Barlow Semi Condensed",
-                  "fontSize": 13,
-                  "fontWeight": "500"
-                },
-                {
-                  "type": "text",
-                  "id": "viWry",
-                  "name": "footLink3",
-                  "fill": "#FFFFFFCC",
-                  "content": "Donate",
-                  "fontFamily": "Barlow Semi Condensed",
-                  "fontSize": 13,
-                  "fontWeight": "500"
-                },
-                {
-                  "type": "text",
-                  "id": "Ldquu",
-                  "name": "footLink4",
-                  "fill": "#FFFFFF80",
-                  "content": "The Cause",
-                  "fontFamily": "Barlow Semi Condensed",
-                  "fontSize": 13,
-                  "fontWeight": "500"
+                  "type": "frame",
+                  "id": "VBv2Q",
+                  "name": "footerLegal",
+                  "gap": 24,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "wUg61",
+                      "name": "footerPrivacy",
+                      "fill": "#FFFFFF55",
+                      "content": "Privacy Policy",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 11,
+                      "fontWeight": "500",
+                      "letterSpacing": 0.5
+                    },
+                    {
+                      "type": "text",
+                      "id": "uFhmN",
+                      "name": "footerTerms",
+                      "fill": "#FFFFFF55",
+                      "content": "Terms of Use",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 11,
+                      "fontWeight": "500",
+                      "letterSpacing": 0.5
+                    }
+                  ]
                 }
               ]
             }
@@ -8476,15 +9698,25 @@
               "alignItems": "center",
               "children": [
                 {
+                  "type": "icon_font",
+                  "id": "Mb4t8",
+                  "name": "mountainIcon",
+                  "width": 28,
+                  "height": 28,
+                  "iconFontName": "mountain",
+                  "iconFontFamily": "lucide",
+                  "fill": "$forest-green"
+                },
+                {
                   "type": "text",
                   "id": "Z0FFf",
                   "name": "logoText",
                   "fill": "$text-primary",
                   "content": "PAUL BARRY",
                   "fontFamily": "Barlow Semi Condensed",
-                  "fontSize": 18,
+                  "fontSize": 16,
                   "fontWeight": "700",
-                  "letterSpacing": 2
+                  "letterSpacing": 3
                 },
                 {
                   "type": "text",
@@ -8493,9 +9725,9 @@
                   "fill": "$text-muted",
                   "content": "PCT 2026",
                   "fontFamily": "Barlow Semi Condensed",
-                  "fontSize": 12,
-                  "fontWeight": "normal",
-                  "letterSpacing": 1
+                  "fontSize": 11,
+                  "fontWeight": "500",
+                  "letterSpacing": 2
                 }
               ]
             },
@@ -8512,9 +9744,9 @@
                   "name": "nav1",
                   "fill": "$text-secondary",
                   "content": "The Journey",
-                  "fontFamily": "Barlow Semi Condensed",
-                  "fontSize": 14,
-                  "fontWeight": "500"
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 15,
+                  "fontWeight": "600"
                 },
                 {
                   "type": "text",
@@ -8522,9 +9754,9 @@
                   "name": "nav2",
                   "fill": "$text-secondary",
                   "content": "Trail Map",
-                  "fontFamily": "Barlow Semi Condensed",
-                  "fontSize": 14,
-                  "fontWeight": "500"
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 15,
+                  "fontWeight": "600"
                 },
                 {
                   "type": "text",
@@ -8532,9 +9764,9 @@
                   "name": "nav3",
                   "fill": "$burnt-orange",
                   "content": "The Cause",
-                  "fontFamily": "Barlow Semi Condensed",
-                  "fontSize": 14,
-                  "fontWeight": "700"
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 15,
+                  "fontWeight": "600"
                 },
                 {
                   "type": "text",
@@ -8542,9 +9774,9 @@
                   "name": "nav4",
                   "fill": "$text-secondary",
                   "content": "Journal",
-                  "fontFamily": "Barlow Semi Condensed",
-                  "fontSize": 14,
-                  "fontWeight": "500"
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 15,
+                  "fontWeight": "600"
                 },
                 {
                   "type": "text",
@@ -8552,17 +9784,18 @@
                   "name": "nav5",
                   "fill": "$text-secondary",
                   "content": "Donors",
-                  "fontFamily": "Barlow Semi Condensed",
-                  "fontSize": 14,
-                  "fontWeight": "500"
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 15,
+                  "fontWeight": "600"
                 },
                 {
                   "type": "frame",
                   "id": "0gXHe",
                   "name": "donateCTA",
-                  "fill": "$forest-green",
+                  "fill": "$burnt-orange",
+                  "gap": 8,
                   "padding": [
-                    10,
+                    12,
                     28
                   ],
                   "children": [
@@ -8573,9 +9806,19 @@
                       "fill": "$text-white",
                       "content": "DONATE NOW",
                       "fontFamily": "Barlow Semi Condensed",
-                      "fontSize": 13,
+                      "fontSize": 12,
                       "fontWeight": "700",
-                      "letterSpacing": 1
+                      "letterSpacing": 2
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "Hv1mR",
+                      "name": "heartIcon",
+                      "width": 14,
+                      "height": 14,
+                      "iconFontName": "heart",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-white"
                     }
                   ]
                 }
@@ -9655,75 +10898,2431 @@
         },
         {
           "type": "frame",
-          "id": "CvPmh",
+          "id": "UB0uG",
           "name": "causeFooter",
           "width": "fill_container",
           "fill": "$bg-dark",
+          "layout": "vertical",
+          "gap": 48,
           "padding": [
-            24,
+            60,
+            120,
+            32,
+            120
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "ZEyBE",
+              "name": "footerTop",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "tG3Z3",
+                  "name": "footerBrand",
+                  "width": 360,
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "s9Gnm",
+                      "name": "footerLogoRow",
+                      "gap": 12,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "028yX",
+                          "name": "footerLogoIcon",
+                          "width": 24,
+                          "height": 24,
+                          "iconFontName": "mountain",
+                          "iconFontFamily": "lucide",
+                          "fill": "$forest-green"
+                        },
+                        {
+                          "type": "text",
+                          "id": "5zMWz",
+                          "name": "footerLogoText",
+                          "fill": "$text-white",
+                          "content": "PAUL BARRY",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 16,
+                          "fontWeight": "700",
+                          "letterSpacing": 3
+                        },
+                        {
+                          "type": "text",
+                          "id": "9yQJD",
+                          "name": "footerLogoSub",
+                          "fill": "$text-muted",
+                          "content": "PCT 2026",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 11,
+                          "fontWeight": "500",
+                          "letterSpacing": 2
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "bGWyT",
+                      "name": "footerTagline",
+                      "fill": "#FFFFFF88",
+                      "textGrowth": "fixed-width",
+                      "width": 340,
+                      "content": "Walking 2,650 miles for cancer awareness, survivor support, and prevention education. Every step counts.",
+                      "lineHeight": 1.6,
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "LseHd",
+                      "name": "footerSocials",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "RJQK6",
+                          "name": "socialIG",
+                          "width": 20,
+                          "height": 20,
+                          "iconFontName": "instagram",
+                          "iconFontFamily": "lucide",
+                          "fill": "$text-muted"
+                        },
+                        {
+                          "type": "icon_font",
+                          "id": "QeiGi",
+                          "name": "socialYT",
+                          "width": 20,
+                          "height": 20,
+                          "iconFontName": "youtube",
+                          "iconFontFamily": "lucide",
+                          "fill": "$text-muted"
+                        },
+                        {
+                          "type": "icon_font",
+                          "id": "NNqsR",
+                          "name": "socialTW",
+                          "width": 20,
+                          "height": 20,
+                          "iconFontName": "twitter",
+                          "iconFontFamily": "lucide",
+                          "fill": "$text-muted"
+                        },
+                        {
+                          "type": "icon_font",
+                          "id": "RWuF2",
+                          "name": "socialFB",
+                          "width": 20,
+                          "height": 20,
+                          "iconFontName": "facebook",
+                          "iconFontFamily": "lucide",
+                          "fill": "$text-muted"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "9WQ96",
+                  "name": "footerNav",
+                  "gap": 64,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "6S0v8",
+                      "name": "fnCol1",
+                      "layout": "vertical",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "KwN4F",
+                          "name": "fnCol1Title",
+                          "fill": "$text-muted",
+                          "content": "EXPLORE",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 11,
+                          "fontWeight": "700",
+                          "letterSpacing": 2
+                        },
+                        {
+                          "type": "text",
+                          "id": "DB0SU",
+                          "name": "fnCol1L1",
+                          "fill": "#FFFFFFAA",
+                          "content": "The Journey",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "3HekR",
+                          "name": "fnCol1L2",
+                          "fill": "#FFFFFFAA",
+                          "content": "Trail Map",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "wQkdU",
+                          "name": "fnCol1L3",
+                          "fill": "#FFFFFFAA",
+                          "content": "Blog & Vlog",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Nc4lz",
+                          "name": "fnCol1L4",
+                          "fill": "#FFFFFFAA",
+                          "content": "Donor Wall",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "f6szp",
+                      "name": "fnCol2",
+                      "layout": "vertical",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "iQTxz",
+                          "name": "fnCol2Title",
+                          "fill": "$text-muted",
+                          "content": "THE CAUSE",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 11,
+                          "fontWeight": "700",
+                          "letterSpacing": 2
+                        },
+                        {
+                          "type": "text",
+                          "id": "7f5XV",
+                          "name": "fnCol2L1",
+                          "fill": "#FFFFFFAA",
+                          "content": "Cancer Prevention",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "DFmz2",
+                          "name": "fnCol2L2",
+                          "fill": "#FFFFFFAA",
+                          "content": "Survivor Support",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "85JbA",
+                          "name": "fnCol2L3",
+                          "fill": "#FFFFFFAA",
+                          "content": "Healthy Lifestyles",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "KBIs8",
+                          "name": "fnCol2L4",
+                          "fill": "#FFFFFFAA",
+                          "content": "Donate",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "hzX3m",
+                      "name": "fnCol3",
+                      "layout": "vertical",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Wi7Ah",
+                          "name": "fnCol3Title",
+                          "fill": "$text-muted",
+                          "content": "CONNECT",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 11,
+                          "fontWeight": "700",
+                          "letterSpacing": 2
+                        },
+                        {
+                          "type": "text",
+                          "id": "cFFzX",
+                          "name": "fnCol3L1",
+                          "fill": "#FFFFFFAA",
+                          "content": "Instagram",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "pHfT7",
+                          "name": "fnCol3L2",
+                          "fill": "#FFFFFFAA",
+                          "content": "YouTube",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "zZOF1",
+                          "name": "fnCol3L3",
+                          "fill": "#FFFFFFAA",
+                          "content": "Contact Paul",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "WTDvn",
+                          "name": "fnCol3L4",
+                          "fill": "#FFFFFFAA",
+                          "content": "Press Kit",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "zM8WU",
+              "name": "footerDivider",
+              "width": "fill_container",
+              "height": 1,
+              "fill": "#FFFFFF15"
+            },
+            {
+              "type": "frame",
+              "id": "6tcgH",
+              "name": "footerBottom",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "XnIwz",
+                  "name": "footerCopy",
+                  "fill": "#FFFFFF55",
+                  "content": "© 2026 Paul Barry PCT Walk for Cancer. All rights reserved.",
+                  "fontFamily": "Barlow Semi Condensed",
+                  "fontSize": 11,
+                  "fontWeight": "500",
+                  "letterSpacing": 0.5
+                },
+                {
+                  "type": "frame",
+                  "id": "u9xpi",
+                  "name": "footerLegal",
+                  "gap": 24,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "KZ04X",
+                      "name": "footerPrivacy",
+                      "fill": "#FFFFFF55",
+                      "content": "Privacy Policy",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 11,
+                      "fontWeight": "500",
+                      "letterSpacing": 0.5
+                    },
+                    {
+                      "type": "text",
+                      "id": "JCyub",
+                      "name": "footerTerms",
+                      "fill": "#FFFFFF55",
+                      "content": "Terms of Use",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 11,
+                      "fontWeight": "500",
+                      "letterSpacing": 0.5
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "06MHp",
+      "x": 9340,
+      "y": 0,
+      "name": "Terms of Use Page",
+      "width": 1440,
+      "fill": "$bg-warm",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "NSf02",
+          "name": "Header",
+          "width": "fill_container",
+          "fill": "#FFFFFFEE",
+          "padding": [
+            20,
             80
           ],
           "justifyContent": "space_between",
           "alignItems": "center",
           "children": [
             {
-              "type": "text",
-              "id": "uelZ4",
-              "name": "footLeft",
-              "fill": "#FFFFFF80",
-              "content": "2026 Paul Barry · Walking for a Cause",
-              "fontFamily": "Barlow Semi Condensed",
-              "fontSize": 13,
-              "fontWeight": "normal"
+              "type": "frame",
+              "id": "EZSBw",
+              "name": "touLogoArea",
+              "gap": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "sKamS",
+                  "name": "touLogoIcon",
+                  "width": 28,
+                  "height": 28,
+                  "iconFontName": "mountain",
+                  "iconFontFamily": "lucide",
+                  "fill": "$forest-green"
+                },
+                {
+                  "type": "text",
+                  "id": "BE6Yr",
+                  "name": "touLogoText",
+                  "fill": "$text-primary",
+                  "content": "PAUL BARRY",
+                  "fontFamily": "Barlow Semi Condensed",
+                  "fontSize": 16,
+                  "fontWeight": "700",
+                  "letterSpacing": 3
+                },
+                {
+                  "type": "text",
+                  "id": "dPHy0",
+                  "name": "touLogoSub",
+                  "fill": "$text-muted",
+                  "content": "PCT 2026",
+                  "fontFamily": "Barlow Semi Condensed",
+                  "fontSize": 11,
+                  "fontWeight": "500",
+                  "letterSpacing": 2
+                }
+              ]
             },
             {
               "type": "frame",
-              "id": "CBSfp",
-              "name": "footRight",
-              "gap": 32,
+              "id": "35f1G",
+              "name": "touNavArea",
+              "gap": 40,
               "alignItems": "center",
               "children": [
                 {
                   "type": "text",
-                  "id": "KhK4N",
-                  "name": "fl1",
-                  "fill": "#FFFFFF80",
-                  "content": "Home",
-                  "fontFamily": "Barlow Semi Condensed",
-                  "fontSize": 13,
-                  "fontWeight": "500"
+                  "id": "88EV4",
+                  "name": "touN1",
+                  "fill": "$text-secondary",
+                  "content": "The Journey",
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 15,
+                  "fontWeight": "600"
                 },
                 {
                   "type": "text",
-                  "id": "dVkuA",
-                  "name": "fl2",
-                  "fill": "#FFFFFF80",
+                  "id": "rQCCs",
+                  "name": "touN2",
+                  "fill": "$text-secondary",
                   "content": "Trail Map",
-                  "fontFamily": "Barlow Semi Condensed",
-                  "fontSize": 13,
-                  "fontWeight": "500"
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 15,
+                  "fontWeight": "600"
                 },
                 {
                   "type": "text",
-                  "id": "66XpL",
-                  "name": "fl3",
-                  "fill": "#FFFFFFCC",
-                  "content": "Donate",
-                  "fontFamily": "Barlow Semi Condensed",
-                  "fontSize": 13,
-                  "fontWeight": "500"
+                  "id": "KyAnk",
+                  "name": "touN3",
+                  "fill": "$text-secondary",
+                  "content": "The Cause",
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 15,
+                  "fontWeight": "600"
                 },
                 {
                   "type": "text",
-                  "id": "HLhhM",
-                  "name": "fl4",
-                  "fill": "#FFFFFF80",
+                  "id": "4lBzk",
+                  "name": "touN4",
+                  "fill": "$text-secondary",
                   "content": "Journal",
-                  "fontFamily": "Barlow Semi Condensed",
-                  "fontSize": 13,
-                  "fontWeight": "500"
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 15,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "D5h9A",
+                  "name": "touN5",
+                  "fill": "$text-secondary",
+                  "content": "Donors",
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 15,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "f4e9f",
+                  "name": "touDonateBtn",
+                  "fill": "$burnt-orange",
+                  "gap": 8,
+                  "padding": [
+                    12,
+                    28
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "6oJJC",
+                      "name": "touDonateTxt",
+                      "fill": "$text-white",
+                      "content": "DONATE NOW",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 12,
+                      "fontWeight": "700",
+                      "letterSpacing": 2
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "55yNX",
+                      "name": "touDonateIcon",
+                      "width": 14,
+                      "height": 14,
+                      "iconFontName": "heart",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-white"
+                    }
+                  ]
                 }
               ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "WFY6h",
+          "name": "TOU Hero",
+          "width": "fill_container",
+          "fill": "$bg-white",
+          "layout": "vertical",
+          "gap": 16,
+          "padding": [
+            64,
+            120
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "zPgCS",
+              "name": "touLabel",
+              "fill": "$burnt-orange",
+              "content": "LEGAL",
+              "fontFamily": "Barlow Semi Condensed",
+              "fontSize": 12,
+              "fontWeight": "700",
+              "letterSpacing": 3
+            },
+            {
+              "type": "text",
+              "id": "9AZld",
+              "name": "touTitle",
+              "fill": "$text-primary",
+              "content": "Terms of Use",
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 48,
+              "fontWeight": "600",
+              "letterSpacing": -0.5
+            },
+            {
+              "type": "text",
+              "id": "mPZgT",
+              "name": "touSubtitle",
+              "fill": "$text-muted",
+              "content": "Last updated: March 1, 2026",
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 16,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "xorrL",
+          "name": "TOU Body",
+          "width": "fill_container",
+          "fill": "$bg-white",
+          "layout": "vertical",
+          "gap": 40,
+          "padding": [
+            0,
+            320,
+            80,
+            320
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "5owwy",
+              "name": "section1",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "wstAs",
+                  "name": "touS1h",
+                  "fill": "$text-primary",
+                  "content": "1. Acceptance of Terms",
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 24,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "9zGJY",
+                  "name": "touS1p",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "By accessing and using this website (paulbarrypct.com), you accept and agree to be bound by the terms and provisions of this agreement. If you do not agree to abide by these terms, please do not use this site.",
+                  "lineHeight": 1.8,
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "FGluZ",
+              "name": "section2",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "OKDbB",
+                  "name": "touS2h",
+                  "fill": "$text-primary",
+                  "content": "2. Purpose of This Website",
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 24,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "QT9LU",
+                  "name": "touS2p",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "This website documents Paul Barry's Pacific Crest Trail thru-hike in 2026 and serves as a platform to raise awareness and funds for cancer research, patient support, and prevention education. The site is operated on a non-commercial, charitable basis.",
+                  "lineHeight": 1.8,
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "OCjJx",
+              "name": "section3",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "qwn9G",
+                  "name": "touS3h",
+                  "fill": "$text-primary",
+                  "content": "3. Donations",
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 24,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "4Ahsp",
+                  "name": "touS3p",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "All donations made through this website are voluntary and non-refundable. Donation processing is handled securely by Stripe. We do not store your payment information. Funds are allocated as described on the website: 40% to cancer research, 30% to patient support, 20% to prevention programs, and 10% to trail operations.",
+                  "lineHeight": 1.8,
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "zjpg0",
+              "name": "section4",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "VkFIK",
+                  "name": "touS4h",
+                  "fill": "$text-primary",
+                  "content": "4. Intellectual Property",
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 24,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "nUrUp",
+                  "name": "touS4p",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "All content on this website — including text, photographs, videos, graphics, and trail data — is the property of Paul Barry unless otherwise noted. You may share content from this site for personal, non-commercial purposes with proper attribution. Commercial use of any content requires written permission.",
+                  "lineHeight": 1.8,
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "uOSMs",
+              "name": "section5",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "JoiiO",
+                  "name": "touS5h",
+                  "fill": "$text-primary",
+                  "content": "5. User Conduct",
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 24,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "nQ5HT",
+                  "name": "touS5p",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "When interacting with this website, including leaving donor messages, you agree not to post content that is harmful, offensive, defamatory, or otherwise inappropriate. We reserve the right to remove any content that violates these guidelines.",
+                  "lineHeight": 1.8,
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "ILJP1",
+              "name": "section6",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "frsQh",
+                  "name": "touS6h",
+                  "fill": "$text-primary",
+                  "content": "6. Disclaimer",
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 24,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "zEs2S",
+                  "name": "touS6p",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "This website is provided &quot;as is&quot; without warranties of any kind. Trail conditions, distances, and other data are approximations and should not be used for navigation or safety planning. Cancer prevention information on this site is for educational purposes only and does not constitute medical advice. Always consult a qualified healthcare provider.",
+                  "lineHeight": 1.8,
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "23uVd",
+              "name": "section7",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "y88ZB",
+                  "name": "touS7h",
+                  "fill": "$text-primary",
+                  "content": "7. Contact",
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 24,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "8Bp2G",
+                  "name": "touS7p",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "If you have any questions about these Terms of Use, please reach out via the contact information provided on the website or through our social media channels.",
+                  "lineHeight": 1.8,
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "DIklF",
+          "name": "touFooter",
+          "width": "fill_container",
+          "fill": "$bg-dark",
+          "layout": "vertical",
+          "gap": 48,
+          "padding": [
+            60,
+            120,
+            32,
+            120
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "W6IEk",
+              "name": "footerTop",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "7d43q",
+                  "name": "footerBrand",
+                  "width": 360,
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "D7Mxc",
+                      "name": "footerLogoRow",
+                      "gap": 12,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "sKHwv",
+                          "name": "footerLogoIcon",
+                          "width": 24,
+                          "height": 24,
+                          "iconFontName": "mountain",
+                          "iconFontFamily": "lucide",
+                          "fill": "$forest-green"
+                        },
+                        {
+                          "type": "text",
+                          "id": "37aGl",
+                          "name": "footerLogoText",
+                          "fill": "$text-white",
+                          "content": "PAUL BARRY",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 16,
+                          "fontWeight": "700",
+                          "letterSpacing": 3
+                        },
+                        {
+                          "type": "text",
+                          "id": "D0z4U",
+                          "name": "footerLogoSub",
+                          "fill": "$text-muted",
+                          "content": "PCT 2026",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 11,
+                          "fontWeight": "500",
+                          "letterSpacing": 2
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "yYZZB",
+                      "name": "footerTagline",
+                      "fill": "#FFFFFF88",
+                      "textGrowth": "fixed-width",
+                      "width": 340,
+                      "content": "Walking 2,650 miles for cancer awareness, survivor support, and prevention education. Every step counts.",
+                      "lineHeight": 1.6,
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "lWCsS",
+                      "name": "footerSocials",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "00aXy",
+                          "name": "socialIG",
+                          "width": 20,
+                          "height": 20,
+                          "iconFontName": "instagram",
+                          "iconFontFamily": "lucide",
+                          "fill": "$text-muted"
+                        },
+                        {
+                          "type": "icon_font",
+                          "id": "GkpnI",
+                          "name": "socialYT",
+                          "width": 20,
+                          "height": 20,
+                          "iconFontName": "youtube",
+                          "iconFontFamily": "lucide",
+                          "fill": "$text-muted"
+                        },
+                        {
+                          "type": "icon_font",
+                          "id": "mExmR",
+                          "name": "socialTW",
+                          "width": 20,
+                          "height": 20,
+                          "iconFontName": "twitter",
+                          "iconFontFamily": "lucide",
+                          "fill": "$text-muted"
+                        },
+                        {
+                          "type": "icon_font",
+                          "id": "rTssG",
+                          "name": "socialFB",
+                          "width": 20,
+                          "height": 20,
+                          "iconFontName": "facebook",
+                          "iconFontFamily": "lucide",
+                          "fill": "$text-muted"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "knm2M",
+                  "name": "footerNav",
+                  "gap": 64,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "AgDWl",
+                      "name": "fnCol1",
+                      "layout": "vertical",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "kf80f",
+                          "name": "fnCol1Title",
+                          "fill": "$text-muted",
+                          "content": "EXPLORE",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 11,
+                          "fontWeight": "700",
+                          "letterSpacing": 2
+                        },
+                        {
+                          "type": "text",
+                          "id": "0eQYg",
+                          "name": "fnCol1L1",
+                          "fill": "#FFFFFFAA",
+                          "content": "The Journey",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Fqb2q",
+                          "name": "fnCol1L2",
+                          "fill": "#FFFFFFAA",
+                          "content": "Trail Map",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Odove",
+                          "name": "fnCol1L3",
+                          "fill": "#FFFFFFAA",
+                          "content": "Blog & Vlog",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "rcLda",
+                          "name": "fnCol1L4",
+                          "fill": "#FFFFFFAA",
+                          "content": "Donor Wall",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "x1Ru2",
+                      "name": "fnCol2",
+                      "layout": "vertical",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "t3iUd",
+                          "name": "fnCol2Title",
+                          "fill": "$text-muted",
+                          "content": "THE CAUSE",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 11,
+                          "fontWeight": "700",
+                          "letterSpacing": 2
+                        },
+                        {
+                          "type": "text",
+                          "id": "P5vdt",
+                          "name": "fnCol2L1",
+                          "fill": "#FFFFFFAA",
+                          "content": "Cancer Prevention",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "FrI1g",
+                          "name": "fnCol2L2",
+                          "fill": "#FFFFFFAA",
+                          "content": "Survivor Support",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "bX4hu",
+                          "name": "fnCol2L3",
+                          "fill": "#FFFFFFAA",
+                          "content": "Healthy Lifestyles",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "2YXzm",
+                          "name": "fnCol2L4",
+                          "fill": "#FFFFFFAA",
+                          "content": "Donate",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "5cZw8",
+                      "name": "fnCol3",
+                      "layout": "vertical",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "gPW9q",
+                          "name": "fnCol3Title",
+                          "fill": "$text-muted",
+                          "content": "CONNECT",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 11,
+                          "fontWeight": "700",
+                          "letterSpacing": 2
+                        },
+                        {
+                          "type": "text",
+                          "id": "g0PEe",
+                          "name": "fnCol3L1",
+                          "fill": "#FFFFFFAA",
+                          "content": "Instagram",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "PmgMr",
+                          "name": "fnCol3L2",
+                          "fill": "#FFFFFFAA",
+                          "content": "YouTube",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "wBFpR",
+                          "name": "fnCol3L3",
+                          "fill": "#FFFFFFAA",
+                          "content": "Contact Paul",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "uIvgp",
+                          "name": "fnCol3L4",
+                          "fill": "#FFFFFFAA",
+                          "content": "Press Kit",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "ROgkX",
+              "name": "footerDivider",
+              "width": "fill_container",
+              "height": 1,
+              "fill": "#FFFFFF15"
+            },
+            {
+              "type": "frame",
+              "id": "WvXsu",
+              "name": "footerBottom",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "sKi9F",
+                  "name": "footerCopy",
+                  "fill": "#FFFFFF55",
+                  "content": "© 2026 Paul Barry PCT Walk for Cancer. All rights reserved.",
+                  "fontFamily": "Barlow Semi Condensed",
+                  "fontSize": 11,
+                  "fontWeight": "500",
+                  "letterSpacing": 0.5
+                },
+                {
+                  "type": "frame",
+                  "id": "C8jio",
+                  "name": "footerLegal",
+                  "gap": 24,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "VDSAW",
+                      "name": "footerPrivacy",
+                      "fill": "#FFFFFF55",
+                      "content": "Privacy Policy",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 11,
+                      "fontWeight": "500",
+                      "letterSpacing": 0.5
+                    },
+                    {
+                      "type": "text",
+                      "id": "0GN2Y",
+                      "name": "footerTerms",
+                      "fill": "#FFFFFF55",
+                      "content": "Terms of Use",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 11,
+                      "fontWeight": "500",
+                      "letterSpacing": 0.5
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "8Bgen",
+      "x": 10880,
+      "y": 0,
+      "name": "Privacy Policy Page",
+      "width": 1440,
+      "fill": "$bg-warm",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "kR8FT",
+          "name": "Header",
+          "width": "fill_container",
+          "fill": "#FFFFFFEE",
+          "padding": [
+            20,
+            80
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "34zyS",
+              "name": "ppLogoArea",
+              "gap": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "mCRGA",
+                  "name": "ppIcon",
+                  "width": 28,
+                  "height": 28,
+                  "iconFontName": "mountain",
+                  "iconFontFamily": "lucide",
+                  "fill": "$forest-green"
+                },
+                {
+                  "type": "text",
+                  "id": "lLI1M",
+                  "name": "ppLogoTxt",
+                  "fill": "$text-primary",
+                  "content": "PAUL BARRY",
+                  "fontFamily": "Barlow Semi Condensed",
+                  "fontSize": 16,
+                  "fontWeight": "700",
+                  "letterSpacing": 3
+                },
+                {
+                  "type": "text",
+                  "id": "9VjEa",
+                  "name": "ppLogoSub",
+                  "fill": "$text-muted",
+                  "content": "PCT 2026",
+                  "fontFamily": "Barlow Semi Condensed",
+                  "fontSize": 11,
+                  "fontWeight": "500",
+                  "letterSpacing": 2
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "jACYE",
+              "name": "ppNavArea",
+              "gap": 40,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "ZtbXt",
+                  "name": "ppN1",
+                  "fill": "$text-secondary",
+                  "content": "The Journey",
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 15,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "8CtMM",
+                  "name": "ppN2",
+                  "fill": "$text-secondary",
+                  "content": "Trail Map",
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 15,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "dZFii",
+                  "name": "ppN3",
+                  "fill": "$text-secondary",
+                  "content": "The Cause",
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 15,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "x4uXd",
+                  "name": "ppN4",
+                  "fill": "$text-secondary",
+                  "content": "Journal",
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 15,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "WFQhh",
+                  "name": "ppN5",
+                  "fill": "$text-secondary",
+                  "content": "Donors",
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 15,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "Ih1Yy",
+                  "name": "ppDonateBtn",
+                  "fill": "$burnt-orange",
+                  "gap": 8,
+                  "padding": [
+                    12,
+                    28
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "NYTPZ",
+                      "name": "ppDonTxt",
+                      "fill": "$text-white",
+                      "content": "DONATE NOW",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 12,
+                      "fontWeight": "700",
+                      "letterSpacing": 2
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "VphQY",
+                      "name": "ppDonIco",
+                      "width": 14,
+                      "height": 14,
+                      "iconFontName": "heart",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-white"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "eDHyj",
+          "name": "PP Hero",
+          "width": "fill_container",
+          "fill": "$bg-white",
+          "layout": "vertical",
+          "gap": 16,
+          "padding": [
+            64,
+            120
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "ILx5I",
+              "name": "ppLbl",
+              "fill": "$burnt-orange",
+              "content": "LEGAL",
+              "fontFamily": "Barlow Semi Condensed",
+              "fontSize": 12,
+              "fontWeight": "700",
+              "letterSpacing": 3
+            },
+            {
+              "type": "text",
+              "id": "GbjDf",
+              "name": "ppTtl",
+              "fill": "$text-primary",
+              "content": "Privacy Policy",
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 48,
+              "fontWeight": "600",
+              "letterSpacing": -0.5
+            },
+            {
+              "type": "text",
+              "id": "Yn8JT",
+              "name": "ppDate",
+              "fill": "$text-muted",
+              "content": "Last updated: March 1, 2026",
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 16,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "S1VTq",
+          "name": "PP Body",
+          "width": "fill_container",
+          "fill": "$bg-white",
+          "layout": "vertical",
+          "gap": 40,
+          "padding": [
+            0,
+            320,
+            80,
+            320
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "cynQg",
+              "name": "ppSec1",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "uQRE7",
+                  "name": "ppS1h",
+                  "fill": "$text-primary",
+                  "content": "1. Information We Collect",
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 24,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "OvwBQ",
+                  "name": "ppS1p",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "When you make a donation, we collect your name, email address, and an optional message. Payment information is processed directly by Stripe and is never stored on our servers. We also collect anonymous usage data through standard web analytics to understand how visitors interact with the site.",
+                  "lineHeight": 1.8,
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "6jbPU",
+              "name": "ppSec2",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "M48pn",
+                  "name": "ppS2h",
+                  "fill": "$text-primary",
+                  "content": "2. How We Use Your Information",
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 24,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "vsd1N",
+                  "name": "ppS2p",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Your information is used solely to process donations, display your name and message on the donor wall (unless you choose to remain anonymous), and send occasional updates about Paul's trail progress and the impact of your donation. We will never sell, rent, or share your personal information with third parties for marketing purposes.",
+                  "lineHeight": 1.8,
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "yh7Ah",
+              "name": "ppSec3",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "YvaFw",
+                  "name": "ppS3h",
+                  "fill": "$text-primary",
+                  "content": "3. Cookies and Tracking",
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 24,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "jvJHM",
+                  "name": "ppS3p",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "This website uses essential cookies required for basic functionality. We may use analytics tools to understand site traffic and improve the user experience. These tools collect anonymized data such as pages visited, time on site, and browser type. No personally identifiable information is collected through analytics.",
+                  "lineHeight": 1.8,
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Fzo4c",
+              "name": "ppSec4",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "URQy6",
+                  "name": "ppS4h",
+                  "fill": "$text-primary",
+                  "content": "4. Data Security",
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 24,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "R3PFt",
+                  "name": "ppS4p",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "We take reasonable measures to protect your personal information. All donation transactions are encrypted using SSL/TLS technology through Stripe. However, no method of transmission over the Internet is 100% secure, and we cannot guarantee absolute security.",
+                  "lineHeight": 1.8,
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "hxtZB",
+              "name": "ppSec5",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "pOMi7",
+                  "name": "ppS5h",
+                  "fill": "$text-primary",
+                  "content": "5. Your Rights",
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 24,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "Hdebp",
+                  "name": "ppS5p",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "You have the right to request access to, correction of, or deletion of your personal data at any time. If you wish to have your donor information removed from the website or our records, please contact us and we will process your request promptly.",
+                  "lineHeight": 1.8,
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "bd3Lc",
+              "name": "ppSec6",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Rbb3O",
+                  "name": "ppS6h",
+                  "fill": "$text-primary",
+                  "content": "6. Third-Party Services",
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 24,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "Q6Da6",
+                  "name": "ppS6p",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "This website uses Stripe for payment processing and OpenStreetMap for trail mapping. These services have their own privacy policies governing how they handle your data. We encourage you to review their respective policies.",
+                  "lineHeight": 1.8,
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "6n5jD",
+              "name": "ppSec7",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "bTL4c",
+                  "name": "ppS7h",
+                  "fill": "$text-primary",
+                  "content": "7. Contact",
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 24,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "MnXaE",
+                  "name": "ppS7p",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "If you have any questions about this Privacy Policy or wish to exercise your data rights, please reach out via the contact information provided on the website or through our social media channels.",
+                  "lineHeight": 1.8,
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "JHncG",
+          "name": "ppFooter",
+          "width": "fill_container",
+          "fill": "$bg-dark",
+          "layout": "vertical",
+          "gap": 48,
+          "padding": [
+            60,
+            120,
+            32,
+            120
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "eVOVg",
+              "name": "footerTop",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "RdOpm",
+                  "name": "footerBrand",
+                  "width": 360,
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "lFQOb",
+                      "name": "footerLogoRow",
+                      "gap": 12,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "VI9nJ",
+                          "name": "footerLogoIcon",
+                          "width": 24,
+                          "height": 24,
+                          "iconFontName": "mountain",
+                          "iconFontFamily": "lucide",
+                          "fill": "$forest-green"
+                        },
+                        {
+                          "type": "text",
+                          "id": "gosBV",
+                          "name": "footerLogoText",
+                          "fill": "$text-white",
+                          "content": "PAUL BARRY",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 16,
+                          "fontWeight": "700",
+                          "letterSpacing": 3
+                        },
+                        {
+                          "type": "text",
+                          "id": "jWelB",
+                          "name": "footerLogoSub",
+                          "fill": "$text-muted",
+                          "content": "PCT 2026",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 11,
+                          "fontWeight": "500",
+                          "letterSpacing": 2
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "E3HZs",
+                      "name": "footerTagline",
+                      "fill": "#FFFFFF88",
+                      "textGrowth": "fixed-width",
+                      "width": 340,
+                      "content": "Walking 2,650 miles for cancer awareness, survivor support, and prevention education. Every step counts.",
+                      "lineHeight": 1.6,
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "aYikA",
+                      "name": "footerSocials",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "nWuxE",
+                          "name": "socialIG",
+                          "width": 20,
+                          "height": 20,
+                          "iconFontName": "instagram",
+                          "iconFontFamily": "lucide",
+                          "fill": "$text-muted"
+                        },
+                        {
+                          "type": "icon_font",
+                          "id": "Q9ASk",
+                          "name": "socialYT",
+                          "width": 20,
+                          "height": 20,
+                          "iconFontName": "youtube",
+                          "iconFontFamily": "lucide",
+                          "fill": "$text-muted"
+                        },
+                        {
+                          "type": "icon_font",
+                          "id": "Bre9o",
+                          "name": "socialTW",
+                          "width": 20,
+                          "height": 20,
+                          "iconFontName": "twitter",
+                          "iconFontFamily": "lucide",
+                          "fill": "$text-muted"
+                        },
+                        {
+                          "type": "icon_font",
+                          "id": "xQuof",
+                          "name": "socialFB",
+                          "width": 20,
+                          "height": 20,
+                          "iconFontName": "facebook",
+                          "iconFontFamily": "lucide",
+                          "fill": "$text-muted"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "0OZh1",
+                  "name": "footerNav",
+                  "gap": 64,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "aDt6Q",
+                      "name": "fnCol1",
+                      "layout": "vertical",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "5HoFw",
+                          "name": "fnCol1Title",
+                          "fill": "$text-muted",
+                          "content": "EXPLORE",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 11,
+                          "fontWeight": "700",
+                          "letterSpacing": 2
+                        },
+                        {
+                          "type": "text",
+                          "id": "2AV3L",
+                          "name": "fnCol1L1",
+                          "fill": "#FFFFFFAA",
+                          "content": "The Journey",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "9zovg",
+                          "name": "fnCol1L2",
+                          "fill": "#FFFFFFAA",
+                          "content": "Trail Map",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "JBneM",
+                          "name": "fnCol1L3",
+                          "fill": "#FFFFFFAA",
+                          "content": "Blog & Vlog",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "xIeEv",
+                          "name": "fnCol1L4",
+                          "fill": "#FFFFFFAA",
+                          "content": "Donor Wall",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "LgJJI",
+                      "name": "fnCol2",
+                      "layout": "vertical",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "cNaIs",
+                          "name": "fnCol2Title",
+                          "fill": "$text-muted",
+                          "content": "THE CAUSE",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 11,
+                          "fontWeight": "700",
+                          "letterSpacing": 2
+                        },
+                        {
+                          "type": "text",
+                          "id": "z1xDC",
+                          "name": "fnCol2L1",
+                          "fill": "#FFFFFFAA",
+                          "content": "Cancer Prevention",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "7IJ57",
+                          "name": "fnCol2L2",
+                          "fill": "#FFFFFFAA",
+                          "content": "Survivor Support",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "fI1Lt",
+                          "name": "fnCol2L3",
+                          "fill": "#FFFFFFAA",
+                          "content": "Healthy Lifestyles",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "oIr60",
+                          "name": "fnCol2L4",
+                          "fill": "#FFFFFFAA",
+                          "content": "Donate",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "y7JJB",
+                      "name": "fnCol3",
+                      "layout": "vertical",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "9F2xr",
+                          "name": "fnCol3Title",
+                          "fill": "$text-muted",
+                          "content": "CONNECT",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 11,
+                          "fontWeight": "700",
+                          "letterSpacing": 2
+                        },
+                        {
+                          "type": "text",
+                          "id": "5qNGQ",
+                          "name": "fnCol3L1",
+                          "fill": "#FFFFFFAA",
+                          "content": "Instagram",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "18J6e",
+                          "name": "fnCol3L2",
+                          "fill": "#FFFFFFAA",
+                          "content": "YouTube",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "MRYvN",
+                          "name": "fnCol3L3",
+                          "fill": "#FFFFFFAA",
+                          "content": "Contact Paul",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "NIYiT",
+                          "name": "fnCol3L4",
+                          "fill": "#FFFFFFAA",
+                          "content": "Press Kit",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "GyGgA",
+              "name": "footerDivider",
+              "width": "fill_container",
+              "height": 1,
+              "fill": "#FFFFFF15"
+            },
+            {
+              "type": "frame",
+              "id": "CsucK",
+              "name": "footerBottom",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "ojoUo",
+                  "name": "footerCopy",
+                  "fill": "#FFFFFF55",
+                  "content": "© 2026 Paul Barry PCT Walk for Cancer. All rights reserved.",
+                  "fontFamily": "Barlow Semi Condensed",
+                  "fontSize": 11,
+                  "fontWeight": "500",
+                  "letterSpacing": 0.5
+                },
+                {
+                  "type": "frame",
+                  "id": "GHNYT",
+                  "name": "footerLegal",
+                  "gap": 24,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "5BiBs",
+                      "name": "footerPrivacy",
+                      "fill": "#FFFFFF55",
+                      "content": "Privacy Policy",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 11,
+                      "fontWeight": "500",
+                      "letterSpacing": 0.5
+                    },
+                    {
+                      "type": "text",
+                      "id": "nKgM2",
+                      "name": "footerTerms",
+                      "fill": "#FFFFFF55",
+                      "content": "Terms of Use",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 11,
+                      "fontWeight": "500",
+                      "letterSpacing": 0.5
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "S0rda",
+      "x": 12420,
+      "y": 0,
+      "name": "GPS Tracker Page (Mobile)",
+      "width": 480,
+      "height": 900,
+      "fill": "$bg-dark",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "f3Dog",
+          "name": "wrapper",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 32,
+          "padding": [
+            60,
+            60,
+            40,
+            60
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "7C10E",
+              "name": "logo",
+              "width": "fill_container",
+              "gap": 12,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "dfPfU",
+                  "name": "logoIcon",
+                  "width": 24,
+                  "height": 24,
+                  "iconFontName": "landscape",
+                  "iconFontFamily": "Material Symbols Rounded",
+                  "fill": "#3D7A5A"
+                },
+                {
+                  "type": "text",
+                  "id": "qcABT",
+                  "name": "logoText",
+                  "fill": "#FFFFFF",
+                  "content": "PCT TRACKER",
+                  "fontFamily": "Barlow Semi Condensed",
+                  "fontSize": 14,
+                  "fontWeight": "700",
+                  "letterSpacing": 3
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "XPO7r",
+              "name": "statusArea",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 14,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "ellipse",
+                  "id": "jwXYd",
+                  "name": "statusCircle",
+                  "fill": "#333333",
+                  "width": 80,
+                  "height": 80
+                },
+                {
+                  "type": "icon_font",
+                  "id": "8RBMV",
+                  "name": "statusIcon",
+                  "width": 40,
+                  "height": 40,
+                  "iconFontName": "location_on",
+                  "iconFontFamily": "Material Symbols Rounded",
+                  "fill": "#8C8A87"
+                },
+                {
+                  "type": "text",
+                  "id": "Cnpyr",
+                  "name": "statusText",
+                  "fill": "#8C8A87",
+                  "content": "Ready",
+                  "textAlign": "center",
+                  "fontFamily": "Barlow Semi Condensed",
+                  "fontSize": 13,
+                  "fontWeight": "600",
+                  "letterSpacing": 1
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "NtQmg",
+              "name": "tokenSection",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "5iT4B",
+                  "name": "tokenLabel",
+                  "fill": "#8C8A87",
+                  "content": "AUTH TOKEN",
+                  "fontFamily": "Barlow Semi Condensed",
+                  "fontSize": 10,
+                  "fontWeight": "700",
+                  "letterSpacing": 2
+                },
+                {
+                  "type": "frame",
+                  "id": "3OWsC",
+                  "name": "tokenInput",
+                  "width": "fill_container",
+                  "height": 48,
+                  "fill": "#2A2D28",
+                  "padding": [
+                    0,
+                    16
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "eg1jP",
+                      "name": "tokenPlaceholder",
+                      "fill": "#666666",
+                      "content": "Enter your auth token",
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "W0RxQ",
+              "name": "startBtn",
+              "width": "fill_container",
+              "height": 56,
+              "fill": "$burnt-orange",
+              "gap": 12,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "MQi2Z",
+                  "name": "startIcon",
+                  "width": 20,
+                  "height": 20,
+                  "iconFontName": "cell_tower",
+                  "iconFontFamily": "Material Symbols Rounded",
+                  "fill": "#FFFFFF"
+                },
+                {
+                  "type": "text",
+                  "id": "bQQ95",
+                  "name": "startLabel",
+                  "fill": "#FFFFFF",
+                  "content": "START TRACKING",
+                  "fontFamily": "Barlow Semi Condensed",
+                  "fontSize": 15,
+                  "fontWeight": "700",
+                  "letterSpacing": 2
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "VnznN",
+              "name": "posCard",
+              "width": "fill_container",
+              "fill": "#2A2D28",
+              "layout": "vertical",
+              "gap": 14,
+              "padding": 20,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "yVGUR",
+                  "name": "posLabel",
+                  "fill": "#8C8A87",
+                  "content": "LAST POSITION",
+                  "fontFamily": "Barlow Semi Condensed",
+                  "fontSize": 10,
+                  "fontWeight": "700",
+                  "letterSpacing": 2
+                },
+                {
+                  "type": "frame",
+                  "id": "QXmBZ",
+                  "name": "row1",
+                  "width": "fill_container",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "rEQ7M",
+                      "name": "row1Label",
+                      "fill": "#999999",
+                      "content": "Latitude",
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "rkizF",
+                      "name": "row1Spacer",
+                      "width": "fill_container",
+                      "height": 1
+                    },
+                    {
+                      "type": "text",
+                      "id": "bn8cr",
+                      "name": "row1Value",
+                      "fill": "#FFFFFF",
+                      "content": "32.650000",
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "aiaOm",
+                  "name": "row2",
+                  "width": "fill_container",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "bmwa5",
+                      "name": "row2Label",
+                      "fill": "#999999",
+                      "content": "Longitude",
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Ttego",
+                      "name": "row2Spacer",
+                      "width": "fill_container",
+                      "height": 1
+                    },
+                    {
+                      "type": "text",
+                      "id": "5qXMQ",
+                      "name": "row2Value",
+                      "fill": "#FFFFFF",
+                      "content": "-116.470000",
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "iI3Hv",
+                  "name": "row3",
+                  "width": "fill_container",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "hLlKT",
+                      "name": "row3Label",
+                      "fill": "#999999",
+                      "content": "Altitude",
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "JeQeA",
+                      "name": "row3Spacer",
+                      "width": "fill_container",
+                      "height": 1
+                    },
+                    {
+                      "type": "text",
+                      "id": "2RmGe",
+                      "name": "row3Value",
+                      "fill": "#FFFFFF",
+                      "content": "890 m",
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "lYqW5",
+                  "name": "row4",
+                  "width": "fill_container",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "XVGPv",
+                      "name": "row4Label",
+                      "fill": "#999999",
+                      "content": "Updates sent",
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "wtNuY",
+                      "name": "row4Spacer",
+                      "width": "fill_container",
+                      "height": 1
+                    },
+                    {
+                      "type": "text",
+                      "id": "EH9a5",
+                      "name": "row4Value",
+                      "fill": "#3D7A5A",
+                      "content": "12",
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "kYtXQ",
+              "name": "footerNote",
+              "fill": "#555555",
+              "content": "Updates every 60 seconds while tracking",
+              "textAlign": "center",
+              "fontFamily": "Barlow Semi Condensed",
+              "fontSize": 11,
+              "fontWeight": "normal"
             }
           ]
         }

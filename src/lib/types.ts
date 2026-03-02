@@ -50,3 +50,34 @@ export interface DonationStats {
   largestDonation: number;
   goalAmount: number;
 }
+
+// Journal types
+
+export interface JournalPost {
+  id: string;
+  title: string;
+  slug: string;
+  dayNumber: number;
+  date: string;
+  body: string;
+  excerpt: string;
+  coverImage: string;
+  images: string[];
+  youtubeUrl: string;
+  tags: string[];
+  published: boolean;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface JournalPostPublic {
+  id: string;
+  title: string;
+  slug: string;
+  dayNumber: number;
+  date: string;
+  excerpt: string;
+  coverImage: string;
+  youtubeUrl: string;
+  tags: string[];
+}
