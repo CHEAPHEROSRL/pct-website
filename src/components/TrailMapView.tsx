@@ -1,8 +1,19 @@
 "use client";
 
-import { MapContainer, TileLayer, Polyline, Marker, Popup } from "react-leaflet";
+import { useEffect } from "react";
+import { MapContainer, TileLayer, Polyline, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+
+function FlyToHandler({ target }: { target?: [number, number, number] }) {
+  const map = useMap();
+  useEffect(() => {
+    if (target) {
+      map.flyTo([target[0], target[1]], target[2], { duration: 1.5 });
+    }
+  }, [map, target]);
+  return null;
+}
 
 // Custom burnt-orange marker icon
 const currentPositionIcon = new L.DivIcon({
@@ -112,7 +123,7 @@ const pctRoute: [number, number][] = [
 // Current position (Day 3 — near Campo, CA)
 const currentPosition: [number, number] = [32.65, -116.47];
 
-export default function TrailMapView() {
+export default function TrailMapView({ flyTo }: { flyTo?: [number, number, number] }) {
   return (
     <MapContainer
       center={[40.0, -120.0]}
@@ -121,10 +132,11 @@ export default function TrailMapView() {
       style={{ width: "100%", height: "100%" }}
       scrollWheelZoom={true}
     >
+      <FlyToHandler target={flyTo} />
       <TileLayer
-        url="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="https://opentopomap.org/">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
-        maxZoom={17}
+        url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        maxZoom={19}
       />
 
       {/* PCT Trail Route */}

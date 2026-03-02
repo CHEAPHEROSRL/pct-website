@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import PrefetchTrailMap from "@/components/PrefetchTrailMap";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -26,6 +27,7 @@ export default function RootLayout({
       </head>
       <body className="h-full">
         {children}
+        <PrefetchTrailMap />
       </body>
     </html>
   );
