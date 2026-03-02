@@ -3,17 +3,18 @@ import Image from "next/image";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ShareButton from "@/components/ShareButton";
+import HomeTrailProgress from "@/components/HomeTrailProgress";
 import {
   Heart,
   Calendar,
   Tent,
   Smartphone,
-  MapPin,
   Shield,
   Sun,
   ChevronDown,
   ArrowRight,
 } from "lucide-react";
+
 
 export default function Home() {
   return (
@@ -126,73 +127,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Trail Progress */}
-      <section className="flex flex-col gap-[32px] md:gap-[48px] px-6 md:px-12 lg:px-[120px] py-[48px] md:py-[64px] lg:py-[80px] bg-[var(--bg-warm)] w-full">
-        <div className="flex flex-col items-center gap-[16px] w-full">
-          <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">TRAIL PROGRESS</span>
-          <h2 className="font-heading font-semibold text-[28px] md:text-[34px] lg:text-[40px] tracking-[-0.5px] text-[var(--text-primary)] text-center">
-            Follow Paul on the Trail
-          </h2>
-          <p className="font-heading text-[18px] leading-[1.6] text-[var(--text-secondary)] text-center">
-            Track the journey in real-time as Paul walks from Mexico to Canada.
-          </p>
-        </div>
-        <div className="flex flex-col lg:flex-row gap-[24px] lg:gap-[32px] w-full">
-          {/* Map Container */}
-          <div className="relative w-full lg:w-[720px] h-[300px] md:h-[400px] lg:h-[560px] bg-[#E8E5E0] border border-[var(--border-subtle)] overflow-hidden shrink-0">
-            <Image
-              src="https://images.unsplash.com/photo-1732396768887-33cfea69bbf3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=720&q=80"
-              alt="Trail Map"
-              fill
-              className="object-cover opacity-30"
-            />
-            <div className="absolute inset-0 bg-[#F4F1EC44]" />
-            <div className="absolute left-[340px] top-[440px] flex flex-col items-center gap-[4px]">
-              <MapPin className="w-[32px] h-[32px] text-[var(--burnt-orange)]" />
-              <div className="bg-[var(--burnt-orange)] px-[10px] py-[4px]">
-                <span className="font-label font-bold text-[9px] tracking-[2px] text-[var(--text-white)]">DAY 1 &middot; CAMPO, CA</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Map Sidebar */}
-          <div className="flex flex-col gap-[24px] flex-1">
-            {/* Current Location */}
-            <div className="flex flex-col gap-[12px] bg-[var(--bg-white)] border border-[var(--border-subtle)] p-[24px]">
-              <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--burnt-orange)]">CURRENT LOCATION</span>
-              <span className="font-heading font-semibold text-[24px] text-[var(--text-primary)]">Campo, CA</span>
-              <span className="font-heading text-[15px] text-[var(--text-secondary)]">Mile 0 of 2,650</span>
-              <div className="relative w-full h-[8px] bg-[#E8E5E0]">
-                <div className="absolute top-0 left-0 h-[8px] bg-[var(--forest-green)] w-[10px]" />
-              </div>
-              <span className="font-label font-medium text-[11px] tracking-[0.5px] text-[var(--text-muted)]">
-                0% Complete — Journey begins March 28, 2026
-              </span>
-            </div>
-
-            {/* Key Milestones */}
-            <div className="flex flex-col gap-[12px] bg-[var(--bg-white)] border border-[var(--border-subtle)] p-[24px]">
-              <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--burnt-orange)]">KEY MILESTONES</span>
-              <div className="flex items-center gap-[12px]">
-                <div className="w-[10px] h-[10px] bg-[var(--forest-green)] shrink-0" />
-                <span className="font-heading text-[14px] text-[var(--text-primary)]">Campo, CA — Mile 0</span>
-              </div>
-              <div className="flex items-center gap-[12px]">
-                <div className="w-[10px] h-[10px] bg-[#D9D7D4] shrink-0" />
-                <span className="font-heading text-[14px] text-[var(--text-secondary)]">Kennedy Meadows — Mile 702</span>
-              </div>
-              <div className="flex items-center gap-[12px]">
-                <div className="w-[10px] h-[10px] bg-[#D9D7D4] shrink-0" />
-                <span className="font-heading text-[14px] text-[var(--text-secondary)]">Ashland, OR — Mile 1,719</span>
-              </div>
-              <div className="flex items-center gap-[12px]">
-                <div className="w-[10px] h-[10px] bg-[#D9D7D4] shrink-0" />
-                <span className="font-heading text-[14px] text-[var(--text-secondary)]">Manning Park, BC — Mile 2,650</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Trail Progress — Live Map */}
+      <HomeTrailProgress />
 
       {/* The Cause */}
       <section className="flex flex-col lg:flex-row w-full bg-[var(--bg-dark)]">
