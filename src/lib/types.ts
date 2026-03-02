@@ -81,3 +81,29 @@ export interface JournalPostPublic {
   youtubeUrl: string;
   tags: string[];
 }
+
+export interface JournalPostDetail {
+  id: string;
+  title: string;
+  slug: string;
+  dayNumber: number;
+  date: string;
+  body: string;
+  excerpt: string;
+  coverImage: string;
+  images: string[];
+  youtubeUrl: string;
+  tags: string[];
+}
+
+export interface PostNavLink {
+  slug: string;
+  title: string;
+  dayNumber: number;
+}
+
+export interface JournalPostDetailResponse {
+  post: JournalPostDetail;
+  prevPost: PostNavLink | null;
+  nextPost: PostNavLink | null;
+}

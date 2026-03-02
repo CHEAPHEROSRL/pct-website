@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Search, ArrowRight, ChevronRight, ChevronLeft } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -11,6 +12,7 @@ const filterOptions = ["ALL", "BLOG", "VLOG", "PHOTOS"] as const;
 type Filter = (typeof filterOptions)[number];
 
 interface JournalEntry {
+  slug: string;
   img: string;
   day: string;
   date: string;
@@ -21,6 +23,7 @@ interface JournalEntry {
 
 function mapPostToEntry(post: JournalPostPublic): JournalEntry {
   return {
+    slug: post.slug,
     img:
       post.coverImage ||
       "https://images.unsplash.com/photo-1609657096517-438da7ed2423?w=1080",
@@ -39,6 +42,7 @@ function mapPostToEntry(post: JournalPostPublic): JournalEntry {
 }
 
 const fallbackFeaturedPost: JournalEntry = {
+  slug: "the-first-step-standing-at-the-southern-terminus",
   img: "https://images.unsplash.com/photo-1764092816494-c165d9a24d70?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzIyNjA0MzV8&ixlib=rb-4.1.0&q=80&w=1080",
   day: "DAY 1",
   date: "MARCH 28, 2026",
@@ -48,12 +52,12 @@ const fallbackFeaturedPost: JournalEntry = {
 };
 
 const fallbackEntries: JournalEntry[] = [
-  { img: "https://images.unsplash.com/photo-1609657096517-438da7ed2423?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80", day: "DAY 2", date: "MARCH 29, 2026", title: "Finding My Rhythm", excerpt: "20 miles in and my feet are already talking to me. But the desert sunrise was worth every blister.", tag: "BLOG" },
-  { img: "https://images.unsplash.com/photo-1723995594361-46b69891c6f9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80", day: "DAY 5", date: "APRIL 1, 2026", title: "Water and Gratitude", excerpt: "Found a perfect stream today. Sat with my feet in the cold water and thought about Mom\u2019s garden.", tag: "VLOG" },
-  { img: "https://images.unsplash.com/photo-1763058138710-7d8e263223ae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80", day: "DAY 8", date: "APRIL 4, 2026", title: "Stars Like I've Never Seen", excerpt: "No light pollution out here. The Milky Way stretches above like a river of light. Dad would have loved this.", tag: "PHOTOS" },
-  { img: "https://images.unsplash.com/photo-1688057951002-a159e26c7f82?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80", day: "DAY 15", date: "APRIL 11, 2026", title: "Through the Desert Wind", excerpt: "The heat is relentless, but the sunsets make it all worthwhile. Met a fellow hiker who lost her mother to breast cancer.", tag: "BLOG" },
-  { img: "https://images.unsplash.com/photo-1759491265362-3bd88910a036?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80", day: "DAY 20", date: "APRIL 16, 2026", title: "Wildflower Season", excerpt: "The desert is blooming. Purple, yellow, orange \u2014 everywhere. Nature\u2019s reminder that beauty follows hardship.", tag: "PHOTOS" },
-  { img: "https://images.unsplash.com/photo-1759150954328-8b0b005ade84?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80", day: "DAY 30", date: "APRIL 26, 2026", title: "Sierra Nights", excerpt: "The stars remind me of camping with my dad. I can feel him walking with me. Tonight\u2019s vlog is for him.", tag: "VLOG" },
+  { slug: "finding-my-rhythm", img: "https://images.unsplash.com/photo-1609657096517-438da7ed2423?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80", day: "DAY 2", date: "MARCH 29, 2026", title: "Finding My Rhythm", excerpt: "20 miles in and my feet are already talking to me. But the desert sunrise was worth every blister.", tag: "BLOG" },
+  { slug: "water-and-gratitude", img: "https://images.unsplash.com/photo-1723995594361-46b69891c6f9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80", day: "DAY 5", date: "APRIL 1, 2026", title: "Water and Gratitude", excerpt: "Found a perfect stream today. Sat with my feet in the cold water and thought about Mom\u2019s garden.", tag: "VLOG" },
+  { slug: "stars-like-ive-never-seen", img: "https://images.unsplash.com/photo-1763058138710-7d8e263223ae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80", day: "DAY 8", date: "APRIL 4, 2026", title: "Stars Like I've Never Seen", excerpt: "No light pollution out here. The Milky Way stretches above like a river of light. Dad would have loved this.", tag: "PHOTOS" },
+  { slug: "through-the-desert-wind", img: "https://images.unsplash.com/photo-1688057951002-a159e26c7f82?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80", day: "DAY 15", date: "APRIL 11, 2026", title: "Through the Desert Wind", excerpt: "The heat is relentless, but the sunsets make it all worthwhile. Met a fellow hiker who lost her mother to breast cancer.", tag: "BLOG" },
+  { slug: "wildflower-season", img: "https://images.unsplash.com/photo-1759491265362-3bd88910a036?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80", day: "DAY 20", date: "APRIL 16, 2026", title: "Wildflower Season", excerpt: "The desert is blooming. Purple, yellow, orange \u2014 everywhere. Nature\u2019s reminder that beauty follows hardship.", tag: "PHOTOS" },
+  { slug: "sierra-nights", img: "https://images.unsplash.com/photo-1759150954328-8b0b005ade84?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80", day: "DAY 30", date: "APRIL 26, 2026", title: "Sierra Nights", excerpt: "The stars remind me of camping with my dad. I can feel him walking with me. Tonight\u2019s vlog is for him.", tag: "VLOG" },
 ];
 
 const PER_PAGE = 6;
@@ -173,10 +177,10 @@ export default function JournalPage() {
               <span className="bg-[var(--forest-green-light)] px-[10px] py-[4px] font-label font-semibold text-[10px] tracking-[1px] text-[var(--forest-green)]">BLOG</span>
               <span className="bg-[var(--burnt-orange-light)] px-[10px] py-[4px] font-label font-semibold text-[10px] tracking-[1px] text-[var(--burnt-orange)]">VIDEO</span>
             </div>
-            <div className="flex items-center gap-[8px] cursor-pointer">
-              <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--burnt-orange)]">READ FULL ENTRY</span>
+            <Link href={`/journal/${featuredPost.slug}`} className="flex items-center gap-[8px] cursor-pointer group">
+              <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--burnt-orange)] group-hover:underline">READ FULL ENTRY</span>
               <ArrowRight className="w-[14px] h-[14px] text-[var(--burnt-orange)]" />
-            </div>
+            </Link>
           </div>
         </section>
       )}
@@ -246,10 +250,10 @@ export default function JournalPage() {
   );
 }
 
-function BlogCard({ img, day, date, title, excerpt, tag }: JournalEntry) {
+function BlogCard({ slug, img, day, date, title, excerpt, tag }: JournalEntry) {
   const isGreen = tag === "BLOG" || tag === "PHOTOS";
   return (
-    <div className="flex flex-col bg-[var(--bg-white)] border border-[var(--border-subtle)] overflow-hidden hover:shadow-md transition-shadow cursor-pointer">
+    <Link href={`/journal/${slug}`} className="flex flex-col bg-[var(--bg-white)] border border-[var(--border-subtle)] overflow-hidden hover:shadow-md transition-shadow cursor-pointer">
       <div className="relative w-full h-[200px]">
         <Image src={img} alt={title} fill className="object-cover" />
       </div>
@@ -264,6 +268,6 @@ function BlogCard({ img, day, date, title, excerpt, tag }: JournalEntry) {
           <span className={`px-[10px] py-[4px] font-label font-semibold text-[10px] tracking-[1px] ${isGreen ? "bg-[var(--forest-green-light)] text-[var(--forest-green)]" : "bg-[var(--burnt-orange-light)] text-[var(--burnt-orange)]"}`}>{tag}</span>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
