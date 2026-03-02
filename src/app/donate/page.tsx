@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, useEffect, FormEvent } from "react";
 import Link from "next/link";
 import { Heart, Check, Lock } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import type { DonorPublic, DonationStats } from "@/lib/types";
 
 const presetAmounts = [25, 50, 100, 250];
 
@@ -12,7 +13,22 @@ export default function DonatePage() {
   const [selectedAmount, setSelectedAmount] = useState<number | "other">(100);
   const [customAmount, setCustomAmount] = useState("");
   const [anonymous, setAnonymous] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Live donor data for sidebar
+  const [stats, setStats] = useState<DonationStats | null>(null);
+  const [recentDonors, setRecentDonors] = useState<DonorPublic[]>([]);
+
+  useEffect(() => {
+    fetch("/api/donors")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.stats) setStats(data.stats);
+        if (data.donors) setRecentDonors(data.donors.slice(0, 3));
+      })
+      .catch(() => {});
+  }, []);
 
   const displayAmount =
     selectedAmount === "other"
@@ -21,38 +37,57 @@ export default function DonatePage() {
         : "$0"
       : `$${selectedAmount}`;
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setSubmitted(true);
-  }
+  const totalRaised = stats?.totalRaised ?? 12450;
+  const donorCount = stats?.donorCount ?? 47;
+  const goalAmount = stats?.goalAmount ?? 50000;
+  const progressPercent = Math.round((totalRaised / goalAmount) * 100);
 
-  if (submitted) {
-    return (
-      <div className="flex flex-col w-full bg-[var(--bg-warm)]">
-        <Header />
-        <section className="flex flex-col items-center justify-center gap-[24px] px-6 md:px-12 lg:px-[120px] py-[80px] md:py-[120px] bg-[var(--bg-white)] w-full">
-          <div className="flex items-center justify-center w-[64px] h-[64px] bg-[var(--forest-green)] rounded-full">
-            <Heart className="w-[28px] h-[28px] text-white" />
-          </div>
-          <h1 className="font-heading font-semibold text-[28px] md:text-[36px] tracking-[-0.5px] text-[var(--text-primary)] text-center">
-            Thank You for Your Generosity!
-          </h1>
-          <p className="font-heading text-[16px] leading-[1.6] text-[var(--text-secondary)] text-center max-w-[520px]">
-            Your {displayAmount} donation will make a real difference in the fight against cancer.
-            Paul will carry your support with every step on the trail.
-          </p>
-          <Link
-            href="/"
-            className="flex items-center justify-center gap-[10px] h-[48px] px-[32px] bg-[var(--burnt-orange)] hover:opacity-90 transition-opacity mt-[16px]"
-          >
-            <span className="font-label font-bold text-[14px] tracking-[2px] text-[var(--text-white)]">
-              BACK TO HOME
-            </span>
-          </Link>
-        </section>
-        <Footer />
-      </div>
-    );
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+
+    const amount =
+      selectedAmount === "other" ? Number(customAmount) : selectedAmount;
+
+    if (!amount || amount < 1) {
+      setError("Please enter a valid donation amount.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/donate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount,
+          firstName: formData.get("firstName"),
+          lastName: formData.get("lastName"),
+          email: formData.get("email"),
+          message: formData.get("message") || "",
+          anonymous,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Something went wrong. Please try again.");
+        setLoading(false);
+        return;
+      }
+
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch {
+      setError("Network error. Please check your connection and try again.");
+      setLoading(false);
+    }
   }
 
   return (
@@ -120,20 +155,20 @@ export default function DonatePage() {
             <div className="flex flex-col sm:flex-row gap-[16px] w-full">
               <div className="flex flex-col gap-[6px] flex-1">
                 <span className="font-heading font-semibold text-[14px] text-[var(--text-primary)]">First Name</span>
-                <input type="text" required placeholder="John" className="h-[48px] px-[16px] border border-[var(--border-subtle)] font-heading text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none" />
+                <input type="text" name="firstName" required placeholder="John" className="h-[48px] px-[16px] border border-[var(--border-subtle)] font-heading text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none" />
               </div>
               <div className="flex flex-col gap-[6px] flex-1">
                 <span className="font-heading font-semibold text-[14px] text-[var(--text-primary)]">Last Name</span>
-                <input type="text" required placeholder="Doe" className="h-[48px] px-[16px] border border-[var(--border-subtle)] font-heading text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none" />
+                <input type="text" name="lastName" required placeholder="Doe" className="h-[48px] px-[16px] border border-[var(--border-subtle)] font-heading text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none" />
               </div>
             </div>
             <div className="flex flex-col gap-[6px]">
               <span className="font-heading font-semibold text-[14px] text-[var(--text-primary)]">Email Address</span>
-              <input type="email" required placeholder="john@example.com" className="h-[48px] px-[16px] border border-[var(--border-subtle)] font-heading text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none w-full" />
+              <input type="email" name="email" required placeholder="john@example.com" className="h-[48px] px-[16px] border border-[var(--border-subtle)] font-heading text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none w-full" />
             </div>
             <div className="flex flex-col gap-[6px]">
               <span className="font-heading font-semibold text-[14px] text-[var(--text-primary)]">Leave a Message (Optional)</span>
-              <textarea placeholder="Share a word of encouragement for Paul..." className="h-[100px] px-[16px] py-[12px] border border-[var(--border-subtle)] font-heading text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none resize-none w-full" />
+              <textarea name="message" placeholder="Share a word of encouragement for Paul..." className="h-[100px] px-[16px] py-[12px] border border-[var(--border-subtle)] font-heading text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none resize-none w-full" />
             </div>
             <button
               type="button"
@@ -147,13 +182,27 @@ export default function DonatePage() {
             </button>
           </div>
 
+          {/* Error */}
+          {error && (
+            <div className="flex items-center gap-[8px] bg-red-50 border border-red-200 px-[16px] py-[12px]">
+              <span className="font-heading text-[14px] text-red-700">{error}</span>
+            </div>
+          )}
+
           {/* Submit */}
           <button
             type="submit"
-            className="flex items-center justify-center gap-[10px] h-[56px] bg-[var(--burnt-orange)] w-full cursor-pointer hover:opacity-90 transition-opacity"
+            disabled={loading}
+            className={`flex items-center justify-center gap-[10px] h-[56px] w-full transition-opacity ${
+              loading
+                ? "bg-[var(--text-muted)] cursor-not-allowed"
+                : "bg-[var(--burnt-orange)] cursor-pointer hover:opacity-90"
+            }`}
           >
-            <span className="font-label font-bold text-[16px] tracking-[2px] text-[var(--text-white)]">DONATE {displayAmount}</span>
-            <Heart className="w-[18px] h-[18px] text-[var(--text-white)]" />
+            <span className="font-label font-bold text-[16px] tracking-[2px] text-[var(--text-white)]">
+              {loading ? "REDIRECTING TO PAYMENT..." : `DONATE ${displayAmount}`}
+            </span>
+            {!loading && <Heart className="w-[18px] h-[18px] text-[var(--text-white)]" />}
           </button>
           <div className="flex items-center justify-center gap-[8px]">
             <Lock className="w-[14px] h-[14px] text-[var(--text-muted)]" />
@@ -167,15 +216,20 @@ export default function DonatePage() {
           <div className="flex flex-col gap-[16px] bg-[var(--bg-card)] border border-[var(--border-subtle)] p-[28px]">
             <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--burnt-orange)]">FUNDRAISING PROGRESS</span>
             <div className="flex items-end gap-[8px]">
-              <span className="font-heading font-semibold text-[32px] tracking-[-1px] text-[var(--forest-green)]">$12,450</span>
-              <span className="font-heading text-[16px] text-[var(--text-secondary)]">of $50,000</span>
+              <span className="font-heading font-semibold text-[32px] tracking-[-1px] text-[var(--forest-green)]">
+                ${totalRaised.toLocaleString()}
+              </span>
+              <span className="font-heading text-[16px] text-[var(--text-secondary)]">of ${goalAmount.toLocaleString()}</span>
             </div>
             <div className="relative w-full h-[10px] bg-[#E8E5E0]">
-              <div className="absolute top-0 left-0 h-[10px] bg-[var(--forest-green)] w-[91px]" />
+              <div
+                className="absolute top-0 left-0 h-[10px] bg-[var(--forest-green)] transition-all duration-1000"
+                style={{ width: `max(10px, ${progressPercent}%)` }}
+              />
             </div>
             <div className="flex justify-between w-full">
-              <span className="font-label font-medium text-[12px] text-[var(--text-muted)]">47 donors</span>
-              <span className="font-label font-semibold text-[12px] text-[var(--forest-green)]">25% funded</span>
+              <span className="font-label font-medium text-[12px] text-[var(--text-muted)]">{donorCount} donors</span>
+              <span className="font-label font-semibold text-[12px] text-[var(--forest-green)]">{progressPercent}% funded</span>
             </div>
           </div>
 
@@ -198,16 +252,19 @@ export default function DonatePage() {
           {/* Recent Donors */}
           <div className="flex flex-col gap-[16px] bg-[var(--bg-card)] border border-[var(--border-subtle)] p-[28px]">
             <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--burnt-orange)]">RECENT DONORS</span>
-            {[
-              { name: "Sarah Mitchell", info: "$250 · 2 hours ago", color: "#3D7A5A" },
-              { name: "Anonymous", info: "$100 · 5 hours ago", color: "#7B6B8E" },
-              { name: "Tom & Lisa Park", info: "$300 · 1 day ago", color: "#C45C26" },
-            ].map((d) => (
-              <div key={d.name + d.info} className="flex items-center gap-[10px]">
+            {(recentDonors.length > 0
+              ? recentDonors
+              : [
+                  { name: "Sarah Mitchell", amount: "$250", date: "2 hours ago", color: "#3D7A5A", amountNum: 250, message: "" },
+                  { name: "Anonymous", amount: "$100", date: "5 hours ago", color: "#7B6B8E", amountNum: 100, message: "" },
+                  { name: "Tom & Lisa Park", amount: "$300", date: "1 day ago", color: "#C45C26", amountNum: 300, message: "" },
+                ]
+            ).map((d, i) => (
+              <div key={d.name + i} className="flex items-center gap-[10px]">
                 <div className="w-[28px] h-[28px] rounded-full shrink-0" style={{ backgroundColor: d.color }} />
                 <div className="flex flex-col gap-[1px]">
                   <span className="font-heading font-semibold text-[13px] text-[var(--text-primary)]">{d.name}</span>
-                  <span className="font-label font-medium text-[10px] tracking-[0.5px] text-[var(--text-muted)]">{d.info}</span>
+                  <span className="font-label font-medium text-[10px] tracking-[0.5px] text-[var(--text-muted)]">{d.amount} · {d.date}</span>
                 </div>
               </div>
             ))}

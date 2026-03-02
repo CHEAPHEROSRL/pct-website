@@ -4,32 +4,26 @@ import { useState, useMemo } from "react";
 import { Search, ChevronRight, ChevronLeft } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-
-interface Donor {
-  name: string;
-  amount: string;
-  amountNum: number;
-  date: string;
-  message: string;
-  color: string;
-}
-
-const donors: Donor[] = [
-  { name: "Robert Williams", amount: "$1,000", amountNum: 1000, date: "Feb 15, 2026", message: "Go Paul! My father fought cancer for 3 years. Walk strong.", color: "#3D7A5A" },
-  { name: "Anonymous", amount: "$2,000", amountNum: 2000, date: "Feb 12, 2026", message: "In memory of Susan. Keep walking.", color: "#5B8EA6" },
-  { name: "Dr. Amanda Brooks", amount: "$750", amountNum: 750, date: "Feb 10, 2026", message: "As an oncologist, this cause is close to my heart.", color: "#C45C26" },
-  { name: "James O\u2019Connor", amount: "$500", amountNum: 500, date: "Feb 8, 2026", message: "Walk on, brother. The world needs more people like you.", color: "#7B6B8E" },
-  { name: "Sarah Mitchell", amount: "$250", amountNum: 250, date: "Feb 5, 2026", message: "For my mom, a 5-year survivor. You\u2019re an inspiration.", color: "#A68B5B" },
-  { name: "Tom & Lisa Park", amount: "$300", amountNum: 300, date: "Feb 1, 2026", message: "We\u2019re cheering for you from Oregon!", color: "#6B8E7B" },
-];
+import { useDonorData } from "@/hooks/useDonorData";
 
 type SortKey = "RECENT" | "AMOUNT" | "NAME";
 const PER_PAGE = 6;
 
 export default function DonorsPage() {
+  const { data } = useDonorData();
+  const donors = data?.donors ?? [];
+  const stats = data?.stats;
+
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<SortKey>("RECENT");
   const [page, setPage] = useState(1);
+
+  const totalRaised = stats?.totalRaised ?? 12450;
+  const donorCount = stats?.donorCount ?? 47;
+  const averageDonation = stats?.averageDonation ?? 265;
+  const largestDonation = stats?.largestDonation ?? 2000;
+  const goalAmount = stats?.goalAmount ?? 50000;
+  const progressPercent = Math.round((totalRaised / goalAmount) * 100);
 
   const processed = useMemo(() => {
     let result = [...donors];
@@ -56,7 +50,7 @@ export default function DonorsPage() {
     }
 
     return result;
-  }, [search, sort]);
+  }, [donors, search, sort]);
 
   const totalPages = Math.max(1, Math.ceil(processed.length / PER_PAGE));
   const currentPage = Math.min(page, totalPages);
@@ -82,25 +76,28 @@ export default function DonorsPage() {
         <div className="flex flex-col gap-[16px] bg-[var(--bg-card)] border border-[var(--border-subtle)] p-[20px] md:p-[32px] w-full max-w-[640px]">
           <div className="flex items-end justify-between w-full">
             <div className="flex items-end gap-[8px]">
-              <span className="font-heading font-semibold text-[36px] tracking-[-1px] text-[var(--forest-green)]">$12,450</span>
-              <span className="font-heading text-[16px] text-[var(--text-secondary)]">raised of $50,000</span>
+              <span className="font-heading font-semibold text-[36px] tracking-[-1px] text-[var(--forest-green)]">${totalRaised.toLocaleString()}</span>
+              <span className="font-heading text-[16px] text-[var(--text-secondary)]">raised of ${goalAmount.toLocaleString()}</span>
             </div>
-            <span className="font-label font-bold text-[18px] text-[var(--forest-green)]">25%</span>
+            <span className="font-label font-bold text-[18px] text-[var(--forest-green)]">{progressPercent}%</span>
           </div>
           <div className="relative w-full h-[12px] bg-[#E8E5E0]">
-            <div className="absolute top-0 left-0 h-[12px] bg-[var(--forest-green)] w-[144px]" />
+            <div
+              className="absolute top-0 left-0 h-[12px] bg-[var(--forest-green)] transition-all duration-1000"
+              style={{ width: `max(12px, ${progressPercent}%)` }}
+            />
           </div>
           <div className="flex justify-around w-full">
             <div className="flex flex-col items-center gap-[2px]">
-              <span className="font-heading font-semibold text-[24px] text-[var(--text-primary)]">47</span>
+              <span className="font-heading font-semibold text-[24px] text-[var(--text-primary)]">{donorCount}</span>
               <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">DONORS</span>
             </div>
             <div className="flex flex-col items-center gap-[2px]">
-              <span className="font-heading font-semibold text-[24px] text-[var(--text-primary)]">$265</span>
+              <span className="font-heading font-semibold text-[24px] text-[var(--text-primary)]">${averageDonation.toLocaleString()}</span>
               <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">AVERAGE</span>
             </div>
             <div className="flex flex-col items-center gap-[2px]">
-              <span className="font-heading font-semibold text-[24px] text-[var(--text-primary)]">$2,000</span>
+              <span className="font-heading font-semibold text-[24px] text-[var(--text-primary)]">${largestDonation.toLocaleString()}</span>
               <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">LARGEST</span>
             </div>
           </div>
