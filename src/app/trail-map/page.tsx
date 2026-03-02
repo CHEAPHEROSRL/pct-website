@@ -4,6 +4,8 @@ import { useState } from "react";
 import dynamic from "next/dynamic";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { useLocationData } from "@/hooks/useLocationData";
+import { getTrailSectionIndex } from "@/lib/trail";
 
 const trailSections = [
   { name: "Southern California", info: "Mi 0 - 700 · Campo to Kennedy Meadows", center: [33.5, -117.0, 7] as [number, number, number] },
@@ -17,7 +19,6 @@ const TrailMapView = dynamic(() => import("@/components/TrailMapView"), {
   ssr: false,
   loading: () => (
     <div className="relative flex items-center justify-center w-full h-full bg-[#E8E5E0]">
-      {/* Static PCT route silhouette for instant visual feedback */}
       <svg
         viewBox="116 32 6 18"
         className="absolute inset-0 w-full h-full opacity-[0.08]"
@@ -42,6 +43,12 @@ const TrailMapView = dynamic(() => import("@/components/TrailMapView"), {
 
 export default function TrailMapPage() {
   const [flyTo, setFlyTo] = useState<[number, number, number] | undefined>();
+  const { data } = useLocationData(30000);
+
+  const stats = data?.stats;
+  const totalMiles = stats?.totalMiles ?? 0;
+  const progressPercent = Math.round((totalMiles / 2650) * 1000) / 10;
+  const currentSectionIndex = getTrailSectionIndex(totalMiles);
 
   return (
     <div className="flex flex-col w-full bg-[var(--bg-warm)]">
@@ -58,11 +65,18 @@ export default function TrailMapPage() {
             {/* Progress bar */}
             <div className="flex flex-col gap-[8px] w-full">
               <div className="relative w-full h-[6px] bg-[#E8E5E0]">
-                <div className="absolute top-0 left-0 h-[6px] bg-[var(--forest-green)] w-[6px]" />
+                <div
+                  className="absolute top-0 left-0 h-[6px] bg-[var(--forest-green)] transition-all duration-1000"
+                  style={{ width: `max(6px, ${progressPercent}%)` }}
+                />
               </div>
               <div className="flex justify-between w-full">
-                <span className="font-label font-medium text-[11px] text-[var(--text-muted)]">Mile 0</span>
-                <span className="font-label font-semibold text-[11px] text-[var(--forest-green)]">1.6%</span>
+                <span className="font-label font-medium text-[11px] text-[var(--text-muted)]">
+                  Mile {totalMiles.toLocaleString()}
+                </span>
+                <span className="font-label font-semibold text-[11px] text-[var(--forest-green)]">
+                  {progressPercent}%
+                </span>
               </div>
             </div>
           </div>
@@ -78,13 +92,13 @@ export default function TrailMapPage() {
               <button
                 key={s.name}
                 onClick={() => setFlyTo(s.center)}
-                className={`flex items-center justify-between px-[24px] py-[14px] border-b border-[var(--border-subtle)] w-full text-left cursor-pointer hover:bg-[var(--forest-green-light)] transition-colors ${i === 0 ? "bg-[var(--forest-green-light)]" : ""}`}
+                className={`flex items-center justify-between px-[24px] py-[14px] border-b border-[var(--border-subtle)] w-full text-left cursor-pointer hover:bg-[var(--forest-green-light)] transition-colors ${i === currentSectionIndex ? "bg-[var(--forest-green-light)]" : ""}`}
               >
                 <div className="flex flex-col">
                   <span className="font-heading font-semibold text-[15px] text-[var(--text-primary)]">{s.name}</span>
                   <span className="font-label text-[11px] text-[var(--text-muted)]">{s.info}</span>
                 </div>
-                {i === 0 && (
+                {i === currentSectionIndex && (
                   <span className="font-label font-bold text-[10px] tracking-[1px] text-[var(--text-white)] bg-[var(--forest-green)] px-[8px] py-[3px]">CURRENT</span>
                 )}
               </button>
@@ -94,7 +108,14 @@ export default function TrailMapPage() {
 
         {/* Map Area */}
         <div className="relative flex-1 h-[400px] md:h-[500px] lg:h-full overflow-hidden bg-[#E8E5E0]">
-          <TrailMapView flyTo={flyTo} />
+          <TrailMapView
+            flyTo={flyTo}
+            currentPosition={data?.current ? { lat: data.current.lat, lng: data.current.lng } : null}
+            dayNumber={stats?.dayNumber}
+            nearestLocationName={stats?.nearestLocationName}
+            totalMiles={stats?.totalMiles}
+            currentElevation={stats?.currentElevation}
+          />
         </div>
       </div>
 
@@ -102,23 +123,33 @@ export default function TrailMapPage() {
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 px-6 md:px-12 lg:px-[80px] py-[20px] md:py-[24px] bg-[var(--bg-white)] border-t border-[var(--border-subtle)] w-full">
         <div className="flex flex-col items-center gap-[4px]">
           <span className="font-label font-bold text-[9px] md:text-[10px] tracking-[2px] text-[var(--text-muted)]">TODAY&apos;S DISTANCE</span>
-          <span className="font-heading font-semibold text-[20px] md:text-[24px] lg:text-[28px] text-[var(--text-primary)]">18.4 mi</span>
+          <span className="font-heading font-semibold text-[20px] md:text-[24px] lg:text-[28px] text-[var(--text-primary)]">
+            {stats ? `${stats.todayDistance} mi` : "—"}
+          </span>
         </div>
         <div className="flex flex-col items-center gap-[4px]">
           <span className="font-label font-bold text-[9px] md:text-[10px] tracking-[2px] text-[var(--text-muted)]">ELEVATION GAIN</span>
-          <span className="font-heading font-semibold text-[20px] md:text-[24px] lg:text-[28px] text-[var(--text-primary)]">+2,340 ft</span>
+          <span className="font-heading font-semibold text-[20px] md:text-[24px] lg:text-[28px] text-[var(--text-primary)]">
+            {stats ? `+${stats.todayElevationGain.toLocaleString()} ft` : "—"}
+          </span>
         </div>
         <div className="flex flex-col items-center gap-[4px]">
           <span className="font-label font-bold text-[9px] md:text-[10px] tracking-[2px] text-[var(--text-muted)]">TOTAL MILES</span>
-          <span className="font-heading font-semibold text-[20px] md:text-[24px] lg:text-[28px] text-[var(--forest-green)]">42.7 / 2,650</span>
+          <span className="font-heading font-semibold text-[20px] md:text-[24px] lg:text-[28px] text-[var(--forest-green)]">
+            {stats ? `${stats.totalMiles.toLocaleString()} / 2,650` : "— / 2,650"}
+          </span>
         </div>
         <div className="flex flex-col items-center gap-[4px]">
           <span className="font-label font-bold text-[9px] md:text-[10px] tracking-[2px] text-[var(--text-muted)]">CURRENT ELEVATION</span>
-          <span className="font-heading font-semibold text-[20px] md:text-[24px] lg:text-[28px] text-[var(--text-primary)]">3,845 ft</span>
+          <span className="font-heading font-semibold text-[20px] md:text-[24px] lg:text-[28px] text-[var(--text-primary)]">
+            {stats ? `${stats.currentElevation.toLocaleString()} ft` : "—"}
+          </span>
         </div>
         <div className="flex flex-col items-center gap-[4px]">
           <span className="font-label font-bold text-[9px] md:text-[10px] tracking-[2px] text-[var(--text-muted)]">DAY</span>
-          <span className="font-heading font-semibold text-[20px] md:text-[24px] lg:text-[28px] text-[var(--burnt-orange)]">3 of ~180</span>
+          <span className="font-heading font-semibold text-[20px] md:text-[24px] lg:text-[28px] text-[var(--burnt-orange)]">
+            {stats ? `${stats.dayNumber} of ~180` : "— of ~180"}
+          </span>
         </div>
       </div>
 
