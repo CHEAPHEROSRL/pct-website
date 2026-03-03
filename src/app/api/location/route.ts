@@ -11,9 +11,13 @@ function getRedis() {
 }
 
 export async function POST(request: NextRequest) {
-  // Auth check
+  const { searchParams } = new URL(request.url);
+  const format = searchParams.get("format");
+
+  // Auth: Bearer header (GPSLogger / browser) or ?token= query param (OwnTracks)
   const authHeader = request.headers.get("authorization");
-  const token = authHeader?.replace("Bearer ", "");
+  const token =
+    authHeader?.replace("Bearer ", "") ?? searchParams.get("token") ?? "";
   if (!token || token !== process.env.TRACKER_AUTH_TOKEN) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -25,7 +29,19 @@ export async function POST(request: NextRequest) {
 
   // Parse and validate
   const body = await request.json();
-  const { lat, lng, altitude, timestamp, accuracy } = body;
+
+  let lat: number, lng: number, altitude: number | null, timestamp: number, accuracy: number | null;
+
+  if (format === "owntracks") {
+    // OwnTracks HTTP payload: { _type, lat, lon, alt, tst (unix seconds), acc }
+    lat = body.lat;
+    lng = body.lon;
+    altitude = typeof body.alt === "number" ? body.alt : null;
+    timestamp = typeof body.tst === "number" ? body.tst * 1000 : Date.now();
+    accuracy = typeof body.acc === "number" ? body.acc : null;
+  } else {
+    ({ lat, lng, altitude = null, timestamp = Date.now(), accuracy = null } = body);
+  }
 
   if (typeof lat !== "number" || typeof lng !== "number") {
     return NextResponse.json({ error: "Invalid coordinates" }, { status: 400 });
@@ -43,9 +59,9 @@ export async function POST(request: NextRequest) {
   const point: GpsPoint = {
     lat,
     lng,
-    altitude: altitude ?? null,
-    timestamp: timestamp ?? Date.now(),
-    accuracy: accuracy ?? null,
+    altitude,
+    timestamp,
+    accuracy,
   };
 
   // Store current position

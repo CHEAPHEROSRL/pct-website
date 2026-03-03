@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
         anonymous: anonymous ? "true" : "false",
       },
       success_url: `${origin}/donate/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/donate`,
+      cancel_url: `${origin}/donate/cancelled`,
     });
 
     return NextResponse.json({ url: session.url });

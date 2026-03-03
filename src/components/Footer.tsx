@@ -56,7 +56,7 @@ export default function Footer() {
             <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Instagram</a>
             <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">YouTube</a>
             <a href="mailto:paul@paulbarrypct.com" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Contact Paul</a>
-            <span className="font-heading text-[14px] text-[#FFFFFFAA]">Press Kit</span>
+            <Link href="/press-kit" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Press Kit</Link>
           </div>
         </div>
       </div>
