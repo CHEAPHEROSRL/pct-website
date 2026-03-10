@@ -107,3 +107,40 @@ export interface JournalPostDetailResponse {
   prevPost: PostNavLink | null;
   nextPost: PostNavLink | null;
 }
+
+// Pledge types
+
+export interface PledgeBoost {
+  challengeId: string;
+  challengeTitle: string;
+  addedAmount: number;
+  addedAt: number;
+}
+
+export interface PledgeRecord {
+  id: string;
+  email: string;
+  name: string;
+  amount: number;
+  interval: number;
+  totalPledge: number;
+  anonymous: boolean;
+  boosts: PledgeBoost[];
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface PledgePublic {
+  name: string;
+  rate: string;
+  totalPledge: number;
+  boostCount: number;
+  createdAt: number;
+}
+
+export interface PledgeStats {
+  pledgerCount: number;
+  totalPledged: number;
+  averagePledge: number;
+  totalBoosts: number;
+}

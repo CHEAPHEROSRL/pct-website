@@ -35,7 +35,10 @@ export default function PledgePage() {
   const [amount, setAmount] = useState(0.1);
   const [intervalValue, setIntervalValue] = useState<number>(1);
   const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const totalPledge = (amount * TOTAL_MILES) / intervalValue;
   const perFoundation = totalPledge / 2;
@@ -68,10 +71,40 @@ export default function PledgePage() {
     []
   );
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
-    setSubmitted(true);
+    setSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const res = await fetch("/api/pledges", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          name: name || "Anonymous",
+          amount,
+          interval: intervalValue,
+          anonymous: !name,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.status === 409) {
+        // Already pledged — still show success
+        setSubmitted(true);
+      } else if (!res.ok) {
+        setSubmitError(data.error || "Something went wrong. Please try again.");
+      } else {
+        setSubmitted(true);
+      }
+    } catch {
+      setSubmitError("Network error. Please check your connection and try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   // Slider position percentage for the custom track fill
@@ -257,7 +290,22 @@ export default function PledgePage() {
             </div>
           </div>
 
-          {/* Email */}
+          {/* Name & Email */}
+          <div className="flex flex-col gap-[12px]">
+            <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-muted)]">
+              YOUR NAME (OPTIONAL — FOR THE PLEDGER WALL)
+            </span>
+            <div className="flex items-center w-full h-[48px] bg-[var(--bg-white)] border border-[var(--border-subtle)]">
+              <input
+                type="text"
+                placeholder="Your name (or leave blank for anonymous)"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="flex-1 h-full px-[16px] font-heading text-[15px] italic text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none bg-transparent"
+              />
+            </div>
+          </div>
+
           <div className="flex flex-col gap-[12px]">
             <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-muted)]">
               YOUR EMAIL (TO NOTIFY YOU WHEN PAUL FINISHES)
@@ -276,6 +324,12 @@ export default function PledgePage() {
           </div>
 
           {/* Submit */}
+          {submitError && (
+            <div className="flex items-center gap-[8px] bg-red-50 border border-red-200 p-[12px]">
+              <span className="font-heading text-[13px] text-red-600">{submitError}</span>
+            </div>
+          )}
+
           {submitted ? (
             <div className="flex flex-col items-center gap-[12px] bg-[var(--forest-green-light)] border border-[var(--forest-green)] p-[24px]">
               <Heart className="w-[28px] h-[28px] text-[var(--forest-green)]" />
@@ -291,11 +345,16 @@ export default function PledgePage() {
           ) : (
             <button
               type="submit"
-              className="flex items-center justify-center gap-[10px] h-[56px] w-full bg-[var(--forest-green)] cursor-pointer hover:opacity-90 transition-opacity"
+              disabled={submitting}
+              className={`flex items-center justify-center gap-[10px] h-[56px] w-full transition-opacity ${
+                submitting
+                  ? "bg-[var(--text-muted)] cursor-not-allowed"
+                  : "bg-[var(--forest-green)] cursor-pointer hover:opacity-90"
+              }`}
             >
               <Heart className="w-[20px] h-[20px] text-[var(--text-white)]" />
               <span className="font-label font-bold text-[15px] tracking-[2px] text-[var(--text-white)]">
-                SET MY PLEDGE
+                {submitting ? "REGISTERING..." : "SET MY PLEDGE"}
               </span>
             </button>
           )}
