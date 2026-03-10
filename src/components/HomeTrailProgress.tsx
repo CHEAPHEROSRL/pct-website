@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { useLocationData } from "@/hooks/useLocationData";
+import DistanceTracker from "@/components/DistanceTracker";
 
 const TrailMapView = dynamic(() => import("@/components/TrailMapView"), {
   ssr: false,
@@ -88,6 +89,9 @@ export default function HomeTrailProgress() {
               );
             })}
           </div>
+
+          {/* Distance Tracker */}
+          <DistanceTracker compact />
 
           {/* Link to full map */}
           <Link

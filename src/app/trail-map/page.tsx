@@ -6,6 +6,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useLocationData } from "@/hooks/useLocationData";
 import { getTrailSectionIndex } from "@/lib/trail";
+import DistanceTracker from "@/components/DistanceTracker";
 
 const trailSections = [
   { name: "Southern California", info: "Mi 0 - 700 · Campo to Kennedy Meadows", center: [33.5, -117.0, 7] as [number, number, number] },
@@ -103,6 +104,11 @@ export default function TrailMapPage() {
                 )}
               </button>
             ))}
+          </div>
+
+          {/* Distance Tracker */}
+          <div className="px-[16px] py-[16px]">
+            <DistanceTracker compact />
           </div>
         </div>
 

@@ -5,6 +5,7 @@ import { Heart, Mail, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import DistanceTracker from "@/components/DistanceTracker";
 
 const TOTAL_MILES = 2650;
 
@@ -372,6 +373,11 @@ export default function PledgePage() {
             </p>
           </div>
         </div>
+      </section>
+
+      {/* Distance Tracker */}
+      <section className="px-6 md:px-12 lg:px-[120px] py-[32px] md:py-[48px] bg-[var(--bg-white)] w-full max-w-[700px] mx-auto lg:max-w-none">
+        <DistanceTracker />
       </section>
 
       {/* How It Works */}
