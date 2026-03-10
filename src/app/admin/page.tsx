@@ -17,6 +17,10 @@ import {
   XCircle,
   Target,
   CheckCircle,
+  Video,
+  Copy,
+  Loader2,
+  Instagram,
 } from "lucide-react";
 import type { JournalPost, ChallengePublic } from "@/lib/types";
 
@@ -43,6 +47,22 @@ export default function AdminPage() {
     startMile: 0,
     durationHours: 24,
   });
+
+  // Video-to-Blog state
+  const [videoUrl, setVideoUrl] = useState("");
+  const [videoDayNumber, setVideoDayNumber] = useState<number | undefined>();
+  const [videoSplit, setVideoSplit] = useState(false);
+  const [videoGenerating, setVideoGenerating] = useState(false);
+  const [videoResult, setVideoResult] = useState<{
+    success: boolean;
+    videoTitle?: string;
+    postsCreated?: number;
+    posts?: { id: string; title: string; slug: string; tags: string[]; published: boolean }[];
+    error?: string;
+  } | null>(null);
+  const [showVideoGenerator, setShowVideoGenerator] = useState(false);
+  const [instagramCaption, setInstagramCaption] = useState<string | null>(null);
+  const [captionCopied, setCaptionCopied] = useState(false);
 
   // Load token from localStorage
   useEffect(() => {
@@ -93,6 +113,63 @@ export default function AdminPage() {
       setStatus("Failed to load challenges");
     }
   }, [token]);
+
+  async function handleGenerateFromVideo() {
+    if (!videoUrl.trim()) return;
+    setVideoGenerating(true);
+    setVideoResult(null);
+    setInstagramCaption(null);
+    try {
+      const res = await fetch("/api/automation/generate-post", {
+        method: "POST",
+        headers: authHeaders(),
+        body: JSON.stringify({
+          videoUrl: videoUrl.trim(),
+          dayNumber: videoDayNumber || undefined,
+          split: videoSplit,
+          publish: false,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setVideoResult(data);
+        setVideoUrl("");
+        setVideoDayNumber(undefined);
+        setVideoSplit(false);
+        await fetchPosts();
+      } else {
+        setVideoResult({ success: false, error: data.error || "Generation failed" });
+      }
+    } catch {
+      setVideoResult({ success: false, error: "Network error. Try again." });
+    } finally {
+      setVideoGenerating(false);
+    }
+  }
+
+  async function fetchInstagramCaption(postId: string) {
+    setCaptionCopied(false);
+    try {
+      const res = await fetch(`/api/automation/instagram-caption?postId=${postId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setInstagramCaption(data.caption);
+      } else {
+        setInstagramCaption(null);
+      }
+    } catch {
+      setInstagramCaption(null);
+    }
+  }
+
+  async function copyCaption() {
+    if (!instagramCaption) return;
+    await navigator.clipboard.writeText(instagramCaption);
+    setCaptionCopied(true);
+    setTimeout(() => setCaptionCopied(false), 2000);
+  }
 
   async function handleCreateChallenge() {
     setLoading(true);
@@ -392,6 +469,155 @@ export default function AdminPage() {
               {status}
             </span>
           )}
+
+          {/* Video to Blog Generator */}
+          <div className="flex flex-col bg-[var(--bg-white)] border border-[var(--border-subtle)]">
+            <button
+              onClick={() => setShowVideoGenerator(!showVideoGenerator)}
+              className="flex items-center justify-between px-[20px] py-[16px] cursor-pointer hover:bg-[var(--warm-stone)] transition-colors"
+            >
+              <div className="flex items-center gap-[10px]">
+                <Video className="w-[18px] h-[18px] text-[var(--burnt-orange)]" />
+                <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-primary)]">
+                  VIDEO → BLOG POST
+                </span>
+              </div>
+              <span className="font-heading text-[18px] text-[var(--text-muted)]">
+                {showVideoGenerator ? "−" : "+"}
+              </span>
+            </button>
+
+            {showVideoGenerator && (
+              <div className="flex flex-col gap-[16px] px-[20px] pb-[20px] border-t border-[var(--border-subtle)] pt-[16px]">
+                <p className="font-heading text-[13px] text-[var(--text-secondary)] leading-[1.6]">
+                  Paste a YouTube URL to auto-generate a blog post from the video transcript using AI.
+                  Posts are created as drafts for you to review before publishing.
+                </p>
+
+                <div className="flex flex-col gap-[12px]">
+                  <input
+                    type="text"
+                    placeholder="YouTube URL (e.g., https://youtube.com/watch?v=...)"
+                    value={videoUrl}
+                    onChange={(e) => setVideoUrl(e.target.value)}
+                    className="h-[44px] px-[14px] font-heading text-[14px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] border border-[var(--border-subtle)] outline-none bg-[var(--bg-card)]"
+                  />
+
+                  <div className="flex items-center gap-[16px]">
+                    <div className="flex items-center gap-[8px]">
+                      <span className="font-label text-[11px] tracking-[1px] text-[var(--text-secondary)]">
+                        DAY #
+                      </span>
+                      <input
+                        type="number"
+                        placeholder="Auto"
+                        value={videoDayNumber ?? ""}
+                        onChange={(e) => setVideoDayNumber(e.target.value ? Number(e.target.value) : undefined)}
+                        className="w-[80px] h-[36px] px-[10px] font-heading text-[13px] text-[var(--text-primary)] border border-[var(--border-subtle)] outline-none bg-[var(--bg-card)]"
+                      />
+                    </div>
+
+                    <label className="flex items-center gap-[6px] cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={videoSplit}
+                        onChange={(e) => setVideoSplit(e.target.checked)}
+                        className="w-[16px] h-[16px]"
+                      />
+                      <span className="font-label text-[11px] tracking-[1px] text-[var(--text-secondary)]">
+                        SPLIT INTO 2 POSTS
+                      </span>
+                    </label>
+                  </div>
+
+                  <button
+                    onClick={handleGenerateFromVideo}
+                    disabled={videoGenerating || !videoUrl.trim()}
+                    className={`flex items-center justify-center gap-[8px] h-[44px] transition-opacity ${
+                      videoGenerating || !videoUrl.trim()
+                        ? "bg-[var(--text-muted)] cursor-not-allowed"
+                        : "bg-[var(--forest-green)] cursor-pointer hover:opacity-90"
+                    }`}
+                  >
+                    {videoGenerating ? (
+                      <Loader2 className="w-[16px] h-[16px] text-white animate-spin" />
+                    ) : (
+                      <Video className="w-[16px] h-[16px] text-white" />
+                    )}
+                    <span className="font-label font-bold text-[13px] tracking-[2px] text-white">
+                      {videoGenerating ? "GENERATING..." : "GENERATE BLOG POST"}
+                    </span>
+                  </button>
+                </div>
+
+                {/* Result */}
+                {videoResult && (
+                  <div className={`flex flex-col gap-[10px] p-[16px] ${
+                    videoResult.success
+                      ? "bg-[var(--forest-green-light)] border border-[var(--forest-green)]"
+                      : "bg-red-50 border border-red-200"
+                  }`}>
+                    {videoResult.success ? (
+                      <>
+                        <div className="flex items-center gap-[8px]">
+                          <CheckCircle className="w-[16px] h-[16px] text-[var(--forest-green)]" />
+                          <span className="font-label font-bold text-[12px] tracking-[1px] text-[var(--forest-green)]">
+                            {videoResult.postsCreated} POST{videoResult.postsCreated !== 1 ? "S" : ""} CREATED AS DRAFT
+                          </span>
+                        </div>
+                        <span className="font-heading text-[13px] text-[var(--text-secondary)]">
+                          From: {videoResult.videoTitle}
+                        </span>
+                        {videoResult.posts?.map((p) => (
+                          <div key={p.id} className="flex items-center gap-[8px]">
+                            <span className="font-heading text-[14px] text-[var(--text-primary)]">
+                              &ldquo;{p.title}&rdquo;
+                            </span>
+                            <span className="font-label text-[10px] px-[6px] py-[2px] bg-[var(--warm-stone)] text-[var(--text-muted)]">
+                              {p.tags.join(", ")}
+                            </span>
+                            <button
+                              onClick={() => fetchInstagramCaption(p.id)}
+                              className="flex items-center gap-[4px] font-label text-[11px] tracking-[0.5px] text-[var(--burnt-orange)] cursor-pointer hover:underline"
+                            >
+                              <Instagram className="w-[12px] h-[12px]" />
+                              IG Caption
+                            </button>
+                          </div>
+                        ))}
+                        {instagramCaption && (
+                          <div className="flex flex-col gap-[8px] mt-[8px] p-[12px] bg-[var(--bg-white)] border border-[var(--border-subtle)]">
+                            <div className="flex items-center justify-between">
+                              <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                                INSTAGRAM CAPTION
+                              </span>
+                              <button
+                                onClick={copyCaption}
+                                className="flex items-center gap-[4px] font-label text-[11px] text-[var(--forest-green)] cursor-pointer hover:underline"
+                              >
+                                <Copy className="w-[12px] h-[12px]" />
+                                {captionCopied ? "Copied!" : "Copy"}
+                              </button>
+                            </div>
+                            <p className="font-heading text-[13px] text-[var(--text-primary)] leading-[1.6] whitespace-pre-wrap">
+                              {instagramCaption}
+                            </p>
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <div className="flex items-center gap-[8px]">
+                        <XCircle className="w-[16px] h-[16px] text-red-500" />
+                        <span className="font-heading text-[13px] text-red-600">
+                          {videoResult.error}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
 
           {/* Posts table */}
           <div className="flex flex-col bg-[var(--bg-white)] border border-[var(--border-subtle)]">
