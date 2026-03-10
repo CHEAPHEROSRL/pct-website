@@ -103,7 +103,7 @@ export default function DonatePage() {
             <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">SUPPORT THE CAUSE</span>
             <h1 className="font-heading font-semibold text-[28px] md:text-[34px] lg:text-[40px] tracking-[-0.5px] text-[var(--text-primary)]">Make a Donation</h1>
             <p className="font-heading text-[16px] leading-[1.6] text-[var(--text-secondary)]">
-              100% of your donation goes to two cancer foundations — Cancer Foundation California and Cancer Foundation Sydney. Paul receives $0 from donations.
+              100% of your donation goes to <Link href="/foundations" className="text-[var(--burnt-orange)] hover:underline">two cancer foundations</Link> — one in California, one in Sydney. Paul receives $0 from donations.
             </p>
           </div>
 

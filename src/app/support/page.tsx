@@ -228,7 +228,7 @@ export default function SupportPage() {
           Already supporting Paul? Pledge per mile for cancer foundations.
         </h2>
         <p className="font-heading text-[15px] leading-[1.6] text-[var(--text-secondary)] text-center max-w-[600px]">
-          100% of pledges go to two cancer foundations — one in California, one
+          100% of pledges go to <Link href="/foundations" className="text-[var(--burnt-orange)] hover:underline">two cancer foundations</Link> — one in California, one
           in Sydney. Paul receives nothing from pledges. Two causes, one journey.
         </p>
         <Link

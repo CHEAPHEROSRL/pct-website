@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -63,7 +64,8 @@ export default function TransparencyPage() {
           <p>
             Partner foundations will be announced prior to the hike start date. Each partner undergoes due diligence to
             confirm their charitable registration status, financial transparency, and program effectiveness. Details about
-            each partner — including their mission, programs, and registration numbers — will be published on this page.
+            each partner — including their mission, programs, and registration numbers — are published on
+            our <Link href="/foundations" className="text-[var(--burnt-orange)] hover:underline">Our Foundations</Link> page.
           </p>
         </TransparencySection>
 

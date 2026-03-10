@@ -308,7 +308,7 @@ export default function DonorsPage() {
           Join the Donor Wall
         </h2>
         <p className="font-heading text-[16px] text-[var(--text-secondary)] text-center max-w-[500px]">
-          Every donation goes directly to two cancer foundations — Cancer Foundation California and Cancer Foundation Sydney. Paul receives $0.
+          Every donation goes directly to <Link href="/foundations" className="text-[var(--burnt-orange)] hover:underline">two cancer foundations</Link> — one in California, one in Sydney. Paul receives $0.
         </p>
         <div className="flex flex-col sm:flex-row gap-[12px]">
           <Link

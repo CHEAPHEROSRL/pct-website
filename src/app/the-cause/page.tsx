@@ -113,6 +113,9 @@ export default function TheCausePage() {
             </div>
           ))}
         </div>
+        <Link href="/foundations" className="font-heading font-semibold text-[15px] text-[var(--forest-green)] hover:underline">
+          Meet our partner foundations &rarr;
+        </Link>
       </section>
 
       {/* CTA */}

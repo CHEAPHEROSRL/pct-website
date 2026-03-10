@@ -49,7 +49,7 @@ export default function Home() {
             One man. One trail.{"\n"}One cause worth walking for.
           </h1>
           <p className="font-heading text-[16px] md:text-[18px] lg:text-[20px] leading-[1.6] text-[#FFFFFFCC] w-full lg:w-[700px]">
-            Paul Barry is walking the entire Pacific Crest Trail to raise funds{"\n"}for two cancer foundations. Paul takes nothing — every dollar goes{"\n"}to research, patient support, and prevention.
+            Paul Barry is walking the entire Pacific Crest Trail to raise funds{"\n"}for <Link href="/foundations" className="underline hover:text-white">two cancer foundations</Link>. Paul takes nothing — every dollar goes{"\n"}to research, patient support, and prevention.
           </p>
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-[16px]">
             <Link
@@ -335,7 +335,7 @@ export default function Home() {
             Walk With Paul.{"\n"}Fund the Fight Against Cancer.
           </h2>
           <p className="font-heading text-[15px] md:text-[18px] leading-[1.6] text-[#FFFFFFAA] text-center w-full lg:w-[600px]">
-            This is a fundraiser for two cancer foundations — one in California, one in Sydney. Paul receives $0 from pledges and donations. You can also support Paul directly on the trail.
+            This is a fundraiser for <Link href="/foundations" className="underline hover:text-white">two cancer foundations</Link> — one in California, one in Sydney. Paul receives $0 from pledges and donations. You can also support Paul directly on the trail.
           </p>
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-[16px]">
             <Link

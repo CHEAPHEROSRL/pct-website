@@ -15,7 +15,7 @@ export default function Footer() {
             </span>
           </div>
           <p className="font-heading text-[14px] leading-[1.6] text-[#FFFFFF88] w-full lg:w-[340px]">
-            A fundraiser for two cancer foundations. Paul walks 2,650 miles —
+            A fundraiser for <Link href="/foundations" className="underline hover:text-white">two cancer foundations</Link>. Paul walks 2,650 miles —
             every pledge and donation goes directly to the cause. Paul takes nothing.
           </p>
           <div className="flex gap-[16px]">

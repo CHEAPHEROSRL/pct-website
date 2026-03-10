@@ -303,8 +303,8 @@ export default function PledgersPage() {
           Join the Wall
         </h2>
         <p className="font-heading text-[16px] text-[var(--text-secondary)] text-center max-w-[500px]">
-          Pledge per mile and your name appears here. Every cent goes to cancer
-          foundations — Paul gets nothing from pledges.
+          Pledge per mile and your name appears here. Every cent goes to <Link href="/foundations" className="text-[var(--burnt-orange)] hover:underline">cancer
+          foundations</Link> — Paul gets nothing from pledges.
         </p>
         <div className="flex flex-col sm:flex-row gap-[12px]">
           <Link
