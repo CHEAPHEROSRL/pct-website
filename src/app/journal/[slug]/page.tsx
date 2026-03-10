@@ -825,6 +825,127 @@ It turns a solo hike into a team effort. Every mile Paul walks, hundreds of pled
 Already pledged? [Check your dashboard →](/my-pledge) to see your running total.`,
     },
     prevPost: { slug: "sierra-nights", title: "Sierra Nights", dayNumber: 30 },
+    nextPost: { slug: "as-a-man-thinketh", title: "As a Man Thinketh — The Book That Made Me Walk", dayNumber: 0 },
+  },
+  {
+    post: {
+      id: "fb-guide-2", title: "As a Man Thinketh — The Book That Made Me Walk", slug: "as-a-man-thinketh",
+      dayNumber: 0, date: "2026-03-15", excerpt: "A small book from 1903 changed how I see this entire journey. James Allen wrote that your thoughts shape your reality. I believe him — and that belief is why I'm walking 2,650 miles.",
+      coverImage: "https://images.unsplash.com/photo-1506880018603-83d5b814b5a6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80",
+      images: [], youtubeUrl: "", tags: ["BLOG"],
+      body: `There's a book I keep coming back to. It's barely 30 pages long. It was written in 1903 by a man named James Allen, and it's called *As a Man Thinketh*. I first read it years ago, long before I ever considered walking 2,650 miles through the wilderness. But when I look back at every decision that led me to this trail, I can trace them all back to the ideas in that book.
+
+I want to share what it means to me, and why I think it matters — not just for this hike, but for anyone facing something hard.
+
+---
+
+## The Book
+
+James Allen was a British writer and philosopher. He lived a quiet life and died in 1912 at the age of 47. He wasn't famous during his lifetime. He didn't have a huge following or a bestseller. But *As a Man Thinketh* outlived him by a century and then some, because it says something true in a way that doesn't expire.
+
+The central idea is simple: **you become what you think about.** Not in a magical, wish-it-into-existence way. In a practical, daily, brick-by-brick way. Your thoughts shape your character. Your character shapes your actions. Your actions shape your life.
+
+Allen wrote:
+
+> "A man is literally what he thinks, his character being the complete sum of all his thoughts."
+
+That line hit me the first time I read it. It hit me again when Mom was diagnosed. And again when Dad was. And again when I decided to walk.
+
+---
+
+## How It Changed My Thinking
+
+When both my parents were fighting cancer, I had a lot of dark thoughts. That's natural. That's human. But I noticed something — the more I dwelled in helplessness, the more helpless I became. Not because thinking positively would cure cancer. It wouldn't. But because my thoughts were determining what I *did* with my grief.
+
+Allen writes about this beautifully:
+
+> "A man cannot directly choose his circumstances, but he can choose his thoughts, and so indirectly, yet surely, shape his circumstances."
+
+I couldn't choose what happened to Mom and Dad. But I could choose what to do with the weight of losing them. I could sit with it, or I could walk with it. I chose to walk.
+
+That choice didn't come from nowhere. It came from years of reading Allen's words and slowly absorbing his core belief: that we are not victims of our circumstances, but sculptors of our response to them.
+
+---
+
+## The Stoic Thread
+
+*As a Man Thinketh* is often grouped with Stoic philosophy, and I think that's right. The Stoics — Marcus Aurelius, Epictetus, Seneca — all said versions of the same thing: **you control your mind, and your mind controls your experience.**
+
+Epictetus said: "It's not what happens to you, but how you react to it that matters."
+
+Marcus Aurelius said: "The happiness of your life depends upon the quality of your thoughts."
+
+Allen was walking the same path, 1,800 years later. And now I'm walking mine.
+
+There's something about Stoic philosophy that makes more sense on a trail than in a classroom. Out here, you face discomfort every day. Blisters, heat, rain, exhaustion, loneliness. You can't control any of it. But you can control how you meet it — and that, the Stoics would say, is the only thing that matters.
+
+---
+
+## Why I'm Really Walking
+
+People ask me all the time: "Why walk 2,650 miles? Why not just donate the money yourself? Why put yourself through this?"
+
+And the honest answer is: because of what Allen taught me about purpose.
+
+He wrote:
+
+> "Until thought is linked with purpose there is no intelligent accomplishment."
+
+I had grief. I had anger at cancer. I had love for my parents. But I didn't have a *purpose* — something to channel all of that into. The PCT gave me that. Every mile is a mile walked with intention. Every dollar raised is a dollar aimed at something meaningful. Every step is a thought made physical.
+
+That's what Allen means when he says thought becomes action becomes destiny. This walk *is* my thinking made manifest. The 2,650 miles are what it looks like when grief is transformed into purpose.
+
+---
+
+## What Allen Says About Suffering
+
+There's a passage in the book that I've carried with me since losing Dad. Allen writes:
+
+> "Suffering is always the effect of wrong thought in some direction. It is an indication that the individual is out of harmony with himself."
+
+Now, I don't think he means that people who suffer deserve it, or that sick people brought it on themselves. That would be cruel and wrong. I think what he means is this: when we suffer *mentally* — when we're consumed by bitterness, resentment, or despair — it's a signal that we need to realign our thinking.
+
+Mom and Dad suffered physically. That wasn't their fault. But I was suffering *mentally* in a way that was entirely within my control. I was angry at the world. I was asking "why us?" over and over. And that anger was eating me alive.
+
+Allen helped me see that the anger wasn't serving them. It was only hurting me. And the moment I redirected that energy — into this walk, into this fundraiser, into something that might actually help other families — the suffering didn't disappear, but it became bearable. It became *useful*.
+
+---
+
+## A Book for the Trail
+
+I'm carrying a physical copy of *As a Man Thinketh* on this hike. It weighs almost nothing — maybe two ounces. In ultralight hiking, every ounce matters. But this book earns its place in my pack.
+
+When I'm tired and my feet hurt and the trail feels endless, I read a page or two. And I'm reminded that the trail isn't happening *to* me. I chose it. My thoughts chose it. And my thoughts can carry me through it.
+
+Allen's final chapter is called "Visions and Ideals." He writes:
+
+> "The dreamers are the saviors of the world. He who cherishes a beautiful vision, a lofty ideal in his heart, will one day realize it."
+
+I dream of a world where fewer families go through what mine did. That's the vision. The PCT is the vehicle. And the fundraiser — your pledges, your donations — that's the fuel.
+
+---
+
+## Why I'm Telling You This
+
+I'm not writing this to tell you to think positive and everything will be fine. Life doesn't work like that. Cancer doesn't care about your mindset.
+
+But I am writing this because I believe — deeply, in my bones — that what we think about determines what we do. And what we do determines who we become.
+
+If you're reading this and you're going through something hard, I want you to know: you get to choose your next thought. You get to choose what you do with your pain. You can't always control what happens to you, but you can control the direction you walk.
+
+That's what *As a Man Thinketh* taught me. That's what this trail is teaching me every day. And that's why I think everyone should read this little book at least once.
+
+---
+
+## Read the Book
+
+*As a Man Thinketh* by James Allen is in the public domain. You can read it for free online, or pick up a copy for a few dollars. It takes about 30 minutes to read. It might take a lifetime to fully absorb.
+
+If you read it, I'd love to hear what you think. Drop a message when you [pledge](/pledge) or [donate](/donate) — tell me your favorite line.
+
+And if you're walking with me on this journey — literally or through your support — thank you. Every step, every pledge, every dollar is a thought made real. Allen would be proud.`,
+    },
+    prevPost: { slug: "how-pledging-works", title: "How Pledging Works — A Complete Guide", dayNumber: 0 },
     nextPost: null,
   },
 ];
