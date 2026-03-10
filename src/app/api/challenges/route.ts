@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
-import type { ChallengeRecord, ChallengePublic } from "@/lib/types";
+import type { ChallengeRecord, ChallengePublic, PledgeRecord } from "@/lib/types";
+import { sendChallengeStarted, sendChallengeResult } from "@/lib/email";
 import crypto from "crypto";
 
 function getRedis() {
@@ -31,6 +32,47 @@ function toPublic(r: ChallengeRecord): ChallengePublic {
     createdAt: r.createdAt,
     resolvedAt: r.resolvedAt,
   };
+}
+
+async function notifyAllPledgers(redis: Redis, challenge: ChallengeRecord) {
+  try {
+    const rawList = await redis.lrange<string>("pledgers:list", 0, -1);
+    const records: PledgeRecord[] = (rawList || []).map((item) =>
+      typeof item === "string" ? JSON.parse(item) : item
+    );
+    const durationHours = Math.round((challenge.deadline - challenge.createdAt) / (1000 * 60 * 60));
+    for (const r of records) {
+      sendChallengeStarted(r.email, r.name, challenge.title, challenge.targetMiles, durationHours).catch(() => {});
+    }
+  } catch (err) {
+    console.error("Failed to notify pledgers:", err);
+  }
+}
+
+async function notifyChallengeResult(redis: Redis, challenge: ChallengeRecord, succeeded: boolean) {
+  try {
+    const rawList = await redis.lrange<string>("pledgers:list", 0, -1);
+    const records: PledgeRecord[] = (rawList || []).map((item) =>
+      typeof item === "string" ? JSON.parse(item) : item
+    );
+
+    // Get commitments to find boost amounts per pledger
+    const commitments = succeeded
+      ? await redis.lrange<string>(`challenge:${challenge.id}:commitments`, 0, -1)
+      : [];
+    const boostMap = new Map<string, number>();
+    for (const raw of commitments || []) {
+      const c = typeof raw === "string" ? JSON.parse(raw) : raw;
+      boostMap.set(c.pledgerId, c.boostAmount);
+    }
+
+    for (const r of records) {
+      const boostApplied = boostMap.get(r.id) || null;
+      sendChallengeResult(r.email, r.name, challenge.title, succeeded, boostApplied).catch(() => {});
+    }
+  } catch (err) {
+    console.error("Failed to notify challenge result:", err);
+  }
 }
 
 // GET — Get active challenge + recent history (public)
@@ -123,6 +165,9 @@ export async function POST(req: NextRequest) {
 
     await redis.set("challenge:active", JSON.stringify(record));
 
+    // Email all pledgers about the new challenge (fire-and-forget)
+    notifyAllPledgers(redis, record).catch(() => {});
+
     return NextResponse.json({ success: true, challenge: toPublic(record) }, { status: 201 });
   } catch (err) {
     console.error("Failed to create challenge:", err);
@@ -166,6 +211,9 @@ export async function PUT(req: NextRequest) {
       };
       record.status = statusMap[action];
       record.resolvedAt = Date.now();
+
+      // Email all pledgers about the result (fire-and-forget, before cleanup)
+      notifyChallengeResult(redis, record, action === "succeed").catch(() => {});
 
       // Move to history
       await redis.lpush("challenge:history", JSON.stringify(record));

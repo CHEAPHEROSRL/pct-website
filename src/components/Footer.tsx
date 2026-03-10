@@ -39,6 +39,7 @@ export default function Footer() {
             <Link href="/trail-map" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Trail Map</Link>
             <Link href="/journal" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Blog & Vlog</Link>
             <Link href="/donors" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Donor Wall</Link>
+            <Link href="/pledgers" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Pledger Wall</Link>
             <Link href="/support" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Support Paul</Link>
           </div>
           <div className="flex flex-col gap-[16px]">

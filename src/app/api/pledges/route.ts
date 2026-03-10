@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
 import type { PledgeRecord } from "@/lib/types";
+import { sendPledgeConfirmation } from "@/lib/email";
 import crypto from "crypto";
 
 const TOTAL_MILES = 2650;
@@ -78,6 +79,10 @@ export async function POST(req: NextRequest) {
     // Update aggregates
     await redis.incr("pledgers:count");
     await redis.incrbyfloat("pledgers:total_pledged", totalPledge);
+
+    // Send confirmation email (fire-and-forget)
+    const rate = `$${amount}/${interval === 1 ? "mi" : interval + "mi"}`;
+    sendPledgeConfirmation(record.email, record.name, rate, totalPledge).catch(() => {});
 
     return NextResponse.json({
       success: true,
