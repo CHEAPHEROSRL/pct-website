@@ -946,6 +946,171 @@ If you read it, I'd love to hear what you think. Drop a message when you [pledge
 And if you're walking with me on this journey — literally or through your support — thank you. Every step, every pledge, every dollar is a thought made real. Allen would be proud.`,
     },
     prevPost: { slug: "how-pledging-works", title: "How Pledging Works — A Complete Guide", dayNumber: 0 },
+    nextPost: { slug: "finding-your-ikigai", title: "Finding Your Ikigai — Why I Started YesChapter and Walked 2,650 Miles", dayNumber: 0 },
+  },
+  {
+    post: {
+      id: "fb-guide-3", title: "Finding Your Ikigai — Why I Started YesChapter and Walked 2,650 Miles", slug: "finding-your-ikigai",
+      dayNumber: 0, date: "2026-03-18", excerpt: "Ikigai isn't something you find sitting still. It's something you build through consistent, hard, fulfilling, and meaningful work. That's why I'm walking — and that's why YesChapter exists.",
+      coverImage: "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80",
+      images: [], youtubeUrl: "", tags: ["BLOG"],
+      body: `I've been thinking a lot about Ikigai lately. Not in the way most people encounter it — a nice diagram on Instagram, four overlapping circles, a quick "find your purpose" caption. I've been thinking about it in the way you think about something when you're 400 miles into a desert with blisters on your feet and nothing to do but walk and think.
+
+I want to tell you what Ikigai means to me, why it's the reason YesChapter exists, and why this 2,650-mile walk is the most honest expression of it I've ever lived.
+
+---
+
+## What Ikigai Actually Is
+
+Ikigai is a Japanese concept. The word roughly translates to "reason for being" — your reason to get up in the morning. In Okinawa, one of the world's Blue Zones where people routinely live past 100, Ikigai isn't a trendy self-help topic. It's a way of life. Every person has one. It's not optional.
+
+The Western interpretation usually shows four overlapping circles:
+
+1. **What you love** — your passion, what lights you up
+2. **What you're good at** — your skills, your craft
+3. **What the world needs** — your contribution, your service
+4. **What you can be paid for** — your livelihood, your sustainability
+
+Where all four overlap, that's your Ikigai. Simple enough on paper. But here's what most people get wrong: they treat Ikigai like a destination. Like it's a treasure buried somewhere and if you just think hard enough, you'll find it. Sit in a coffee shop, journal about your passions, and eventually — eureka — your Ikigai appears.
+
+That's not how it works. That's not how it works at all.
+
+---
+
+## The Truth About Finding Your Ikigai
+
+Here's what I believe, and it's something I've said many times to people who ask me why I'm doing all of this:
+
+> **"In order to find your Ikigai, you have to do consistent, hard, fulfilling, and meaningful work."**
+
+Read that again. There are four words in there that matter, and each one maps to a part of the Ikigai framework. But they're not abstract. They're *active*. They're things you do, not things you think about.
+
+Let me break it down.
+
+### 1. Consistent — You Show Up Every Day
+
+Consistency is the foundation. You don't find your Ikigai in a flash of inspiration on a Tuesday afternoon. You find it in the accumulation of days, weeks, months, and years of showing up.
+
+On the PCT, consistency means walking. Every single day. Rain or shine, blisters or no blisters, motivated or miserable. There's no "I'll hike when I feel like it." The trail doesn't care about your mood. You wake up, you pack your bag, and you walk north.
+
+In life, consistency means committing to something long enough for it to teach you who you are. Most people quit before they get to the lesson. They try something for two weeks, don't feel the magic, and move on. But Ikigai doesn't reveal itself to tourists. It reveals itself to residents — people who stay.
+
+Consistency also means you're actually *focused on finding balance* across all four elements of Ikigai. You're not obsessing over just one circle. You're not only chasing passion while ignoring what the world needs. You're not only grinding at what pays while ignoring what you love. Consistency means you keep all four in view, every day, and you keep adjusting. That balance — that daily, deliberate calibration — is where happiness lives.
+
+### 2. Hard — You Push Beyond Comfort
+
+If it's easy, it's probably not your Ikigai. That sounds harsh, but think about it. The things worth doing — the things that give you a genuine reason to be alive — are almost always hard.
+
+Walking 2,650 miles is hard. Raising money for cancer research is hard. Building something meaningful from scratch is hard. But hardness is the point. Difficulty is the forge. You don't become a better version of yourself by staying comfortable.
+
+The "hard" element maps to *what you're good at* — because you don't get good at anything without struggling through the part where you're bad at it. Skill is just suffering that paid off. Every blister I've earned on this trail has made me a stronger hiker. Every difficult conversation about cancer has made me a better communicator. Every challenge I've failed at has taught me something I needed to learn.
+
+If you're looking for your Ikigai and everything feels easy, you're probably not looking hard enough.
+
+### 3. Fulfilling — It Feeds Your Soul
+
+Hard work alone isn't enough. Plenty of things are hard and soul-crushing. The work has to fill you up, not drain you. It has to be something that, even on the worst days, you can look at and say: "This matters to me."
+
+Fulfillment is deeply personal. For me, it's the moment I reach a ridge after a brutal climb and see a valley stretching out below me. It's reading a message from someone who pledged because they lost a parent to cancer too. It's knowing that every mile I walk moves money toward research that might save a life.
+
+Fulfillment is what you love — the passion circle. But it's not just fun or pleasure. It's deeper than that. It's the quiet satisfaction of doing work that aligns with who you are at your core.
+
+### 4. Meaningful — It Matters to Others
+
+This is the one most people skip. They focus on what they love, what they're good at, and what pays the bills. But they forget: *what does the world need from you?*
+
+Meaning comes from contribution. From being useful. From knowing that your work touches lives beyond your own. That's the difference between a hobby and a calling.
+
+This PCT walk could have been a personal challenge — just me, the trail, and my thoughts. But it became something bigger when I attached it to a cause. Cancer took both my parents. The fundraiser means that every step I take pushes money toward research, patient support, and prevention. My suffering on the trail translates into funding that might ease someone else's suffering in a hospital.
+
+That's meaningful. That's the circle that makes the other three matter.
+
+---
+
+## The Four Together = Balance = Happiness
+
+Here's the insight that changed everything for me: **Ikigai isn't about finding the perfect intersection. It's about maintaining balance across all four elements.**
+
+If you only do what you love but it's not hard, you stagnate.
+If you only do hard things but they're not fulfilling, you burn out.
+If you only do fulfilling things but they're not meaningful to others, you're selfish.
+If you only do meaningful things but you're inconsistent, you never finish.
+
+Balance is the goal. And balance isn't a static state — it's a daily practice. Some days on the trail, I lean more into the "hard" element. Some days, I lean into "meaningful" by connecting with supporters and sharing the story. Some days, I lean into "fulfilling" by just being present in nature. And every day, I show up consistently.
+
+That balance — across all four elements, maintained through daily practice — is where happiness actually lives. Not in achieving some final state of enlightenment. Not in reaching the northern terminus. But in the *practice* of balancing these four things, day after day after day.
+
+---
+
+## The Choice
+
+There's something else I want to say, and it's important. Maybe the most important thing in this entire post.
+
+> **"Either you say you will change your life for the better, or you say you will stay in your current situation for now, for whatever reason. You are choosing your own life."**
+
+Read that one more time. Sit with it.
+
+There is no middle ground. There is no "I'll get to it someday." There is no "I'm waiting for the right moment." Every day you wake up, you are making a choice. You are either moving toward your Ikigai or you are staying where you are. Both are choices. Both are valid. But both are *yours*.
+
+I'm not here to judge anyone who chooses to stay. Sometimes staying is the right call. Sometimes you have responsibilities, health issues, financial constraints — real reasons to hold steady. That's okay. But own it. Say: "I'm choosing this for now." Don't say: "I can't." Say: "I'm not, right now, and here's why."
+
+Because the moment you realize you're *choosing* — not stuck, not trapped, not a victim of circumstance, but actively choosing — everything changes. You get your power back. You realize that the door was never locked. You were just sitting in front of it.
+
+I chose to walk. I chose to leave my job, my apartment, my routine. I chose to strap a pack to my back and walk from Mexico to Canada for cancer research. Was it comfortable? No. Was it convenient? Absolutely not. But I looked at my life and I said: "I can either change this for the better, or I can stay. And I choose to change."
+
+That choice is available to everyone. Every day. For the rest of your life.
+
+---
+
+## Why YesChapter
+
+People ask about the name. Why "YesChapter"?
+
+Because that's what this is. A new chapter. And the only way to start a new chapter is to say *yes*.
+
+Yes to discomfort. Yes to purpose. Yes to doing something hard and meaningful and fulfilling and consistent. Yes to the unknown. Yes to the trail. Yes to the cause. Yes to showing up every single day even when you don't want to.
+
+YesChapter isn't just a brand. It's a philosophy. It's the belief that every person has the capacity to turn the page — to close the chapter that isn't working and open one that is. But you have to say yes first. You have to choose.
+
+The PCT is my YesChapter. Walking 2,650 miles for cancer research is my way of saying: "I choose this. I choose purpose over comfort. I choose meaning over convenience. I choose to build my Ikigai one step at a time."
+
+---
+
+## The PCT as Ikigai in Motion
+
+Let me map it out clearly, so you can see how this walk embodies all four elements:
+
+**What I love:** Being in nature. Walking. Solitude. The simplicity of trail life. Waking up with the sun and going to sleep with the stars.
+
+**What I'm good at:** Endurance. Stubbornness. Telling stories. Connecting with people. Turning pain into something productive.
+
+**What the world needs:** Cancer research funding. Awareness. Proof that one person can make a difference. A reminder that grief can be transformed into action.
+
+**What sustains it:** Your pledges. Your donations. Your support. The community that has formed around this walk. YesChapter as a platform for inspiring others to start their own chapters.
+
+All four circles. All four active. All four in balance — not perfectly, not every day, but as a practice. As a daily commitment to showing up and doing the work.
+
+That's my Ikigai. I didn't find it sitting in a coffee shop. I found it on a trail, one mile at a time, through consistent, hard, fulfilling, and meaningful work.
+
+---
+
+## Your Ikigai
+
+I'm not going to tell you what your Ikigai is. I can't. Nobody can. That's the whole point — it's *yours*.
+
+But I will tell you this: you won't find it by thinking about it. You'll find it by doing. Start something. Make it hard. Make it meaningful. Show up consistently. Let it fill you up. Adjust as you go.
+
+And when you're standing at a crossroads — when you're deciding whether to change your life or stay where you are — remember: you're choosing either way. There's no neutral. There's no pause button. You're writing your chapter right now, whether you realize it or not.
+
+The only question is: what does your YesChapter look like?
+
+---
+
+If this post resonated with you, I'd love to hear about it. Tell me your YesChapter moment. What did you say yes to? What are you saying yes to next?
+
+[Pledge per mile →](/pledge) and walk this trail with me. Or [donate directly →](/donate) to the cancer foundations. Either way, you're saying yes to something that matters.`,
+    },
+    prevPost: { slug: "as-a-man-thinketh", title: "As a Man Thinketh — The Book That Made Me Walk", dayNumber: 0 },
     nextPost: null,
   },
 ];
