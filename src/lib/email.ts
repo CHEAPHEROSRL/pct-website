@@ -6,7 +6,7 @@ function getResend(): Resend | null {
   return new Resend(key);
 }
 
-const FROM = process.env.EMAIL_FROM || "Paul Barry PCT <noreply@paulbarrypct.com>";
+const FROM = process.env.EMAIL_FROM || "YesChapter <noreply@yeschapter.com>";
 
 interface SendResult {
   success: boolean;
@@ -45,7 +45,7 @@ export async function sendPledgeConfirmation(
     <div style="font-family: Georgia, serif; max-width: 560px; margin: 0 auto; color: #1C1C1C;">
       <div style="background: #3D7A5A; padding: 24px 32px;">
         <h1 style="margin: 0; font-size: 20px; color: white; letter-spacing: 2px; font-family: sans-serif;">
-          PAUL BARRY · PCT 2026
+          YESCHAPTER · PCT 2026
         </h1>
       </div>
       <div style="padding: 32px;">
@@ -63,7 +63,7 @@ export async function sendPledgeConfirmation(
           </p>
         </div>
         <p style="font-size: 14px; color: #5C5C5C; line-height: 1.6;">
-          You can track your pledge anytime at <strong>paulbarrypct.com/my-pledge</strong>.
+          You can track your pledge anytime at <strong>yeschapter.com/my-pledge</strong>.
           When Paul starts trail challenges, you'll have the chance to boost your pledge even further!
         </p>
         <p style="font-size: 14px; color: #8C8A87; margin-top: 32px;">
@@ -89,7 +89,7 @@ export async function sendChallengeStarted(
     <div style="font-family: Georgia, serif; max-width: 560px; margin: 0 auto; color: #1C1C1C;">
       <div style="background: #1C1F1A; padding: 24px 32px;">
         <h1 style="margin: 0; font-size: 20px; color: white; letter-spacing: 2px; font-family: sans-serif;">
-          PAUL BARRY · PCT 2026
+          YESCHAPTER · PCT 2026
         </h1>
       </div>
       <div style="padding: 32px;">
@@ -106,7 +106,7 @@ export async function sendChallengeStarted(
           <p style="margin: 0; font-size: 16px; color: #1C1C1C;">
             <strong>Boost your pledge if Paul makes it!</strong><br/>
             <span style="font-size: 14px; color: #5C5C5C;">
-              Visit paulbarrypct.com to commit a boost. If Paul succeeds, your
+              Visit yeschapter.com to commit a boost. If Paul succeeds, your
               per-mile rate increases automatically.
             </span>
           </p>
@@ -157,13 +157,13 @@ export async function sendChallengeResult(
     <div style="font-family: Georgia, serif; max-width: 560px; margin: 0 auto; color: #1C1C1C;">
       <div style="background: ${succeeded ? "#3D7A5A" : "#1C1F1A"}; padding: 24px 32px;">
         <h1 style="margin: 0; font-size: 20px; color: white; letter-spacing: 2px; font-family: sans-serif;">
-          PAUL BARRY · PCT 2026
+          YESCHAPTER · PCT 2026
         </h1>
       </div>
       <div style="padding: 32px;">
         ${body}
         <p style="font-size: 14px; color: #5C5C5C; margin-top: 24px;">
-          View your pledge: <strong>paulbarrypct.com/my-pledge</strong>
+          View your pledge: <strong>yeschapter.com/my-pledge</strong>
         </p>
         <p style="font-size: 14px; color: #8C8A87; margin-top: 24px;">
           You're receiving this because you pledged to Paul's PCT walk.

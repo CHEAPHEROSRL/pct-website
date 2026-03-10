@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "Terms of Use",
-  description: "Terms of use for the Paul Barry PCT 2026 website.",
+  description: "Terms of use for the YesChapter website.",
 };
 
 export default function TermsOfUsePage() {
@@ -24,7 +24,7 @@ export default function TermsOfUsePage() {
       {/* Body */}
       <section className="flex flex-col gap-[40px] px-6 md:px-12 lg:px-[320px] py-[40px] md:py-[60px] lg:py-[80px] bg-[var(--bg-white)] w-full">
         <LegalSection title="1. Acceptance of Terms">
-          By accessing and using this website (paulbarrypct.com), you agree to be bound by these Terms of Use.
+          By accessing and using this website (yeschapter.com), you agree to be bound by these Terms of Use.
           If you do not agree to these terms, please do not use this site. We reserve the right to update these
           terms at any time, and continued use of the site constitutes acceptance of any changes.
         </LegalSection>
@@ -65,8 +65,8 @@ export default function TermsOfUsePage() {
 
         <LegalSection title="7. Contact Information">
           If you have questions about these Terms of Use, please contact us at{" "}
-          <a href="mailto:paul@paulbarrypct.com" className="text-[var(--burnt-orange)] hover:underline">
-            paul@paulbarrypct.com
+          <a href="mailto:paul@yeschapter.com" className="text-[var(--burnt-orange)] hover:underline">
+            paul@yeschapter.com
           </a>.
         </LegalSection>
       </section>

@@ -51,7 +51,7 @@ The webhook tells our website when a payment is completed, so we can record the 
 3. Click **"Add endpoint"**
 4. Fill in:
    - **Endpoint URL**: `https://pct-website-iota.vercel.app/api/webhooks/stripe`
-     - If using a custom domain: `https://paulbarry.com/api/webhooks/stripe`
+     - If using a custom domain: `https://yeschapter.com/api/webhooks/stripe`
    - **Description** (optional): "PCT Website donation webhook"
 5. Under **"Select events to listen to"**, click **"Select events"**
 6. Search for `checkout.session.completed` and check the box
@@ -166,12 +166,12 @@ When you're ready to accept real money:
 
 ## Step 8: Custom Domain Notes
 
-If you move the site to a custom domain like `paulbarry.com`:
+If you move the site to a custom domain like `yeschapter.com`:
 
 1. The donate flow works automatically — it uses relative URLs
 2. **Update the webhook endpoint** in Stripe Dashboard:
    - Go to Developers → Webhooks
-   - Edit the endpoint URL from `https://pct-website-iota.vercel.app/api/webhooks/stripe` to `https://paulbarry.com/api/webhooks/stripe`
+   - Edit the endpoint URL from `https://pct-website-iota.vercel.app/api/webhooks/stripe` to `https://yeschapter.com/api/webhooks/stripe`
    - Or create a new endpoint and delete the old one
 3. No code changes needed
 4. The same `STRIPE_SECRET_KEY` and Redis store work regardless of domain

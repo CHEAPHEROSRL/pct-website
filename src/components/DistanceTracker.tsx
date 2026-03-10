@@ -72,7 +72,7 @@ export default function DistanceTracker({ compact }: DistanceTrackerProps) {
           him? Reach out and join Paul on the trail.
         </p>
         <a
-          href="mailto:paul@paulbarrypct.com?subject=I want to walk with you on the PCT!"
+          href="mailto:paul@yeschapter.com?subject=I want to walk with you on the PCT!"
           className="flex items-center justify-center gap-[10px] h-[48px] w-full bg-[var(--forest-green)] hover:opacity-90 transition-opacity"
         >
           <Users className="w-[18px] h-[18px] text-[var(--text-white)]" />

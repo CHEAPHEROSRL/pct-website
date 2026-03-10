@@ -1,8 +1,8 @@
-# Paul Barry PCT 2026 — Walking for Cancer
+# YesChapter — Walking for Cancer
 
 ## Project Overview
 
-Personal website for Paul Barry's 2026 Pacific Crest Trail (PCT) thru-hike fundraiser. Paul is walking 2,650 miles from Mexico to Canada to raise awareness and funds for cancer research, patient support, and prevention — in honor of both his parents who he lost to cancer.
+Personal website for Paul Barry's 2026 Pacific Crest Trail (PCT) thru-hike fundraiser (yeschapter.com). Paul is walking 2,650 miles from Mexico to Canada to raise awareness and funds for cancer research, patient support, and prevention — in honor of both his parents who he lost to cancer.
 
 ## Tech Stack
 

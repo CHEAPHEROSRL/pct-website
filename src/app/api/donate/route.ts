@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
           price_data: {
             currency: "usd",
             product_data: {
-              name: "Donation — Paul Barry PCT Walk for Cancer",
+              name: "Donation — YesChapter Walk for Cancer",
               description: `$${amountNum} donation to support cancer research and prevention`,
             },
             unit_amount: amountNum * 100,

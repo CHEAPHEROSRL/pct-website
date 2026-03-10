@@ -17,7 +17,7 @@ export async function geocodeCity(
       `https://nominatim.openstreetmap.org/search?q=${encoded}&format=json&limit=1`,
       {
         headers: {
-          "User-Agent": "PaulBarryPCT2026/1.0",
+          "User-Agent": "YesChapter/1.0",
         },
       }
     );

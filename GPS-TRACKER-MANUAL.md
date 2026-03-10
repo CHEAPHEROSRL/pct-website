@@ -1,6 +1,6 @@
 # PCT GPS Tracker — User Manual
 
-A step-by-step guide to setting up and using the real-time GPS tracker on Paul Barry's PCT 2026 website.
+A step-by-step guide to setting up and using the real-time GPS tracker on the YesChapter website.
 
 ---
 
@@ -98,7 +98,7 @@ Give Paul the auth token from Step 2. He'll need to type it into his phone once.
 ### Starting a Tracking Session
 
 1. **Open the tracker page** on Paul's phone browser:
-   - `https://paulbarry.com/tracker` (if using custom domain)
+   - `https://yeschapter.com/tracker` (if using custom domain)
    - OR `https://pct-website-iota.vercel.app/tracker` (Vercel URL)
 
 2. **Enter the auth token** in the "AUTH TOKEN" field
@@ -149,7 +149,7 @@ Give Paul the auth token from Step 2. He'll need to type it into his phone once.
 
 Anyone visiting the website can see Paul's live location:
 
-1. Go to `https://paulbarry.com/trail-map` (or the Vercel URL)
+1. Go to `https://yeschapter.com/trail-map` (or the Vercel URL)
 2. The map shows:
    - **Orange trail line**: The full PCT route
    - **Orange marker pin**: Paul's current location with day number and nearest landmark
@@ -266,7 +266,7 @@ This returns JSON with the current position and stats. If it returns default/emp
 
 ### Custom Domain
 
-When moving to a custom domain (e.g., `paulbarry.com`):
+When moving to a custom domain (e.g., `yeschapter.com`):
 1. Add the domain in Vercel Dashboard → Settings → Domains
 2. Update DNS records as instructed by Vercel
 3. Everything else works automatically — no code changes needed

@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
-  description: "Privacy policy for the Paul Barry PCT 2026 website.",
+  description: "Privacy policy for the YesChapter website.",
 };
 
 export default function PrivacyPolicyPage() {
@@ -68,8 +68,8 @@ export default function PrivacyPolicyPage() {
         <LegalSection title="7. Contact Us">
           If you have questions about this Privacy Policy or wish to exercise your data rights, please
           contact us at{" "}
-          <a href="mailto:paul@paulbarrypct.com" className="text-[var(--burnt-orange)] hover:underline">
-            paul@paulbarrypct.com
+          <a href="mailto:paul@yeschapter.com" className="text-[var(--burnt-orange)] hover:underline">
+            paul@yeschapter.com
           </a>.
         </LegalSection>
       </section>

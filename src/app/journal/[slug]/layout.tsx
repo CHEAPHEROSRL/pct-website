@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Trail Journal Entry | Paul Barry PCT 2026",
+  title: "Trail Journal Entry | YesChapter",
   description:
-    "A journal entry from Paul Barry's PCT 2026 thru-hike for cancer research.",
+    "A journal entry from Paul's PCT 2026 thru-hike for cancer research.",
 };
 
 export default function JournalPostLayout({

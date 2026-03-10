@@ -13,8 +13,8 @@ export default function ShareButton({
 }) {
   async function handleShare() {
     const shareData = {
-      title: "Paul Barry PCT 2026 — Walking for Cancer",
-      text: "Paul Barry is walking 2,650 miles on the Pacific Crest Trail for cancer awareness. Support his journey!",
+      title: "YesChapter — Walking for Cancer",
+      text: "Paul is walking 2,650 miles on the Pacific Crest Trail for cancer awareness. Support his journey!",
       url: window.location.origin,
     };
 

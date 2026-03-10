@@ -74,7 +74,7 @@ Respond in this exact JSON format:
   "body": "The full Markdown blog post content",
   "excerpt": "A 1-2 sentence teaser (max 200 chars)",
   "tags": ["VLOG"],
-  "instagramCaption": "A short Instagram caption (2-3 sentences) with relevant hashtags. Include #PaulBarryPCT #PCT2026 #WalkingForCancer #PacificCrestTrail and 3-5 relevant ones."
+  "instagramCaption": "A short Instagram caption (2-3 sentences) with relevant hashtags. Include #YesChapter #PCT2026 #WalkingForCancer #PacificCrestTrail and 3-5 relevant ones."
 }`,
       },
     ],
@@ -136,14 +136,14 @@ Respond in this exact JSON format:
     "body": "Full Markdown content",
     "excerpt": "1-2 sentence teaser (max 200 chars)",
     "tags": ["VLOG"],
-    "instagramCaption": "Instagram caption with hashtags including #PaulBarryPCT #PCT2026 #WalkingForCancer #PacificCrestTrail"
+    "instagramCaption": "Instagram caption with hashtags including #YesChapter #PCT2026 #WalkingForCancer #PacificCrestTrail"
   },
   "post2": {
     "title": "Title for the second post",
     "body": "Full Markdown content",
     "excerpt": "1-2 sentence teaser (max 200 chars)",
     "tags": ["BLOG"],
-    "instagramCaption": "Instagram caption with hashtags including #PaulBarryPCT #PCT2026 #WalkingForCancer #PacificCrestTrail"
+    "instagramCaption": "Instagram caption with hashtags including #YesChapter #PCT2026 #WalkingForCancer #PacificCrestTrail"
   }
 }`,
       },

@@ -362,7 +362,7 @@ Every time a blog post is generated from a video (either automatically or manual
 4. The Instagram caption will appear in a white box below the post titles
 5. It includes:
    - A short, engaging caption (2-3 sentences)
-   - Relevant hashtags (always includes #PaulBarryPCT #PCT2026 #WalkingForCancer #PacificCrestTrail plus 3-5 topic-specific ones)
+   - Relevant hashtags (always includes #YesChapter #PCT2026 #WalkingForCancer #PacificCrestTrail plus 3-5 topic-specific ones)
 6. Click the **"Copy"** button in the top-right corner of the caption box
 7. The text "Copy" changes to **"Copied!"** — the caption is now on your clipboard
 8. Open Instagram on your phone or browser

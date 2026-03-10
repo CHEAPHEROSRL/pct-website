@@ -177,7 +177,7 @@ export default function PressKitPage() {
         <p className="font-heading text-[15px] leading-[1.6] text-[var(--text-muted)] -mt-[20px]">
           High-resolution photos available for editorial use. Please credit:{" "}
           <span className="text-[var(--text-secondary)]">
-            Paul Barry / paulbarrypct.com
+            Paul Barry / yeschapter.com
           </span>
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-[24px]">
@@ -216,18 +216,18 @@ export default function PressKitPage() {
           </span>
           <div className="w-[48px] h-[1px] bg-[#FFFFFF22]" />
           <a
-            href="mailto:paul@paulbarrypct.com"
+            href="mailto:paul@yeschapter.com"
             className="flex items-center gap-[10px] hover:opacity-80 transition-opacity"
           >
             <Mail className="w-[16px] h-[16px] text-[var(--burnt-orange)]" />
             <span className="font-label font-semibold text-[15px] tracking-[0.5px] text-[var(--text-white)]">
-              paul@paulbarrypct.com
+              paul@yeschapter.com
             </span>
           </a>
           <div className="flex items-center gap-[10px]">
             <Globe className="w-[16px] h-[16px] text-[var(--burnt-orange)]" />
             <span className="font-label font-semibold text-[15px] tracking-[0.5px] text-[var(--text-white)]">
-              paulbarrypct.com
+              yeschapter.com
             </span>
           </div>
         </div>

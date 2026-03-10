@@ -4,21 +4,21 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "Paul Barry PCT 2026 — Walking for Cancer",
-    template: "%s | Paul Barry PCT 2026",
+    default: "YesChapter — Walking for Cancer",
+    template: "%s | YesChapter",
   },
   description:
-    "Paul Barry is walking the entire Pacific Crest Trail to raise awareness and funds for cancer survivors, patients, and prevention.",
+    "Paul is walking the entire Pacific Crest Trail to raise awareness and funds for cancer survivors, patients, and prevention.",
   openGraph: {
     type: "website",
-    siteName: "Paul Barry PCT 2026",
-    title: "Paul Barry PCT 2026 — Walking for Cancer",
+    siteName: "YesChapter",
+    title: "YesChapter — Walking for Cancer",
     description:
       "Walking 2,650 miles on the Pacific Crest Trail for cancer awareness, survivor support, and prevention education.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Paul Barry PCT 2026 — Walking for Cancer",
+    title: "YesChapter — Walking for Cancer",
     description:
       "Walking 2,650 miles on the Pacific Crest Trail for cancer awareness, survivor support, and prevention education.",
   },

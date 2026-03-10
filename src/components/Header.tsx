@@ -20,10 +20,7 @@ export default function Header({ activeItem }: HeaderProps) {
       <Link href="/" className="flex items-center gap-[12px]">
         <Mountain className="w-[28px] h-[28px] text-[var(--forest-green)]" />
         <span className="font-label font-bold text-[16px] tracking-[3px] text-[var(--text-primary)]">
-          PAUL BARRY
-        </span>
-        <span className="font-label font-medium text-[11px] tracking-[2px] text-[var(--text-muted)] hidden sm:inline">
-          PCT 2026
+          YESCHAPTER
         </span>
       </Link>
       <nav className="hidden lg:flex items-center gap-[40px]">

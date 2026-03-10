@@ -11,10 +11,7 @@ export default function Footer() {
           <div className="flex items-center gap-[12px]">
             <Mountain className="w-[24px] h-[24px] text-[var(--forest-green)]" />
             <span className="font-label font-bold text-[16px] tracking-[3px] text-[var(--text-white)]">
-              PAUL BARRY
-            </span>
-            <span className="font-label font-medium text-[11px] tracking-[2px] text-[var(--text-muted)]">
-              PCT 2026
+              YESCHAPTER
             </span>
           </div>
           <p className="font-heading text-[14px] leading-[1.6] text-[#FFFFFF88] w-full lg:w-[340px]">
@@ -57,7 +54,7 @@ export default function Footer() {
             </span>
             <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Instagram</a>
             <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">YouTube</a>
-            <a href="mailto:paul@paulbarrypct.com" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Contact Paul</a>
+            <a href="mailto:paul@yeschapter.com" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Contact Paul</a>
             <Link href="/press-kit" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Press Kit</Link>
           </div>
         </div>
@@ -69,7 +66,7 @@ export default function Footer() {
       {/* Bottom */}
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0 w-full">
         <span className="font-label font-medium text-[11px] tracking-[0.5px] text-[#FFFFFF55]">
-          &copy; 2026 Paul Barry PCT Walk for Cancer. All rights reserved.
+          &copy; 2026 YesChapter — Walk for Cancer. All rights reserved.
         </span>
         <div className="flex gap-[24px]">
           <Link href="/privacy-policy" className="font-label font-medium text-[11px] tracking-[0.5px] text-[#FFFFFF55] hover:text-white cursor-pointer">

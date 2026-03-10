@@ -1,6 +1,6 @@
 # Coding Partner Setup Guide — PCT Website
 
-Welcome! This guide will get you set up to work on the **Paul Barry PCT 2026** website using VS Code and Claude Code.
+Welcome! This guide will get you set up to work on the **YesChapter** website using VS Code and Claude Code.
 
 ---
 
