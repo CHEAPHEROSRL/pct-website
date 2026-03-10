@@ -126,8 +126,20 @@ export interface PledgeRecord {
   totalPledge: number;
   anonymous: boolean;
   boosts: PledgeBoost[];
+  city?: string;
+  country?: string;
+  lat?: number;
+  lng?: number;
   createdAt: number;
   updatedAt: number;
+}
+
+export interface PledgerLocation {
+  name: string;
+  city: string;
+  country: string;
+  lat: number;
+  lng: number;
 }
 
 export interface PledgePublic {

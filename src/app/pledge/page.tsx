@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { Heart, Mail, ArrowRight, HeartHandshake } from "lucide-react";
 import Link from "next/link";
 import Header from "@/components/Header";
@@ -40,6 +40,19 @@ export default function PledgePage() {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+
+  // Silent IP geolocation on mount
+  const geoRef = useRef<{ city?: string; country?: string; lat?: number; lng?: number }>({});
+  useEffect(() => {
+    fetch("https://ip-api.com/json/?fields=city,country,lat,lon")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.lat && data.lon) {
+          geoRef.current = { city: data.city, country: data.country, lat: data.lat, lng: data.lon };
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const totalPledge = (amount * TOTAL_MILES) / intervalValue;
   const perFoundation = totalPledge / 2;
@@ -88,6 +101,7 @@ export default function PledgePage() {
           amount,
           interval: intervalValue,
           anonymous: !name,
+          ...geoRef.current,
         }),
       });
 

@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { email, name, amount, interval, anonymous } = body;
+    const { email, name, amount, interval, anonymous, city, country, lat, lng } = body;
 
     if (!email || typeof email !== "string" || !email.includes("@")) {
       return NextResponse.json({ error: "Valid email is required" }, { status: 400 });
@@ -66,6 +66,10 @@ export async function POST(req: NextRequest) {
       totalPledge,
       anonymous: !!anonymous,
       boosts: [],
+      city: typeof city === "string" ? city.trim().slice(0, 100) : undefined,
+      country: typeof country === "string" ? country.trim().slice(0, 100) : undefined,
+      lat: typeof lat === "number" && lat >= -90 && lat <= 90 ? lat : undefined,
+      lng: typeof lng === "number" && lng >= -180 && lng <= 180 ? lng : undefined,
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };

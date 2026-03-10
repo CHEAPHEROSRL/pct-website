@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useMemo } from "react";
-import { MapContainer, TileLayer, Polyline, Marker, Popup, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Polyline, Marker, Popup, CircleMarker, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { pctRouteCoords } from "@/lib/trail";
+import type { PledgerLocation } from "@/lib/types";
 
 function FlyToHandler({ target }: { target?: [number, number, number] }) {
   const map = useMap();
@@ -53,6 +54,8 @@ interface TrailMapViewProps {
   nearestLocationName?: string;
   totalMiles?: number;
   currentElevation?: number;
+  mode?: "trail" | "pledgers";
+  pledgerLocations?: PledgerLocation[];
 }
 
 // Default fallback position (Campo, CA — starting point)
@@ -65,6 +68,8 @@ export default function TrailMapView({
   nearestLocationName = "Campo",
   totalMiles = 0,
   currentElevation = 2915,
+  mode = "trail",
+  pledgerLocations = [],
 }: TrailMapViewProps) {
   const position: [number, number] = currentPosition
     ? [currentPosition.lat, currentPosition.lng]
@@ -75,49 +80,97 @@ export default function TrailMapView({
     [dayNumber, nearestLocationName]
   );
 
+  // For pledger mode, zoom out to world view
+  const effectiveFlyTo = mode === "pledgers"
+    ? [20, -40, 2] as [number, number, number]
+    : flyTo;
+
   return (
     <MapContainer
-      center={[40.0, -120.0]}
-      zoom={6}
+      center={mode === "pledgers" ? [20, -40] : [40.0, -120.0]}
+      zoom={mode === "pledgers" ? 2 : 6}
       zoomControl={true}
       style={{ width: "100%", height: "100%" }}
       scrollWheelZoom={true}
     >
-      <FlyToHandler target={flyTo} />
+      <FlyToHandler target={effectiveFlyTo} />
       <TileLayer
         url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         maxZoom={19}
       />
 
-      {/* PCT Trail Route */}
-      <Polyline
-        positions={pctRouteCoords}
-        pathOptions={{
-          color: "#C45C26",
-          weight: 3,
-          opacity: 0.85,
-        }}
-      />
+      {mode === "trail" && (
+        <>
+          {/* PCT Trail Route */}
+          <Polyline
+            positions={pctRouteCoords}
+            pathOptions={{
+              color: "#C45C26",
+              weight: 3,
+              opacity: 0.85,
+            }}
+          />
 
-      {/* Current Position Marker */}
-      <Marker position={position} icon={icon}>
-        <Popup>
-          <div style={{ fontFamily: "'Barlow Semi Condensed', sans-serif", textAlign: "center" }}>
-            <strong style={{ fontSize: 14 }}>
-              Day {dayNumber} — {nearestLocationName}
-            </strong>
-            <br />
-            <span style={{ fontSize: 12, color: "#5C5C5C" }}>
-              Mile {totalMiles.toLocaleString()} of 2,650
-            </span>
-            <br />
-            <span style={{ fontSize: 12, color: "#5C5C5C" }}>
-              Elevation: {currentElevation.toLocaleString()} ft
-            </span>
-          </div>
-        </Popup>
-      </Marker>
+          {/* Current Position Marker */}
+          <Marker position={position} icon={icon}>
+            <Popup>
+              <div style={{ fontFamily: "'Barlow Semi Condensed', sans-serif", textAlign: "center" }}>
+                <strong style={{ fontSize: 14 }}>
+                  Day {dayNumber} — {nearestLocationName}
+                </strong>
+                <br />
+                <span style={{ fontSize: 12, color: "#5C5C5C" }}>
+                  Mile {totalMiles.toLocaleString()} of 2,650
+                </span>
+                <br />
+                <span style={{ fontSize: 12, color: "#5C5C5C" }}>
+                  Elevation: {currentElevation.toLocaleString()} ft
+                </span>
+              </div>
+            </Popup>
+          </Marker>
+        </>
+      )}
+
+      {mode === "pledgers" && (
+        <>
+          {/* PCT Trail Route (faded) */}
+          <Polyline
+            positions={pctRouteCoords}
+            pathOptions={{
+              color: "#C45C26",
+              weight: 2,
+              opacity: 0.3,
+            }}
+          />
+
+          {/* Pledger location markers */}
+          {pledgerLocations.map((loc, i) => (
+            <CircleMarker
+              key={`${loc.lat}-${loc.lng}-${i}`}
+              center={[loc.lat, loc.lng]}
+              radius={7}
+              pathOptions={{
+                color: "#FFFFFF",
+                weight: 2,
+                fillColor: "#C45C26",
+                fillOpacity: 0.85,
+              }}
+            >
+              <Popup>
+                <div style={{ fontFamily: "'Barlow Semi Condensed', sans-serif", textAlign: "center" }}>
+                  <strong style={{ fontSize: 13 }}>{loc.name}</strong>
+                  <br />
+                  <span style={{ fontSize: 11, color: "#5C5C5C" }}>
+                    {loc.city}, {loc.country}
+                  </span>
+                </div>
+              </Popup>
+            </CircleMarker>
+          ))}
+        </>
+      )}
     </MapContainer>
   );
 }
