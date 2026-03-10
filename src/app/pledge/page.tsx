@@ -364,7 +364,10 @@ export default function PledgePage() {
           <p className="font-heading italic text-[13px] leading-[1.5] text-[var(--text-muted)]">
             No payment is collected. This is a pledge of intent. When Paul
             reaches Canada, you&apos;ll receive an email to donate directly to
-            the foundations.
+            the foundations.{" "}
+            <Link href="/journal/how-pledging-works" className="text-[var(--burnt-orange)] not-italic hover:underline">
+              How does this work?
+            </Link>
           </p>
         </form>
 
@@ -519,6 +522,16 @@ export default function PledgePage() {
               you to donate your pledge — 50/50 to two cancer foundations.
             </p>
           </div>
+        </div>
+
+        {/* Learn More */}
+        <div className="flex items-center justify-center">
+          <Link
+            href="/journal/how-pledging-works"
+            className="font-heading text-[15px] text-[var(--burnt-orange)] hover:underline"
+          >
+            Want the full details? Read our complete guide to how pledging works &rarr;
+          </Link>
         </div>
 
         {/* Extra CTA */}

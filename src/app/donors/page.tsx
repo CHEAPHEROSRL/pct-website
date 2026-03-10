@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Search, ChevronRight, ChevronLeft } from "lucide-react";
+import { Search, ChevronRight, ChevronLeft, Users, TrendingUp, Heart, Target } from "lucide-react";
+import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ChallengeBanner from "@/components/ChallengeBanner";
@@ -106,6 +107,79 @@ export default function DonorsPage() {
         </div>
       </section>
 
+      {/* Stats Bar */}
+      <section className="flex flex-col sm:flex-row items-center gap-[24px] sm:gap-0 sm:divide-x sm:divide-[var(--border-subtle)] px-6 md:px-12 lg:px-[120px] py-[24px] bg-[var(--bg-card)] border-y border-[var(--border-subtle)] w-full">
+        <div className="flex items-center gap-[12px] sm:pr-[40px]">
+          <TrendingUp className="w-[20px] h-[20px] text-[var(--forest-green)]" />
+          <div className="flex flex-col">
+            <span className="font-heading font-semibold text-[24px] text-[var(--text-primary)] leading-[1]">
+              ${totalRaised.toLocaleString()}
+            </span>
+            <span className="font-label text-[11px] tracking-[1px] text-[var(--text-muted)]">
+              TOTAL RAISED
+            </span>
+          </div>
+        </div>
+        <div className="flex items-center gap-[12px] sm:px-[40px]">
+          <Users className="w-[20px] h-[20px] text-[var(--burnt-orange)]" />
+          <div className="flex flex-col">
+            <span className="font-heading font-semibold text-[24px] text-[var(--text-primary)] leading-[1]">
+              {donorCount}
+            </span>
+            <span className="font-label text-[11px] tracking-[1px] text-[var(--text-muted)]">
+              DONORS
+            </span>
+          </div>
+        </div>
+        <div className="flex items-center gap-[12px] sm:px-[40px]">
+          <Heart className="w-[20px] h-[20px] text-[var(--forest-green)]" />
+          <div className="flex flex-col">
+            <span className="font-heading font-semibold text-[24px] text-[var(--text-primary)] leading-[1]">
+              ${averageDonation.toLocaleString()}
+            </span>
+            <span className="font-label text-[11px] tracking-[1px] text-[var(--text-muted)]">
+              AVERAGE
+            </span>
+          </div>
+        </div>
+        <div className="flex items-center gap-[12px] sm:pl-[40px]">
+          <Target className="w-[20px] h-[20px] text-[var(--burnt-orange)]" />
+          <div className="flex flex-col">
+            <span className="font-heading font-semibold text-[24px] text-[var(--text-primary)] leading-[1]">
+              {progressPercent}%
+            </span>
+            <span className="font-label text-[11px] tracking-[1px] text-[var(--text-muted)]">
+              OF ${goalAmount.toLocaleString()} GOAL
+            </span>
+          </div>
+        </div>
+      </section>
+
+      {/* Recent Donors */}
+      {donors.length > 0 && (
+        <section className="flex flex-col gap-[16px] px-6 md:px-12 lg:px-[120px] py-[24px] bg-[var(--bg-white)] border-b border-[var(--border-subtle)] w-full">
+          <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-muted)]">
+            RECENT DONORS
+          </span>
+          <div className="flex flex-wrap gap-[12px]">
+            {donors.slice(0, 8).map((d, i) => (
+              <div
+                key={`recent-${i}`}
+                className="flex items-center gap-[10px] bg-[var(--bg-card)] border border-[var(--border-subtle)] px-[16px] py-[10px]"
+              >
+                <div className="w-[24px] h-[24px] rounded-full shrink-0" style={{ backgroundColor: d.color }} />
+                <span className="font-heading font-semibold text-[14px] text-[var(--text-primary)]">
+                  {d.name}
+                </span>
+                <span className="font-heading font-semibold text-[14px] text-[var(--forest-green)]">
+                  {d.amount}
+                </span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* Filter Bar */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 md:gap-0 px-6 md:px-12 lg:px-[120px] py-[16px] bg-[var(--bg-warm)] w-full">
         <div className="flex items-center gap-[10px] bg-[var(--bg-white)] border border-[var(--border-subtle)] px-[16px] py-[10px] w-full md:w-auto">
@@ -139,7 +213,8 @@ export default function DonorsPage() {
       <section className="flex flex-col px-6 md:px-12 lg:px-[120px] pb-[48px] md:pb-[80px] bg-[var(--bg-warm)] w-full">
         {/* Desktop Table Header */}
         <div className="hidden md:flex bg-[var(--bg-dark)] px-[20px] py-[12px] w-full">
-          <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)] w-[360px]">DONOR</span>
+          <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)] w-[60px]">#</span>
+          <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)] w-[300px]">DONOR</span>
           <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)] w-[120px]">AMOUNT</span>
           <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)] w-[140px]">DATE</span>
           <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">MESSAGE</span>
@@ -158,17 +233,23 @@ export default function DonorsPage() {
         ) : (
           <>
             {/* Desktop Rows */}
-            {paged.map((d, i) => (
-              <div key={d.name + d.date} className={`hidden md:flex items-center px-[20px] py-[16px] border-b border-[var(--border-subtle)] w-full ${i % 2 === 0 ? "bg-[var(--bg-white)]" : "bg-[var(--bg-card)]"}`}>
-                <div className="flex items-center gap-[12px] w-[360px]">
-                  <div className="w-[32px] h-[32px] rounded-full shrink-0" style={{ backgroundColor: d.color }} />
-                  <span className="font-heading font-semibold text-[15px] text-[var(--text-primary)]">{d.name}</span>
+            {paged.map((d, i) => {
+              const rank = (currentPage - 1) * PER_PAGE + i + 1;
+              return (
+                <div key={d.name + d.date} className={`hidden md:flex items-center px-[20px] py-[16px] border-b border-[var(--border-subtle)] w-full ${i % 2 === 0 ? "bg-[var(--bg-white)]" : "bg-[var(--bg-card)]"}`}>
+                  <span className={`font-heading font-semibold text-[16px] w-[60px] ${rank <= 3 ? "text-[var(--burnt-orange)]" : "text-[var(--text-muted)]"}`}>
+                    {rank}
+                  </span>
+                  <div className="flex items-center gap-[12px] w-[300px]">
+                    <div className="w-[32px] h-[32px] rounded-full shrink-0" style={{ backgroundColor: d.color }} />
+                    <span className="font-heading font-semibold text-[15px] text-[var(--text-primary)]">{d.name}</span>
+                  </div>
+                  <span className="font-heading font-semibold text-[15px] text-[var(--forest-green)] w-[120px]">{d.amount}</span>
+                  <span className="font-label font-medium text-[13px] text-[var(--text-muted)] w-[140px]">{d.date}</span>
+                  <span className="font-heading italic text-[13px] text-[var(--text-secondary)] flex-1">{d.message}</span>
                 </div>
-                <span className="font-heading font-semibold text-[15px] text-[var(--forest-green)] w-[120px]">{d.amount}</span>
-                <span className="font-label font-medium text-[13px] text-[var(--text-muted)] w-[140px]">{d.date}</span>
-                <span className="font-heading italic text-[13px] text-[var(--text-secondary)] flex-1">{d.message}</span>
-              </div>
-            ))}
+              );
+            })}
 
             {/* Mobile Card Layout */}
             {paged.map((d, i) => (
@@ -219,6 +300,35 @@ export default function DonorsPage() {
             )}
           </div>
         )}
+      </section>
+
+      {/* CTA */}
+      <section className="flex flex-col items-center gap-[20px] px-6 md:px-12 lg:px-[120px] py-[48px] bg-[var(--bg-white)] border-t border-[var(--border-subtle)] w-full">
+        <h2 className="font-heading font-semibold text-[24px] text-[var(--text-primary)] text-center">
+          Join the Donor Wall
+        </h2>
+        <p className="font-heading text-[16px] text-[var(--text-secondary)] text-center max-w-[500px]">
+          Every donation goes directly to two cancer foundations — Cancer Foundation California and Cancer Foundation Sydney. Paul receives $0.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-[12px]">
+          <Link
+            href="/donate"
+            className="flex items-center gap-[8px] bg-[var(--burnt-orange)] px-[32px] py-[14px] hover:opacity-90 transition-opacity"
+          >
+            <Heart className="w-[16px] h-[16px] text-[var(--text-white)]" />
+            <span className="font-label font-bold text-[13px] tracking-[2px] text-[var(--text-white)]">
+              DONATE NOW
+            </span>
+          </Link>
+          <Link
+            href="/pledge"
+            className="flex items-center gap-[8px] border border-[var(--border-subtle)] px-[32px] py-[14px] hover:bg-[var(--bg-card)] transition-colors"
+          >
+            <span className="font-label font-bold text-[13px] tracking-[2px] text-[var(--text-secondary)]">
+              OR PLEDGE PER MILE
+            </span>
+          </Link>
+        </div>
       </section>
 
       <Footer />

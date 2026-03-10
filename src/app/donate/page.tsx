@@ -103,7 +103,7 @@ export default function DonatePage() {
             <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">SUPPORT THE CAUSE</span>
             <h1 className="font-heading font-semibold text-[28px] md:text-[34px] lg:text-[40px] tracking-[-0.5px] text-[var(--text-primary)]">Make a Donation</h1>
             <p className="font-heading text-[16px] leading-[1.6] text-[var(--text-secondary)]">
-              100% of your donation goes directly to cancer research, patient support, and prevention education programs.
+              100% of your donation goes to two cancer foundations — Cancer Foundation California and Cancer Foundation Sydney. Paul receives $0 from donations.
             </p>
           </div>
 
@@ -268,6 +268,19 @@ export default function DonatePage() {
                 </div>
               </div>
             ))}
+          </div>
+          {/* Pledge Alternative */}
+          <div className="flex flex-col gap-[12px] bg-[var(--bg-card)] border border-[var(--border-subtle)] p-[28px]">
+            <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--burnt-orange)]">PREFER TO PLEDGE PER MILE?</span>
+            <p className="font-heading text-[14px] leading-[1.6] text-[var(--text-secondary)]">
+              Instead of a one-time donation, pledge a small amount per mile Paul walks. Pay nothing now — only when he finishes.
+            </p>
+            <Link href="/pledge" className="flex items-center gap-[8px] cursor-pointer group">
+              <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--burnt-orange)] group-hover:underline">SET A PLEDGE</span>
+            </Link>
+            <Link href="/journal/how-pledging-works" className="font-heading text-[13px] text-[var(--text-muted)] hover:text-[var(--burnt-orange)]">
+              Learn how pledging works &rarr;
+            </Link>
           </div>
         </div>
       </section>

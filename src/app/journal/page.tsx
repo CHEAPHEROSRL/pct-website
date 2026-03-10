@@ -58,6 +58,7 @@ const fallbackEntries: JournalEntry[] = [
   { slug: "through-the-desert-wind", img: "https://images.unsplash.com/photo-1688057951002-a159e26c7f82?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80", day: "DAY 15", date: "APRIL 11, 2026", title: "Through the Desert Wind", excerpt: "The heat is relentless, but the sunsets make it all worthwhile. Met a fellow hiker who lost her mother to breast cancer.", tag: "BLOG" },
   { slug: "wildflower-season", img: "https://images.unsplash.com/photo-1759491265362-3bd88910a036?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80", day: "DAY 20", date: "APRIL 16, 2026", title: "Wildflower Season", excerpt: "The desert is blooming. Purple, yellow, orange \u2014 everywhere. Nature\u2019s reminder that beauty follows hardship.", tag: "PHOTOS" },
   { slug: "sierra-nights", img: "https://images.unsplash.com/photo-1759150954328-8b0b005ade84?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80", day: "DAY 30", date: "APRIL 26, 2026", title: "Sierra Nights", excerpt: "The stars remind me of camping with my dad. I can feel him walking with me. Tonight\u2019s vlog is for him.", tag: "VLOG" },
+  { slug: "how-pledging-works", img: "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80", day: "GUIDE", date: "MARCH 10, 2026", title: "How Pledging Works \u2014 A Complete Guide", excerpt: "Everything you need to know about pledging per mile: how it works, when you pay, where the money goes, and why this model keeps Paul accountable.", tag: "BLOG" },
 ];
 
 const PER_PAGE = 6;

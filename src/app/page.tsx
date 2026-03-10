@@ -49,7 +49,7 @@ export default function Home() {
             One man. One trail.{"\n"}One cause worth walking for.
           </h1>
           <p className="font-heading text-[16px] md:text-[18px] lg:text-[20px] leading-[1.6] text-[#FFFFFFCC] w-full lg:w-[700px]">
-            Paul Barry is walking the entire Pacific Crest Trail to raise awareness{"\n"}and funds for cancer survivors, patients, and prevention.
+            Paul Barry is walking the entire Pacific Crest Trail to raise funds{"\n"}for two cancer foundations. Paul takes nothing — every dollar goes{"\n"}to research, patient support, and prevention.
           </p>
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-[16px]">
             <Link
@@ -332,10 +332,10 @@ export default function Home() {
         <div className="relative flex flex-col items-center justify-center gap-[16px] md:gap-[24px] h-full px-6 md:px-12 lg:px-[120px]">
           <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">EVERY MILE MATTERS</span>
           <h2 className="font-heading font-semibold text-[24px] md:text-[34px] lg:text-[42px] leading-[1.2] tracking-[-0.5px] text-[var(--text-white)] text-center w-full lg:w-[800px]">
-            Help Paul Complete This Journey{"\n"}For Those Who Can&apos;t Walk It Themselves
+            Walk With Paul.{"\n"}Fund the Fight Against Cancer.
           </h2>
           <p className="font-heading text-[15px] md:text-[18px] leading-[1.6] text-[#FFFFFFAA] text-center w-full lg:w-[600px]">
-            100% of donations go directly to cancer research, patient support, and prevention education.
+            This is a fundraiser for two cancer foundations — one in California, one in Sydney. Paul receives $0 from pledges and donations. You can also support Paul directly on the trail.
           </p>
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-[16px]">
             <Link

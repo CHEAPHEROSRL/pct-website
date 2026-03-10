@@ -688,6 +688,143 @@ Thirty days. Roughly 450 miles. I've worn through one pair of shoes, eaten appro
 Five more months to go. One step at a time.`,
     },
     prevPost: { slug: "wildflower-season", title: "Wildflower Season", dayNumber: 20 },
+    nextPost: { slug: "how-pledging-works", title: "How Pledging Works — A Complete Guide", dayNumber: 0 },
+  },
+  {
+    post: {
+      id: "fb-guide-1", title: "How Pledging Works — A Complete Guide", slug: "how-pledging-works",
+      dayNumber: 0, date: "2026-03-10", excerpt: "Everything you need to know about pledging per mile: how it works, when you pay, where the money goes, and why this model keeps Paul accountable.",
+      coverImage: "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80",
+      images: [], youtubeUrl: "", tags: ["BLOG"],
+      body: `This is a complete guide to how the pledge-per-mile system works for Paul's PCT fundraiser. Whether you're considering making a pledge or you've already pledged and want to understand the details, this post covers everything.
+
+## The Big Idea
+
+Instead of donating a lump sum upfront, you pledge a small amount per mile that Paul walks on the Pacific Crest Trail. The more miles Paul completes, the more your pledge is worth. **You pay nothing now.** Payment only happens after Paul finishes — and only for the miles he actually walked.
+
+This model does two important things:
+1. **It keeps Paul accountable.** If he doesn't walk, you don't pay. Every dollar of your pledge is earned on the trail, mile by mile.
+2. **It creates momentum.** As Paul racks up miles, the total fundraising amount grows in real-time — creating excitement and encouraging others to join.
+
+---
+
+## Step by Step: How It Works
+
+### Step 1 — Set Your Pledge
+
+Go to the [Pledge page](/pledge) and choose how much you want to pledge per mile. You can pick a preset like 10¢/mile or $1/mile, or set a custom amount with the slider.
+
+You'll also choose a **pledge interval** — every mile, every 10 miles, or every 100 miles. This just changes the unit, not the math. For example:
+- **$0.10 per mile** = $265 total if Paul completes all 2,650 miles
+- **$1.00 per 10 miles** = also $265 total
+- **$10.00 per 100 miles** = also $265 total
+
+All three are equivalent. Pick whichever feels most natural to you.
+
+### Step 2 — Paul Walks
+
+Once your pledge is set, that's it for now. Paul hits the trail and you follow along. You can:
+- Track his progress on the [Trail Map](/trail-map)
+- Read his [Journal](/journal) entries
+- Watch your running total grow on your [Pledge Dashboard](/my-pledge)
+- Participate in trail challenges to boost your pledge (more on that below)
+
+**You are not charged anything during this phase.** Your pledge is a commitment of intent, not a payment.
+
+### Step 3 — Paul Finishes (or Doesn't)
+
+When Paul reaches Manning Park, BC — the northern terminus of the PCT — you'll receive an email with:
+- A personal thank-you video from Paul
+- Your final pledge total (based on actual miles walked)
+- A link to donate your pledge amount directly to the two cancer foundations
+
+**If Paul doesn't finish the full trail**, your pledge total is calculated based on the miles he actually completed. If he walks 1,500 of 2,650 miles, a $0.10/mile pledge would be $150, not $265.
+
+---
+
+## Where Does the Money Go?
+
+**100% of your pledge goes to two cancer foundations.** Paul receives $0 from pledges and donations.
+
+The two foundations are:
+- **Cancer Foundation — California** (50% of your pledge)
+- **Cancer Foundation — Sydney, Australia** (50% of your pledge)
+
+These foundations fund cancer research, patient support programs, screening events, and prevention education. Paul chose one in each hemisphere to honor both his parents — his mother, who was treated in Sydney, and his father, who was treated in California.
+
+> **Paul takes nothing.** Not a cent. Pledges and donations go directly to the foundations. If you want to support Paul on the trail (food, gear, rest days), that's a separate stream through the [Support Paul](/support) page.
+
+---
+
+## The Pledge Dashboard
+
+After you pledge, you can check your [Pledge Dashboard](/my-pledge) anytime by entering the email you used. Your dashboard shows:
+
+- **Your running total** — how much your pledge is currently worth based on miles Paul has walked so far
+- **Your pledge rate** — your per-mile amount, including any challenge boosts
+- **Foundation split** — how your pledge will be divided between the two foundations
+- **Pledge history** — your original pledge and any boosts from challenges
+
+---
+
+## Challenge Boosts
+
+During the hike, Paul will occasionally set **trail challenges** — time-boxed goals like "Hike 30 miles in 24 hours" or "Summit Mt. Whitney by Friday." When a challenge is active, you can **boost your pledge** by committing extra cents per mile.
+
+Here's how it works:
+1. A challenge goes live (you'll see a banner across the site)
+2. You enter your email and a boost amount (e.g., +$0.05/mile)
+3. The boost is **pre-committed** — it only applies if Paul succeeds
+4. If Paul completes the challenge, your boost is permanently added to your pledge rate
+5. If Paul fails, nothing changes — no boost is applied
+
+Boosts stack. If you boost during three challenges, all three amounts are added to your base pledge. You can see your complete boost history on your Pledge Dashboard.
+
+---
+
+## Frequently Asked Questions
+
+**When do I actually pay?**
+Only after Paul reaches Canada (or stops hiking). You'll receive an email with a donation link. Payment is voluntary — you won't be auto-charged.
+
+**Is there a minimum pledge?**
+Yes, the minimum is $0.01 per mile ($26.50 total if Paul finishes). There's no maximum.
+
+**Can I change my pledge?**
+You can increase your pledge anytime by visiting the [Pledge page](/pledge) again with the same email. Challenge boosts also increase your pledge automatically.
+
+**What if I can't pay the full amount at the end?**
+That's okay. The pledge is a commitment of intent, not a binding contract. Donate what you can when the time comes. Every dollar helps.
+
+**Is my pledge anonymous?**
+If you leave the name field blank when pledging, you'll appear as "Anonymous" on the pledger wall. Your email is never displayed publicly.
+
+**Can I also make a one-time donation?**
+Absolutely. Visit the [Donate page](/donate) to make a one-time donation anytime. Donations also go 100% to the two cancer foundations.
+
+**What about supporting Paul directly?**
+If you want to buy Paul a meal, new boots, or fund a rest day, visit the [Support Paul](/support) page. Trail support goes directly to Paul and is completely separate from the cancer foundation fundraiser.
+
+---
+
+## Why This Model?
+
+Paul chose the pledge-per-mile model because it aligns everyone's incentives:
+- **You** only pay for real miles walked
+- **Paul** is motivated to complete every mile, knowing each step grows the total
+- **The foundations** benefit from a system that encourages participation and builds over time
+
+It turns a solo hike into a team effort. Every mile Paul walks, hundreds of pledgers are walking with him in spirit — and in dollars.
+
+---
+
+## Ready to Pledge?
+
+[Set your pledge now →](/pledge) — it takes 30 seconds and costs nothing upfront.
+
+Already pledged? [Check your dashboard →](/my-pledge) to see your running total.`,
+    },
+    prevPost: { slug: "sierra-nights", title: "Sierra Nights", dayNumber: 30 },
     nextPost: null,
   },
 ];

@@ -109,7 +109,10 @@ export default function MyPledgePage() {
         </h1>
         <p className="font-heading text-[16px] leading-[1.6] text-[var(--text-secondary)] max-w-[650px]">
           Track your pledge, see your running total as Paul progresses, and
-          boost your pledge during challenges.
+          boost your pledge during challenges.{" "}
+          <Link href="/journal/how-pledging-works" className="text-[var(--burnt-orange)] hover:underline">
+            Learn how pledging works &rarr;
+          </Link>
         </p>
       </section>
 

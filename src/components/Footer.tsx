@@ -18,8 +18,8 @@ export default function Footer() {
             </span>
           </div>
           <p className="font-heading text-[14px] leading-[1.6] text-[#FFFFFF88] w-full lg:w-[340px]">
-            Walking 2,650 miles for cancer awareness, survivor support, and
-            prevention education. Every step counts.
+            A fundraiser for two cancer foundations. Paul walks 2,650 miles —
+            every pledge and donation goes directly to the cause. Paul takes nothing.
           </p>
           <div className="flex gap-[16px]">
             <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><Instagram className="w-[20px] h-[20px] text-[var(--text-muted)] hover:text-white cursor-pointer" /></a>
