@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Heart, Mail, ArrowRight } from "lucide-react";
+import { Heart, Mail, ArrowRight, HeartHandshake } from "lucide-react";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -80,6 +80,26 @@ export default function PledgePage() {
   return (
     <div className="flex flex-col w-full bg-[var(--bg-warm)]">
       <Header />
+
+      {/* Two-Stream Banner */}
+      <section className="flex flex-col sm:flex-row items-center gap-[16px] sm:gap-[32px] px-6 md:px-12 lg:px-[120px] py-[16px] md:py-[20px] bg-[var(--bg-dark)] w-full">
+        <div className="flex items-center gap-[12px]">
+          <div className="w-[10px] h-[10px] rounded-full bg-[var(--burnt-orange)] shrink-0" />
+          <span className="font-heading font-semibold text-[14px] text-[var(--text-white)]">
+            Pledges go 100% to cancer foundations
+          </span>
+        </div>
+        <div className="hidden sm:block w-[1px] h-[24px] bg-[#FFFFFF33]" />
+        <div className="flex items-center gap-[12px]">
+          <div className="w-[10px] h-[10px] rounded-full bg-[var(--forest-green)] shrink-0" />
+          <span className="font-heading font-semibold text-[14px] text-[var(--text-white)]">
+            Trail support goes directly to Paul
+          </span>
+        </div>
+        <span className="font-heading italic text-[13px] text-[#FFFFFF88]">
+          Two causes. One journey. They never mix.
+        </span>
+      </section>
 
       {/* Hero */}
       <section className="flex flex-col gap-[16px] px-6 md:px-12 lg:px-[120px] py-[40px] md:py-[56px] bg-[var(--bg-white)] w-full">
@@ -461,6 +481,27 @@ export default function PledgePage() {
             <ArrowRight className="w-[14px] h-[14px] text-[var(--text-secondary)]" />
           </Link>
         </div>
+      </section>
+
+      {/* Support Paul Cross-sell */}
+      <section className="flex flex-col items-center gap-[20px] px-6 md:px-12 lg:px-[120px] py-[48px] md:py-[56px] bg-[var(--bg-white)] border-t border-[var(--border-subtle)] w-full">
+        <HeartHandshake className="w-[36px] h-[36px] text-[var(--forest-green)]" />
+        <h2 className="font-heading font-semibold text-[22px] text-[var(--text-primary)] text-center max-w-[600px]">
+          Already pledged? Support Paul directly on the trail.
+        </h2>
+        <p className="font-heading text-[15px] leading-[1.6] text-[var(--text-secondary)] text-center max-w-[600px]">
+          Buy Paul a meal, boots, or a rest day. Trail support goes directly to
+          Paul — keeping him on the trail so he can walk for the cause.
+        </p>
+        <Link
+          href="/support"
+          className="flex items-center justify-center gap-[10px] bg-[var(--forest-green)] px-[40px] py-[16px] hover:opacity-90 transition-opacity"
+        >
+          <span className="font-label font-bold text-[14px] tracking-[2px] text-[var(--text-white)]">
+            SUPPORT PAUL ON THE TRAIL
+          </span>
+          <ArrowRight className="w-[16px] h-[16px] text-[var(--text-white)]" />
+        </Link>
       </section>
 
       <Footer />

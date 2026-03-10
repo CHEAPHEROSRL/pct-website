@@ -137,6 +137,12 @@ export default function TheCausePage() {
               labelClassName="font-label font-bold text-[13px] lg:text-[14px] tracking-[2px] text-[var(--text-white)]"
             />
           </div>
+          <Link
+            href="/support"
+            className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white underline underline-offset-4"
+          >
+            Or support Paul directly on the trail →
+          </Link>
         </div>
       </section>
 
