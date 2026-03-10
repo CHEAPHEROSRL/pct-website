@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ShareButton from "@/components/ShareButton";
 import HomeTrailProgress from "@/components/HomeTrailProgress";
+import ChallengeBanner from "@/components/ChallengeBanner";
 import {
   Heart,
   Calendar,
@@ -20,6 +21,7 @@ export default function Home() {
   return (
     <div className="flex flex-col w-full bg-[var(--bg-warm)]">
       <Header />
+      <ChallengeBanner />
 
       {/* Hero Section */}
       <section className="relative w-full h-[480px] md:h-[600px] lg:h-[720px] overflow-hidden">

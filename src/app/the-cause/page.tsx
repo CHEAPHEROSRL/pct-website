@@ -5,6 +5,7 @@ import { Footprints, Apple, Sun, ScanSearch, CigaretteOff, HeartPulse } from "lu
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ShareButton from "@/components/ShareButton";
+import ChallengeBanner from "@/components/ChallengeBanner";
 
 export const metadata: Metadata = {
   title: "The Cause — Cancer Prevention & Awareness",
@@ -15,6 +16,7 @@ export default function TheCausePage() {
   return (
     <div className="flex flex-col w-full bg-[var(--bg-warm)]">
       <Header activeItem="The Cause" />
+      <ChallengeBanner />
 
       {/* Hero */}
       <section className="relative w-full h-[400px] md:h-[480px] lg:h-[560px] overflow-hidden">

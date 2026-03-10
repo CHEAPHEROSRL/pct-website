@@ -10,10 +10,18 @@ import {
   ArrowLeft,
   Send,
   Trash2,
+  Zap,
+  BookOpen,
+  Clock,
+  Trophy,
+  XCircle,
+  Target,
+  CheckCircle,
 } from "lucide-react";
-import type { JournalPost } from "@/lib/types";
+import type { JournalPost, ChallengePublic } from "@/lib/types";
 
-type View = "login" | "list" | "editor";
+type View = "login" | "list" | "editor" | "challenges";
+type AdminTab = "journal" | "challenges";
 
 export default function AdminPage() {
   const [token, setToken] = useState("");
@@ -25,6 +33,16 @@ export default function AdminPage() {
   const [editingPost, setEditingPost] = useState<Partial<JournalPost> | null>(
     null
   );
+  const [activeTab, setActiveTab] = useState<AdminTab>("journal");
+  const [activeChallenge, setActiveChallenge] = useState<ChallengePublic | null>(null);
+  const [challengeHistory, setChallengeHistory] = useState<ChallengePublic[]>([]);
+  const [challengeForm, setChallengeForm] = useState({
+    title: "",
+    description: "",
+    targetMiles: 30,
+    startMile: 0,
+    durationHours: 24,
+  });
 
   // Load token from localStorage
   useEffect(() => {
@@ -61,6 +79,72 @@ export default function AdminPage() {
     }
   }, [token]);
 
+  const fetchChallenges = useCallback(async () => {
+    try {
+      const res = await fetch("/api/challenges", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setActiveChallenge(data.active);
+        setChallengeHistory(data.history || []);
+      }
+    } catch {
+      setStatus("Failed to load challenges");
+    }
+  }, [token]);
+
+  async function handleCreateChallenge() {
+    setLoading(true);
+    setStatus("");
+    try {
+      const res = await fetch("/api/challenges", {
+        method: "POST",
+        headers: authHeaders(),
+        body: JSON.stringify(challengeForm),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setStatus("Challenge created!");
+        setChallengeForm({ title: "", description: "", targetMiles: 30, startMile: 0, durationHours: 24 });
+        await fetchChallenges();
+      } else {
+        setStatus(data.error || "Failed to create challenge");
+      }
+    } catch {
+      setStatus("Failed to create challenge");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleResolveChallenge(action: "succeed" | "fail" | "cancel") {
+    const labels = { succeed: "mark as succeeded", fail: "mark as failed", cancel: "cancel" };
+    if (!confirm(`Are you sure you want to ${labels[action]} this challenge?`)) return;
+
+    setLoading(true);
+    setStatus("");
+    try {
+      const res = await fetch("/api/challenges", {
+        method: "PUT",
+        headers: authHeaders(),
+        body: JSON.stringify({ action }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        const boostMsg = data.boostsApplied > 0 ? ` ${data.boostsApplied} boosts applied!` : "";
+        setStatus(`Challenge ${action === "succeed" ? "succeeded" : action === "fail" ? "failed" : "cancelled"}!${boostMsg}`);
+        await fetchChallenges();
+      } else {
+        setStatus(data.error || "Failed to resolve challenge");
+      }
+    } catch {
+      setStatus("Failed to resolve challenge");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   // Login
   async function handleLogin() {
     if (!token.trim()) return;
@@ -77,6 +161,8 @@ export default function AdminPage() {
         setPosts(data);
         setAuthenticated(true);
         setView("list");
+        // Also fetch challenges
+        fetchChallenges();
       } else if (res.status === 401) {
         setStatus("Invalid token");
         localStorage.removeItem("pct-admin-token");
@@ -234,6 +320,32 @@ export default function AdminPage() {
             <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-secondary)]">
               LOG OUT
             </span>
+          </button>
+        </div>
+
+        {/* Tabs */}
+        <div className="flex gap-0 px-[40px] bg-[var(--bg-white)] border-b border-[var(--border-subtle)]">
+          <button
+            onClick={() => { setActiveTab("journal"); setView("list"); setStatus(""); }}
+            className={`flex items-center gap-[8px] px-[24px] py-[14px] font-label font-bold text-[12px] tracking-[2px] border-b-2 transition-colors cursor-pointer ${
+              activeTab === "journal"
+                ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
+                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+            }`}
+          >
+            <BookOpen className="w-[16px] h-[16px]" />
+            JOURNAL
+          </button>
+          <button
+            onClick={() => { setActiveTab("challenges"); setView("challenges"); setStatus(""); fetchChallenges(); }}
+            className={`flex items-center gap-[8px] px-[24px] py-[14px] font-label font-bold text-[12px] tracking-[2px] border-b-2 transition-colors cursor-pointer ${
+              activeTab === "challenges"
+                ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
+                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+            }`}
+          >
+            <Zap className="w-[16px] h-[16px]" />
+            CHALLENGES
           </button>
         </div>
 
@@ -636,6 +748,305 @@ export default function AdminPage() {
                 </span>
               </button>
             )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // --- CHALLENGES VIEW ---
+  if (view === "challenges" && authenticated) {
+    return (
+      <div className="flex flex-col w-full min-h-screen bg-[var(--bg-warm)]">
+        {/* Top bar */}
+        <div className="flex items-center justify-between h-[64px] px-[40px] bg-[var(--bg-white)] border-b border-[var(--border-subtle)]">
+          <div className="flex items-center gap-[12px]">
+            <Shield className="w-[24px] h-[24px] text-[var(--forest-green)]" />
+            <span className="font-label font-bold text-[14px] tracking-[3px] text-[var(--text-primary)]">
+              PCT ADMIN
+            </span>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-[8px] px-[20px] py-[8px] border border-[var(--border-subtle)] hover:border-[var(--text-secondary)] transition-colors cursor-pointer"
+          >
+            <LogOut className="w-[14px] h-[14px] text-[var(--text-secondary)]" />
+            <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-secondary)]">
+              LOG OUT
+            </span>
+          </button>
+        </div>
+
+        {/* Tabs */}
+        <div className="flex gap-0 px-[40px] bg-[var(--bg-white)] border-b border-[var(--border-subtle)]">
+          <button
+            onClick={() => { setActiveTab("journal"); setView("list"); setStatus(""); }}
+            className={`flex items-center gap-[8px] px-[24px] py-[14px] font-label font-bold text-[12px] tracking-[2px] border-b-2 transition-colors cursor-pointer ${
+              activeTab === "journal"
+                ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
+                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+            }`}
+          >
+            <BookOpen className="w-[16px] h-[16px]" />
+            JOURNAL
+          </button>
+          <button
+            onClick={() => { setActiveTab("challenges"); setView("challenges"); setStatus(""); fetchChallenges(); }}
+            className={`flex items-center gap-[8px] px-[24px] py-[14px] font-label font-bold text-[12px] tracking-[2px] border-b-2 transition-colors cursor-pointer ${
+              activeTab === "challenges"
+                ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
+                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+            }`}
+          >
+            <Zap className="w-[16px] h-[16px]" />
+            CHALLENGES
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="flex flex-col gap-[24px] p-[40px]">
+          <div className="flex flex-col gap-[8px]">
+            <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">
+              TRAIL CHALLENGES
+            </span>
+            <h1 className="font-heading font-semibold text-[28px] text-[var(--text-primary)]">
+              Manage Challenges
+            </h1>
+          </div>
+
+          {status && (
+            <span className="font-label text-[13px] text-[var(--forest-green)]">
+              {status}
+            </span>
+          )}
+
+          <div className="flex flex-col lg:flex-row gap-[24px]">
+            {/* Left column: Active challenge or create form */}
+            <div className="flex flex-col gap-[24px] flex-1">
+              {activeChallenge ? (
+                /* Active Challenge Card */
+                <div className="flex flex-col gap-[16px] p-[28px] bg-[var(--bg-white)] border-2 border-[var(--burnt-orange)]">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-[10px]">
+                      <div className="w-[10px] h-[10px] rounded-full bg-red-500 animate-pulse" />
+                      <span className="font-label font-bold text-[11px] tracking-[2px] text-red-600">
+                        LIVE CHALLENGE
+                      </span>
+                    </div>
+                    <span className="font-label font-bold text-[10px] tracking-[1px] text-[var(--text-muted)]">
+                      {activeChallenge.commitmentCount} BOOST{activeChallenge.commitmentCount !== 1 ? "S" : ""} COMMITTED
+                    </span>
+                  </div>
+
+                  <h2 className="font-heading font-semibold text-[24px] text-[var(--text-primary)]">
+                    {activeChallenge.title}
+                  </h2>
+
+                  {activeChallenge.description && (
+                    <p className="font-heading text-[14px] text-[var(--text-secondary)] leading-[1.6]">
+                      {activeChallenge.description}
+                    </p>
+                  )}
+
+                  <div className="flex flex-col gap-[8px]">
+                    <div className="flex justify-between">
+                      <span className="font-heading text-[13px] text-[var(--text-secondary)]">
+                        Target: {activeChallenge.targetMiles} miles from mile {activeChallenge.startMile}
+                      </span>
+                      <span className="font-heading font-semibold text-[13px] text-[var(--text-primary)]">
+                        {Math.max(0, activeChallenge.currentMiles - activeChallenge.startMile).toFixed(1)} / {activeChallenge.targetMiles} mi
+                      </span>
+                    </div>
+                    <div className="relative w-full h-[8px] bg-[var(--warm-stone)]">
+                      <div
+                        className="absolute top-0 left-0 h-[8px] bg-[var(--burnt-orange)] transition-all duration-500"
+                        style={{
+                          width: `${Math.min(100, ((activeChallenge.currentMiles - activeChallenge.startMile) / activeChallenge.targetMiles) * 100)}%`,
+                        }}
+                      />
+                    </div>
+                    <div className="flex items-center gap-[8px]">
+                      <Clock className="w-[14px] h-[14px] text-[var(--text-muted)]" />
+                      <span className="font-heading text-[13px] text-[var(--text-muted)]">
+                        Deadline: {new Date(activeChallenge.deadline).toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="w-full h-[1px] bg-[var(--border-subtle)]" />
+
+                  <div className="flex gap-[12px]">
+                    <button
+                      onClick={() => handleResolveChallenge("succeed")}
+                      disabled={loading}
+                      className="flex items-center gap-[8px] px-[20px] py-[10px] bg-[var(--forest-green)] hover:opacity-90 transition-opacity disabled:opacity-50 cursor-pointer"
+                    >
+                      <Trophy className="w-[14px] h-[14px] text-white" />
+                      <span className="font-label font-bold text-[11px] tracking-[2px] text-white">
+                        SUCCEEDED
+                      </span>
+                    </button>
+                    <button
+                      onClick={() => handleResolveChallenge("fail")}
+                      disabled={loading}
+                      className="flex items-center gap-[8px] px-[20px] py-[10px] border border-[var(--border-subtle)] hover:border-red-400 transition-colors disabled:opacity-50 cursor-pointer"
+                    >
+                      <XCircle className="w-[14px] h-[14px] text-[var(--text-secondary)]" />
+                      <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-secondary)]">
+                        FAILED
+                      </span>
+                    </button>
+                    <button
+                      onClick={() => handleResolveChallenge("cancel")}
+                      disabled={loading}
+                      className="flex items-center gap-[8px] px-[20px] py-[10px] border border-[var(--border-subtle)] hover:border-[var(--text-secondary)] transition-colors disabled:opacity-50 cursor-pointer"
+                    >
+                      <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-muted)]">
+                        CANCEL
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                /* Create Challenge Form */
+                <div className="flex flex-col gap-[20px] p-[28px] bg-[var(--bg-white)] border border-[var(--border-subtle)]">
+                  <div className="flex items-center gap-[10px]">
+                    <Target className="w-[18px] h-[18px] text-[var(--burnt-orange)]" />
+                    <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-muted)]">
+                      CREATE NEW CHALLENGE
+                    </span>
+                  </div>
+
+                  <div className="flex flex-col gap-[6px]">
+                    <label className="font-heading font-semibold text-[14px] text-[var(--text-primary)]">
+                      Challenge Title
+                    </label>
+                    <input
+                      type="text"
+                      value={challengeForm.title}
+                      onChange={(e) => setChallengeForm({ ...challengeForm, title: e.target.value })}
+                      placeholder="e.g. Desert Push: 40 Miles in 24 Hours"
+                      className="w-full h-[48px] px-[16px] border border-[var(--border-subtle)] font-heading text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none bg-[var(--bg-card)]"
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-[6px]">
+                    <label className="font-heading font-semibold text-[14px] text-[var(--text-primary)]">
+                      Description
+                    </label>
+                    <textarea
+                      value={challengeForm.description}
+                      onChange={(e) => setChallengeForm({ ...challengeForm, description: e.target.value })}
+                      placeholder="Describe the challenge..."
+                      rows={3}
+                      className="w-full px-[16px] py-[12px] border border-[var(--border-subtle)] font-heading text-[14px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none bg-[var(--bg-card)] resize-y"
+                    />
+                  </div>
+
+                  <div className="flex gap-[16px]">
+                    <div className="flex flex-col gap-[6px] flex-1">
+                      <label className="font-heading font-semibold text-[14px] text-[var(--text-primary)]">
+                        Target Miles
+                      </label>
+                      <input
+                        type="number"
+                        value={challengeForm.targetMiles}
+                        onChange={(e) => setChallengeForm({ ...challengeForm, targetMiles: Number(e.target.value) })}
+                        min={1}
+                        className="w-full h-[48px] px-[16px] border border-[var(--border-subtle)] font-heading text-[15px] text-[var(--text-primary)] outline-none bg-[var(--bg-card)]"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-[6px] flex-1">
+                      <label className="font-heading font-semibold text-[14px] text-[var(--text-primary)]">
+                        Start Mile
+                      </label>
+                      <input
+                        type="number"
+                        value={challengeForm.startMile}
+                        onChange={(e) => setChallengeForm({ ...challengeForm, startMile: Number(e.target.value) })}
+                        min={0}
+                        className="w-full h-[48px] px-[16px] border border-[var(--border-subtle)] font-heading text-[15px] text-[var(--text-primary)] outline-none bg-[var(--bg-card)]"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-[6px] flex-1">
+                      <label className="font-heading font-semibold text-[14px] text-[var(--text-primary)]">
+                        Duration (hours)
+                      </label>
+                      <input
+                        type="number"
+                        value={challengeForm.durationHours}
+                        onChange={(e) => setChallengeForm({ ...challengeForm, durationHours: Number(e.target.value) })}
+                        min={1}
+                        max={168}
+                        className="w-full h-[48px] px-[16px] border border-[var(--border-subtle)] font-heading text-[15px] text-[var(--text-primary)] outline-none bg-[var(--bg-card)]"
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={handleCreateChallenge}
+                    disabled={loading || !challengeForm.title.trim()}
+                    className="flex items-center justify-center gap-[8px] h-[48px] bg-[var(--burnt-orange)] hover:opacity-90 transition-opacity disabled:opacity-50 cursor-pointer"
+                  >
+                    <Zap className="w-[16px] h-[16px] text-white" />
+                    <span className="font-label font-bold text-[13px] tracking-[2px] text-white">
+                      {loading ? "CREATING..." : "START CHALLENGE"}
+                    </span>
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Right column: Challenge History */}
+            <div className="flex flex-col gap-[16px] w-full lg:w-[380px] shrink-0">
+              <div className="flex flex-col gap-[16px] p-[24px] bg-[var(--bg-white)] border border-[var(--border-subtle)]">
+                <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-muted)]">
+                  CHALLENGE HISTORY
+                </span>
+
+                {challengeHistory.length === 0 ? (
+                  <p className="font-heading text-[13px] text-[var(--text-muted)] italic">
+                    No completed challenges yet.
+                  </p>
+                ) : (
+                  challengeHistory.map((ch) => (
+                    <div key={ch.id} className="flex flex-col gap-[6px] pb-[12px] border-b border-[var(--border-subtle)] last:border-b-0">
+                      <div className="flex items-center gap-[8px]">
+                        {ch.status === "succeeded" ? (
+                          <CheckCircle className="w-[14px] h-[14px] text-[var(--forest-green)]" />
+                        ) : ch.status === "failed" ? (
+                          <XCircle className="w-[14px] h-[14px] text-red-500" />
+                        ) : (
+                          <XCircle className="w-[14px] h-[14px] text-[var(--text-muted)]" />
+                        )}
+                        <span className="font-heading font-semibold text-[14px] text-[var(--text-primary)]">
+                          {ch.title}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-[12px] ml-[22px]">
+                        <span className={`font-label font-bold text-[10px] tracking-[1px] px-[8px] py-[2px] ${
+                          ch.status === "succeeded"
+                            ? "bg-[var(--forest-green-light)] text-[var(--forest-green)]"
+                            : ch.status === "failed"
+                            ? "bg-red-50 text-red-600"
+                            : "bg-gray-100 text-[var(--text-muted)]"
+                        }`}>
+                          {ch.status.toUpperCase()}
+                        </span>
+                        <span className="font-heading text-[12px] text-[var(--text-muted)]">
+                          {ch.commitmentCount} boost{ch.commitmentCount !== 1 ? "s" : ""}
+                        </span>
+                        {ch.resolvedAt && (
+                          <span className="font-heading text-[12px] text-[var(--text-muted)]">
+                            {new Date(ch.resolvedAt).toLocaleDateString()}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>

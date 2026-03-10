@@ -1,0 +1,240 @@
+import { NextRequest, NextResponse } from "next/server";
+import { Redis } from "@upstash/redis";
+import type { ChallengeRecord, ChallengePublic } from "@/lib/types";
+import crypto from "crypto";
+
+function getRedis() {
+  const url = process.env.KV_REST_API_URL;
+  const token = process.env.KV_REST_API_TOKEN;
+  if (!url || !token) return null;
+  return new Redis({ url, token });
+}
+
+function isAdmin(req: NextRequest): boolean {
+  const auth = req.headers.get("authorization");
+  if (!auth) return false;
+  const token = auth.replace("Bearer ", "");
+  return token === process.env.ADMIN_TOKEN;
+}
+
+function toPublic(r: ChallengeRecord): ChallengePublic {
+  return {
+    id: r.id,
+    title: r.title,
+    description: r.description,
+    targetMiles: r.targetMiles,
+    startMile: r.startMile,
+    currentMiles: r.currentMiles,
+    deadline: r.deadline,
+    status: r.status,
+    commitmentCount: r.commitmentCount,
+    createdAt: r.createdAt,
+    resolvedAt: r.resolvedAt,
+  };
+}
+
+// GET — Get active challenge + recent history (public)
+export async function GET() {
+  const redis = getRedis();
+  if (!redis) {
+    return NextResponse.json({ active: null, history: [] });
+  }
+
+  try {
+    const activeRaw = await redis.get<string>("challenge:active");
+    let active: ChallengePublic | null = null;
+
+    if (activeRaw) {
+      const record: ChallengeRecord =
+        typeof activeRaw === "string" ? JSON.parse(activeRaw) : activeRaw;
+      active = toPublic(record);
+    }
+
+    const historyRaw = await redis.lrange<string>("challenge:history", 0, 9);
+    const history: ChallengePublic[] = (historyRaw || []).map((item) => {
+      const r: ChallengeRecord =
+        typeof item === "string" ? JSON.parse(item) : item;
+      return toPublic(r);
+    });
+
+    return NextResponse.json(
+      { active, history },
+      { headers: { "Cache-Control": "s-maxage=10, stale-while-revalidate=20" } }
+    );
+  } catch (err) {
+    console.error("Failed to fetch challenges:", err);
+    return NextResponse.json({ active: null, history: [] });
+  }
+}
+
+// POST — Admin creates a new challenge
+export async function POST(req: NextRequest) {
+  if (!isAdmin(req)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const redis = getRedis();
+  if (!redis) {
+    return NextResponse.json({ error: "Storage unavailable" }, { status: 503 });
+  }
+
+  try {
+    // Check no active challenge already
+    const existing = await redis.get<string>("challenge:active");
+    if (existing) {
+      return NextResponse.json(
+        { error: "A challenge is already active. Resolve it first." },
+        { status: 409 }
+      );
+    }
+
+    const body = await req.json();
+    const { title, description, targetMiles, startMile, durationHours } = body;
+
+    if (!title || typeof title !== "string") {
+      return NextResponse.json({ error: "Title required" }, { status: 400 });
+    }
+    if (typeof targetMiles !== "number" || targetMiles <= 0) {
+      return NextResponse.json({ error: "Target miles must be positive" }, { status: 400 });
+    }
+    if (typeof startMile !== "number" || startMile < 0) {
+      return NextResponse.json({ error: "Start mile must be >= 0" }, { status: 400 });
+    }
+    if (typeof durationHours !== "number" || durationHours <= 0 || durationHours > 168) {
+      return NextResponse.json({ error: "Duration must be 1-168 hours" }, { status: 400 });
+    }
+
+    const id = crypto.randomBytes(8).toString("hex");
+    const now = Date.now();
+
+    const record: ChallengeRecord = {
+      id,
+      title: title.trim().slice(0, 200),
+      description: (description || "").trim().slice(0, 500),
+      targetMiles,
+      startMile,
+      currentMiles: startMile,
+      deadline: now + durationHours * 60 * 60 * 1000,
+      status: "active",
+      commitmentCount: 0,
+      createdAt: now,
+      resolvedAt: null,
+    };
+
+    await redis.set("challenge:active", JSON.stringify(record));
+
+    return NextResponse.json({ success: true, challenge: toPublic(record) }, { status: 201 });
+  } catch (err) {
+    console.error("Failed to create challenge:", err);
+    return NextResponse.json({ error: "Failed to create challenge" }, { status: 500 });
+  }
+}
+
+// PUT — Admin resolves or updates the active challenge
+export async function PUT(req: NextRequest) {
+  if (!isAdmin(req)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const redis = getRedis();
+  if (!redis) {
+    return NextResponse.json({ error: "Storage unavailable" }, { status: 503 });
+  }
+
+  try {
+    const activeRaw = await redis.get<string>("challenge:active");
+    if (!activeRaw) {
+      return NextResponse.json({ error: "No active challenge" }, { status: 404 });
+    }
+
+    const record: ChallengeRecord =
+      typeof activeRaw === "string" ? JSON.parse(activeRaw) : activeRaw;
+
+    const body = await req.json();
+    const { action, currentMiles } = body;
+
+    // Update current miles if provided
+    if (typeof currentMiles === "number" && currentMiles >= 0) {
+      record.currentMiles = currentMiles;
+    }
+
+    if (action === "succeed" || action === "fail" || action === "cancel") {
+      const statusMap: Record<string, "succeeded" | "failed" | "cancelled"> = {
+        succeed: "succeeded",
+        fail: "failed",
+        cancel: "cancelled",
+      };
+      record.status = statusMap[action];
+      record.resolvedAt = Date.now();
+
+      // Move to history
+      await redis.lpush("challenge:history", JSON.stringify(record));
+      await redis.del("challenge:active");
+
+      // If succeeded, apply all pre-committed boosts
+      if (action === "succeed") {
+        const commitments = await redis.lrange<string>(
+          `challenge:${record.id}:commitments`,
+          0,
+          -1
+        );
+
+        for (const raw of commitments || []) {
+          const commitment =
+            typeof raw === "string" ? JSON.parse(raw) : raw;
+
+          // Get pledger record and apply boost
+          const pledgerKey = `pledger:${commitment.pledgerId}`;
+          const pledgerRaw = await redis.get<string>(pledgerKey);
+          if (!pledgerRaw) continue;
+
+          const pledger =
+            typeof pledgerRaw === "string" ? JSON.parse(pledgerRaw) : pledgerRaw;
+
+          const oldTotal = pledger.totalPledge;
+          pledger.amount += commitment.boostAmount;
+          pledger.totalPledge = (pledger.amount * 2650) / pledger.interval;
+          pledger.updatedAt = Date.now();
+          pledger.boosts.push({
+            challengeId: record.id,
+            challengeTitle: record.title,
+            addedAmount: commitment.boostAmount,
+            addedAt: Date.now(),
+          });
+
+          await redis.set(pledgerKey, JSON.stringify(pledger));
+
+          // Update aggregate
+          const totalDiff = pledger.totalPledge - oldTotal;
+          await redis.incrbyfloat("pledgers:total_pledged", totalDiff);
+
+          // Update list entry
+          const list = await redis.lrange<string>("pledgers:list", 0, -1);
+          for (let i = 0; i < list.length; i++) {
+            const item = typeof list[i] === "string" ? JSON.parse(list[i]) : list[i];
+            if (item.id === commitment.pledgerId) {
+              await redis.lset("pledgers:list", i, JSON.stringify(pledger));
+              break;
+            }
+          }
+        }
+
+        // Clean up commitments
+        await redis.del(`challenge:${record.id}:commitments`);
+      }
+
+      return NextResponse.json({
+        success: true,
+        challenge: toPublic(record),
+        boostsApplied: action === "succeed" ? record.commitmentCount : 0,
+      });
+    }
+
+    // Just updating currentMiles (no resolution)
+    await redis.set("challenge:active", JSON.stringify(record));
+    return NextResponse.json({ success: true, challenge: toPublic(record) });
+  } catch (err) {
+    console.error("Failed to update challenge:", err);
+    return NextResponse.json({ error: "Failed to update challenge" }, { status: 500 });
+  }
+}

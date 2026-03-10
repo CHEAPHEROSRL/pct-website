@@ -6,6 +6,7 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import DistanceTracker from "@/components/DistanceTracker";
+import ChallengeBanner from "@/components/ChallengeBanner";
 
 const TOTAL_MILES = 2650;
 
@@ -113,6 +114,7 @@ export default function PledgePage() {
   return (
     <div className="flex flex-col w-full bg-[var(--bg-warm)]">
       <Header />
+      <ChallengeBanner />
 
       {/* Two-Stream Banner */}
       <section className="flex flex-col sm:flex-row items-center gap-[16px] sm:gap-[32px] px-6 md:px-12 lg:px-[120px] py-[16px] md:py-[20px] bg-[var(--bg-dark)] w-full">

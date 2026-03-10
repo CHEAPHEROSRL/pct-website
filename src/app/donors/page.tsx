@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { Search, ChevronRight, ChevronLeft } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import ChallengeBanner from "@/components/ChallengeBanner";
 import { useDonorData } from "@/hooks/useDonorData";
 
 type SortKey = "RECENT" | "AMOUNT" | "NAME";
@@ -59,6 +60,7 @@ export default function DonorsPage() {
   return (
     <div className="flex flex-col w-full bg-[var(--bg-warm)]">
       <Header activeItem="Donors" />
+      <ChallengeBanner />
 
       {/* Hero */}
       <section className="flex flex-col items-center gap-[24px] md:gap-[32px] px-6 md:px-12 lg:px-[120px] py-[40px] md:py-[52px] lg:py-[64px] bg-[var(--bg-white)] w-full">

@@ -144,3 +144,43 @@ export interface PledgeStats {
   averagePledge: number;
   totalBoosts: number;
 }
+
+// Challenge types
+
+export type ChallengeStatus = "active" | "succeeded" | "failed" | "cancelled";
+
+export interface ChallengeRecord {
+  id: string;
+  title: string;
+  description: string;
+  targetMiles: number;
+  startMile: number;
+  currentMiles: number;
+  deadline: number;
+  status: ChallengeStatus;
+  commitmentCount: number;
+  createdAt: number;
+  resolvedAt: number | null;
+}
+
+export interface ChallengePublic {
+  id: string;
+  title: string;
+  description: string;
+  targetMiles: number;
+  startMile: number;
+  currentMiles: number;
+  deadline: number;
+  status: ChallengeStatus;
+  commitmentCount: number;
+  createdAt: number;
+  resolvedAt: number | null;
+}
+
+export interface ChallengeCommitment {
+  pledgerId: string;
+  pledgerName: string;
+  challengeId: string;
+  boostAmount: number;
+  committedAt: number;
+}
