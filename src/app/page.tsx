@@ -337,10 +337,10 @@ export default function Home() {
           </p>
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-[16px]">
             <Link
-              href="/donate"
+              href="/pledge"
               className="flex items-center justify-center gap-[10px] bg-[var(--burnt-orange)] px-[32px] lg:px-[48px] py-[16px] lg:py-[20px] hover:opacity-90 transition-opacity"
             >
-              <span className="font-label font-bold text-[13px] lg:text-[15px] tracking-[2px] text-[var(--text-white)]">DONATE NOW</span>
+              <span className="font-label font-bold text-[13px] lg:text-[15px] tracking-[2px] text-[var(--text-white)]">PLEDGE NOW</span>
               <Heart className="w-[18px] h-[18px] text-[var(--text-white)]" />
             </Link>
             <ShareButton

@@ -39,11 +39,11 @@ export default function Header({ activeItem }: HeaderProps) {
           )
         )}
         <Link
-          href="/donate"
+          href="/pledge"
           className="flex items-center gap-[8px] bg-[var(--burnt-orange)] px-[28px] py-[12px] hover:opacity-90 transition-opacity"
         >
           <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-white)]">
-            DONATE NOW
+            PLEDGE NOW
           </span>
           <Heart className="w-[14px] h-[14px] text-[var(--text-white)]" />
         </Link>

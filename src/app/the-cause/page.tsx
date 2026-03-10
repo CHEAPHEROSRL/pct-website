@@ -128,8 +128,8 @@ export default function TheCausePage() {
             Every donation, no matter how small, brings us one step closer to a cancer-free future.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-[20px]">
-            <Link href="/donate" className="bg-[var(--burnt-orange)] px-[32px] lg:px-[48px] py-[14px] lg:py-[16px] text-center">
-              <span className="font-label font-bold text-[13px] lg:text-[14px] tracking-[2px] text-[var(--text-white)]">DONATE NOW</span>
+            <Link href="/pledge" className="bg-[var(--burnt-orange)] px-[32px] lg:px-[48px] py-[14px] lg:py-[16px] text-center">
+              <span className="font-label font-bold text-[13px] lg:text-[14px] tracking-[2px] text-[var(--text-white)]">PLEDGE NOW</span>
             </Link>
             <ShareButton
               className="flex items-center justify-center gap-[10px] border border-[#FFFFFF66] px-[32px] lg:px-[48px] py-[14px] lg:py-[16px] hover:bg-white/10 transition-colors cursor-pointer"

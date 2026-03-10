@@ -55,12 +55,12 @@ export default function MobileNav({ activeItem }: MobileNavProps) {
             )
           )}
           <Link
-            href="/donate"
+            href="/pledge"
             className="flex items-center justify-center gap-[8px] bg-[var(--burnt-orange)] px-[28px] py-[14px] mt-4"
             onClick={() => setOpen(false)}
           >
             <span className="font-label font-bold text-[13px] tracking-[2px] text-[var(--text-white)]">
-              DONATE NOW
+              PLEDGE NOW
             </span>
             <Heart className="w-[14px] h-[14px] text-[var(--text-white)]" />
           </Link>
