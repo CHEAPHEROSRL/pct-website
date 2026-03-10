@@ -140,6 +140,23 @@ export default function DistanceTracker({ compact }: DistanceTrackerProps) {
     );
   }
 
+  // --- State: Auto-detecting location ---
+  if (isGeocoding && !visitorLocation && !showInput) {
+    return (
+      <div className={`flex flex-col gap-[16px] bg-[var(--bg-card)] border border-[var(--border-subtle)] ${compact ? "p-[20px]" : "p-[28px]"}`}>
+        <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--burnt-orange)]">
+          HOW FAR IS PAUL FROM YOU?
+        </span>
+        <div className="flex items-center gap-[10px]">
+          <Navigation className="w-[16px] h-[16px] text-[var(--burnt-orange)] animate-pulse" />
+          <span className="font-heading text-[14px] text-[var(--text-secondary)]">
+            Detecting your location...
+          </span>
+        </div>
+      </div>
+    );
+  }
+
   // --- State: No location set (or editing) ---
   return (
     <div className={`flex flex-col gap-[16px] bg-[var(--bg-card)] border border-[var(--border-subtle)] ${compact ? "p-[20px]" : "p-[28px]"}`}>

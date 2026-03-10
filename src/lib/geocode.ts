@@ -14,7 +14,7 @@ export async function geocodeCity(
   try {
     const encoded = encodeURIComponent(query);
     const res = await fetch(
-      `https://nominatim.openstreetmap.org/search?q=${encoded}&format=json&limit=1&countrycodes=us,ca,au`,
+      `https://nominatim.openstreetmap.org/search?q=${encoded}&format=json&limit=1`,
       {
         headers: {
           "User-Agent": "PaulBarryPCT2026/1.0",

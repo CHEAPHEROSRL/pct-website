@@ -712,7 +712,7 @@ export default function AdminPage() {
                 Select one or more content types
               </span>
               <div className="flex gap-[8px]">
-                {["BLOG", "VLOG", "PHOTOS"].map((tag) => {
+                {["BLOG", "VLOG", "INTERVIEWS", "PHOTOS"].map((tag) => {
                   const active = (editingPost.tags || []).includes(tag);
                   return (
                     <button

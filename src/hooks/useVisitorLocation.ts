@@ -36,16 +36,41 @@ export function useVisitorLocation(
   const [isGeocoding, setIsGeocoding] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Load from localStorage on mount
+  // Load from localStorage on mount, or auto-detect via IP geolocation
   useEffect(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         setVisitorLocation(JSON.parse(stored));
+        return;
       }
     } catch {
       // Ignore parse errors
     }
+
+    // No stored location — auto-detect via IP geolocation
+    setIsGeocoding(true);
+    fetch("http://ip-api.com/json/?fields=status,city,regionName,country,lat,lon")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === "success" && typeof data.lat === "number") {
+          const displayParts = [data.city, data.regionName].filter(Boolean);
+          const location: VisitorLocation = {
+            lat: data.lat,
+            lng: data.lon,
+            displayName: displayParts.join(", ") || data.country || "Your location",
+            setAt: Date.now(),
+          };
+          setVisitorLocation(location);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(location));
+        }
+      })
+      .catch(() => {
+        // Silently fail — user can still enter manually
+      })
+      .finally(() => {
+        setIsGeocoding(false);
+      });
   }, []);
 
   // Calculate distance

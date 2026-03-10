@@ -8,7 +8,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import type { JournalPostPublic } from "@/lib/types";
 
-const filterOptions = ["ALL", "BLOG", "VLOG", "PHOTOS"] as const;
+const filterOptions = ["ALL", "BLOG", "VLOG", "INTERVIEWS", "PHOTOS"] as const;
 type Filter = (typeof filterOptions)[number];
 
 interface JournalEntry {
@@ -18,7 +18,7 @@ interface JournalEntry {
   date: string;
   title: string;
   excerpt: string;
-  tag: "BLOG" | "VLOG" | "PHOTOS";
+  tag: "BLOG" | "VLOG" | "INTERVIEWS" | "PHOTOS";
 }
 
 function mapPostToEntry(post: JournalPostPublic): JournalEntry {
@@ -37,7 +37,7 @@ function mapPostToEntry(post: JournalPostPublic): JournalEntry {
       .toUpperCase(),
     title: post.title,
     excerpt: post.excerpt,
-    tag: (post.tags[0] as "BLOG" | "VLOG" | "PHOTOS") || "BLOG",
+    tag: (post.tags[0] as "BLOG" | "VLOG" | "INTERVIEWS" | "PHOTOS") || "BLOG",
   };
 }
 
@@ -58,6 +58,8 @@ const fallbackEntries: JournalEntry[] = [
   { slug: "through-the-desert-wind", img: "https://images.unsplash.com/photo-1688057951002-a159e26c7f82?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80", day: "DAY 15", date: "APRIL 11, 2026", title: "Through the Desert Wind", excerpt: "The heat is relentless, but the sunsets make it all worthwhile. Met a fellow hiker who lost her mother to breast cancer.", tag: "BLOG" },
   { slug: "wildflower-season", img: "https://images.unsplash.com/photo-1759491265362-3bd88910a036?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80", day: "DAY 20", date: "APRIL 16, 2026", title: "Wildflower Season", excerpt: "The desert is blooming. Purple, yellow, orange \u2014 everywhere. Nature\u2019s reminder that beauty follows hardship.", tag: "PHOTOS" },
   { slug: "sierra-nights", img: "https://images.unsplash.com/photo-1759150954328-8b0b005ade84?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80", day: "DAY 30", date: "APRIL 26, 2026", title: "Sierra Nights", excerpt: "The stars remind me of camping with my dad. I can feel him walking with me. Tonight\u2019s vlog is for him.", tag: "VLOG" },
+  { slug: "trail-interview-sarah-portland", img: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80", day: "DAY 12", date: "APRIL 8, 2026", title: "YesChapter Interview: Sarah from Portland", excerpt: "I asked Sarah the question: 'What's a time in your life where you could go back and change the answer to YES?' Her answer stopped me in my tracks.", tag: "INTERVIEWS" },
+  { slug: "trail-interview-marcus-and-elena", img: "https://images.unsplash.com/photo-1551632811-561732d1e306?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80", day: "DAY 25", date: "APRIL 21, 2026", title: "YesChapter Interview: Marcus & Elena — A Couple on the Trail", excerpt: "They both had different answers to the YesChapter question. Marcus wished he'd said yes to forgiving his father sooner. Elena wished she'd said yes to herself.", tag: "INTERVIEWS" },
   { slug: "how-pledging-works", img: "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80", day: "GUIDE", date: "MARCH 10, 2026", title: "How Pledging Works \u2014 A Complete Guide", excerpt: "Everything you need to know about pledging per mile: how it works, when you pay, where the money goes, and why this model keeps Paul accountable.", tag: "BLOG" },
   { slug: "as-a-man-thinketh", img: "https://images.unsplash.com/photo-1506880018603-83d5b814b5a6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80", day: "REFLECTIONS", date: "MARCH 15, 2026", title: "As a Man Thinketh \u2014 The Book That Made Me Walk", excerpt: "A small book from 1903 changed how I see this entire journey. James Allen wrote that your thoughts shape your reality. I believe him.", tag: "BLOG" },
   { slug: "finding-your-ikigai", img: "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80", day: "REFLECTIONS", date: "MARCH 18, 2026", title: "Finding Your Ikigai \u2014 Why I Started YesChapter and Walked 2,650 Miles", excerpt: "Ikigai isn\u2019t something you find sitting still. It\u2019s something you build through consistent, hard, fulfilling, and meaningful work.", tag: "BLOG" },
@@ -254,7 +256,12 @@ export default function JournalPage() {
 }
 
 function BlogCard({ slug, img, day, date, title, excerpt, tag }: JournalEntry) {
-  const isGreen = tag === "BLOG" || tag === "PHOTOS";
+  const tagStyle =
+    tag === "INTERVIEWS"
+      ? "bg-[#EDE9FE] text-[#6D28D9]"
+      : tag === "VLOG"
+        ? "bg-[var(--burnt-orange-light)] text-[var(--burnt-orange)]"
+        : "bg-[var(--forest-green-light)] text-[var(--forest-green)]";
   return (
     <Link href={`/journal/${slug}`} className="flex flex-col bg-[var(--bg-white)] border border-[var(--border-subtle)] overflow-hidden hover:shadow-md transition-shadow cursor-pointer">
       <div className="relative w-full h-[200px]">
@@ -268,7 +275,7 @@ function BlogCard({ slug, img, day, date, title, excerpt, tag }: JournalEntry) {
         <span className="font-heading font-semibold text-[18px] text-[var(--text-primary)]">{title}</span>
         <p className="font-heading text-[14px] leading-[1.6] text-[var(--text-secondary)]">{excerpt}</p>
         <div className="flex gap-[6px]">
-          <span className={`px-[10px] py-[4px] font-label font-semibold text-[10px] tracking-[1px] ${isGreen ? "bg-[var(--forest-green-light)] text-[var(--forest-green)]" : "bg-[var(--burnt-orange-light)] text-[var(--burnt-orange)]"}`}>{tag}</span>
+          <span className={`px-[10px] py-[4px] font-label font-semibold text-[10px] tracking-[1px] ${tagStyle}`}>{tag}</span>
         </div>
       </div>
     </Link>

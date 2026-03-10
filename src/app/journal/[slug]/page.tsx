@@ -688,6 +688,114 @@ Thirty days. Roughly 450 miles. I've worn through one pair of shoes, eaten appro
 Five more months to go. One step at a time.`,
     },
     prevPost: { slug: "wildflower-season", title: "Wildflower Season", dayNumber: 20 },
+    nextPost: { slug: "trail-interview-sarah-portland", title: "YesChapter Interview: Sarah from Portland", dayNumber: 12 },
+  },
+  {
+    post: {
+      id: "fb-interview-1", title: "YesChapter Interview: Sarah from Portland", slug: "trail-interview-sarah-portland",
+      dayNumber: 12, date: "2026-04-08", excerpt: "I asked Sarah the question: 'What's a time in your life where you could go back and change the answer to YES?' Her answer stopped me in my tracks.",
+      coverImage: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80",
+      images: [], youtubeUrl: "", tags: ["INTERVIEWS"],
+      body: `I met Sarah on a dusty stretch of trail somewhere between Warner Springs and Paradise Valley Café. She was day-hiking — just out for a few hours with her dog, a scruffy Australian shepherd named Biscuit. We got to talking.
+
+She asked what I was doing out here, and I told her — the cancer walk, the fundraiser, the whole thing. She got quiet for a moment. Then she said, "My mom's in treatment right now. Breast cancer. Stage 3."
+
+We sat down on a rock together. I told her about my parents. About losing them both. About why I'm walking. And then I asked her the question.
+
+---
+
+## The YesChapter Question
+
+> **"What's a time in your life where you could go back and change the answer to YES?"**
+
+Sarah didn't hesitate. Not even for a second.
+
+"My mom asked me to come home for Christmas two years ago. I said no. I was 'busy.' I had a work thing. I had plans with friends. I had a hundred reasons not to go. But the truth is, I just didn't feel like making the trip."
+
+She paused.
+
+"She was already sick then. I just didn't know it yet. And now every time I visit her in the hospital, I think about that Christmas. I think about how I could have been there, sitting by the fire, watching her open presents, hearing her laugh at my dad's terrible jokes. I had that chance and I said no."
+
+---
+
+## What I Learned
+
+Sarah's answer is one I'll carry with me for the rest of this trail. Because it's not really about Christmas. It's about time. It's about the fact that we never know how much of it we have left — with the people we love, in the places that matter, doing the things that fill us up.
+
+Every person I interview on this trail has a different answer to the YesChapter question. But they all share one thing: the understanding that our choices define our lives. Not our circumstances. Not our luck. Our choices.
+
+Sarah changed my day. She reminded me why I'm out here. Not just to raise money — though that matters enormously. But to have these conversations. To hear these stories. To remind myself and everyone following along that life is happening right now, and the only wrong answer is the one you never give.
+
+---
+
+Say yes to something today. Call someone you love. Book that trip. Have that conversation you've been avoiding. Start that thing you've been putting off.
+
+And if you want to be part of this journey, [pledge per mile →](/pledge) or [donate directly →](/donate). Every dollar goes to cancer research and patient support. Paul takes $0.`,
+    },
+    prevPost: { slug: "sierra-nights", title: "Sierra Nights", dayNumber: 30 },
+    nextPost: { slug: "trail-interview-marcus-and-elena", title: "YesChapter Interview: Marcus & Elena — A Couple on the Trail", dayNumber: 25 },
+  },
+  {
+    post: {
+      id: "fb-interview-2", title: "YesChapter Interview: Marcus & Elena — A Couple on the Trail", slug: "trail-interview-marcus-and-elena",
+      dayNumber: 25, date: "2026-04-21", excerpt: "They both had different answers to the YesChapter question. Marcus wished he'd said yes to forgiving his father sooner. Elena wished she'd said yes to herself.",
+      coverImage: "https://images.unsplash.com/photo-1551632811-561732d1e306?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80",
+      images: [], youtubeUrl: "", tags: ["INTERVIEWS"],
+      body: `Marcus and Elena were section-hiking the PCT together — their first long trail as a couple. They'd been together for three years, and Elena told me this hike was Marcus's idea. "He said we needed to do something hard together before we decided if we wanted to do life together." She laughed. "So here we are, covered in dirt, eating cold ramen out of a bag. Very romantic."
+
+I liked them immediately.
+
+We shared a campsite near Deep Creek Hot Springs. After dinner, as the sky turned orange and purple, I asked them both the question.
+
+---
+
+## Marcus's Answer
+
+> **"What's a time in your life where you could go back and change the answer to YES?"**
+
+Marcus stared at the fire for a long time.
+
+"My dad and I didn't talk for six years. He made some mistakes when I was a teenager — nothing unforgivable, looking back, but at the time it felt like the end of the world. He tried to reach out a few times. Called on my birthdays. Sent letters. I ignored all of it."
+
+He took a breath.
+
+"He got diagnosed with prostate cancer four years into our silence. My sister told me. I almost called him then. Almost. I picked up the phone probably fifty times. But I couldn't do it. I was still angry. Still stubborn. Still convinced he needed to come to me first."
+
+"Two years later, he called one more time. And this time — I don't know why — I picked up. We talked for three hours. We both cried. We said everything we needed to say. He died eight months later."
+
+Marcus looked at me. "I got those eight months. But I should have had six years. If I could go back, I'd pick up that phone the first time he called. I'd say yes to my dad."
+
+---
+
+## Elena's Answer
+
+Elena's answer was different. Quieter. More personal.
+
+"I would have said yes to myself."
+
+She explained: "I spent my twenties doing what everyone expected. The right degree. The right job. The right apartment in the right city. I was miserable and I knew it, but I kept telling myself it was fine. That this was what success looked like."
+
+"When I was 27, I got an offer to teach English in Japan for a year. My parents said no. My boss said it would be career suicide. My friends said I was crazy. So I said no too. I stayed at my desk. I kept being miserable."
+
+She gestured at the trail around us. "I finally said yes to myself when I turned 30. Quit my job. Started painting. Met this guy." She elbowed Marcus. "But I lost three years because I was too afraid to say yes when the opportunity was right in front of me."
+
+---
+
+## Two Answers, One Truth
+
+What struck me about Marcus and Elena is how different their answers were — and how they both pointed to the same truth. Marcus needed to say yes to someone else. Elena needed to say yes to herself. But in both cases, the thing holding them back was fear. Fear of vulnerability. Fear of judgment. Fear of the unknown.
+
+The trail strips all of that away. Out here, there's nothing to hide behind. No job titles, no social media, no comfortable routines. Just you, the dirt, and the next mile. And in that rawness, people tell you the truth. Not because you're special — but because the trail makes it safe to be honest.
+
+I'm grateful for Marcus and Elena. For their honesty. For sharing their fire and their stories. For reminding me that every YesChapter is unique, but every single one starts the same way: with the courage to be honest about what you really want.
+
+---
+
+What's your YesChapter? What would you go back and change the answer to YES?
+
+[Pledge per mile →](/pledge) and walk this trail with me. Every mile raises money for cancer research. Paul takes $0.`,
+    },
+    prevPost: { slug: "trail-interview-sarah-portland", title: "YesChapter Interview: Sarah from Portland", dayNumber: 12 },
     nextPost: { slug: "how-pledging-works", title: "How Pledging Works — A Complete Guide", dayNumber: 0 },
   },
   {
@@ -824,7 +932,7 @@ It turns a solo hike into a team effort. Every mile Paul walks, hundreds of pled
 
 Already pledged? [Check your dashboard →](/my-pledge) to see your running total.`,
     },
-    prevPost: { slug: "sierra-nights", title: "Sierra Nights", dayNumber: 30 },
+    prevPost: { slug: "trail-interview-marcus-and-elena", title: "YesChapter Interview: Marcus & Elena — A Couple on the Trail", dayNumber: 25 },
     nextPost: { slug: "as-a-man-thinketh", title: "As a Man Thinketh — The Book That Made Me Walk", dayNumber: 0 },
   },
   {
