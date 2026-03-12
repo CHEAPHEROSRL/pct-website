@@ -27,7 +27,7 @@ export default function Home() {
       <ChallengeBanner />
 
       {/* Hero Section */}
-      <section className="relative w-full h-[480px] md:h-[600px] lg:h-[720px] overflow-hidden">
+      <section className="relative w-full h-[560px] md:h-[680px] lg:h-[800px] overflow-hidden">
         <HeroParallax>
           <Image
             src="/images/hiking/FB_IMG_1771991299919.jpg"
