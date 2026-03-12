@@ -16,6 +16,7 @@ import {
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ChallengeBanner from "@/components/ChallengeBanner";
+import ScrollReveal from "@/components/ScrollReveal";
 
 interface GiftOption {
   icon: React.ReactNode;
@@ -98,13 +99,13 @@ export default function SupportPage() {
 
       {/* Hero */}
       <section className="flex flex-col gap-[16px] px-6 md:px-12 lg:px-[120px] py-[40px] md:py-[56px] bg-[var(--bg-white)] w-full">
-        <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--forest-green)]">
+        <span className="animate-fade-up font-label font-bold text-[12px] tracking-[3px] text-[var(--forest-green)]">
           SUPPORT PAUL ON THE TRAIL
         </span>
-        <h1 className="font-heading font-semibold text-[28px] md:text-[34px] lg:text-[36px] tracking-[-0.5px] text-[var(--text-primary)] max-w-[800px]">
+        <h1 className="animate-fade-up stagger-2 font-heading font-semibold text-[28px] md:text-[34px] lg:text-[36px] tracking-[-0.5px] text-[var(--text-primary)] max-w-[800px]">
           Help Fuel Paul&apos;s Journey
         </h1>
-        <p className="font-heading text-[16px] leading-[1.6] text-[var(--text-secondary)] max-w-[750px]">
+        <p className="animate-fade-up stagger-4 font-heading text-[16px] leading-[1.6] text-[var(--text-secondary)] max-w-[750px]">
           Paul carries everything on his back for 2,650 miles. Buy him a meal, a
           pair of boots, or a rest day. These go directly to Paul — keeping him
           on the trail so he can walk for the cause.
@@ -138,7 +139,7 @@ export default function SupportPage() {
         </span>
 
         {/* Row 1: $15, $20, $25 */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-[24px] w-full">
+        <ScrollReveal animation="fade-up" className="grid grid-cols-1 md:grid-cols-3 gap-[24px] w-full">
           {giftOptions.slice(0, 3).map((gift) => (
             <GiftCard
               key={gift.title}
@@ -147,10 +148,10 @@ export default function SupportPage() {
               onSelect={handleGift}
             />
           ))}
-        </div>
+        </ScrollReveal>
 
         {/* Row 2: $75, $100 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[24px] w-full">
+        <ScrollReveal animation="fade-up" delay={100} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[24px] w-full">
           {giftOptions.slice(3, 5).map((gift) => (
             <GiftCard
               key={gift.title}
@@ -159,10 +160,10 @@ export default function SupportPage() {
               onSelect={handleGift}
             />
           ))}
-        </div>
+        </ScrollReveal>
 
         {/* Row 3: $150, Custom */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[24px] w-full">
+        <ScrollReveal animation="fade-up" delay={200} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[24px] w-full">
           {giftOptions.slice(5).map((gift) => (
             <GiftCard
               key={gift.title}
@@ -218,19 +219,23 @@ export default function SupportPage() {
               </div>
             )}
           </div>
-        </div>
+        </ScrollReveal>
       </section>
 
       {/* Pledge Cross-sell */}
       <section className="flex flex-col items-center gap-[20px] px-6 md:px-12 lg:px-[120px] py-[48px] md:py-[56px] bg-[var(--bg-warm)] border-t border-[var(--border-subtle)] w-full">
+        <ScrollReveal animation="scale-up">
         <HeartHandshake className="w-[36px] h-[36px] text-[var(--burnt-orange)]" />
         <h2 className="font-heading font-semibold text-[22px] text-[var(--text-primary)] text-center max-w-[600px]">
           Already supporting Paul? Pledge per mile for cancer foundations.
         </h2>
+        </ScrollReveal>
+        <ScrollReveal animation="fade-up" delay={100}>
         <p className="font-heading text-[15px] leading-[1.6] text-[var(--text-secondary)] text-center max-w-[600px]">
           100% of pledges go to <Link href="/foundations" className="text-[var(--burnt-orange)] hover:underline">two cancer foundations</Link> — one in California, one
           in Sydney. Paul receives nothing from pledges. Two causes, one journey.
         </p>
+        </ScrollReveal>
         <Link
           href="/pledge"
           className="flex items-center justify-center gap-[10px] bg-[var(--burnt-orange)] px-[40px] py-[16px] hover:opacity-90 transition-opacity"

@@ -30,3 +30,74 @@
     font-family: "Barlow Semi Condensed", "Barlow", Arial, sans-serif;
   }
 }
+
+/* ── Scroll Animation System ── */
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Hidden state before scroll reveal */
+.scroll-hidden {
+  opacity: 0;
+}
+
+/* Fade Up — primary reveal, like mist lifting to reveal a mountain */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-up {
+  animation: fadeUp 800ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Fade In — gentle appearance, like dawn light */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.animate-fade-in {
+  animation: fadeIn 700ms ease-out both;
+}
+
+/* Slide Left — content from the right, like the trail revealing what's ahead */
+@keyframes slideLeft {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.animate-slide-left {
+  animation: slideLeft 800ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Slide Right — content from the left, like looking back at where you've been */
+@keyframes slideRight {
+  from { opacity: 0; transform: translateX(-40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.animate-slide-right {
+  animation: slideRight 800ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Scale Up — a detail coming into focus */
+@keyframes scaleUp {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.animate-scale-up {
+  animation: scaleUp 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Stagger delay utilities for grid items */
+.stagger-1 { animation-delay: 80ms; }
+.stagger-2 { animation-delay: 160ms; }
+.stagger-3 { animation-delay: 240ms; }
+.stagger-4 { animation-delay: 320ms; }
+.stagger-5 { animation-delay: 400ms; }
+.stagger-6 { animation-delay: 480ms; }

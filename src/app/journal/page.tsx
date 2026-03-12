@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Search, ArrowRight, ChevronRight, ChevronLeft } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import ScrollReveal from "@/components/ScrollReveal";
 import type { JournalPostPublic } from "@/lib/types";
 
 const filterOptions = ["ALL", "BLOG", "VLOG", "INTERVIEWS", "PHOTOS"] as const;
@@ -119,11 +120,11 @@ export default function JournalPage() {
 
       {/* Hero */}
       <section className="flex flex-col items-center gap-[16px] px-6 md:px-12 lg:px-[120px] py-[40px] md:py-[52px] lg:py-[64px] bg-[var(--bg-white)] w-full">
-        <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">TRAIL JOURNAL</span>
-        <h1 className="font-heading font-semibold text-[28px] md:text-[38px] lg:text-[48px] tracking-[-0.5px] text-[var(--text-primary)] text-center">
+        <span className="animate-fade-up font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">TRAIL JOURNAL</span>
+        <h1 className="animate-fade-up stagger-2 font-heading font-semibold text-[28px] md:text-[38px] lg:text-[48px] tracking-[-0.5px] text-[var(--text-primary)] text-center">
           Stories From the Trail
         </h1>
-        <p className="font-heading text-[16px] md:text-[18px] leading-[1.6] text-[var(--text-secondary)] text-center w-full lg:w-[640px]">
+        <p className="animate-fade-up stagger-4 font-heading text-[16px] md:text-[18px] leading-[1.6] text-[var(--text-secondary)] text-center w-full lg:w-[640px]">
           Daily photos, videos, and reflections from Paul&apos;s 2,650-mile PCT journey. Follow along as he walks from Mexico to Canada.
         </p>
       </section>
@@ -156,15 +157,15 @@ export default function JournalPage() {
       {/* Featured Post */}
       {showFeatured && (
         <section className="flex flex-col lg:flex-row gap-[24px] lg:gap-[40px] px-6 md:px-12 lg:px-[120px] py-[32px] md:py-[48px] bg-[var(--bg-white)] w-full">
-          <div className="relative w-full lg:w-[640px] h-[250px] md:h-[320px] lg:h-[400px] shrink-0">
+          <ScrollReveal animation="slide-right" className="relative w-full lg:w-[640px] h-[250px] md:h-[320px] lg:h-[400px] shrink-0">
             <Image
               src={featuredPost.img}
               alt={featuredPost.title}
               fill
               className="object-cover"
             />
-          </div>
-          <div className="flex flex-col justify-center gap-[20px] flex-1">
+          </ScrollReveal>
+          <ScrollReveal animation="slide-left" className="flex flex-col justify-center gap-[20px] flex-1">
             <div className="bg-[var(--burnt-orange)] px-[12px] py-[4px] w-fit">
               <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-white)]">FEATURED POST</span>
             </div>
@@ -186,7 +187,7 @@ export default function JournalPage() {
               <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--burnt-orange)] group-hover:underline">READ FULL ENTRY</span>
               <ArrowRight className="w-[14px] h-[14px] text-[var(--burnt-orange)]" />
             </Link>
-          </div>
+          </ScrollReveal>
         </section>
       )}
 

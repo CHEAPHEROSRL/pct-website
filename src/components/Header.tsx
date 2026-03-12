@@ -1,9 +1,13 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Mountain, Heart } from "lucide-react";
 import MobileNav from "./MobileNav";
 
 interface HeaderProps {
   activeItem?: string;
+  transparent?: boolean;
 }
 
 const navLinks = [
@@ -14,23 +18,47 @@ const navLinks = [
   { href: "/donors", label: "Donors" },
 ];
 
-export default function Header({ activeItem }: HeaderProps) {
+export default function Header({ activeItem, transparent }: HeaderProps) {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    if (!transparent) return;
+    const onScroll = () => setScrolled(window.scrollY > 80);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [transparent]);
+
+  const isTransparent = transparent && !scrolled;
+
   return (
-    <header className="flex items-center justify-between px-4 md:px-8 lg:px-[80px] py-[16px] md:py-[20px] bg-[#FFFFFFEE] w-full relative z-50">
+    <header
+      className={`flex items-center justify-between px-4 md:px-8 lg:px-[80px] py-[16px] md:py-[20px] w-full z-50 transition-colors duration-400 ${
+        transparent ? "fixed top-0 left-0" : "relative"
+      } ${isTransparent ? "bg-transparent" : "bg-[#FFFFFFEE]"}`}
+    >
       <Link href="/" className="flex items-center gap-[12px]">
-        <Mountain className="w-[28px] h-[28px] text-[var(--forest-green)]" />
-        <span className="font-label font-bold text-[16px] tracking-[3px] text-[var(--text-primary)]">
+        <Mountain className={`w-[28px] h-[28px] transition-colors duration-300 ${isTransparent ? "text-white" : "text-[var(--forest-green)]"}`} />
+        <span className={`font-label font-bold text-[16px] tracking-[3px] transition-colors duration-300 ${isTransparent ? "text-white" : "text-[var(--text-primary)]"}`}>
           YESCHAPTER
         </span>
       </Link>
       <nav className="hidden lg:flex items-center gap-[40px]">
         {navLinks.map((link) =>
           link.label === activeItem ? (
-            <span key={link.label} className="font-heading text-[15px] font-semibold text-[var(--burnt-orange)]">
+            <span key={link.label} className={`font-heading text-[15px] font-semibold transition-colors duration-300 ${isTransparent ? "text-white" : "text-[var(--burnt-orange)]"}`}>
               {link.label}
             </span>
           ) : (
-            <Link key={link.label} href={link.href} className="font-heading text-[15px] font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
+            <Link
+              key={link.label}
+              href={link.href}
+              className={`font-heading text-[15px] font-semibold transition-colors duration-300 ${
+                isTransparent
+                  ? "text-white/80 hover:text-white"
+                  : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+              }`}
+            >
               {link.label}
             </Link>
           )

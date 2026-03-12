@@ -1,6 +1,8 @@
 import { Mail, Globe } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import ScrollReveal from "@/components/ScrollReveal";
+import HeroParallax from "@/components/HeroParallax";
 
 const storyAngles = [
   {
@@ -45,26 +47,28 @@ const photos = [
 export default function PressKitPage() {
   return (
     <div className="flex flex-col w-full bg-[var(--bg-warm)]">
-      <Header />
+      <Header transparent />
 
       {/* Hero */}
       <section className="relative w-full h-[400px] overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage:
-              "url('https://images.unsplash.com/photo-1551632811-561732d1e306?w=1440&q=80')",
-          }}
-        />
+        <HeroParallax>
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{
+              backgroundImage:
+                "url('https://images.unsplash.com/photo-1551632811-561732d1e306?w=1440&q=80')",
+            }}
+          />
+        </HeroParallax>
         <div className="absolute inset-0 bg-gradient-to-r from-[#1C1F1AEE] to-[#1C1F1A99]" />
         <div className="relative z-10 flex flex-col justify-center gap-[16px] h-full px-6 md:px-12 lg:px-[120px]">
-          <span className="font-label font-bold text-[11px] tracking-[3px] text-[var(--burnt-orange)]">
+          <span className="font-label font-bold text-[11px] tracking-[3px] text-[var(--burnt-orange)] animate-fade-up">
             PRESS KIT
           </span>
-          <h1 className="font-heading font-semibold text-[36px] md:text-[48px] lg:text-[56px] leading-[1.1] tracking-[-1px] text-[var(--text-white)]">
+          <h1 className="font-heading font-semibold text-[36px] md:text-[48px] lg:text-[56px] leading-[1.1] tracking-[-1px] text-[var(--text-white)] animate-fade-up stagger-2">
             Cover Paul&apos;s Story
           </h1>
-          <p className="font-heading text-[16px] md:text-[18px] leading-[1.6] text-[#FFFFFFCC] max-w-[600px]">
+          <p className="font-heading text-[16px] md:text-[18px] leading-[1.6] text-[#FFFFFFCC] max-w-[600px] animate-fade-up stagger-4">
             A 2,650-mile walk from Mexico to Canada in honor of two parents lost
             to cancer. Everything you need to tell this story.
           </p>
@@ -73,32 +77,36 @@ export default function PressKitPage() {
 
       {/* Facts bar */}
       <section className="flex flex-wrap justify-around gap-6 px-6 md:px-12 lg:px-[120px] py-[28px] bg-[var(--bg-dark)] w-full">
-        {[
-          { value: "2,650", label: "MILES ON TRAIL" },
-          { value: "~180", label: "DAYS HIKING" },
-          { value: "2026", label: "YEAR OF THE HIKE", highlight: true },
-          { value: "Mexico → Canada", label: "SOUTHERN TO NORTHERN TERMINUS" },
-        ].map((f) => (
-          <div key={f.label} className="flex flex-col items-center gap-[4px]">
-            <span
-              className={`font-heading font-semibold text-[28px] md:text-[32px] ${
-                f.highlight
-                  ? "text-[var(--burnt-orange)]"
-                  : "text-[var(--text-white)]"
-              }`}
-            >
-              {f.value}
-            </span>
-            <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
-              {f.label}
-            </span>
+        <ScrollReveal animation="fade-up">
+          <div className="flex flex-wrap justify-around gap-6 w-full">
+            {[
+              { value: "2,650", label: "MILES ON TRAIL" },
+              { value: "~180", label: "DAYS HIKING" },
+              { value: "2026", label: "YEAR OF THE HIKE", highlight: true },
+              { value: "Mexico → Canada", label: "SOUTHERN TO NORTHERN TERMINUS" },
+            ].map((f) => (
+              <div key={f.label} className="flex flex-col items-center gap-[4px]">
+                <span
+                  className={`font-heading font-semibold text-[28px] md:text-[32px] ${
+                    f.highlight
+                      ? "text-[var(--burnt-orange)]"
+                      : "text-[var(--text-white)]"
+                  }`}
+                >
+                  {f.value}
+                </span>
+                <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                  {f.label}
+                </span>
+              </div>
+            ))}
           </div>
-        ))}
+        </ScrollReveal>
       </section>
 
       {/* Bio */}
       <section className="flex flex-col md:flex-row items-center gap-[64px] px-6 md:px-12 lg:px-[120px] py-[80px] bg-[var(--bg-white)] w-full">
-        <div className="w-full md:w-[400px] shrink-0">
+        <ScrollReveal animation="slide-right" className="w-full md:w-[400px] shrink-0">
           <div
             className="w-full h-[380px] md:h-[480px] rounded-[2px] bg-cover bg-center bg-[var(--bg-warm)]"
             style={{
@@ -106,8 +114,8 @@ export default function PressKitPage() {
                 "url('https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=800&q=80')",
             }}
           />
-        </div>
-        <div className="flex flex-col gap-[24px] w-full">
+        </ScrollReveal>
+        <ScrollReveal animation="slide-left" className="flex flex-col gap-[24px] w-full">
           <span className="font-label font-bold text-[11px] tracking-[3px] text-[var(--burnt-orange)]">
             ABOUT PAUL
           </span>
@@ -135,18 +143,20 @@ export default function PressKitPage() {
               — Paul Barry
             </span>
           </div>
-        </div>
+        </ScrollReveal>
       </section>
 
       {/* Story angles */}
       <section className="flex flex-col items-center gap-[40px] px-6 md:px-12 lg:px-[120px] py-[80px] bg-[var(--bg-warm)] w-full">
-        <span className="font-label font-bold text-[11px] tracking-[3px] text-[var(--burnt-orange)]">
-          STORY ANGLES
-        </span>
-        <h2 className="font-heading font-semibold text-[28px] md:text-[36px] tracking-[-0.5px] text-[var(--text-primary)] text-center">
-          Ways to Cover This Story
-        </h2>
-        <div className="flex flex-col gap-[16px] w-full">
+        <ScrollReveal animation="fade-up">
+          <span className="font-label font-bold text-[11px] tracking-[3px] text-[var(--burnt-orange)]">
+            STORY ANGLES
+          </span>
+          <h2 className="font-heading font-semibold text-[28px] md:text-[36px] tracking-[-0.5px] text-[var(--text-primary)] text-center">
+            Ways to Cover This Story
+          </h2>
+        </ScrollReveal>
+        <ScrollReveal animation="fade-up" delay={100} className="flex flex-col gap-[16px] w-full">
           {storyAngles.map((a) => (
             <div
               key={a.num}
@@ -163,24 +173,26 @@ export default function PressKitPage() {
               </p>
             </div>
           ))}
-        </div>
+        </ScrollReveal>
       </section>
 
       {/* Photos */}
       <section className="flex flex-col gap-[40px] px-6 md:px-12 lg:px-[120px] py-[80px] bg-[var(--bg-white)] w-full">
-        <span className="font-label font-bold text-[11px] tracking-[3px] text-[var(--burnt-orange)]">
-          MEDIA ASSETS
-        </span>
-        <h2 className="font-heading font-semibold text-[28px] md:text-[36px] tracking-[-0.5px] text-[var(--text-primary)]">
-          Photos &amp; Graphics
-        </h2>
-        <p className="font-heading text-[15px] leading-[1.6] text-[var(--text-muted)] -mt-[20px]">
-          High-resolution photos available for editorial use. Please credit:{" "}
-          <span className="text-[var(--text-secondary)]">
-            Paul Barry / yeschapter.com
+        <ScrollReveal animation="fade-up">
+          <span className="font-label font-bold text-[11px] tracking-[3px] text-[var(--burnt-orange)]">
+            MEDIA ASSETS
           </span>
-        </p>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-[24px]">
+          <h2 className="font-heading font-semibold text-[28px] md:text-[36px] tracking-[-0.5px] text-[var(--text-primary)]">
+            Photos &amp; Graphics
+          </h2>
+          <p className="font-heading text-[15px] leading-[1.6] text-[var(--text-muted)] -mt-[20px]">
+            High-resolution photos available for editorial use. Please credit:{" "}
+            <span className="text-[var(--text-secondary)]">
+              Paul Barry / yeschapter.com
+            </span>
+          </p>
+        </ScrollReveal>
+        <ScrollReveal animation="scale-up" delay={100} className="grid grid-cols-1 sm:grid-cols-3 gap-[24px]">
           {photos.map((p) => (
             <div key={p.caption} className="flex flex-col gap-[12px]">
               <div
@@ -192,11 +204,12 @@ export default function PressKitPage() {
               </span>
             </div>
           ))}
-        </div>
+        </ScrollReveal>
       </section>
 
       {/* Media contact */}
       <section className="flex flex-col items-center gap-[32px] px-6 md:px-12 lg:px-[120px] py-[80px] bg-[var(--bg-dark)] w-full">
+        <ScrollReveal animation="fade-in">
         <span className="font-label font-bold text-[11px] tracking-[3px] text-[var(--burnt-orange)]">
           MEDIA CONTACT
         </span>
@@ -231,6 +244,7 @@ export default function PressKitPage() {
             </span>
           </div>
         </div>
+        </ScrollReveal>
       </section>
 
       <Footer />

@@ -13,6 +13,7 @@ import {
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ChallengeBanner from "@/components/ChallengeBanner";
+import ScrollReveal from "@/components/ScrollReveal";
 import type { PledgePublic, PledgeStats, ChallengePublic } from "@/lib/types";
 
 function formatCurrency(value: number): string {
@@ -83,13 +84,13 @@ export default function PledgersPage() {
 
       {/* Hero */}
       <section className="flex flex-col gap-[16px] px-6 md:px-12 lg:px-[120px] py-[40px] md:py-[56px] bg-[var(--bg-white)] w-full">
-        <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">
+        <span className="animate-fade-up font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">
           PLEDGER WALL
         </span>
-        <h1 className="font-heading font-semibold text-[28px] md:text-[34px] lg:text-[36px] tracking-[-0.5px] text-[var(--text-primary)]">
+        <h1 className="animate-fade-up stagger-2 font-heading font-semibold text-[28px] md:text-[34px] lg:text-[36px] tracking-[-0.5px] text-[var(--text-primary)]">
           People Walking With Paul
         </h1>
-        <p className="font-heading text-[16px] leading-[1.6] text-[var(--text-secondary)] max-w-[650px]">
+        <p className="animate-fade-up stagger-4 font-heading text-[16px] leading-[1.6] text-[var(--text-secondary)] max-w-[650px]">
           Every mile Paul walks, these pledgers are right there with him — turning
           steps into dollars for cancer research and patient support.
         </p>
@@ -299,13 +300,17 @@ export default function PledgersPage() {
 
       {/* CTA */}
       <section className="flex flex-col items-center gap-[20px] px-6 md:px-12 lg:px-[120px] py-[48px] bg-[var(--bg-warm)] w-full">
+        <ScrollReveal animation="fade-up">
         <h2 className="font-heading font-semibold text-[24px] text-[var(--text-primary)] text-center">
           Join the Wall
         </h2>
+        </ScrollReveal>
+        <ScrollReveal animation="fade-up" delay={100}>
         <p className="font-heading text-[16px] text-[var(--text-secondary)] text-center max-w-[500px]">
           Pledge per mile and your name appears here. Every cent goes to <Link href="/foundations" className="text-[var(--burnt-orange)] hover:underline">cancer
           foundations</Link> — Paul gets nothing from pledges.
         </p>
+        </ScrollReveal>
         <div className="flex flex-col sm:flex-row gap-[12px]">
           <Link
             href="/pledge"

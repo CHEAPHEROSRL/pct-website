@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Heart, ExternalLink } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import ScrollReveal from "@/components/ScrollReveal";
 
 export const metadata: Metadata = {
   title: "Our Partner Foundations — YesChapter",
@@ -65,13 +66,13 @@ export default function FoundationsPage() {
 
       {/* Hero */}
       <section className="flex flex-col items-center gap-[12px] px-6 md:px-12 lg:px-[120px] py-[40px] md:py-[52px] lg:py-[64px] bg-[var(--bg-white)] w-full">
-        <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">
+        <span className="animate-fade-up font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">
           WHERE YOUR MONEY GOES
         </span>
-        <h1 className="font-heading font-semibold text-[28px] md:text-[38px] lg:text-[48px] tracking-[-0.5px] text-[var(--text-primary)] text-center">
+        <h1 className="animate-fade-up stagger-2 font-heading font-semibold text-[28px] md:text-[38px] lg:text-[48px] tracking-[-0.5px] text-[var(--text-primary)] text-center">
           Our Partner Foundations
         </h1>
-        <p className="font-heading text-[16px] md:text-[18px] text-[var(--text-secondary)] text-center max-w-[700px]">
+        <p className="animate-fade-up stagger-4 font-heading text-[16px] md:text-[18px] text-[var(--text-secondary)] text-center max-w-[700px]">
           Every dollar you donate is split equally between two cancer foundations — one in California, one in
           Sydney — honoring both of Paul&apos;s parents.
         </p>
@@ -88,18 +89,22 @@ export default function FoundationsPage() {
           receive direct support.
         </p>
         <div className="flex flex-col md:flex-row gap-[24px] md:gap-[32px] justify-center">
-          <div className="flex flex-col items-center gap-[12px] bg-[var(--bg-white)] border border-[var(--border-subtle)] rounded-[12px] px-[40px] py-[32px] w-[280px] md:w-[360px]">
-            <span className="text-[32px]">&#127482;&#127480;</span>
-            <span className="font-label font-bold text-[40px] text-[var(--burnt-orange)]">50%</span>
-            <span className="font-heading font-semibold text-[18px] text-[var(--text-primary)]">California, USA</span>
-            <span className="font-heading text-[14px] text-[var(--text-muted)]">Honoring Paul&apos;s father</span>
-          </div>
-          <div className="flex flex-col items-center gap-[12px] bg-[var(--bg-white)] border border-[var(--border-subtle)] rounded-[12px] px-[40px] py-[32px] w-[280px] md:w-[360px]">
-            <span className="text-[32px]">&#127462;&#127482;</span>
-            <span className="font-label font-bold text-[40px] text-[var(--forest-green)]">50%</span>
-            <span className="font-heading font-semibold text-[18px] text-[var(--text-primary)]">Sydney, Australia</span>
-            <span className="font-heading text-[14px] text-[var(--text-muted)]">Honoring Paul&apos;s mother</span>
-          </div>
+          <ScrollReveal animation="slide-right">
+            <div className="flex flex-col items-center gap-[12px] bg-[var(--bg-white)] border border-[var(--border-subtle)] rounded-[12px] px-[40px] py-[32px] w-[280px] md:w-[360px]">
+              <span className="text-[32px]">&#127482;&#127480;</span>
+              <span className="font-label font-bold text-[40px] text-[var(--burnt-orange)]">50%</span>
+              <span className="font-heading font-semibold text-[18px] text-[var(--text-primary)]">California, USA</span>
+              <span className="font-heading text-[14px] text-[var(--text-muted)]">Honoring Paul&apos;s father</span>
+            </div>
+          </ScrollReveal>
+          <ScrollReveal animation="slide-left">
+            <div className="flex flex-col items-center gap-[12px] bg-[var(--bg-white)] border border-[var(--border-subtle)] rounded-[12px] px-[40px] py-[32px] w-[280px] md:w-[360px]">
+              <span className="text-[32px]">&#127462;&#127482;</span>
+              <span className="font-label font-bold text-[40px] text-[var(--forest-green)]">50%</span>
+              <span className="font-heading font-semibold text-[18px] text-[var(--text-primary)]">Sydney, Australia</span>
+              <span className="font-heading text-[14px] text-[var(--text-muted)]">Honoring Paul&apos;s mother</span>
+            </div>
+          </ScrollReveal>
         </div>
       </section>
 
@@ -107,7 +112,7 @@ export default function FoundationsPage() {
       {foundations.map((f) => (
         <section key={f.name} className={`flex flex-col gap-[32px] px-6 md:px-12 lg:px-[120px] py-[40px] md:py-[64px] w-full ${f.bgClass}`}>
           {/* Foundation Header */}
-          <div className="flex flex-col gap-[8px]">
+          <ScrollReveal animation="fade-up"><div className="flex flex-col gap-[8px]">
             <span className="font-label font-bold text-[12px] tracking-[3px]" style={{ color: f.regionColor }}>
               {f.region}
             </span>
@@ -117,7 +122,7 @@ export default function FoundationsPage() {
             <p className="font-heading text-[16px] md:text-[18px] leading-[1.6] text-[var(--text-secondary)] max-w-[800px]">
               {f.tagline}
             </p>
-          </div>
+          </div></ScrollReveal>
 
           {/* Details Grid */}
           <div className="flex flex-col lg:flex-row gap-[32px] lg:gap-[48px]">
@@ -171,12 +176,16 @@ export default function FoundationsPage() {
 
       {/* CTA */}
       <section className="flex flex-col items-center gap-[20px] px-6 md:px-12 lg:px-[120px] py-[48px] md:py-[64px] bg-[var(--bg-white)] w-full">
-        <h2 className="font-heading font-semibold text-[28px] md:text-[32px] text-[var(--text-primary)] text-center">
-          Support the Cause
-        </h2>
-        <p className="font-heading text-[16px] md:text-[18px] text-[var(--text-secondary)] text-center max-w-[500px]">
-          Every dollar goes directly to these foundations. Paul takes nothing.
-        </p>
+        <ScrollReveal animation="fade-up">
+          <h2 className="font-heading font-semibold text-[28px] md:text-[32px] text-[var(--text-primary)] text-center">
+            Support the Cause
+          </h2>
+        </ScrollReveal>
+        <ScrollReveal animation="fade-up" delay={100}>
+          <p className="font-heading text-[16px] md:text-[18px] text-[var(--text-secondary)] text-center max-w-[500px]">
+            Every dollar goes directly to these foundations. Paul takes nothing.
+          </p>
+        </ScrollReveal>
         <div className="flex flex-col sm:flex-row gap-[16px] items-center">
           <Link
             href="/donate"
