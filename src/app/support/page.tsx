@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import ChallengeBanner from "@/components/ChallengeBanner";
+import CountdownBanner from "@/components/CountdownBanner";
 import ScrollReveal from "@/components/ScrollReveal";
 
 interface GiftOption {
@@ -122,7 +122,7 @@ export default function SupportPage() {
   return (
     <div className="flex flex-col w-full bg-[var(--bg-warm)]">
       <Header />
-      <ChallengeBanner />
+      <CountdownBanner />
 
       {/* Hero */}
       <section className="flex flex-col gap-[16px] px-6 md:px-12 lg:px-[120px] py-[40px] md:py-[56px] bg-[var(--bg-white)] w-full">

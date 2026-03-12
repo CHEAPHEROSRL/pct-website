@@ -4,7 +4,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ShareButton from "@/components/ShareButton";
 import HomeTrailProgress from "@/components/HomeTrailProgress";
-import ChallengeBanner from "@/components/ChallengeBanner";
+import CountdownBanner from "@/components/CountdownBanner";
+import CountdownSection from "@/components/CountdownSection";
 import ScrollReveal from "@/components/ScrollReveal";
 import HeroParallax from "@/components/HeroParallax";
 import CountUpStat from "@/components/CountUpStat";
@@ -24,7 +25,7 @@ export default function Home() {
   return (
     <div className="flex flex-col w-full bg-[var(--bg-warm)]">
       <Header transparent />
-      <ChallengeBanner />
+      <CountdownBanner />
 
       {/* Hero Section */}
       <section className="relative w-full h-[560px] md:h-[680px] lg:h-[800px] overflow-hidden">
@@ -90,6 +91,9 @@ export default function Home() {
         <CountUpStat end={3} label="STATES TRAVERSED" color="var(--burnt-orange)" />
         <CountUpStat end={50} prefix="$" suffix="K" label="PLEDGE GOAL" color="var(--forest-green)" />
       </section>
+
+      {/* Countdown to Trail Start */}
+      <CountdownSection />
 
       {/* About The Journey */}
       <section className="flex flex-col gap-[32px] md:gap-[48px] px-6 md:px-12 lg:px-[120px] py-[48px] md:py-[64px] lg:py-[80px] bg-[var(--bg-white)] w-full">

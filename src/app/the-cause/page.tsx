@@ -7,7 +7,7 @@ import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
 import HeroParallax from "@/components/HeroParallax";
 import ShareButton from "@/components/ShareButton";
-import ChallengeBanner from "@/components/ChallengeBanner";
+import CountdownBanner from "@/components/CountdownBanner";
 
 export const metadata: Metadata = {
   title: "The Cause — Cancer Prevention & Awareness",
@@ -18,7 +18,7 @@ export default function TheCausePage() {
   return (
     <div className="flex flex-col w-full bg-[var(--bg-warm)]">
       <Header activeItem="The Cause" transparent />
-      <ChallengeBanner />
+      <CountdownBanner />
 
       {/* Hero */}
       <section className="relative w-full h-[400px] md:h-[480px] lg:h-[560px] overflow-hidden">

@@ -5,7 +5,7 @@ import { Search, ChevronRight, ChevronLeft, Users, TrendingUp, Heart, Target } f
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import ChallengeBanner from "@/components/ChallengeBanner";
+import CountdownBanner from "@/components/CountdownBanner";
 import ScrollReveal from "@/components/ScrollReveal";
 import { useDonorData } from "@/hooks/useDonorData";
 
@@ -62,7 +62,7 @@ export default function DonorsPage() {
   return (
     <div className="flex flex-col w-full bg-[var(--bg-warm)]">
       <Header activeItem="Donors" />
-      <ChallengeBanner />
+      <CountdownBanner />
 
       {/* Hero */}
       <section className="flex flex-col items-center gap-[24px] md:gap-[32px] px-6 md:px-12 lg:px-[120px] py-[40px] md:py-[52px] lg:py-[64px] bg-[var(--bg-white)] w-full">
