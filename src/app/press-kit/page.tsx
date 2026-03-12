@@ -28,17 +28,17 @@ const storyAngles = [
 
 const photos = [
   {
-    src: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80",
+    src: "/images/hiking/20240128_110150.jpg",
     caption: "Southern Desert Section",
     credit: "Unsplash",
   },
   {
-    src: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80",
+    src: "/images/hiking/20220822_134051.jpg",
     caption: "Sierra Nevada High Country",
     credit: "Unsplash",
   },
   {
-    src: "https://images.unsplash.com/photo-1448375240586-882707db888b?w=800&q=80",
+    src: "/images/hiking/20230821_165432.jpg",
     caption: "Pacific Northwest Forest",
     credit: "Unsplash",
   },
@@ -56,7 +56,7 @@ export default function PressKitPage() {
             className="absolute inset-0 bg-cover bg-center"
             style={{
               backgroundImage:
-                "url('https://images.unsplash.com/photo-1551632811-561732d1e306?w=1440&q=80')",
+                "url('/images/hiking/20260201_123623.jpg')",
             }}
           />
         </HeroParallax>
@@ -111,7 +111,7 @@ export default function PressKitPage() {
             className="w-full h-[380px] md:h-[480px] rounded-[2px] bg-cover bg-center bg-[var(--bg-warm)]"
             style={{
               backgroundImage:
-                "url('https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=800&q=80')",
+                "url('/images/portraits/FB_IMG_1771992947610.jpg')",
             }}
           />
         </ScrollReveal>

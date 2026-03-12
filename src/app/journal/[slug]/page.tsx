@@ -197,7 +197,7 @@ function BlogHero({
 }) {
   const coverImage =
     post.coverImage ||
-    "https://images.unsplash.com/photo-1609657096517-438da7ed2423?w=1080";
+    "/images/hiking/20230903_090215.jpg";
 
   return (
     <section className="relative w-full h-[320px] md:h-[400px] lg:h-[480px]">
@@ -511,7 +511,7 @@ const fallbackPosts: JournalPostDetailResponse[] = [
     post: {
       id: "fb-1", title: "The First Step: Standing at the Southern Terminus", slug: "the-first-step-standing-at-the-southern-terminus",
       dayNumber: 1, date: "2026-03-28", excerpt: "Standing at the southern monument, looking north toward Canada.",
-      coverImage: "https://images.unsplash.com/photo-1764092816494-c165d9a24d70?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80",
+      coverImage: "/images/hiking/FB_IMG_1771992615412.jpg",
       images: [], youtubeUrl: "", tags: ["BLOG"],
       body: `I stood at the southern terminus monument, my pack heavy on my shoulders, staring north into the desert. The morning air was cool but I could already feel the promise of heat in the sun climbing above the hills. Behind me, the metal border fence stretched east and west. Ahead, 2,650 miles of trail.
 
@@ -540,7 +540,7 @@ If you're reading this and you've been touched by cancer, know that you're part 
     post: {
       id: "fb-2", title: "Finding My Rhythm", slug: "finding-my-rhythm",
       dayNumber: 2, date: "2026-03-29", excerpt: "20 miles in and my feet are already talking to me.",
-      coverImage: "https://images.unsplash.com/photo-1609657096517-438da7ed2423?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80",
+      coverImage: "/images/hiking/20250802_160435.jpg",
       images: [], youtubeUrl: "", tags: ["BLOG"],
       body: `Twenty miles in and my feet are already talking to me. But the desert sunrise was worth every blister. The sky turned from deep purple to blazing orange in what felt like seconds, painting the rocks around me in warm light.
 
@@ -565,7 +565,7 @@ Met two other hikers at the water cache — "Sunshine" and "Tripod." Trail names
     post: {
       id: "fb-3", title: "Water and Gratitude", slug: "water-and-gratitude",
       dayNumber: 5, date: "2026-04-01", excerpt: "Found a perfect stream today.",
-      coverImage: "https://images.unsplash.com/photo-1723995594361-46b69891c6f9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80",
+      coverImage: "/images/hiking/20220822_134557.jpg",
       images: [], youtubeUrl: "", tags: ["VLOG"],
       body: `Found a perfect stream today. Sat with my feet in the cold water and thought about Mom's garden. She always said water was the most honest thing in nature — it goes where it needs to go, no pretense, no hesitation.
 
@@ -586,11 +586,11 @@ A trail angel had left a cooler at the road crossing near mile 40. Inside: cold 
     post: {
       id: "fb-4", title: "Stars Like I've Never Seen", slug: "stars-like-ive-never-seen",
       dayNumber: 8, date: "2026-04-04", excerpt: "No light pollution out here.",
-      coverImage: "https://images.unsplash.com/photo-1763058138710-7d8e263223ae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80",
+      coverImage: "/images/hiking/20230824_122513.jpg",
       images: [
-        "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1080&q=80",
-        "https://images.unsplash.com/photo-1507400492013-162706c8c05e?w=1080&q=80",
-        "https://images.unsplash.com/photo-1464802686167-b939a6910659?w=1080&q=80",
+        "/images/hiking/20250821_175814.jpg",
+        "/images/hiking/20230821_165432.jpg",
+        "/images/hiking/FB_IMG_1771991299919.jpg",
       ],
       youtubeUrl: "", tags: ["PHOTOS"],
       body: `No light pollution out here. The Milky Way stretches above like a river of light. Dad would have loved this. He was the one who taught me to find Orion, to trace the Big Dipper, to understand that we're small in the best possible way.
@@ -614,7 +614,7 @@ This walk is for you too, Dad. Every star I see, I see through your eyes.`,
     post: {
       id: "fb-5", title: "Through the Desert Wind", slug: "through-the-desert-wind",
       dayNumber: 15, date: "2026-04-11", excerpt: "The heat is relentless, but the sunsets make it all worthwhile.",
-      coverImage: "https://images.unsplash.com/photo-1688057951002-a159e26c7f82?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80",
+      coverImage: "/images/hiking/20240128_110150.jpg",
       images: [], youtubeUrl: "", tags: ["BLOG"],
       body: `The heat is relentless, but the sunsets make it all worthwhile. Day 15 and I've settled into a rhythm: wake at 5am, hike until 11, rest through the worst heat, hike again from 3pm until dark.
 
@@ -639,11 +639,11 @@ But then — the sunset. Orange and gold and purple streaking across a sky so wi
     post: {
       id: "fb-6", title: "Wildflower Season", slug: "wildflower-season",
       dayNumber: 20, date: "2026-04-16", excerpt: "The desert is blooming.",
-      coverImage: "https://images.unsplash.com/photo-1759491265362-3bd88910a036?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80",
+      coverImage: "/images/hiking/Screenshot_20240316-175047_Gallery.jpg",
       images: [
-        "https://images.unsplash.com/photo-1490750967868-88aa4f44baee?w=1080&q=80",
-        "https://images.unsplash.com/photo-1457530378978-8bac673b8062?w=1080&q=80",
-        "https://images.unsplash.com/photo-1487530811176-3780de880c2d?w=1080&q=80",
+        "/images/hiking/20250823_144222.jpg",
+        "/images/hiking/20220823_123521.jpg",
+        "/images/hiking/FB_IMG_1771992615412.jpg",
       ],
       youtubeUrl: "", tags: ["PHOTOS"],
       body: `The desert is blooming. Purple, yellow, orange — everywhere. Nature's reminder that beauty follows hardship. After weeks of browns and tans, the wildflowers have arrived like a surprise party thrown by the earth.
@@ -667,7 +667,7 @@ These wildflowers remind me of her garden. They push through hard, dry earth and
     post: {
       id: "fb-7", title: "Sierra Nights", slug: "sierra-nights",
       dayNumber: 30, date: "2026-04-26", excerpt: "The stars remind me of camping with my dad.",
-      coverImage: "https://images.unsplash.com/photo-1759150954328-8b0b005ade84?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80",
+      coverImage: "/images/hiking/20220822_134051.jpg",
       images: [], youtubeUrl: "", tags: ["VLOG"],
       body: `The stars remind me of camping with my dad. I can feel him walking with me. Tonight's vlog is for him. Thirty days on the trail, and I'm approaching the Sierra Nevada — the real mountains begin.
 
@@ -694,7 +694,7 @@ Five more months to go. One step at a time.`,
     post: {
       id: "fb-interview-1", title: "YesChapter Interview: Sarah from Portland", slug: "trail-interview-sarah-portland",
       dayNumber: 12, date: "2026-04-08", excerpt: "I asked Sarah the question: 'What's a time in your life where you could go back and change the answer to YES?' Her answer stopped me in my tracks.",
-      coverImage: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80",
+      coverImage: "/images/hiking/20230831_135648.jpg",
       images: [], youtubeUrl: "", tags: ["INTERVIEWS"],
       body: `I met Sarah on a dusty stretch of trail somewhere between Warner Springs and Paradise Valley Café. She was day-hiking — just out for a few hours with her dog, a scruffy Australian shepherd named Biscuit. We got to talking.
 
@@ -739,7 +739,7 @@ And if you want to be part of this journey, [pledge per mile →](/pledge) or [d
     post: {
       id: "fb-interview-2", title: "YesChapter Interview: Marcus & Elena — A Couple on the Trail", slug: "trail-interview-marcus-and-elena",
       dayNumber: 25, date: "2026-04-21", excerpt: "They both had different answers to the YesChapter question. Marcus wished he'd said yes to forgiving his father sooner. Elena wished she'd said yes to herself.",
-      coverImage: "https://images.unsplash.com/photo-1551632811-561732d1e306?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80",
+      coverImage: "/images/hiking/image1.jpeg",
       images: [], youtubeUrl: "", tags: ["INTERVIEWS"],
       body: `Marcus and Elena were section-hiking the PCT together — their first long trail as a couple. They'd been together for three years, and Elena told me this hike was Marcus's idea. "He said we needed to do something hard together before we decided if we wanted to do life together." She laughed. "So here we are, covered in dirt, eating cold ramen out of a bag. Very romantic."
 
@@ -802,7 +802,7 @@ What's your YesChapter? What would you go back and change the answer to YES?
     post: {
       id: "fb-guide-1", title: "How Pledging Works — A Complete Guide", slug: "how-pledging-works",
       dayNumber: 0, date: "2026-03-10", excerpt: "Everything you need to know about pledging per mile: how it works, when you pay, where the money goes, and why this model keeps Paul accountable.",
-      coverImage: "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80",
+      coverImage: "/images/hiking/FB_IMG_1771992929191.jpg",
       images: [], youtubeUrl: "", tags: ["BLOG"],
       body: `This is a complete guide to how the pledge-per-mile system works for Paul's PCT fundraiser. Whether you're considering making a pledge or you've already pledged and want to understand the details, this post covers everything.
 
@@ -939,7 +939,7 @@ Already pledged? [Check your dashboard →](/my-pledge) to see your running tota
     post: {
       id: "fb-guide-2", title: "As a Man Thinketh — The Book That Made Me Walk", slug: "as-a-man-thinketh",
       dayNumber: 0, date: "2026-03-15", excerpt: "A small book from 1903 changed how I see this entire journey. James Allen wrote that your thoughts shape your reality. I believe him — and that belief is why I'm walking 2,650 miles.",
-      coverImage: "https://images.unsplash.com/photo-1506880018603-83d5b814b5a6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80",
+      coverImage: "/images/portraits/20230823_190926.jpg",
       images: [], youtubeUrl: "", tags: ["BLOG"],
       body: `There's a book I keep coming back to. It's barely 30 pages long. It was written in 1903 by a man named James Allen, and it's called *As a Man Thinketh*. I first read it years ago, long before I ever considered walking 2,650 miles through the wilderness. But when I look back at every decision that led me to this trail, I can trace them all back to the ideas in that book.
 
@@ -1060,7 +1060,7 @@ And if you're walking with me on this journey — literally or through your supp
     post: {
       id: "fb-guide-3", title: "Finding Your Ikigai — Why I Started YesChapter and Walked 2,650 Miles", slug: "finding-your-ikigai",
       dayNumber: 0, date: "2026-03-18", excerpt: "Ikigai isn't something you find sitting still. It's something you build through consistent, hard, fulfilling, and meaningful work. That's why I'm walking — and that's why YesChapter exists.",
-      coverImage: "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80",
+      coverImage: "/images/hiking/FB_IMG_1771992939135.jpg",
       images: [], youtubeUrl: "", tags: ["BLOG"],
       body: `I've been thinking a lot about Ikigai lately. Not in the way most people encounter it — a nice diagram on Instagram, four overlapping circles, a quick "find your purpose" caption. I've been thinking about it in the way you think about something when you're 400 miles into a desert with blisters on your feet and nothing to do but walk and think.
 

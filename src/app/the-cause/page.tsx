@@ -24,7 +24,7 @@ export default function TheCausePage() {
       <section className="relative w-full h-[400px] md:h-[480px] lg:h-[560px] overflow-hidden">
         <HeroParallax>
           <Image
-            src="https://images.unsplash.com/photo-1648547254224-ea84e019798f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzIyNjA5NTR8&ixlib=rb-4.1.0&q=80&w=1080"
+            src="/images/hiking/20250821_175814.jpg"
             alt="The Cause"
             fill
             className="object-cover"
@@ -48,7 +48,7 @@ export default function TheCausePage() {
         <ScrollReveal animation="slide-right">
           <div className="relative w-full lg:w-[480px] h-[300px] md:h-[400px] lg:h-[580px] shrink-0">
             <Image
-              src="https://images.unsplash.com/photo-1762445333169-0c7d95a5e6c0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzIyNjA5NzJ8&ixlib=rb-4.1.0&q=80&w=1080"
+              src="/images/family/FB_IMG_1761627851598.jpg"
               alt="Paul"
               fill
               className="object-cover"
@@ -144,7 +144,7 @@ export default function TheCausePage() {
       <section className="relative w-full h-[360px] md:h-[380px] lg:h-[400px] overflow-hidden">
         <HeroParallax>
           <Image
-            src="https://images.unsplash.com/photo-1576479569327-e777337d3606?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzIyNjEwNTB8&ixlib=rb-4.1.0&q=80&w=1080"
+            src="/images/hiking/FB_IMG_1771992939135.jpg"
             alt="CTA background"
             fill
             className="object-cover"

@@ -30,7 +30,7 @@ export default function Home() {
       <section className="relative w-full h-[480px] md:h-[600px] lg:h-[720px] overflow-hidden">
         <HeroParallax>
           <Image
-            src="https://images.unsplash.com/photo-1732396768887-33cfea69bbf3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzIyNTk4ODl8&ixlib=rb-4.1.0&q=80&w=1080"
+            src="/images/hiking/FB_IMG_1771991299919.jpg"
             alt="Pacific Crest Trail"
             fill
             className="object-cover"
@@ -144,7 +144,7 @@ export default function Home() {
       <section className="flex flex-col lg:flex-row w-full bg-[var(--bg-dark)]">
         <ScrollReveal animation="slide-right" className="relative w-full lg:w-[580px] h-[300px] md:h-[400px] lg:h-[700px] shrink-0 overflow-hidden">
           <Image
-            src="https://images.unsplash.com/photo-1767189522336-1a68f4dbea6c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzIyNTk5OTR8&ixlib=rb-4.1.0&q=80&w=1080"
+            src="/images/family/FB_IMG_1729964832568.jpg"
             alt="The Cause"
             fill
             className="object-cover"
@@ -249,7 +249,7 @@ export default function Home() {
             <div className="flex flex-col bg-[var(--bg-white)] border border-[var(--border-subtle)] overflow-hidden">
               <div className="relative w-full h-[220px]">
                 <Image
-                  src="https://images.unsplash.com/photo-1621341917840-8aa7744c1108?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzIyNjAwOTV8&ixlib=rb-4.1.0&q=80&w=1080"
+                  src="/images/hiking/20250802_160435.jpg"
                   alt="The First Step"
                   fill
                   className="object-cover"
@@ -277,7 +277,7 @@ export default function Home() {
             <div className="flex flex-col bg-[var(--bg-white)] border border-[var(--border-subtle)] overflow-hidden">
               <div className="relative w-full h-[220px]">
                 <Image
-                  src="https://images.unsplash.com/photo-1759046258329-24e108c78425?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzIyNjAxMDZ8&ixlib=rb-4.1.0&q=80&w=1080"
+                  src="/images/hiking/20220822_134557.jpg"
                   alt="Through the Desert Wind"
                   fill
                   className="object-cover"
@@ -304,7 +304,7 @@ export default function Home() {
             <div className="flex flex-col bg-[var(--bg-white)] border border-[var(--border-subtle)] overflow-hidden">
               <div className="relative w-full h-[220px]">
                 <Image
-                  src="https://images.unsplash.com/photo-1761671600698-597651a68568?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzIyNjAxMTJ8&ixlib=rb-4.1.0&q=80&w=1080"
+                  src="/images/hiking/20230824_122513.jpg"
                   alt="Sierra Nights"
                   fill
                   className="object-cover"
@@ -332,7 +332,7 @@ export default function Home() {
       <section className="relative w-full h-[420px] md:h-[450px] lg:h-[480px] overflow-hidden">
         <HeroParallax>
           <Image
-            src="https://images.unsplash.com/photo-1760685468640-dddb93b7a10b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzIyNjAxMzF8&ixlib=rb-4.1.0&q=80&w=1080"
+            src="/images/hiking/FB_IMG_1771992929191.jpg"
             alt="Mountain sunset"
             fill
             className="object-cover"

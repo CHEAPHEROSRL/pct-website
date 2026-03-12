@@ -27,7 +27,7 @@ function mapPostToEntry(post: JournalPostPublic): JournalEntry {
     slug: post.slug,
     img:
       post.coverImage ||
-      "https://images.unsplash.com/photo-1609657096517-438da7ed2423?w=1080",
+      "/images/hiking/20230903_090215.jpg",
     day: `DAY ${post.dayNumber}`,
     date: new Date(post.date + "T12:00:00")
       .toLocaleDateString("en-US", {
@@ -44,7 +44,7 @@ function mapPostToEntry(post: JournalPostPublic): JournalEntry {
 
 const fallbackFeaturedPost: JournalEntry = {
   slug: "the-first-step-standing-at-the-southern-terminus",
-  img: "https://images.unsplash.com/photo-1764092816494-c165d9a24d70?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzIyNjA0MzV8&ixlib=rb-4.1.0&q=80&w=1080",
+  img: "/images/hiking/FB_IMG_1771992615412.jpg",
   day: "DAY 1",
   date: "MARCH 28, 2026",
   title: "The First Step: Standing at the Southern Terminus",
@@ -53,17 +53,17 @@ const fallbackFeaturedPost: JournalEntry = {
 };
 
 const fallbackEntries: JournalEntry[] = [
-  { slug: "finding-my-rhythm", img: "https://images.unsplash.com/photo-1609657096517-438da7ed2423?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80", day: "DAY 2", date: "MARCH 29, 2026", title: "Finding My Rhythm", excerpt: "20 miles in and my feet are already talking to me. But the desert sunrise was worth every blister.", tag: "BLOG" },
-  { slug: "water-and-gratitude", img: "https://images.unsplash.com/photo-1723995594361-46b69891c6f9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80", day: "DAY 5", date: "APRIL 1, 2026", title: "Water and Gratitude", excerpt: "Found a perfect stream today. Sat with my feet in the cold water and thought about Mom\u2019s garden.", tag: "VLOG" },
-  { slug: "stars-like-ive-never-seen", img: "https://images.unsplash.com/photo-1763058138710-7d8e263223ae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80", day: "DAY 8", date: "APRIL 4, 2026", title: "Stars Like I've Never Seen", excerpt: "No light pollution out here. The Milky Way stretches above like a river of light. Dad would have loved this.", tag: "PHOTOS" },
-  { slug: "through-the-desert-wind", img: "https://images.unsplash.com/photo-1688057951002-a159e26c7f82?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80", day: "DAY 15", date: "APRIL 11, 2026", title: "Through the Desert Wind", excerpt: "The heat is relentless, but the sunsets make it all worthwhile. Met a fellow hiker who lost her mother to breast cancer.", tag: "BLOG" },
-  { slug: "wildflower-season", img: "https://images.unsplash.com/photo-1759491265362-3bd88910a036?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80", day: "DAY 20", date: "APRIL 16, 2026", title: "Wildflower Season", excerpt: "The desert is blooming. Purple, yellow, orange \u2014 everywhere. Nature\u2019s reminder that beauty follows hardship.", tag: "PHOTOS" },
-  { slug: "sierra-nights", img: "https://images.unsplash.com/photo-1759150954328-8b0b005ade84?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80", day: "DAY 30", date: "APRIL 26, 2026", title: "Sierra Nights", excerpt: "The stars remind me of camping with my dad. I can feel him walking with me. Tonight\u2019s vlog is for him.", tag: "VLOG" },
-  { slug: "trail-interview-sarah-portland", img: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80", day: "DAY 12", date: "APRIL 8, 2026", title: "YesChapter Interview: Sarah from Portland", excerpt: "I asked Sarah the question: 'What's a time in your life where you could go back and change the answer to YES?' Her answer stopped me in my tracks.", tag: "INTERVIEWS" },
-  { slug: "trail-interview-marcus-and-elena", img: "https://images.unsplash.com/photo-1551632811-561732d1e306?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80", day: "DAY 25", date: "APRIL 21, 2026", title: "YesChapter Interview: Marcus & Elena — A Couple on the Trail", excerpt: "They both had different answers to the YesChapter question. Marcus wished he'd said yes to forgiving his father sooner. Elena wished she'd said yes to herself.", tag: "INTERVIEWS" },
-  { slug: "how-pledging-works", img: "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80", day: "GUIDE", date: "MARCH 10, 2026", title: "How Pledging Works \u2014 A Complete Guide", excerpt: "Everything you need to know about pledging per mile: how it works, when you pay, where the money goes, and why this model keeps Paul accountable.", tag: "BLOG" },
-  { slug: "as-a-man-thinketh", img: "https://images.unsplash.com/photo-1506880018603-83d5b814b5a6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80", day: "REFLECTIONS", date: "MARCH 15, 2026", title: "As a Man Thinketh \u2014 The Book That Made Me Walk", excerpt: "A small book from 1903 changed how I see this entire journey. James Allen wrote that your thoughts shape your reality. I believe him.", tag: "BLOG" },
-  { slug: "finding-your-ikigai", img: "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80", day: "REFLECTIONS", date: "MARCH 18, 2026", title: "Finding Your Ikigai \u2014 Why I Started YesChapter and Walked 2,650 Miles", excerpt: "Ikigai isn\u2019t something you find sitting still. It\u2019s something you build through consistent, hard, fulfilling, and meaningful work.", tag: "BLOG" },
+  { slug: "finding-my-rhythm", img: "/images/hiking/20250802_160435.jpg", day: "DAY 2", date: "MARCH 29, 2026", title: "Finding My Rhythm", excerpt: "20 miles in and my feet are already talking to me. But the desert sunrise was worth every blister.", tag: "BLOG" },
+  { slug: "water-and-gratitude", img: "/images/hiking/20220822_134557.jpg", day: "DAY 5", date: "APRIL 1, 2026", title: "Water and Gratitude", excerpt: "Found a perfect stream today. Sat with my feet in the cold water and thought about Mom\u2019s garden.", tag: "VLOG" },
+  { slug: "stars-like-ive-never-seen", img: "/images/hiking/20230824_122513.jpg", day: "DAY 8", date: "APRIL 4, 2026", title: "Stars Like I've Never Seen", excerpt: "No light pollution out here. The Milky Way stretches above like a river of light. Dad would have loved this.", tag: "PHOTOS" },
+  { slug: "through-the-desert-wind", img: "/images/hiking/20240128_110150.jpg", day: "DAY 15", date: "APRIL 11, 2026", title: "Through the Desert Wind", excerpt: "The heat is relentless, but the sunsets make it all worthwhile. Met a fellow hiker who lost her mother to breast cancer.", tag: "BLOG" },
+  { slug: "wildflower-season", img: "/images/hiking/Screenshot_20240316-175047_Gallery.jpg", day: "DAY 20", date: "APRIL 16, 2026", title: "Wildflower Season", excerpt: "The desert is blooming. Purple, yellow, orange \u2014 everywhere. Nature\u2019s reminder that beauty follows hardship.", tag: "PHOTOS" },
+  { slug: "sierra-nights", img: "/images/hiking/20220822_134051.jpg", day: "DAY 30", date: "APRIL 26, 2026", title: "Sierra Nights", excerpt: "The stars remind me of camping with my dad. I can feel him walking with me. Tonight\u2019s vlog is for him.", tag: "VLOG" },
+  { slug: "trail-interview-sarah-portland", img: "/images/hiking/20230831_135648.jpg", day: "DAY 12", date: "APRIL 8, 2026", title: "YesChapter Interview: Sarah from Portland", excerpt: "I asked Sarah the question: 'What's a time in your life where you could go back and change the answer to YES?' Her answer stopped me in my tracks.", tag: "INTERVIEWS" },
+  { slug: "trail-interview-marcus-and-elena", img: "/images/hiking/image1.jpeg", day: "DAY 25", date: "APRIL 21, 2026", title: "YesChapter Interview: Marcus & Elena — A Couple on the Trail", excerpt: "They both had different answers to the YesChapter question. Marcus wished he'd said yes to forgiving his father sooner. Elena wished she'd said yes to herself.", tag: "INTERVIEWS" },
+  { slug: "how-pledging-works", img: "/images/hiking/FB_IMG_1771992929191.jpg", day: "GUIDE", date: "MARCH 10, 2026", title: "How Pledging Works \u2014 A Complete Guide", excerpt: "Everything you need to know about pledging per mile: how it works, when you pay, where the money goes, and why this model keeps Paul accountable.", tag: "BLOG" },
+  { slug: "as-a-man-thinketh", img: "/images/portraits/20230823_190926.jpg", day: "REFLECTIONS", date: "MARCH 15, 2026", title: "As a Man Thinketh \u2014 The Book That Made Me Walk", excerpt: "A small book from 1903 changed how I see this entire journey. James Allen wrote that your thoughts shape your reality. I believe him.", tag: "BLOG" },
+  { slug: "finding-your-ikigai", img: "/images/hiking/FB_IMG_1771992939135.jpg", day: "REFLECTIONS", date: "MARCH 18, 2026", title: "Finding Your Ikigai \u2014 Why I Started YesChapter and Walked 2,650 Miles", excerpt: "Ikigai isn\u2019t something you find sitting still. It\u2019s something you build through consistent, hard, fulfilling, and meaningful work.", tag: "BLOG" },
 ];
 
 const PER_PAGE = 6;
