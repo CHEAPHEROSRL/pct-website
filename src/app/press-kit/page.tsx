@@ -30,17 +30,17 @@ const photos = [
   {
     src: "/images/hiking/20240128_110150.jpg",
     caption: "Southern Desert Section",
-    credit: "Unsplash",
+    credit: "Paul Barry",
   },
   {
     src: "/images/hiking/20220822_134051.jpg",
     caption: "Sierra Nevada High Country",
-    credit: "Unsplash",
+    credit: "Paul Barry",
   },
   {
     src: "/images/hiking/20230821_165432.jpg",
     caption: "Pacific Northwest Forest",
-    credit: "Unsplash",
+    credit: "Paul Barry",
   },
 ];
 
