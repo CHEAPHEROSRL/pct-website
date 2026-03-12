@@ -67,7 +67,7 @@ export default function TheCausePage() {
               The grief was overwhelming. But somewhere in that darkness, I found a spark of purpose. I realized that while I couldn&apos;t change what happened to my parents, I could help others — by raising awareness about cancer prevention and the lifestyle choices that can reduce risk.
             </p>
             <p className="font-heading text-[17px] leading-[1.8] text-[var(--text-secondary)]">
-              So in March 2026, I&apos;m lacing up my boots and walking the entire Pacific Crest Trail — 2,650 miles from the Mexican border to Canada — to honor my parents and raise funds for cancer research and prevention programs.
+              So in March 2026, I&apos;m lacing up my boots and walking the entire Pacific Crest Trail — 2,650 miles from the Mexican border to Canada — to honor my parents and raise awareness and pledges for cancer research and prevention programs.
             </p>
           </div>
         </ScrollReveal>
@@ -115,17 +115,16 @@ export default function TheCausePage() {
       <section className="flex flex-col items-center gap-[40px] md:gap-[60px] px-6 md:px-12 lg:px-[120px] py-[48px] md:py-[72px] lg:py-[100px] bg-[var(--forest-green-light)] w-full">
         <ScrollReveal animation="fade-up">
           <div className="flex flex-col items-center gap-[16px]">
-            <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--forest-green)]">WHERE YOUR DONATION GOES</span>
+            <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--forest-green)]">WHERE YOUR PLEDGE GOES</span>
             <h2 className="font-heading font-semibold text-[28px] md:text-[34px] lg:text-[42px] tracking-[-0.5px] text-[var(--text-primary)] text-center">Making a Real Difference</h2>
           </div>
         </ScrollReveal>
         <ScrollReveal animation="fade-up" delay={100}>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[24px] lg:gap-[32px] w-full">
           {[
-            { pct: "40%", title: "Cancer Research", desc: "Funding breakthrough research into early detection and treatment of pancreatic and lung cancers." },
-            { pct: "30%", title: "Patient Support", desc: "Helping cancer patients and their families with financial aid, counseling, and access to treatment resources." },
-            { pct: "20%", title: "Prevention Programs", desc: "Community education programs promoting healthy lifestyles, early screening, and cancer prevention awareness." },
-            { pct: "10%", title: "Trail Operations", desc: "Covering essential costs of the PCT journey — equipment, permits, and documentation to share the story." },
+            { pct: "50%", title: "Cancer Research", desc: "Funding breakthrough research into early detection and treatment of pancreatic and lung cancers." },
+            { pct: "25%", title: "Patient Support", desc: "Helping cancer patients and their families with counseling, resources, and access to treatment." },
+            { pct: "25%", title: "Prevention Programs", desc: "Community education programs promoting healthy lifestyles, early screening, and cancer prevention awareness." },
           ].map((item) => (
             <div key={item.title} className="flex flex-col items-center gap-[16px] bg-[var(--bg-white)] p-[24px] md:p-[32px] lg:p-[40px]">
               <span className="font-heading font-bold text-[48px] text-[var(--forest-green)]">{item.pct}</span>
@@ -157,7 +156,7 @@ export default function TheCausePage() {
           </ScrollReveal>
           <ScrollReveal animation="fade-up" delay={100}>
             <p className="font-heading text-[15px] md:text-[18px] leading-[1.6] text-[#FFFFFFAA] text-center w-full lg:w-[600px]">
-              Every donation, no matter how small, brings us one step closer to a cancer-free future.
+              Every pledge, no matter how small, brings us one step closer to a cancer-free future.
             </p>
           </ScrollReveal>
           <ScrollReveal animation="fade-up" delay={200}>

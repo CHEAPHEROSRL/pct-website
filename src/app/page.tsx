@@ -54,15 +54,15 @@ export default function Home() {
             One man. One trail.{"\n"}One cause worth walking for.
           </h1>
           <p className="animate-fade-up stagger-4 font-heading text-[16px] md:text-[18px] lg:text-[20px] leading-[1.6] text-[#FFFFFFCC] w-full lg:w-[700px]">
-            Paul Barry is walking the entire Pacific Crest Trail to raise funds{"\n"}for <Link href="/foundations" className="underline hover:text-white">two cancer foundations</Link>. Paul takes nothing — every dollar goes{"\n"}to research, patient support, and prevention.
+            Paul Barry is walking the entire Pacific Crest Trail to raise awareness{"\n"}and pledges for <Link href="/foundations" className="underline hover:text-white">two cancer foundations</Link>. Paul takes nothing — every pledge{"\n"}goes to research, patient support, and prevention.
           </p>
           <div className="animate-fade-up stagger-5 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-[16px]">
             <Link
-              href="/donate"
+              href="/pledge"
               className="flex items-center justify-center gap-[10px] bg-[var(--burnt-orange)] px-[28px] lg:px-[40px] py-[14px] lg:py-[18px] hover:opacity-90 transition-opacity"
             >
               <span className="font-label font-bold text-[13px] lg:text-[14px] tracking-[2px] text-[var(--text-white)]">
-                SUPPORT THE CAUSE
+                PLEDGE NOW
               </span>
               <Heart className="w-[16px] h-[16px] text-[var(--text-white)]" />
             </Link>
@@ -88,7 +88,7 @@ export default function Home() {
           <span className="font-label font-bold text-[9px] md:text-[10px] tracking-[3px] text-[var(--text-muted)]">MONTHS ON TRAIL</span>
         </div>
         <CountUpStat end={3} label="STATES TRAVERSED" color="var(--burnt-orange)" />
-        <CountUpStat end={50} prefix="$" suffix="K" label="FUNDRAISING GOAL" color="var(--forest-green)" />
+        <CountUpStat end={50} prefix="$" suffix="K" label="PLEDGE GOAL" color="var(--forest-green)" />
       </section>
 
       {/* About The Journey */}
@@ -177,46 +177,46 @@ export default function Home() {
         </ScrollReveal>
       </section>
 
-      {/* Donor Wall */}
+      {/* Pledger Wall */}
       <section className="flex flex-col items-center gap-[32px] md:gap-[48px] px-6 md:px-12 lg:px-[120px] py-[48px] md:py-[64px] lg:py-[80px] bg-[var(--bg-white)] w-full">
         <ScrollReveal animation="fade-up">
           <div className="flex flex-col items-center gap-[16px] w-full">
-            <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">DONOR WALL</span>
+            <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">PLEDGER WALL</span>
             <h2 className="font-heading font-semibold text-[28px] md:text-[34px] lg:text-[40px] tracking-[-0.5px] text-[var(--text-primary)] text-center">
               People Who Make This Possible
             </h2>
             <p className="font-heading text-[18px] leading-[1.6] text-[var(--text-secondary)] text-center">
-              Every donation fuels another mile. Thank you to everyone who has contributed to this cause.
+              Every pledge brings us closer to the goal. Thank you to everyone walking with Paul.
             </p>
           </div>
         </ScrollReveal>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[16px] w-full">
           <ScrollReveal animation="fade-up" className="flex flex-col gap-[12px]">
-            <DonorCard name="Sarah Mitchell" amount="$250" color="#3D7A5A" />
-            <DonorCard name="James O'Connor" amount="$500" color="#C45C26" />
-            <DonorCard name="Linda Chen" amount="$100" color="#8B7355" />
+            <DonorCard name="Sarah Mitchell" amount="$0.25/mi" color="#3D7A5A" />
+            <DonorCard name="James O'Connor" amount="$1.00/mi" color="#C45C26" />
+            <DonorCard name="Linda Chen" amount="$0.10/mi" color="#8B7355" />
           </ScrollReveal>
           <ScrollReveal animation="fade-up" delay={100} className="flex flex-col gap-[12px]">
-            <DonorCard name="Robert Williams" amount="$1,000" color="#6B8E7B" />
-            <DonorCard name="Maria Rodriguez" amount="$75" color="#7B6B8E" />
-            <DonorCard name="Tom & Lisa Park" amount="$300" color="#3D7A5A" />
+            <DonorCard name="Robert Williams" amount="$2.00/mi" color="#6B8E7B" />
+            <DonorCard name="Maria Rodriguez" amount="$0.05/mi" color="#7B6B8E" />
+            <DonorCard name="Tom & Lisa Park" amount="$0.50/mi" color="#3D7A5A" />
           </ScrollReveal>
           <ScrollReveal animation="fade-up" delay={200} className="flex flex-col gap-[12px]">
-            <DonorCard name="David Thompson" amount="$150" color="#A68B5B" />
-            <DonorCard name="Anonymous" amount="$2,000" color="#5B8EA6" />
-            <DonorCard name="Emily Watson" amount="$50" color="#C45C26" />
+            <DonorCard name="David Thompson" amount="$0.10/mi" color="#A68B5B" />
+            <DonorCard name="Anonymous" amount="$5.00/mi" color="#5B8EA6" />
+            <DonorCard name="Emily Watson" amount="$0.01/mi" color="#C45C26" />
           </ScrollReveal>
           <ScrollReveal animation="fade-up" delay={300} className="flex flex-col gap-[12px]">
-            <DonorCard name="Rachel Kim" amount="$125" color="#6B7B5B" />
-            <DonorCard name="Michael Foster" amount="$400" color="#8E6B7B" />
-            <DonorCard name="Dr. Amanda Brooks" amount="$750" color="#5B6B8E" />
+            <DonorCard name="Rachel Kim" amount="$0.25/mi" color="#6B7B5B" />
+            <DonorCard name="Michael Foster" amount="$1.00/mi" color="#8E6B7B" />
+            <DonorCard name="Dr. Amanda Brooks" amount="$0.50/mi" color="#5B6B8E" />
           </ScrollReveal>
         </div>
         <Link
-          href="/donors"
+          href="/pledgers"
           className="flex items-center justify-center gap-[8px] border border-[var(--border-subtle)] px-[32px] py-[14px]"
         >
-          <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-secondary)]">VIEW ALL 47 DONORS</span>
+          <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-secondary)]">VIEW ALL PLEDGERS</span>
           <ChevronDown className="w-[14px] h-[14px] text-[var(--text-secondary)]" />
         </Link>
       </section>
@@ -351,12 +351,12 @@ export default function Home() {
           </ScrollReveal>
           <ScrollReveal animation="fade-up" delay={100}>
             <h2 className="font-heading font-semibold text-[24px] md:text-[34px] lg:text-[42px] leading-[1.2] tracking-[-0.5px] text-[var(--text-white)] text-center w-full lg:w-[800px]">
-              Walk With Paul.{"\n"}Fund the Fight Against Cancer.
+              Walk With Paul.{"\n"}Join the Fight Against Cancer.
             </h2>
           </ScrollReveal>
           <ScrollReveal animation="fade-up" delay={200}>
             <p className="font-heading text-[15px] md:text-[18px] leading-[1.6] text-[#FFFFFFAA] text-center w-full lg:w-[600px]">
-              This is a fundraiser for <Link href="/foundations" className="underline hover:text-white">two cancer foundations</Link> — one in California, one in Sydney. Paul receives $0 from pledges and donations. You can also support Paul directly on the trail.
+              Pledge per mile for <Link href="/foundations" className="underline hover:text-white">two cancer foundations</Link> — one in California, one in Sydney. Pay nothing now — pledge directly to the foundations when Paul reaches Canada. You can also support Paul directly on the trail.
             </p>
           </ScrollReveal>
           <ScrollReveal animation="fade-up" delay={300}>
@@ -381,7 +381,7 @@ export default function Home() {
           >
             Or support Paul directly on the trail →
           </Link>
-          <span className="font-label font-medium text-[13px] tracking-[1px] text-[#FFFFFF88]">$12,450 raised of $50,000 goal</span>
+          <span className="font-label font-medium text-[13px] tracking-[1px] text-[#FFFFFF88]">$12,450 pledged toward $50,000 goal</span>
         </div>
       </section>
 

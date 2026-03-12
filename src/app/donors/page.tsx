@@ -67,12 +67,12 @@ export default function DonorsPage() {
       {/* Hero */}
       <section className="flex flex-col items-center gap-[24px] md:gap-[32px] px-6 md:px-12 lg:px-[120px] py-[40px] md:py-[52px] lg:py-[64px] bg-[var(--bg-white)] w-full">
         <div className="flex flex-col items-center gap-[16px]">
-          <span className="animate-fade-up font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">DONOR WALL</span>
+          <span className="animate-fade-up font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">TRAIL SUPPORTERS</span>
           <h1 className="animate-fade-up stagger-2 font-heading font-semibold text-[28px] md:text-[38px] lg:text-[48px] tracking-[-0.5px] text-[var(--text-primary)] text-center">
-            People Who Make This Possible
+            People Who Keep Paul Going
           </h1>
           <p className="animate-fade-up stagger-4 font-heading text-[16px] md:text-[18px] leading-[1.6] text-[var(--text-secondary)] text-center w-full max-w-[640px]">
-            Every donation fuels another mile. Thank you to everyone who has contributed to Paul&apos;s journey and the fight against cancer.
+            These amazing people have supported Paul directly on the trail — buying meals, gear, and rest days to keep him walking for the cause.
           </p>
         </div>
 
@@ -307,22 +307,22 @@ export default function DonorsPage() {
       <section className="flex flex-col items-center gap-[20px] px-6 md:px-12 lg:px-[120px] py-[48px] bg-[var(--bg-white)] border-t border-[var(--border-subtle)] w-full">
         <ScrollReveal animation="fade-up">
         <h2 className="font-heading font-semibold text-[24px] text-[var(--text-primary)] text-center">
-          Join the Donor Wall
+          Support Paul on the Trail
         </h2>
         </ScrollReveal>
         <ScrollReveal animation="fade-up" delay={100}>
         <p className="font-heading text-[16px] text-[var(--text-secondary)] text-center max-w-[500px]">
-          Every donation goes directly to <Link href="/foundations" className="text-[var(--burnt-orange)] hover:underline">two cancer foundations</Link> — one in California, one in Sydney. Paul receives $0.
+          Buy Paul a meal, boots, or a rest day. Trail support goes directly to Paul — keeping him on the trail so he can walk for the cause.
         </p>
         </ScrollReveal>
         <div className="flex flex-col sm:flex-row gap-[12px]">
           <Link
-            href="/donate"
-            className="flex items-center gap-[8px] bg-[var(--burnt-orange)] px-[32px] py-[14px] hover:opacity-90 transition-opacity"
+            href="/support"
+            className="flex items-center gap-[8px] bg-[var(--forest-green)] px-[32px] py-[14px] hover:opacity-90 transition-opacity"
           >
             <Heart className="w-[16px] h-[16px] text-[var(--text-white)]" />
             <span className="font-label font-bold text-[13px] tracking-[2px] text-[var(--text-white)]">
-              DONATE NOW
+              SUPPORT PAUL
             </span>
           </Link>
           <Link

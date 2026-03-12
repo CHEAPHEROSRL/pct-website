@@ -8,7 +8,7 @@ import ScrollReveal from "@/components/ScrollReveal";
 export const metadata: Metadata = {
   title: "Our Partner Foundations — YesChapter",
   description:
-    "Meet the two cancer foundations receiving 100% of YesChapter donations. Tower Cancer Research Foundation (California) and Cancer Council NSW (Sydney).",
+    "Meet the two cancer foundations receiving 100% of YesChapter pledges. Tower Cancer Research Foundation (California) and Cancer Council NSW (Sydney).",
 };
 
 const foundations = [
@@ -67,13 +67,13 @@ export default function FoundationsPage() {
       {/* Hero */}
       <section className="flex flex-col items-center gap-[12px] px-6 md:px-12 lg:px-[120px] py-[40px] md:py-[52px] lg:py-[64px] bg-[var(--bg-white)] w-full">
         <span className="animate-fade-up font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">
-          WHERE YOUR MONEY GOES
+          WHERE YOUR PLEDGE GOES
         </span>
         <h1 className="animate-fade-up stagger-2 font-heading font-semibold text-[28px] md:text-[38px] lg:text-[48px] tracking-[-0.5px] text-[var(--text-primary)] text-center">
           Our Partner Foundations
         </h1>
         <p className="animate-fade-up stagger-4 font-heading text-[16px] md:text-[18px] text-[var(--text-secondary)] text-center max-w-[700px]">
-          Every dollar you donate is split equally between two cancer foundations — one in California, one in
+          Every dollar you pledge is split equally between two cancer foundations — one in California, one in
           Sydney — honoring both of Paul&apos;s parents.
         </p>
       </section>
@@ -84,7 +84,7 @@ export default function FoundationsPage() {
           50 / 50 SPLIT
         </span>
         <p className="font-heading text-[16px] leading-[1.7] text-[var(--text-secondary)] text-center max-w-[700px]">
-          Paul lost his father in California and his mother in Sydney. In their honor, donations are divided
+          Paul lost his father in California and his mother in Sydney. In their honor, pledges are divided
           equally between foundations in each region — ensuring the communities closest to his family&apos;s story
           receive direct support.
         </p>
@@ -183,22 +183,22 @@ export default function FoundationsPage() {
         </ScrollReveal>
         <ScrollReveal animation="fade-up" delay={100}>
           <p className="font-heading text-[16px] md:text-[18px] text-[var(--text-secondary)] text-center max-w-[500px]">
-            Every dollar goes directly to these foundations. Paul takes nothing.
+            Every pledge goes directly to these foundations. Paul takes nothing.
           </p>
         </ScrollReveal>
         <div className="flex flex-col sm:flex-row gap-[16px] items-center">
           <Link
-            href="/donate"
+            href="/pledge"
             className="flex items-center gap-[8px] bg-[var(--burnt-orange)] px-[32px] py-[14px] hover:opacity-90 transition-opacity"
           >
-            <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-white)]">DONATE NOW</span>
+            <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-white)]">PLEDGE PER MILE</span>
             <Heart className="w-[14px] h-[14px] text-[var(--text-white)]" />
           </Link>
           <Link
-            href="/pledge"
+            href="/support"
             className="flex items-center gap-[8px] bg-[var(--forest-green)] px-[32px] py-[14px] hover:opacity-90 transition-opacity"
           >
-            <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-white)]">PLEDGE PER MILE</span>
+            <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-white)]">SUPPORT PAUL ON TRAIL</span>
           </Link>
         </div>
         <Link href="/transparency" className="font-heading font-semibold text-[14px] text-[var(--burnt-orange)] hover:underline">

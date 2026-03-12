@@ -13,7 +13,7 @@ const navLinks = [
   { href: "/trail-map", label: "Trail Map" },
   { href: "/the-cause", label: "The Cause" },
   { href: "/journal", label: "Journal" },
-  { href: "/donors", label: "Donors" },
+  { href: "/pledgers", label: "Pledgers" },
 ];
 
 export default function MobileNav({ activeItem }: MobileNavProps) {

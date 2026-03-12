@@ -15,8 +15,8 @@ export default function Footer() {
             </span>
           </div>
           <p className="font-heading text-[14px] leading-[1.6] text-[#FFFFFF88] w-full lg:w-[340px]">
-            A fundraiser for <Link href="/foundations" className="underline hover:text-white">two cancer foundations</Link>. Paul walks 2,650 miles —
-            every pledge and donation goes directly to the cause. Paul takes nothing.
+            Paul walks 2,650 miles for <Link href="/foundations" className="underline hover:text-white">two cancer foundations</Link>.
+            Every pledge goes directly to the cause. Paul takes nothing.
           </p>
           <div className="flex gap-[16px]">
             <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><Instagram className="w-[20px] h-[20px] text-[var(--text-muted)] hover:text-white cursor-pointer" /></a>
@@ -35,8 +35,8 @@ export default function Footer() {
             <Link href="/" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">The Journey</Link>
             <Link href="/trail-map" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Trail Map</Link>
             <Link href="/journal" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Blog & Vlog</Link>
-            <Link href="/donors" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Donor Wall</Link>
             <Link href="/pledgers" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Pledger Wall</Link>
+            <Link href="/supporters" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Trail Supporters</Link>
             <Link href="/support" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Support Paul</Link>
           </div>
           <div className="flex flex-col gap-[16px]">
