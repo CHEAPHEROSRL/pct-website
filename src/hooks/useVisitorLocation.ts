@@ -50,7 +50,7 @@ export function useVisitorLocation(
 
     // No stored location — auto-detect via IP geolocation
     setIsGeocoding(true);
-    fetch("http://ip-api.com/json/?fields=status,city,regionName,country,lat,lon")
+    fetch("/api/geo")
       .then((res) => res.json())
       .then((data) => {
         if (data.status === "success" && typeof data.lat === "number") {
