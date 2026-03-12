@@ -44,7 +44,7 @@ function mapPostToEntry(post: JournalPostPublic): JournalEntry {
 
 const fallbackFeaturedPost: JournalEntry = {
   slug: "the-first-step-standing-at-the-southern-terminus",
-  img: "/images/hiking/FB_IMG_1771992615412.jpg",
+  img: "/images/hiking/20220823_123521.jpg",
   day: "DAY 1",
   date: "MARCH 28, 2026",
   title: "The First Step: Standing at the Southern Terminus",
@@ -53,9 +53,9 @@ const fallbackFeaturedPost: JournalEntry = {
 };
 
 const fallbackEntries: JournalEntry[] = [
-  { slug: "finding-my-rhythm", img: "/images/hiking/20250802_160435.jpg", day: "DAY 2", date: "MARCH 29, 2026", title: "Finding My Rhythm", excerpt: "20 miles in and my feet are already talking to me. But the desert sunrise was worth every blister.", tag: "BLOG" },
+  { slug: "finding-my-rhythm", img: "/images/hiking/FB_IMG_1771992615412.jpg", day: "DAY 2", date: "MARCH 29, 2026", title: "Finding My Rhythm", excerpt: "20 miles in and my feet are already talking to me. But the desert sunrise was worth every blister.", tag: "BLOG" },
   { slug: "water-and-gratitude", img: "/images/hiking/20220822_134557.jpg", day: "DAY 5", date: "APRIL 1, 2026", title: "Water and Gratitude", excerpt: "Found a perfect stream today. Sat with my feet in the cold water and thought about Mom\u2019s garden.", tag: "VLOG" },
-  { slug: "stars-like-ive-never-seen", img: "/images/hiking/20230824_122513.jpg", day: "DAY 8", date: "APRIL 4, 2026", title: "Stars Like I've Never Seen", excerpt: "No light pollution out here. The Milky Way stretches above like a river of light. Dad would have loved this.", tag: "PHOTOS" },
+  { slug: "stars-like-ive-never-seen", img: "/images/hiking/20230821_165432.jpg", day: "DAY 8", date: "APRIL 4, 2026", title: "Stars Like I've Never Seen", excerpt: "No light pollution out here. The Milky Way stretches above like a river of light. Dad would have loved this.", tag: "PHOTOS" },
   { slug: "through-the-desert-wind", img: "/images/hiking/20240128_110150.jpg", day: "DAY 15", date: "APRIL 11, 2026", title: "Through the Desert Wind", excerpt: "The heat is relentless, but the sunsets make it all worthwhile. Met a fellow hiker who lost her mother to breast cancer.", tag: "BLOG" },
   { slug: "wildflower-season", img: "/images/hiking/Screenshot_20240316-175047_Gallery.jpg", day: "DAY 20", date: "APRIL 16, 2026", title: "Wildflower Season", excerpt: "The desert is blooming. Purple, yellow, orange \u2014 everywhere. Nature\u2019s reminder that beauty follows hardship.", tag: "PHOTOS" },
   { slug: "sierra-nights", img: "/images/hiking/20220822_134051.jpg", day: "DAY 30", date: "APRIL 26, 2026", title: "Sierra Nights", excerpt: "The stars remind me of camping with my dad. I can feel him walking with me. Tonight\u2019s vlog is for him.", tag: "VLOG" },

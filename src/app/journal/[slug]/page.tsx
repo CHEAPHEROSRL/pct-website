@@ -511,7 +511,7 @@ const fallbackPosts: JournalPostDetailResponse[] = [
     post: {
       id: "fb-1", title: "The First Step: Standing at the Southern Terminus", slug: "the-first-step-standing-at-the-southern-terminus",
       dayNumber: 1, date: "2026-03-28", excerpt: "Standing at the southern monument, looking north toward Canada.",
-      coverImage: "/images/hiking/FB_IMG_1771992615412.jpg",
+      coverImage: "/images/hiking/20220823_123521.jpg",
       images: [], youtubeUrl: "", tags: ["BLOG"],
       body: `I stood at the southern terminus monument, my pack heavy on my shoulders, staring north into the desert. The morning air was cool but I could already feel the promise of heat in the sun climbing above the hills. Behind me, the metal border fence stretched east and west. Ahead, 2,650 miles of trail.
 
@@ -540,7 +540,7 @@ If you're reading this and you've been touched by cancer, know that you're part 
     post: {
       id: "fb-2", title: "Finding My Rhythm", slug: "finding-my-rhythm",
       dayNumber: 2, date: "2026-03-29", excerpt: "20 miles in and my feet are already talking to me.",
-      coverImage: "/images/hiking/20250802_160435.jpg",
+      coverImage: "/images/hiking/FB_IMG_1771992615412.jpg",
       images: [], youtubeUrl: "", tags: ["BLOG"],
       body: `Twenty miles in and my feet are already talking to me. But the desert sunrise was worth every blister. The sky turned from deep purple to blazing orange in what felt like seconds, painting the rocks around me in warm light.
 
@@ -586,7 +586,7 @@ A trail angel had left a cooler at the road crossing near mile 40. Inside: cold 
     post: {
       id: "fb-4", title: "Stars Like I've Never Seen", slug: "stars-like-ive-never-seen",
       dayNumber: 8, date: "2026-04-04", excerpt: "No light pollution out here.",
-      coverImage: "/images/hiking/20230824_122513.jpg",
+      coverImage: "/images/hiking/20230821_165432.jpg",
       images: [
         "/images/hiking/20250821_175814.jpg",
         "/images/hiking/20230821_165432.jpg",

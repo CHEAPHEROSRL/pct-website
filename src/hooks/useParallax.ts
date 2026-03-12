@@ -5,9 +5,14 @@ import { useEffect, useRef } from "react";
 interface ParallaxOptions {
   speed?: number;
   max?: number;
+  scaleRange?: [number, number];
 }
 
-export function useParallax({ speed = 0.3, max = 80 }: ParallaxOptions = {}) {
+export function useParallax({
+  speed = 0.35,
+  max = 120,
+  scaleRange = [1.12, 1.22],
+}: ParallaxOptions = {}) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -18,6 +23,7 @@ export function useParallax({ speed = 0.3, max = 80 }: ParallaxOptions = {}) {
     if (!el) return;
 
     let rafId: number | null = null;
+    let lastTransform = "";
 
     function onScroll() {
       if (rafId !== null) return;
@@ -30,12 +36,26 @@ export function useParallax({ speed = 0.3, max = 80 }: ParallaxOptions = {}) {
         // Only compute when element is in viewport
         if (rect.bottom < 0 || rect.top > windowHeight) return;
 
-        const center = rect.top + rect.height / 2;
-        const viewCenter = windowHeight / 2;
-        const offset = (center - viewCenter) * speed;
-        const clamped = Math.max(-max, Math.min(max, offset));
+        // progress: 0 = element top at viewport bottom, 1 = element bottom at viewport top
+        const totalTravel = windowHeight + rect.height;
+        const progress = 1 - (rect.bottom / totalTravel);
+        const clamped01 = Math.max(0, Math.min(1, progress));
 
-        el.style.transform = `translateY(${clamped}px)`;
+        // Ease-out cubic for organic, decelerating motion
+        const eased = 1 - Math.pow(1 - clamped01, 3);
+
+        // Vertical offset — maps eased 0→1 to -max → +max
+        const yOffset = (eased - 0.5) * 2 * max;
+
+        // Scale — subtle zoom-in as you scroll past, creating depth
+        const [scaleMin, scaleMax] = scaleRange;
+        const scale = scaleMin + eased * (scaleMax - scaleMin);
+
+        const transform = `translate3d(0, ${yOffset.toFixed(1)}px, 0) scale(${scale.toFixed(4)})`;
+        if (transform !== lastTransform) {
+          el.style.transform = transform;
+          lastTransform = transform;
+        }
       });
     }
 
@@ -46,7 +66,7 @@ export function useParallax({ speed = 0.3, max = 80 }: ParallaxOptions = {}) {
       window.removeEventListener("scroll", onScroll);
       if (rafId !== null) cancelAnimationFrame(rafId);
     };
-  }, [speed, max]);
+  }, [speed, max, scaleRange]);
 
   return { ref };
 }
