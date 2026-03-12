@@ -183,7 +183,7 @@ export default function MyPledgePage() {
                   {formatCurrency(runningTotal)}
                 </span>
                 <span className="font-heading text-[14px] text-[var(--text-secondary)]">
-                  based on {totalMiles.toLocaleString()} miles completed so far
+                  based on {totalMiles.toLocaleString("en-US")} miles completed so far
                 </span>
                 <div className="relative w-full h-[8px] bg-[var(--warm-stone)]">
                   <div

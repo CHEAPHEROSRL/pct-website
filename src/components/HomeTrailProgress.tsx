@@ -61,7 +61,7 @@ export default function HomeTrailProgress() {
             <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--burnt-orange)]">CURRENT LOCATION</span>
             <span className="font-heading font-semibold text-[24px] text-[var(--text-primary)]">{locationName}</span>
             <span className="font-heading text-[15px] text-[var(--text-secondary)]">
-              Mile {totalMiles.toLocaleString()} of 2,650
+              Mile {totalMiles.toLocaleString("en-US")} of 2,650
             </span>
             <div className="relative w-full h-[8px] bg-[#E8E5E0]">
               <div
@@ -83,7 +83,7 @@ export default function HomeTrailProgress() {
                 <div key={m.name} className="flex items-center gap-[12px]">
                   <div className={`w-[10px] h-[10px] shrink-0 ${reached ? "bg-[var(--forest-green)]" : "bg-[#D9D7D4]"}`} />
                   <span className={`font-heading text-[14px] ${reached ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"}`}>
-                    {m.name} — Mile {m.mile.toLocaleString()}
+                    {m.name} — Mile {m.mile.toLocaleString("en-US")}
                   </span>
                 </div>
               );

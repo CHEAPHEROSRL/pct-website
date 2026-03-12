@@ -1094,7 +1094,7 @@ export default function AdminPage() {
                     <div className="flex items-center gap-[8px]">
                       <Clock className="w-[14px] h-[14px] text-[var(--text-muted)]" />
                       <span className="font-heading text-[13px] text-[var(--text-muted)]">
-                        Deadline: {new Date(activeChallenge.deadline).toLocaleString()}
+                        Deadline: {new Date(activeChallenge.deadline).toLocaleString("en-US")}
                       </span>
                     </div>
                   </div>

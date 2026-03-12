@@ -80,8 +80,8 @@ export default function DonorsPage() {
         <div className="flex flex-col gap-[16px] bg-[var(--bg-card)] border border-[var(--border-subtle)] p-[20px] md:p-[32px] w-full max-w-[640px]">
           <div className="flex items-end justify-between w-full">
             <div className="flex items-end gap-[8px]">
-              <span className="font-heading font-semibold text-[36px] tracking-[-1px] text-[var(--forest-green)]">${totalRaised.toLocaleString()}</span>
-              <span className="font-heading text-[16px] text-[var(--text-secondary)]">raised of ${goalAmount.toLocaleString()}</span>
+              <span className="font-heading font-semibold text-[36px] tracking-[-1px] text-[var(--forest-green)]">${totalRaised.toLocaleString("en-US")}</span>
+              <span className="font-heading text-[16px] text-[var(--text-secondary)]">raised of ${goalAmount.toLocaleString("en-US")}</span>
             </div>
             <span className="font-label font-bold text-[18px] text-[var(--forest-green)]">{progressPercent}%</span>
           </div>
@@ -97,11 +97,11 @@ export default function DonorsPage() {
               <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">DONORS</span>
             </div>
             <div className="flex flex-col items-center gap-[2px]">
-              <span className="font-heading font-semibold text-[24px] text-[var(--text-primary)]">${averageDonation.toLocaleString()}</span>
+              <span className="font-heading font-semibold text-[24px] text-[var(--text-primary)]">${averageDonation.toLocaleString("en-US")}</span>
               <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">AVERAGE</span>
             </div>
             <div className="flex flex-col items-center gap-[2px]">
-              <span className="font-heading font-semibold text-[24px] text-[var(--text-primary)]">${largestDonation.toLocaleString()}</span>
+              <span className="font-heading font-semibold text-[24px] text-[var(--text-primary)]">${largestDonation.toLocaleString("en-US")}</span>
               <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">LARGEST</span>
             </div>
           </div>
@@ -114,7 +114,7 @@ export default function DonorsPage() {
           <TrendingUp className="w-[20px] h-[20px] text-[var(--forest-green)]" />
           <div className="flex flex-col">
             <span className="font-heading font-semibold text-[24px] text-[var(--text-primary)] leading-[1]">
-              ${totalRaised.toLocaleString()}
+              ${totalRaised.toLocaleString("en-US")}
             </span>
             <span className="font-label text-[11px] tracking-[1px] text-[var(--text-muted)]">
               TOTAL RAISED
@@ -136,7 +136,7 @@ export default function DonorsPage() {
           <Heart className="w-[20px] h-[20px] text-[var(--forest-green)]" />
           <div className="flex flex-col">
             <span className="font-heading font-semibold text-[24px] text-[var(--text-primary)] leading-[1]">
-              ${averageDonation.toLocaleString()}
+              ${averageDonation.toLocaleString("en-US")}
             </span>
             <span className="font-label text-[11px] tracking-[1px] text-[var(--text-muted)]">
               AVERAGE
@@ -150,7 +150,7 @@ export default function DonorsPage() {
               {progressPercent}%
             </span>
             <span className="font-label text-[11px] tracking-[1px] text-[var(--text-muted)]">
-              OF ${goalAmount.toLocaleString()} GOAL
+              OF ${goalAmount.toLocaleString("en-US")} GOAL
             </span>
           </div>
         </div>

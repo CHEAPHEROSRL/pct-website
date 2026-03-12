@@ -217,9 +217,9 @@ export default function DonatePage() {
             <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--burnt-orange)]">FUNDRAISING PROGRESS</span>
             <div className="flex items-end gap-[8px]">
               <span className="font-heading font-semibold text-[32px] tracking-[-1px] text-[var(--forest-green)]">
-                ${totalRaised.toLocaleString()}
+                ${totalRaised.toLocaleString("en-US")}
               </span>
-              <span className="font-heading text-[16px] text-[var(--text-secondary)]">of ${goalAmount.toLocaleString()}</span>
+              <span className="font-heading text-[16px] text-[var(--text-secondary)]">of ${goalAmount.toLocaleString("en-US")}</span>
             </div>
             <div className="relative w-full h-[10px] bg-[#E8E5E0]">
               <div

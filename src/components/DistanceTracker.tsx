@@ -105,7 +105,7 @@ export default function DistanceTracker({ compact }: DistanceTrackerProps) {
         </span>
         <div className="flex items-end gap-[8px]">
           <span className={`font-heading font-semibold tracking-[-1px] text-[var(--text-primary)] ${compact ? "text-[36px]" : "text-[48px]"}`}>
-            {distanceMiles.toLocaleString()}
+            {distanceMiles.toLocaleString("en-US")}
           </span>
           <span className="font-heading text-[18px] text-[var(--text-secondary)] pb-[2px]">
             miles away

@@ -161,7 +161,7 @@ export default function TrailMapPage() {
                   </div>
                   <div className="flex justify-between w-full">
                     <span className="font-label font-medium text-[11px] text-[var(--text-muted)]">
-                      Mile {totalMiles.toLocaleString()}
+                      Mile {totalMiles.toLocaleString("en-US")}
                     </span>
                     <span className="font-label font-semibold text-[11px] text-[var(--forest-green)]">
                       {progressPercent}%
@@ -287,19 +287,19 @@ export default function TrailMapPage() {
         <div className="flex flex-col items-center gap-[4px]">
           <span className="font-label font-bold text-[9px] md:text-[10px] tracking-[2px] text-[var(--text-muted)]">ELEVATION GAIN</span>
           <span className="font-heading font-semibold text-[20px] md:text-[24px] lg:text-[28px] text-[var(--text-primary)]">
-            {stats ? `+${stats.todayElevationGain.toLocaleString()} ft` : "—"}
+            {stats ? `+${stats.todayElevationGain.toLocaleString("en-US")} ft` : "—"}
           </span>
         </div>
         <div className="flex flex-col items-center gap-[4px]">
           <span className="font-label font-bold text-[9px] md:text-[10px] tracking-[2px] text-[var(--text-muted)]">TOTAL MILES</span>
           <span className="font-heading font-semibold text-[20px] md:text-[24px] lg:text-[28px] text-[var(--forest-green)]">
-            {stats ? `${stats.totalMiles.toLocaleString()} / 2,650` : "— / 2,650"}
+            {stats ? `${stats.totalMiles.toLocaleString("en-US")} / 2,650` : "— / 2,650"}
           </span>
         </div>
         <div className="flex flex-col items-center gap-[4px]">
           <span className="font-label font-bold text-[9px] md:text-[10px] tracking-[2px] text-[var(--text-muted)]">CURRENT ELEVATION</span>
           <span className="font-heading font-semibold text-[20px] md:text-[24px] lg:text-[28px] text-[var(--text-primary)]">
-            {stats ? `${stats.currentElevation.toLocaleString()} ft` : "—"}
+            {stats ? `${stats.currentElevation.toLocaleString("en-US")} ft` : "—"}
           </span>
         </div>
         <div className="flex flex-col items-center gap-[4px]">

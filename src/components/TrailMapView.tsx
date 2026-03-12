@@ -121,11 +121,11 @@ export default function TrailMapView({
                 </strong>
                 <br />
                 <span style={{ fontSize: 12, color: "#5C5C5C" }}>
-                  Mile {totalMiles.toLocaleString()} of 2,650
+                  Mile {totalMiles.toLocaleString("en-US")} of 2,650
                 </span>
                 <br />
                 <span style={{ fontSize: 12, color: "#5C5C5C" }}>
-                  Elevation: {currentElevation.toLocaleString()} ft
+                  Elevation: {currentElevation.toLocaleString("en-US")} ft
                 </span>
               </div>
             </Popup>
