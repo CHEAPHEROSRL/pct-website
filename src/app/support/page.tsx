@@ -81,15 +81,42 @@ export default function SupportPage() {
   const [customAmount, setCustomAmount] = useState("");
   const [selectedGift, setSelectedGift] = useState<string | null>(null);
 
-  const handleGift = (title: string) => {
+  const handleGift = async (title: string) => {
+    const gift = giftOptions.find((g) => g.title === title);
+    if (!gift) return;
     setSelectedGift(title);
-    // TODO: Stripe checkout integration
+    try {
+      const res = await fetch("/api/support", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: gift.price, giftTitle: gift.title }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch {
+      setSelectedGift(null);
+    }
   };
 
-  const handleCustom = () => {
-    if (!customAmount || parseFloat(customAmount) <= 0) return;
+  const handleCustom = async () => {
+    const amount = parseFloat(customAmount);
+    if (!amount || amount <= 0) return;
     setSelectedGift("Custom");
-    // TODO: Stripe checkout integration
+    try {
+      const res = await fetch("/api/support", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: Math.round(amount), giftTitle: "" }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch {
+      setSelectedGift(null);
+    }
   };
 
   return (
