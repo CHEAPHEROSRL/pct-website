@@ -162,6 +162,8 @@ async function sendMilestoneEmails(redis: Redis, currentMiles: number) {
 
     for (const record of allRecords) {
       if (!record.email) continue;
+      // Milestones sent to "all" + "milestones" preference tiers
+      if (record.emailPreference === "finish") continue;
 
       const result = await sendMilestoneReached(
         record.email,
@@ -237,6 +239,8 @@ async function sendNudgeEmails(redis: Redis, currentMiles: number) {
 
     for (const record of allRecords) {
       if (!record.email) continue;
+      // Nudges are "all" preference level only
+      if (record.emailPreference && record.emailPreference !== "all") continue;
 
       const result = await sendPreMilestoneNudge(
         record.email,
@@ -304,6 +308,7 @@ async function sendNearFinishEmails(redis: Redis, currentMiles: number) {
 
     for (const record of allRecords) {
       if (!record.email) continue;
+      // Near-finish emails sent to ALL preference tiers (everyone needs to know Paul finished)
 
       const finalTotal = (record.amount * 2650) / record.interval;
 

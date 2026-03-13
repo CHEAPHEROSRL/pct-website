@@ -1,4 +1,4 @@
-import { Mountain, Flag, Mail, ArrowRight, CheckCircle, MapPin, Share2, Calendar, Heart, Shield, DollarSign, Users, Globe, Clock } from "lucide-react";
+import { Mountain, Flag, Mail, ArrowRight, CheckCircle, MapPin, Share2, Calendar, Heart, Shield, DollarSign, Users, Globe, Clock, Bell, UserPlus, Award } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -74,10 +74,10 @@ export default function StrategyPage() {
           <span className="text-[var(--burnt-orange)]">Pledge Engagement</span>
         </h1>
         <p className="font-heading text-[18px] text-[#FFFFFFBB] max-w-[560px] leading-[1.6]">
-          Three email designs to keep pledgers connected during the hike and guide them through honoring their pledges when you reach Canada.
+          Seven email templates to keep pledgers connected from day one through honoring their pledges when you reach Canada. Welcome drip, weekly updates, milestones, community celebrations, and honor flow.
         </p>
         <span className="font-label font-semibold text-[11px] tracking-[2px] text-[#FFFFFF44] mt-[24px]">
-          YOUR EMAIL STRATEGY &middot; MARCH 2026
+          YOUR EMAIL STRATEGY &middot; MARCH 2026 &middot; V2
         </span>
       </section>
 
@@ -86,7 +86,7 @@ export default function StrategyPage() {
       {/* ═══════════════════════════════════════ */}
       <section className="flex flex-col gap-[48px] px-6 md:px-12 lg:px-[120px] py-[64px] bg-[var(--bg-white)] w-full">
         <div className="flex flex-col gap-[8px]">
-          <SectionBadge>TEMPLATE 1 OF 3</SectionBadge>
+          <SectionBadge>TEMPLATE 1 OF 7</SectionBadge>
           <h2 className="font-heading font-semibold text-[32px] tracking-[-0.5px] text-[var(--text-primary)]">
             Weekly <span className="text-[var(--burnt-orange)]">Update</span> Email
           </h2>
@@ -172,7 +172,7 @@ export default function StrategyPage() {
       {/* ═══════════════════════════════════════ */}
       <section className="flex flex-col gap-[48px] px-6 md:px-12 lg:px-[120px] py-[64px] bg-[var(--bg-warm)] w-full">
         <div className="flex flex-col gap-[8px]">
-          <SectionBadge>TEMPLATE 2 OF 3</SectionBadge>
+          <SectionBadge>TEMPLATE 2 OF 7</SectionBadge>
           <h2 className="font-heading font-semibold text-[32px] tracking-[-0.5px] text-[var(--text-primary)]">
             Milestone <span className="text-[var(--burnt-orange)]">Celebration</span> Email
           </h2>
@@ -257,7 +257,7 @@ export default function StrategyPage() {
       {/* ═══════════════════════════════════════ */}
       <section className="flex flex-col gap-[48px] px-6 md:px-12 lg:px-[120px] py-[64px] bg-[var(--bg-white)] w-full">
         <div className="flex flex-col gap-[8px]">
-          <SectionBadge>TEMPLATE 3 OF 3</SectionBadge>
+          <SectionBadge>TEMPLATE 3 OF 7</SectionBadge>
           <h2 className="font-heading font-semibold text-[32px] tracking-[-0.5px] text-[var(--text-primary)]">
             Paul Made It &mdash; <span className="text-[var(--burnt-orange)]">Honor</span> Email
           </h2>
@@ -355,6 +355,226 @@ export default function StrategyPage() {
       </section>
 
       {/* ═══════════════════════════════════════ */}
+      {/* TEMPLATE 4: WELCOME DAY 1 */}
+      {/* ═══════════════════════════════════════ */}
+      <section className="flex flex-col gap-[48px] px-6 md:px-12 lg:px-[120px] py-[64px] bg-[var(--bg-warm)] w-full">
+        <div className="flex flex-col gap-[8px]">
+          <SectionBadge>TEMPLATE 4 OF 7 &mdash; V2</SectionBadge>
+          <h2 className="font-heading font-semibold text-[32px] tracking-[-0.5px] text-[var(--text-primary)]">
+            Welcome <span className="text-[var(--burnt-orange)]">Day 1</span> Email
+          </h2>
+          <p className="font-heading text-[16px] text-[var(--text-secondary)] max-w-[600px] leading-[1.6]">
+            Sent 24 hours after pledge. Fills the silence gap between pledge confirmation and the first Monday update. Teaches them how to track progress.
+          </p>
+        </div>
+
+        <div className="flex flex-col lg:flex-row gap-[48px] items-start">
+          <div className="w-full lg:w-[480px] shrink-0 rounded-[4px] overflow-hidden shadow-lg">
+            <EmailHeader />
+            <div className="flex flex-col gap-[16px] px-[32px] py-[32px] bg-[var(--bg-white)]">
+              <h3 className="font-heading font-semibold text-[24px] text-[var(--text-primary)]">Welcome aboard, Sarah!</h3>
+              <p className="font-heading text-[14px] text-[var(--text-secondary)] leading-[1.6]">
+                You pledged <strong className="text-[var(--burnt-orange)]">$0.25/mile</strong> &mdash; that&apos;s
+                <strong>$662.50</strong> if Paul completes all 2,650 miles. Here&apos;s how to stay in the loop:
+              </p>
+              <div className="flex flex-col gap-[8px] p-[20px] bg-[var(--bg-warm)]">
+                <span className="font-heading font-semibold text-[15px] text-[var(--text-primary)]">Your pledge dashboard</span>
+                <p className="font-heading text-[13px] text-[var(--text-secondary)] leading-[1.6]">
+                  Bookmark <strong>yeschapter.com/my-pledge</strong> &mdash; enter your email anytime to see
+                  your running total, pledge history, and how much has been earned for cancer research.
+                </p>
+              </div>
+              <div className="flex flex-col gap-[8px] p-[20px] bg-[var(--forest-green-light)]">
+                <span className="font-heading font-semibold text-[15px] text-[var(--text-primary)]">Live trail map</span>
+                <p className="font-heading text-[13px] text-[var(--text-secondary)] leading-[1.6]">
+                  Watch Paul move in real time at <strong>yeschapter.com/trail-map</strong>.
+                </p>
+              </div>
+              <p className="font-heading text-[14px] text-[var(--text-secondary)] leading-[1.6]">
+                You&apos;re now one of <strong className="text-[var(--forest-green)]">247 people</strong> walking with Paul.
+              </p>
+              <div className="flex justify-center py-[8px]">
+                <div className="flex items-center gap-[6px] bg-[var(--forest-green)] px-[28px] py-[12px]">
+                  <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-white)]">VIEW MY PLEDGE DASHBOARD</span>
+                </div>
+              </div>
+            </div>
+            <EmailFooter detail="Sent 24 hours after pledge · You can change frequency in Email Preferences" />
+          </div>
+
+          <div className="flex flex-col gap-[20px] flex-1">
+            <h3 className="font-heading font-semibold text-[18px] text-[var(--text-primary)]">Key Design Decisions</h3>
+            <DetailItem label="TIMING">Sent ~24 hours after pledge (checked by cron every 6 hours). Fills the silence between confirmation and next Monday.</DetailItem>
+            <DetailItem label="ONBOARDING">Teaches two habits: checking /my-pledge dashboard and watching the trail map. These are the main engagement loops.</DetailItem>
+            <DetailItem label="COMMUNITY COUNT">Shows how many pledgers exist. Social proof from day one &mdash; they&apos;re part of something.</DetailItem>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════ */}
+      {/* TEMPLATE 5: WELCOME DAY 3 */}
+      {/* ═══════════════════════════════════════ */}
+      <section className="flex flex-col gap-[48px] px-6 md:px-12 lg:px-[120px] py-[64px] bg-[var(--bg-white)] w-full">
+        <div className="flex flex-col gap-[8px]">
+          <SectionBadge>TEMPLATE 5 OF 7 &mdash; V2</SectionBadge>
+          <h2 className="font-heading font-semibold text-[32px] tracking-[-0.5px] text-[var(--text-primary)]">
+            Welcome <span className="text-[var(--burnt-orange)]">Day 3</span> &mdash; Bring a Friend
+          </h2>
+          <p className="font-heading text-[16px] text-[var(--text-secondary)] max-w-[600px] leading-[1.6]">
+            Sent 72 hours after pledge. The pledger is settled in &mdash; now ask them to recruit. Links to the personalized /join referral page.
+          </p>
+        </div>
+
+        <div className="flex flex-col lg:flex-row gap-[48px] items-start">
+          <div className="w-full lg:w-[480px] shrink-0 rounded-[4px] overflow-hidden shadow-lg">
+            <EmailHeader />
+            <div className="flex flex-col gap-[16px] px-[32px] py-[32px] bg-[var(--bg-white)]">
+              <h3 className="font-heading font-semibold text-[24px] text-[var(--text-primary)]">Know someone who&apos;d care?</h3>
+              <p className="font-heading text-[15px] text-[var(--text-secondary)] leading-[1.6]">
+                Sarah, you&apos;re part of a community of <strong className="text-[var(--forest-green)]">247 pledgers</strong> walking with Paul. Every new person who joins makes the impact bigger.
+              </p>
+              <div className="flex flex-col items-center gap-[12px] p-[24px] bg-[var(--burnt-orange-light)]">
+                <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--burnt-orange)]">SHARE YOUR PLEDGE</span>
+                <p className="font-heading text-[13px] text-[var(--text-secondary)] text-center">Share this link with a friend, colleague, or on social media:</p>
+                <div className="flex items-center gap-[6px] bg-[var(--burnt-orange)] px-[28px] py-[12px]">
+                  <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-white)]">SHARE WITH A FRIEND &rarr;</span>
+                </div>
+              </div>
+              <p className="font-heading text-[14px] text-[var(--text-secondary)] leading-[1.6]">
+                Already want to do more? You can <strong className="text-[var(--burnt-orange)]">increase your pledge</strong> anytime from your dashboard.
+              </p>
+            </div>
+            <EmailFooter detail="Sent 72 hours after pledge · You can change frequency in Email Preferences" />
+          </div>
+
+          <div className="flex flex-col gap-[20px] flex-1">
+            <h3 className="font-heading font-semibold text-[18px] text-[var(--text-primary)]">Key Design Decisions</h3>
+            <DetailItem label="TIMING">72 hours &mdash; pledger has had time to settle but the excitement is still fresh.</DetailItem>
+            <DetailItem label="REFERRAL PAGE">Share link goes to /join?ref=Name &mdash; personalized landing page that says &ldquo;Sarah is walking with Paul. Join them.&rdquo;</DetailItem>
+            <DetailItem label="INCREASE NUDGE">Subtle mention of increasing pledge. Plant the seed early, don&apos;t push hard.</DetailItem>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════ */}
+      {/* TEMPLATE 6: HONOR CONFIRMATION */}
+      {/* ═══════════════════════════════════════ */}
+      <section className="flex flex-col gap-[48px] px-6 md:px-12 lg:px-[120px] py-[64px] bg-[var(--bg-warm)] w-full">
+        <div className="flex flex-col gap-[8px]">
+          <SectionBadge>TEMPLATE 6 OF 7 &mdash; V2</SectionBadge>
+          <h2 className="font-heading font-semibold text-[32px] tracking-[-0.5px] text-[var(--text-primary)]">
+            Honor <span className="text-[var(--burnt-orange)]">Confirmation</span> Email
+          </h2>
+          <p className="font-heading text-[16px] text-[var(--text-secondary)] max-w-[600px] leading-[1.6]">
+            Sent immediately after a pledger clicks &ldquo;I&apos;ve honored my pledge&rdquo; on /honor. Closes the gratitude loop and encourages sharing.
+          </p>
+        </div>
+
+        <div className="flex flex-col lg:flex-row gap-[48px] items-start">
+          <div className="w-full lg:w-[480px] shrink-0 rounded-[4px] overflow-hidden shadow-lg">
+            <EmailHeader />
+            <div className="flex flex-col items-center gap-[10px] px-[32px] py-[36px] bg-[var(--forest-green)] text-center">
+              <span className="font-label font-bold text-[11px] tracking-[3px] text-[#FFFFFF88]">PLEDGE HONORED</span>
+              <h3 className="font-heading font-semibold text-[28px] text-[var(--text-white)]">Thank you, Sarah.</h3>
+              <p className="font-heading text-[16px] text-[#FFFFFFCC]">You honored your $662.50 pledge.</p>
+            </div>
+            <div className="flex flex-col gap-[16px] px-[32px] py-[28px] bg-[var(--bg-white)]">
+              <div className="flex flex-col gap-[6px] p-[20px] bg-[var(--bg-warm)]">
+                <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">YOUR DONATION SUMMARY</span>
+                <p className="font-heading text-[14px] text-[var(--text-secondary)] leading-[1.8]">
+                  $331.25 &rarr; Tower Cancer Research Foundation<br/>
+                  $331.25 &rarr; Cancer Council NSW<br/>
+                  <strong>$662.50 total to cancer research</strong>
+                </p>
+              </div>
+              <p className="font-heading text-[15px] text-[var(--text-secondary)] leading-[1.6]">
+                You&apos;re one of <strong className="text-[var(--forest-green)]">89</strong> pledgers who&apos;ve honored so far &mdash; that&apos;s <strong className="text-[var(--forest-green)]">72%</strong> of all 124 pledgers.
+              </p>
+              <p className="font-heading text-[14px] text-[var(--text-muted)] leading-[1.6]">
+                Paul never touches a cent. Every dollar goes directly to the foundations.
+              </p>
+              <div className="flex flex-col items-center gap-[8px] pt-[8px]">
+                <div className="flex items-center gap-[6px] bg-[var(--burnt-orange)] px-[28px] py-[12px]">
+                  <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-white)]">TELL A FRIEND WHAT YOU DID &rarr;</span>
+                </div>
+                <span className="font-heading text-[12px] text-[var(--text-muted)]">Inspire someone else to join the walk.</span>
+              </div>
+            </div>
+            <EmailFooter detail="Sent after you marked your pledge as honored on yeschapter.com/honor" />
+          </div>
+
+          <div className="flex flex-col gap-[20px] flex-1">
+            <h3 className="font-heading font-semibold text-[18px] text-[var(--text-primary)]">Key Design Decisions</h3>
+            <DetailItem label="GRATITUDE">Green hero says &ldquo;PLEDGE HONORED&rdquo; &mdash; recognition and warmth. The pledger did something meaningful and the email reflects that.</DetailItem>
+            <DetailItem label="DONATION SUMMARY">Shows the 50/50 split. Receipts come from the foundations, but this email reinforces where the money went.</DetailItem>
+            <DetailItem label="COMMUNITY PROGRESS">Shows honor rate (72%). Social proof that others are honoring too. Creates momentum.</DetailItem>
+            <DetailItem label="SHARE CTA">&ldquo;Tell a friend what you did&rdquo; &mdash; honored pledgers are the best ambassadors. Link goes to /join referral page.</DetailItem>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════ */}
+      {/* TEMPLATE 7: COMMUNITY MILESTONE */}
+      {/* ═══════════════════════════════════════ */}
+      <section className="flex flex-col gap-[48px] px-6 md:px-12 lg:px-[120px] py-[64px] bg-[var(--bg-white)] w-full">
+        <div className="flex flex-col gap-[8px]">
+          <SectionBadge>TEMPLATE 7 OF 7 &mdash; V2</SectionBadge>
+          <h2 className="font-heading font-semibold text-[32px] tracking-[-0.5px] text-[var(--text-primary)]">
+            Community <span className="text-[var(--burnt-orange)]">Milestone</span> Email
+          </h2>
+          <p className="font-heading text-[16px] text-[var(--text-secondary)] max-w-[600px] leading-[1.6]">
+            Triggered when the community hits a threshold: 25/50/100/200/500 pledgers or $5K/$10K/$25K/$50K total pledged. Creates social proof and FOMO.
+          </p>
+        </div>
+
+        <div className="flex flex-col lg:flex-row gap-[48px] items-start">
+          <div className="w-full lg:w-[480px] shrink-0 rounded-[4px] overflow-hidden shadow-lg">
+            <EmailHeader />
+            <div className="flex flex-col items-center gap-[10px] px-[32px] py-[36px] bg-[var(--burnt-orange)] text-center">
+              <span className="font-label font-bold text-[11px] tracking-[3px] text-[#FFFFFF88]">COMMUNITY MILESTONE</span>
+              <h3 className="font-heading font-semibold text-[26px] text-[var(--text-white)]">100 People Walking With Paul</h3>
+            </div>
+            <div className="flex flex-col gap-[16px] px-[32px] py-[28px] bg-[var(--bg-white)]">
+              <p className="font-heading text-[15px] text-[var(--text-secondary)] leading-[1.6]">
+                Sarah, the YesChapter community just reached <strong>100 pledgers</strong>. That&apos;s 100 people who believe every mile matters.
+              </p>
+              <div className="flex justify-around p-[20px] bg-[var(--bg-warm)]">
+                <div className="flex flex-col items-center">
+                  <span className="font-heading font-semibold text-[22px] text-[var(--forest-green)]">100</span>
+                  <span className="font-label font-semibold text-[9px] tracking-[2px] text-[var(--text-muted)]">PLEDGERS</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <span className="font-heading font-semibold text-[22px] text-[var(--burnt-orange)]">$12,450</span>
+                  <span className="font-label font-semibold text-[9px] tracking-[2px] text-[var(--text-muted)]">TOTAL PLEDGED</span>
+                </div>
+              </div>
+              <div className="flex flex-col items-center gap-[12px] pt-[8px]">
+                <div className="flex items-center gap-[6px] bg-[var(--forest-green)] px-[28px] py-[12px]">
+                  <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-white)]">INCREASE MY PLEDGE</span>
+                </div>
+                <div className="flex items-center gap-[6px] bg-[var(--burnt-orange)] px-[28px] py-[12px]">
+                  <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-white)]">SHARE WITH A FRIEND &rarr;</span>
+                </div>
+              </div>
+            </div>
+            <EmailFooter detail="Community milestone · Only sent to pledgers with 'All Updates' preference" />
+          </div>
+
+          <div className="flex flex-col gap-[20px] flex-1">
+            <h3 className="font-heading font-semibold text-[18px] text-[var(--text-primary)]">Key Design Decisions</h3>
+            <DetailItem label="TRIGGER THRESHOLDS">
+              <strong>Pledger count:</strong> 25, 50, 100, 200, 500, 1000<br />
+              <strong>Total pledged:</strong> $5K, $10K, $25K, $50K, $100K<br />
+              Triggered in real-time when a new pledge crosses the threshold.
+            </DetailItem>
+            <DetailItem label="ORANGE HERO">Celebration color &mdash; different from weekly (dark) and milestone (orange hero but about Paul). This is about the <em>community</em>.</DetailItem>
+            <DetailItem label="DUAL CTA">Both &ldquo;Increase My Pledge&rdquo; and &ldquo;Share With a Friend&rdquo;. Community milestones are natural share moments.</DetailItem>
+            <DetailItem label="DEDUPLICATION">Tracked in Redis set emails:community:sent. Each threshold fires once, ever. No repeat sends.</DetailItem>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════ */}
       {/* EMAIL SCHEDULE */}
       {/* ═══════════════════════════════════════ */}
       <section className="flex flex-col gap-[40px] px-6 md:px-12 lg:px-[120px] py-[64px] bg-[var(--bg-dark)] w-full">
@@ -379,17 +599,19 @@ export default function StrategyPage() {
             </thead>
             <tbody>
               {[
-                { when: "Day 1", phase: "DURING", phaseColor: "bg-[var(--forest-green-light)] text-[var(--forest-green)]", email: "\"Paul just started!\"", purpose: "Excitement + pledge confirmation" },
+                { when: "Immediately", phase: "WELCOME", phaseColor: "bg-[#E8F0EB] text-[var(--forest-green)]", email: "Pledge Confirmation", purpose: "Thank you + pledge math + share CTA" },
+                { when: "+24 hours", phase: "WELCOME", phaseColor: "bg-[#E8F0EB] text-[var(--forest-green)]", email: "Welcome Day 1", purpose: "How to track: /my-pledge + /trail-map" },
+                { when: "+72 hours", phase: "WELCOME", phaseColor: "bg-[#E8F0EB] text-[var(--forest-green)]", email: "Welcome Day 3", purpose: "\"Bring a friend\" — referral link to /join" },
                 { when: "Every Monday", phase: "DURING", phaseColor: "bg-[var(--forest-green-light)] text-[var(--forest-green)]", email: "Weekly Update", purpose: "Running total + trail progress + journal excerpt" },
+                { when: "Threshold crossed", phase: "COMMUNITY", phaseColor: "bg-[var(--burnt-orange-light)] text-[var(--burnt-orange)]", email: "Community Milestone", purpose: "\"We hit 100 pledgers!\" — social proof + FOMO" },
+                { when: "Near milestone", phase: "DURING", phaseColor: "bg-[var(--forest-green-light)] text-[var(--forest-green)]", email: "Pre-Milestone Nudge", purpose: "\"500 miles is coming!\" + increase CTA" },
                 { when: "500 / 1000 / 1325 mi", phase: "MILESTONE", phaseColor: "bg-[var(--burnt-orange-light)] text-[var(--burnt-orange)]", email: "Milestone Celebration", purpose: "Celebrate achievement + growing pledge total" },
                 { when: "State crossings", phase: "MILESTONE", phaseColor: "bg-[var(--burnt-orange-light)] text-[var(--burnt-orange)]", email: "\"Paul entered Oregon!\"", purpose: "Geographic progress + local connection" },
-                { when: "200 mi from Canada", phase: "DURING", phaseColor: "bg-[var(--forest-green-light)] text-[var(--forest-green)]", email: "\"Almost there\"", purpose: "Anticipation + approximate final total" },
-                { when: "Paul finishes", phase: "HONOR", phaseColor: "bg-[#333333] text-[#FFFFFFCC]", email: "\"Paul Made It!\"", purpose: "Final total + foundation links + honor buttons" },
-                { when: "+3 days", phase: "HONOR", phaseColor: "bg-[#333333] text-[#FFFFFFCC]", email: "Gentle reminder", purpose: "\"Your pledge links are ready\"" },
-                { when: "+7 days", phase: "HONOR", phaseColor: "bg-[#333333] text-[#FFFFFFCC]", email: "Social proof", purpose: "\"X% of pledgers have honored!\"" },
-                { when: "+14 days", phase: "HONOR", phaseColor: "bg-[#333333] text-[#FFFFFFCC]", email: "Understanding", purpose: "\"No rush — here are your links\"" },
-                { when: "+30 days", phase: "HONOR", phaseColor: "bg-[#333333] text-[#FFFFFFCC]", email: "Purpose", purpose: "\"The foundations are counting on us\"" },
-                { when: "+45 days", phase: "HONOR", phaseColor: "bg-[#333333] text-[#FFFFFFCC]", email: "Installment offer", purpose: "\"Honor over 3 months\" — then we stop" },
+                { when: "200 mi from Canada", phase: "FINISH", phaseColor: "bg-[#333333] text-[#FFFFFFCC]", email: "Near-Finish (3 emails)", purpose: "200mi → 100mi → Finish sequence" },
+                { when: "Paul finishes", phase: "HONOR", phaseColor: "bg-[#333333] text-[#FFFFFFCC]", email: "\"Paul Made It!\"", purpose: "Final total + foundation links + honor CTA" },
+                { when: "+5 days", phase: "HONOR", phaseColor: "bg-[#333333] text-[#FFFFFFCC]", email: "Honor Reminder", purpose: "Gentle nudge to un-honored pledgers" },
+                { when: "+14 days", phase: "HONOR", phaseColor: "bg-[#333333] text-[#FFFFFFCC]", email: "Final Reminder", purpose: "Last nudge — then we stop" },
+                { when: "After honor", phase: "HONOR", phaseColor: "bg-[#333333] text-[#FFFFFFCC]", email: "Honor Confirmation", purpose: "Thank you + donation summary + share CTA" },
               ].map((row, i) => (
                 <tr key={i} className="border-b border-[#FFFFFF11]">
                   <td className="font-label font-semibold text-[13px] text-[#FFFFFFCC] py-[14px] px-[16px] whitespace-nowrap">{row.when}</td>
@@ -408,7 +630,7 @@ export default function StrategyPage() {
         <div className="flex flex-col gap-[8px] p-[24px] bg-[#FFFFFF0A] border-l-[3px] border-[var(--burnt-orange)]">
           <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--burnt-orange)]">KEY PRINCIPLE</span>
           <p className="font-heading text-[15px] text-[#FFFFFFCC] leading-[1.6]">
-            Every email includes the pledger&apos;s <strong className="text-[var(--text-white)]">personal running total</strong>. Watching it grow from $12 to $200 to $662 over 6 months creates ownership. It&apos;s not abstract &mdash; it&apos;s <em>their</em> number. After 45 days post-finish, we stop. No guilt. No harassment.
+            Every email includes the pledger&apos;s <strong className="text-[var(--text-white)]">personal running total</strong>. Watching it grow from $12 to $200 to $662 over 6 months creates ownership. It&apos;s not abstract &mdash; it&apos;s <em>their</em> number. Every email includes an <strong className="text-[var(--text-white)]">unsubscribe link</strong> with 3 frequency tiers: All Updates, Milestones Only, or Finish Only. Honor reminders always send regardless. After 14 days post-finish, we stop. No guilt. No harassment.
           </p>
         </div>
       </section>

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
+import { sendHonorConfirmation } from "@/lib/email";
 import type { PledgeRecord } from "@/lib/types";
 import crypto from "crypto";
 
@@ -115,6 +116,20 @@ export async function POST(req: NextRequest) {
         break;
       }
     }
+
+    // Send honor confirmation email (fire-and-forget)
+    const honoredCount = (await redis.get<number>("pledgers:honored_count")) || 0;
+    const pledgerCount = (await redis.get<number>("pledgers:count")) || 0;
+    const honorRate = pledgerCount > 0 ? Math.round((honoredCount / pledgerCount) * 100) : 0;
+    sendHonorConfirmation(
+      record.email,
+      record.anonymous ? "Friend" : record.name,
+      record.totalPledge,
+      honoredCount,
+      pledgerCount,
+      honorRate,
+      record.unsubscribeToken
+    ).catch(() => {});
 
     return NextResponse.json({
       success: true,

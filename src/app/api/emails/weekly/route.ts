@@ -86,6 +86,8 @@ async function handleWeeklySend(request: NextRequest) {
 
     for (const record of records) {
       if (!record.email) continue;
+      // Respect email preferences — weekly is "all" level only
+      if (record.emailPreference && record.emailPreference !== "all") continue;
 
       const result = await sendWeeklyUpdate(
         record.email,

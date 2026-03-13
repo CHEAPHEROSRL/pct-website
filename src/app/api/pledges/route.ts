@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
 import type { PledgeRecord } from "@/lib/types";
-import { sendPledgeConfirmation, sendPledgeIncreased } from "@/lib/email";
+import { sendPledgeConfirmation, sendPledgeIncreased, sendCommunityMilestone } from "@/lib/email";
 import crypto from "crypto";
 
 const TOTAL_MILES = 2650;
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { email, name, amount, interval, anonymous, message, city, country, lat, lng } = body;
+    const { email, name, amount, interval, anonymous, message, city, country, lat, lng, referredBy } = body;
 
     if (!email || typeof email !== "string" || !email.includes("@")) {
       return NextResponse.json({ error: "Valid email is required" }, { status: 400 });
@@ -56,6 +56,7 @@ export async function POST(req: NextRequest) {
     }
 
     const totalPledge = (amount * TOTAL_MILES) / interval;
+    const unsubscribeToken = crypto.randomBytes(16).toString("hex");
 
     const record: PledgeRecord = {
       id: hash,
@@ -66,11 +67,14 @@ export async function POST(req: NextRequest) {
       totalPledge,
       anonymous: !!anonymous,
       boosts: [],
+      unsubscribeToken,
+      emailPreference: "all",
       message: typeof message === "string" && message.trim() ? message.trim().slice(0, 280) : undefined,
       city: typeof city === "string" ? city.trim().slice(0, 100) : undefined,
       country: typeof country === "string" ? country.trim().slice(0, 100) : undefined,
       lat: typeof lat === "number" && lat >= -90 && lat <= 90 ? lat : undefined,
       lng: typeof lng === "number" && lng >= -180 && lng <= 180 ? lng : undefined,
+      referredBy: typeof referredBy === "string" && referredBy.trim() ? referredBy.trim().slice(0, 100) : undefined,
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };
@@ -88,6 +92,14 @@ export async function POST(req: NextRequest) {
     // Send confirmation email (fire-and-forget)
     const rate = `$${amount}/${interval === 1 ? "mi" : interval + "mi"}`;
     sendPledgeConfirmation(record.email, record.name, rate, totalPledge).catch(() => {});
+
+    // Store unsubscribe token mapping for quick lookup
+    await redis.set(`unsub:${unsubscribeToken}`, record.email);
+
+    // Check community milestone thresholds (Gap 8)
+    const newCount = (await redis.get<number>("pledgers:count")) || 0;
+    const newTotal = (await redis.get<number>("pledgers:total_pledged")) || 0;
+    checkCommunityMilestones(redis, newCount, newTotal).catch(() => {});
 
     return NextResponse.json({
       success: true,
@@ -232,5 +244,68 @@ export async function PUT(req: NextRequest) {
   } catch (err) {
     console.error("Failed to update pledge:", err);
     return NextResponse.json({ error: "Failed to update pledge" }, { status: 500 });
+  }
+}
+
+// --- Community Milestone Checks (Gap 8) ---
+
+const PLEDGER_THRESHOLDS = [25, 50, 100, 200, 500, 1000];
+const TOTAL_THRESHOLDS = [5000, 10000, 25000, 50000, 100000];
+
+async function checkCommunityMilestones(redis: Redis, pledgerCount: number, totalPledged: number) {
+  const sentSet = (await redis.smembers("emails:community:sent")) || [];
+
+  // Check pledger count thresholds
+  for (const threshold of PLEDGER_THRESHOLDS) {
+    const key = `pledgers:${threshold}`;
+    if (pledgerCount >= threshold && !sentSet.includes(key)) {
+      await sendCommunityMilestoneToAll(redis, "pledgers", threshold, pledgerCount, totalPledged);
+      await redis.sadd("emails:community:sent", key);
+      break; // Only send one community milestone per pledge
+    }
+  }
+
+  // Check total pledged thresholds
+  for (const threshold of TOTAL_THRESHOLDS) {
+    const key = `total:${threshold}`;
+    if (totalPledged >= threshold && !sentSet.includes(key)) {
+      await sendCommunityMilestoneToAll(redis, "total", threshold, pledgerCount, totalPledged);
+      await redis.sadd("emails:community:sent", key);
+      break;
+    }
+  }
+}
+
+async function sendCommunityMilestoneToAll(
+  redis: Redis,
+  variant: "pledgers" | "total" | "countries",
+  value: number,
+  pledgerCount: number,
+  totalPledged: number
+) {
+  const rawList = await redis.lrange<string>("pledgers:list", 0, -1);
+  const records: PledgeRecord[] = (rawList || []).map((item) =>
+    typeof item === "string" ? JSON.parse(item) : item
+  );
+
+  let sent = 0;
+  for (const record of records) {
+    if (!record.email) continue;
+    // Respect email preferences — community milestones are "all" level
+    if (record.emailPreference && record.emailPreference !== "all") continue;
+
+    await sendCommunityMilestone(
+      record.email,
+      record.anonymous ? "Friend" : record.name,
+      variant,
+      value,
+      pledgerCount,
+      totalPledged,
+      record.unsubscribeToken
+    );
+    sent++;
+    if (sent % 10 === 0) {
+      await new Promise((r) => setTimeout(r, 1000));
+    }
   }
 }

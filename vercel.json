@@ -11,6 +11,10 @@
     {
       "path": "/api/emails/honor",
       "schedule": "0 12 * * *"
+    },
+    {
+      "path": "/api/emails/welcome",
+      "schedule": "0 */6 * * *"
     }
   ]
 }

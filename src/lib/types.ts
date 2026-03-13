@@ -133,6 +133,9 @@ export interface PledgeRecord {
   lng?: number;
   honored?: boolean;
   honoredAt?: number;
+  unsubscribeToken?: string;
+  emailPreference?: "all" | "milestones" | "finish";
+  referredBy?: string;
   createdAt: number;
   updatedAt: number;
 }
