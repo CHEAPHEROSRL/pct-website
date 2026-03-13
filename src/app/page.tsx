@@ -25,7 +25,7 @@ export default function Home() {
   return (
     <div className="flex flex-col w-full bg-[var(--bg-warm)]">
       <Header transparent />
-      <CountdownBanner />
+      <CountdownBanner belowFixedHeader />
 
       {/* Hero Section */}
       <section className="relative w-full h-[560px] md:h-[680px] lg:h-[800px] overflow-hidden">

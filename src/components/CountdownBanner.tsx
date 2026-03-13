@@ -9,14 +9,14 @@ function pad(n: number): string {
   return n.toString().padStart(2, "0");
 }
 
-export default function CountdownBanner() {
+export default function CountdownBanner({ belowFixedHeader }: { belowFixedHeader?: boolean }) {
   const { days, hours, minutes, seconds, isExpired } = useCountdown();
 
   // Once the hike starts, show the challenge banner instead
   if (isExpired) return <ChallengeBanner />;
 
   return (
-    <div className="flex items-center justify-center gap-[16px] sm:gap-[32px] w-full px-4 sm:px-6 md:px-12 lg:px-[80px] py-[12px] bg-[var(--bg-dark)]">
+    <div className={`flex items-center justify-center gap-[16px] sm:gap-[32px] w-full px-4 sm:px-6 md:px-12 lg:px-[80px] py-[12px] bg-[var(--bg-dark)] ${belowFixedHeader ? "relative z-40 mt-[60px] md:mt-[68px]" : ""}`}>
       {/* Left: label */}
       <div className="hidden sm:flex items-center gap-[10px]">
         <Mountain className="w-[16px] h-[16px] text-[var(--burnt-orange)]" />

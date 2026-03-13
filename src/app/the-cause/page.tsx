@@ -18,7 +18,7 @@ export default function TheCausePage() {
   return (
     <div className="flex flex-col w-full bg-[var(--bg-warm)]">
       <Header activeItem="The Cause" transparent />
-      <CountdownBanner />
+      <CountdownBanner belowFixedHeader />
 
       {/* Hero */}
       <section className="relative w-full h-[400px] md:h-[480px] lg:h-[560px] overflow-hidden">
