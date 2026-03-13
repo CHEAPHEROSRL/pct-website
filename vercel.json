@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/emails/weekly",
+      "schedule": "0 15 * * 1"
+    },
+    {
+      "path": "/api/emails/milestone",
+      "schedule": "0 */6 * * *"
+    }
+  ]
+}
