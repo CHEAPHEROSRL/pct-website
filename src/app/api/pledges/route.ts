@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
 import type { PledgeRecord } from "@/lib/types";
-import { sendPledgeConfirmation } from "@/lib/email";
+import { sendPledgeConfirmation, sendPledgeIncreased } from "@/lib/email";
 import crypto from "crypto";
 
 const TOTAL_MILES = 2650;
@@ -147,6 +147,9 @@ export async function GET(req: NextRequest) {
 }
 
 // PUT — Update pledge amount (increase / boost)
+// Supports two modes:
+//   1. Manual increase: { email, addAmount } — pledger voluntarily increases their per-mile rate
+//   2. Challenge boost: { email, addAmount, challengeId, challengeTitle } — boost from a completed challenge
 export async function PUT(req: NextRequest) {
   const redis = getRedis();
   if (!redis) {
@@ -173,21 +176,23 @@ export async function PUT(req: NextRequest) {
     }
 
     const record: PledgeRecord = typeof raw === "string" ? JSON.parse(raw) : raw;
+    const oldAmount = record.amount;
     const oldTotal = record.totalPledge;
 
-    // Apply boost
+    // Apply increase
     record.amount += addAmount;
     record.totalPledge = (record.amount * TOTAL_MILES) / record.interval;
     record.updatedAt = Date.now();
 
-    if (challengeId) {
-      record.boosts.push({
-        challengeId,
-        challengeTitle: challengeTitle || "Manual increase",
-        addedAmount: addAmount,
-        addedAt: Date.now(),
-      });
-    }
+    const isChallenge = !!challengeId;
+
+    // Record boost entry (for both challenge boosts and manual increases)
+    record.boosts.push({
+      challengeId: challengeId || "manual",
+      challengeTitle: challengeTitle || "Manual increase",
+      addedAmount: addAmount,
+      addedAt: Date.now(),
+    });
 
     // Save updated record
     await redis.set(key, JSON.stringify(record));
@@ -204,6 +209,13 @@ export async function PUT(req: NextRequest) {
         await redis.lset("pledgers:list", i, JSON.stringify(record));
         break;
       }
+    }
+
+    // Send confirmation email for manual increases (fire-and-forget)
+    if (!isChallenge) {
+      const name = record.anonymous ? "Pledger" : record.name;
+      const newRate = `$${record.amount}/mi`;
+      sendPledgeIncreased(record.email, name, oldAmount, record.amount, newRate, record.totalPledge).catch(() => {});
     }
 
     return NextResponse.json({
