@@ -21,12 +21,10 @@ export default function DonorsPage() {
   const [sort, setSort] = useState<SortKey>("RECENT");
   const [page, setPage] = useState(1);
 
-  const totalRaised = stats?.totalRaised ?? 12450;
-  const donorCount = stats?.donorCount ?? 47;
-  const averageDonation = stats?.averageDonation ?? 265;
-  const largestDonation = stats?.largestDonation ?? 2000;
-  const goalAmount = stats?.goalAmount ?? 50000;
-  const progressPercent = Math.round((totalRaised / goalAmount) * 100);
+  const totalGifts = stats?.totalRaised ?? 12450;
+  const supporterCount = stats?.donorCount ?? 47;
+  const averageGift = stats?.averageDonation ?? 265;
+  const largestGift = stats?.largestDonation ?? 2000;
 
   const processed = useMemo(() => {
     let result = [...donors];
@@ -61,7 +59,7 @@ export default function DonorsPage() {
 
   return (
     <div className="flex flex-col w-full bg-[var(--bg-warm)]">
-      <Header activeItem="Donors" />
+      <Header activeItem="Supporters" />
       <CountdownBanner />
 
       {/* Hero */}
@@ -76,33 +74,24 @@ export default function DonorsPage() {
           </p>
         </div>
 
-        {/* Progress Card */}
+        {/* Stats Card */}
         <div className="flex flex-col gap-[16px] bg-[var(--bg-card)] border border-[var(--border-subtle)] p-[20px] md:p-[32px] w-full max-w-[640px]">
-          <div className="flex items-end justify-between w-full">
-            <div className="flex items-end gap-[8px]">
-              <span className="font-heading font-semibold text-[36px] tracking-[-1px] text-[var(--forest-green)]">${totalRaised.toLocaleString("en-US")}</span>
-              <span className="font-heading text-[16px] text-[var(--text-secondary)]">raised of ${goalAmount.toLocaleString("en-US")}</span>
-            </div>
-            <span className="font-label font-bold text-[18px] text-[var(--forest-green)]">{progressPercent}%</span>
-          </div>
-          <div className="relative w-full h-[12px] bg-[#E8E5E0]">
-            <div
-              className="absolute top-0 left-0 h-[12px] bg-[var(--forest-green)] transition-all duration-1000"
-              style={{ width: `max(12px, ${progressPercent}%)` }}
-            />
+          <div className="flex items-end gap-[8px]">
+            <span className="font-heading font-semibold text-[36px] tracking-[-1px] text-[var(--forest-green)]">${totalGifts.toLocaleString("en-US")}</span>
+            <span className="font-heading text-[16px] text-[var(--text-secondary)]">in trail support gifts</span>
           </div>
           <div className="flex justify-around w-full">
             <div className="flex flex-col items-center gap-[2px]">
-              <span className="font-heading font-semibold text-[24px] text-[var(--text-primary)]">{donorCount}</span>
-              <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">DONORS</span>
+              <span className="font-heading font-semibold text-[24px] text-[var(--text-primary)]">{supporterCount}</span>
+              <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">SUPPORTERS</span>
             </div>
             <div className="flex flex-col items-center gap-[2px]">
-              <span className="font-heading font-semibold text-[24px] text-[var(--text-primary)]">${averageDonation.toLocaleString("en-US")}</span>
-              <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">AVERAGE</span>
+              <span className="font-heading font-semibold text-[24px] text-[var(--text-primary)]">${averageGift.toLocaleString("en-US")}</span>
+              <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">AVG GIFT</span>
             </div>
             <div className="flex flex-col items-center gap-[2px]">
-              <span className="font-heading font-semibold text-[24px] text-[var(--text-primary)]">${largestDonation.toLocaleString("en-US")}</span>
-              <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">LARGEST</span>
+              <span className="font-heading font-semibold text-[24px] text-[var(--text-primary)]">${largestGift.toLocaleString("en-US")}</span>
+              <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">LARGEST GIFT</span>
             </div>
           </div>
         </div>
@@ -114,10 +103,10 @@ export default function DonorsPage() {
           <TrendingUp className="w-[20px] h-[20px] text-[var(--forest-green)]" />
           <div className="flex flex-col">
             <span className="font-heading font-semibold text-[24px] text-[var(--text-primary)] leading-[1]">
-              ${totalRaised.toLocaleString("en-US")}
+              ${totalGifts.toLocaleString("en-US")}
             </span>
             <span className="font-label text-[11px] tracking-[1px] text-[var(--text-muted)]">
-              TOTAL RAISED
+              TOTAL GIFTS
             </span>
           </div>
         </div>
@@ -125,10 +114,10 @@ export default function DonorsPage() {
           <Users className="w-[20px] h-[20px] text-[var(--burnt-orange)]" />
           <div className="flex flex-col">
             <span className="font-heading font-semibold text-[24px] text-[var(--text-primary)] leading-[1]">
-              {donorCount}
+              {supporterCount}
             </span>
             <span className="font-label text-[11px] tracking-[1px] text-[var(--text-muted)]">
-              DONORS
+              SUPPORTERS
             </span>
           </div>
         </div>
@@ -136,10 +125,10 @@ export default function DonorsPage() {
           <Heart className="w-[20px] h-[20px] text-[var(--forest-green)]" />
           <div className="flex flex-col">
             <span className="font-heading font-semibold text-[24px] text-[var(--text-primary)] leading-[1]">
-              ${averageDonation.toLocaleString("en-US")}
+              ${averageGift.toLocaleString("en-US")}
             </span>
             <span className="font-label text-[11px] tracking-[1px] text-[var(--text-muted)]">
-              AVERAGE
+              AVG GIFT
             </span>
           </div>
         </div>
@@ -147,10 +136,10 @@ export default function DonorsPage() {
           <Target className="w-[20px] h-[20px] text-[var(--burnt-orange)]" />
           <div className="flex flex-col">
             <span className="font-heading font-semibold text-[24px] text-[var(--text-primary)] leading-[1]">
-              {progressPercent}%
+              ${largestGift.toLocaleString("en-US")}
             </span>
             <span className="font-label text-[11px] tracking-[1px] text-[var(--text-muted)]">
-              OF ${goalAmount.toLocaleString("en-US")} GOAL
+              LARGEST GIFT
             </span>
           </div>
         </div>
@@ -160,7 +149,7 @@ export default function DonorsPage() {
       {donors.length > 0 && (
         <section className="flex flex-col gap-[16px] px-6 md:px-12 lg:px-[120px] py-[24px] bg-[var(--bg-white)] border-b border-[var(--border-subtle)] w-full">
           <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-muted)]">
-            RECENT DONORS
+            RECENT SUPPORTERS
           </span>
           <div className="flex flex-wrap gap-[12px]">
             {donors.slice(0, 8).map((d, i) => (
@@ -187,7 +176,7 @@ export default function DonorsPage() {
           <Search className="w-[16px] h-[16px] text-[var(--text-muted)]" />
           <input
             type="text"
-            placeholder="Search donors..."
+            placeholder="Search supporters..."
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
             className="font-heading text-[14px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none bg-transparent w-full md:w-[180px]"
@@ -206,7 +195,7 @@ export default function DonorsPage() {
           ))}
         </div>
         <span className="font-label font-semibold text-[11px] tracking-[2px] text-[var(--text-muted)] hidden md:inline">
-          {processed.length} DONOR{processed.length !== 1 ? "S" : ""}
+          {processed.length} SUPPORTER{processed.length !== 1 ? "S" : ""}
         </span>
       </div>
 
@@ -215,7 +204,7 @@ export default function DonorsPage() {
         {/* Desktop Table Header */}
         <div className="hidden md:flex bg-[var(--bg-dark)] px-[20px] py-[12px] w-full">
           <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)] w-[60px]">#</span>
-          <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)] w-[300px]">DONOR</span>
+          <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)] w-[300px]">SUPPORTER</span>
           <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)] w-[120px]">AMOUNT</span>
           <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)] w-[140px]">DATE</span>
           <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">MESSAGE</span>
@@ -223,7 +212,7 @@ export default function DonorsPage() {
 
         {paged.length === 0 ? (
           <div className="flex flex-col items-center gap-[12px] py-[48px]">
-            <span className="font-heading text-[18px] text-[var(--text-muted)]">No donors found</span>
+            <span className="font-heading text-[18px] text-[var(--text-muted)]">No supporters found</span>
             <button
               onClick={() => { setSearch(""); setPage(1); }}
               className="font-label font-bold text-[12px] tracking-[2px] text-[var(--burnt-orange)] cursor-pointer"

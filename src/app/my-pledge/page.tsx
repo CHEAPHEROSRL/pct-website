@@ -1,12 +1,15 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, useCallback, FormEvent } from "react";
 import Link from "next/link";
 import {
   Mail,
   ArrowRight,
   TrendingUp,
   Heart,
+  Share2,
+  Download,
+  Check,
 } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -42,6 +45,126 @@ interface PledgeData {
   boosts: PledgeBoost[];
   createdAt: number;
   updatedAt: number;
+}
+
+function ShareBadge({ pledge }: { pledge: PledgeData }) {
+  const [copied, setCopied] = useState(false);
+
+  const rateStr = `$${pledge.amount}/${pledge.interval === 1 ? "mi" : pledge.interval + "mi"}`;
+  const totalStr = formatCurrency(pledge.totalPledge);
+  const badgeUrl = `/api/share-badge?name=${encodeURIComponent(pledge.name)}&rate=${encodeURIComponent(rateStr)}&total=${encodeURIComponent(totalStr)}`;
+
+  const handleDownload = useCallback(async () => {
+    try {
+      const res = await fetch(badgeUrl);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "yeschapter-pledge-badge.png";
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      // Fallback: open in new tab
+      window.open(badgeUrl, "_blank");
+    }
+  }, [badgeUrl]);
+
+  const handleCopyLink = useCallback(async () => {
+    const shareUrl = `${window.location.origin}/pledge`;
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Fallback
+      window.open(shareUrl, "_blank");
+    }
+  }, []);
+
+  const handleShare = useCallback(async () => {
+    const shareData = {
+      title: "I'm pledging for cancer research — YesChapter",
+      text: `I pledged ${rateStr} per mile for Paul's 2,650-mile PCT walk for cancer research. Join me!`,
+      url: `${window.location.origin}/pledge`,
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch {
+        // User cancelled — that's fine
+      }
+    } else {
+      handleCopyLink();
+    }
+  }, [rateStr, handleCopyLink]);
+
+  return (
+    <section className="flex flex-col gap-[24px] px-6 md:px-12 lg:px-[120px] py-[48px] bg-[var(--bg-warm)] border-t border-[var(--border-subtle)] w-full">
+      <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-muted)]">
+        SHARE YOUR PLEDGE
+      </span>
+      <div className="flex flex-col lg:flex-row gap-[24px] items-start">
+        {/* Badge Preview */}
+        <div className="w-full lg:w-[480px] shrink-0 rounded-[4px] overflow-hidden shadow-lg border border-[var(--border-subtle)]">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={badgeUrl}
+            alt="Your pledge share badge"
+            className="w-full h-auto"
+          />
+        </div>
+
+        {/* Share Actions */}
+        <div className="flex flex-col gap-[16px] flex-1">
+          <h3 className="font-heading font-semibold text-[22px] text-[var(--text-primary)]">
+            Spread the word
+          </h3>
+          <p className="font-heading text-[14px] text-[var(--text-secondary)] leading-[1.6]">
+            Every share can turn into another pledge. Download your badge for
+            social media or share the pledge link directly.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-[12px] mt-[8px]">
+            <button
+              onClick={handleDownload}
+              className="flex items-center justify-center gap-[8px] bg-[var(--burnt-orange)] px-[24px] py-[14px] hover:opacity-90 transition-opacity cursor-pointer"
+            >
+              <Download className="w-[16px] h-[16px] text-[var(--text-white)]" />
+              <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-white)]">
+                DOWNLOAD BADGE
+              </span>
+            </button>
+
+            <button
+              onClick={handleShare}
+              className="flex items-center justify-center gap-[8px] bg-[var(--forest-green)] px-[24px] py-[14px] hover:opacity-90 transition-opacity cursor-pointer"
+            >
+              <Share2 className="w-[16px] h-[16px] text-[var(--text-white)]" />
+              <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-white)]">
+                SHARE
+              </span>
+            </button>
+
+            <button
+              onClick={handleCopyLink}
+              className="flex items-center justify-center gap-[8px] border border-[var(--border-subtle)] px-[24px] py-[14px] hover:bg-[var(--bg-white)] transition-colors cursor-pointer"
+            >
+              {copied ? (
+                <Check className="w-[16px] h-[16px] text-[var(--forest-green)]" />
+              ) : (
+                <Share2 className="w-[14px] h-[14px] text-[var(--text-secondary)]" />
+              )}
+              <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-secondary)]">
+                {copied ? "COPIED!" : "COPY LINK"}
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
 }
 
 export default function MyPledgePage() {
@@ -323,6 +446,9 @@ export default function MyPledgePage() {
               )}
             </div>
           </section>
+
+          {/* Share Badge */}
+          <ShareBadge pledge={pledge} />
 
           {/* CTAs */}
           <section className="flex flex-col sm:flex-row items-center justify-center gap-[16px] px-6 md:px-12 lg:px-[120px] py-[32px] bg-[var(--bg-warm)] w-full">
