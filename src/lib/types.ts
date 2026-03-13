@@ -131,6 +131,8 @@ export interface PledgeRecord {
   country?: string;
   lat?: number;
   lng?: number;
+  honored?: boolean;
+  honoredAt?: number;
   createdAt: number;
   updatedAt: number;
 }

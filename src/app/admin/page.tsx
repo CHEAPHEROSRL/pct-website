@@ -24,8 +24,8 @@ import {
 } from "lucide-react";
 import type { JournalPost, ChallengePublic } from "@/lib/types";
 
-type View = "login" | "list" | "editor" | "challenges";
-type AdminTab = "journal" | "challenges";
+type View = "login" | "list" | "editor" | "challenges" | "honor";
+type AdminTab = "journal" | "challenges" | "honor";
 
 export default function AdminPage() {
   const [token, setToken] = useState("");
@@ -62,6 +62,16 @@ export default function AdminPage() {
   } | null>(null);
   const [showVideoGenerator, setShowVideoGenerator] = useState(false);
   const [instagramCaption, setInstagramCaption] = useState<string | null>(null);
+
+  // Honor tracking state
+  const [honorStats, setHonorStats] = useState<{
+    honoredCount: number;
+    pledgerCount: number;
+    totalPledged: number;
+    honorRate: number;
+    totalHonored: number;
+  } | null>(null);
+  const [honorLoading, setHonorLoading] = useState(false);
   const [captionCopied, setCaptionCopied] = useState(false);
 
   // Load token from localStorage
@@ -111,6 +121,37 @@ export default function AdminPage() {
       }
     } catch {
       setStatus("Failed to load challenges");
+    }
+  }, [token]);
+
+  const fetchHonorStats = useCallback(async () => {
+    setHonorLoading(true);
+    try {
+      const [countRes, pledgersRes] = await Promise.all([
+        fetch("/api/pledges?stats=true"),
+        fetch("/api/honor/stats", { headers: { Authorization: `Bearer ${token}` } }),
+      ]);
+
+      // Try dedicated stats endpoint first, fall back to basic counts
+      const pledgerCount = countRes.ok ? ((await countRes.json()).stats?.pledgerCount ?? 0) : 0;
+
+      if (pledgersRes.ok) {
+        const data = await pledgersRes.json();
+        setHonorStats(data);
+      } else {
+        // Fallback: just show what we know
+        setHonorStats({
+          honoredCount: 0,
+          pledgerCount,
+          totalPledged: 0,
+          honorRate: 0,
+          totalHonored: 0,
+        });
+      }
+    } catch {
+      setStatus("Failed to load honor stats");
+    } finally {
+      setHonorLoading(false);
     }
   }, [token]);
 
@@ -423,6 +464,17 @@ export default function AdminPage() {
           >
             <Zap className="w-[16px] h-[16px]" />
             CHALLENGES
+          </button>
+          <button
+            onClick={() => { setActiveTab("honor"); setView("honor"); setStatus(""); fetchHonorStats(); }}
+            className={`flex items-center gap-[8px] px-[24px] py-[14px] font-label font-bold text-[12px] tracking-[2px] border-b-2 transition-colors cursor-pointer ${
+              activeTab === "honor"
+                ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
+                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+            }`}
+          >
+            <CheckCircle className="w-[16px] h-[16px]" />
+            HONOR TRACKING
           </button>
         </div>
 
@@ -1027,6 +1079,17 @@ export default function AdminPage() {
             <Zap className="w-[16px] h-[16px]" />
             CHALLENGES
           </button>
+          <button
+            onClick={() => { setActiveTab("honor"); setView("honor"); setStatus(""); fetchHonorStats(); }}
+            className={`flex items-center gap-[8px] px-[24px] py-[14px] font-label font-bold text-[12px] tracking-[2px] border-b-2 transition-colors cursor-pointer ${
+              activeTab === "honor"
+                ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
+                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+            }`}
+          >
+            <CheckCircle className="w-[16px] h-[16px]" />
+            HONOR TRACKING
+          </button>
         </div>
 
         {/* Content */}
@@ -1274,6 +1337,133 @@ export default function AdminPage() {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (view === "honor" && authenticated) {
+    return (
+      <div className="flex flex-col w-full min-h-screen bg-[var(--bg-warm)]">
+        <div className="flex items-center justify-between px-[40px] py-[20px] bg-[var(--bg-dark)]">
+          <div className="flex items-center gap-[12px]">
+            <Shield className="w-[20px] h-[20px] text-[var(--burnt-orange)]" />
+            <span className="font-label font-bold text-[14px] tracking-[3px] text-white">
+              ADMIN
+            </span>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-[8px] px-[20px] py-[8px] border border-[#FFFFFF33] hover:border-white transition-colors cursor-pointer"
+          >
+            <LogOut className="w-[14px] h-[14px] text-white" />
+            <span className="font-label font-bold text-[11px] tracking-[2px] text-white">
+              LOG OUT
+            </span>
+          </button>
+        </div>
+
+        <div className="flex gap-0 px-[40px] bg-[var(--bg-white)] border-b border-[var(--border-subtle)]">
+          <button
+            onClick={() => { setActiveTab("journal"); setView("list"); setStatus(""); }}
+            className={`flex items-center gap-[8px] px-[24px] py-[14px] font-label font-bold text-[12px] tracking-[2px] border-b-2 transition-colors cursor-pointer ${
+              activeTab === "journal"
+                ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
+                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+            }`}
+          >
+            <BookOpen className="w-[16px] h-[16px]" />
+            JOURNAL
+          </button>
+          <button
+            onClick={() => { setActiveTab("challenges"); setView("challenges"); setStatus(""); fetchChallenges(); }}
+            className={`flex items-center gap-[8px] px-[24px] py-[14px] font-label font-bold text-[12px] tracking-[2px] border-b-2 transition-colors cursor-pointer ${
+              activeTab === "challenges"
+                ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
+                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+            }`}
+          >
+            <Zap className="w-[16px] h-[16px]" />
+            CHALLENGES
+          </button>
+          <button
+            onClick={() => { setActiveTab("honor"); setView("honor"); setStatus(""); fetchHonorStats(); }}
+            className={`flex items-center gap-[8px] px-[24px] py-[14px] font-label font-bold text-[12px] tracking-[2px] border-b-2 transition-colors cursor-pointer ${
+              activeTab === "honor"
+                ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
+                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+            }`}
+          >
+            <CheckCircle className="w-[16px] h-[16px]" />
+            HONOR TRACKING
+          </button>
+        </div>
+
+        <div className="flex flex-col gap-[24px] p-[40px]">
+          <div className="flex flex-col gap-[8px]">
+            <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">
+              PLEDGE HONOR RATE
+            </span>
+            <h1 className="font-heading font-semibold text-[28px] text-[var(--text-primary)]">
+              Honor Tracking Dashboard
+            </h1>
+          </div>
+
+          {honorLoading ? (
+            <span className="font-heading text-[14px] text-[var(--text-muted)]">Loading stats...</span>
+          ) : honorStats ? (
+            <div className="flex flex-col gap-[24px]">
+              {/* Stats Cards */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-[16px]">
+                <div className="flex flex-col gap-[8px] bg-[var(--bg-white)] border border-[var(--border-subtle)] p-[24px]">
+                  <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">HONOR RATE</span>
+                  <span className="font-heading font-semibold text-[36px] text-[var(--forest-green)]">{honorStats.honorRate}%</span>
+                </div>
+                <div className="flex flex-col gap-[8px] bg-[var(--bg-white)] border border-[var(--border-subtle)] p-[24px]">
+                  <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">HONORED</span>
+                  <span className="font-heading font-semibold text-[36px] text-[var(--burnt-orange)]">{honorStats.honoredCount}</span>
+                  <span className="font-heading text-[12px] text-[var(--text-muted)]">of {honorStats.pledgerCount} pledgers</span>
+                </div>
+                <div className="flex flex-col gap-[8px] bg-[var(--bg-white)] border border-[var(--border-subtle)] p-[24px]">
+                  <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">NOT YET HONORED</span>
+                  <span className="font-heading font-semibold text-[36px] text-[var(--text-secondary)]">{honorStats.pledgerCount - honorStats.honoredCount}</span>
+                </div>
+                <div className="flex flex-col gap-[8px] bg-[var(--bg-white)] border border-[var(--border-subtle)] p-[24px]">
+                  <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">TOTAL PLEDGED</span>
+                  <span className="font-heading font-semibold text-[36px] text-[var(--text-primary)]">
+                    ${honorStats.totalPledged.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                  </span>
+                </div>
+              </div>
+
+              {/* Progress bar */}
+              <div className="flex flex-col gap-[8px] bg-[var(--bg-white)] border border-[var(--border-subtle)] p-[24px]">
+                <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">HONOR PROGRESS</span>
+                <div className="relative w-full h-[16px] bg-[var(--warm-stone)]">
+                  <div
+                    className="absolute top-0 left-0 h-[16px] bg-[var(--forest-green)] transition-all duration-1000"
+                    style={{ width: `${Math.min(100, honorStats.honorRate)}%` }}
+                  />
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-heading text-[12px] text-[var(--text-muted)]">0%</span>
+                  <span className="font-heading font-semibold text-[12px] text-[var(--forest-green)]">{honorStats.honorRate}% honored</span>
+                  <span className="font-heading text-[12px] text-[var(--text-muted)]">100%</span>
+                </div>
+              </div>
+
+              <button
+                onClick={fetchHonorStats}
+                className="flex items-center gap-[8px] px-[20px] py-[10px] border border-[var(--border-subtle)] hover:bg-[var(--bg-white)] transition-colors cursor-pointer w-fit"
+              >
+                <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-secondary)]">
+                  REFRESH STATS
+                </span>
+              </button>
+            </div>
+          ) : (
+            <span className="font-heading text-[14px] text-[var(--text-muted)]">No honor data available yet.</span>
+          )}
         </div>
       </div>
     );
