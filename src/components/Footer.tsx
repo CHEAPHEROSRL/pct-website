@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Mountain, Instagram, Youtube, Twitter, Facebook } from "lucide-react";
+import { Mountain, Instagram, Youtube } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -20,9 +20,7 @@ export default function Footer() {
           </p>
           <div className="flex gap-[16px]">
             <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><Instagram className="w-[20px] h-[20px] text-[var(--text-muted)] hover:text-white cursor-pointer" /></a>
-            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><Youtube className="w-[20px] h-[20px] text-[var(--text-muted)] hover:text-white cursor-pointer" /></a>
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter"><Twitter className="w-[20px] h-[20px] text-[var(--text-muted)] hover:text-white cursor-pointer" /></a>
-            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><Facebook className="w-[20px] h-[20px] text-[var(--text-muted)] hover:text-white cursor-pointer" /></a>
+            <a href="https://www.youtube.com/@YesChapter" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><Youtube className="w-[20px] h-[20px] text-[var(--text-muted)] hover:text-white cursor-pointer" /></a>
           </div>
         </div>
 
@@ -53,7 +51,7 @@ export default function Footer() {
               CONNECT
             </span>
             <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Instagram</a>
-            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">YouTube</a>
+            <a href="https://www.youtube.com/@YesChapter" target="_blank" rel="noopener noreferrer" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">YouTube</a>
             <a href="mailto:paul@yeschapter.com" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Contact Paul</a>
             <Link href="/press-kit" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Press Kit</Link>
             <Link href="/transparency" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Transparency</Link>

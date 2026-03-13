@@ -16,7 +16,7 @@ function formatTimeLeft(deadline: number): string {
   return `${hours}h ${mins}m left`;
 }
 
-export default function ChallengeBanner() {
+export default function ChallengeBanner({ belowFixedHeader }: { belowFixedHeader?: boolean }) {
   const [challenge, setChallenge] = useState<ChallengePublic | null>(null);
   const [expanded, setExpanded] = useState(false);
   const [email, setEmail] = useState("");
@@ -95,7 +95,7 @@ export default function ChallengeBanner() {
   };
 
   return (
-    <div className="w-full bg-[var(--bg-dark)] text-white">
+    <div className={`w-full bg-[var(--bg-dark)] text-white ${belowFixedHeader ? "mt-[60px] md:mt-[68px] lg:mt-[78px]" : ""}`}>
       {/* Compact bar */}
       <button
         onClick={() => setExpanded(!expanded)}

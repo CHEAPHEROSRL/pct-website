@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Donate — Support the Walk",
-  description: "Support Paul Barry's 2,650-mile PCT walk for cancer. 100% of donations go to cancer prevention, survivor support, and research.",
+  title: "How to Help — YesChapter",
+  description: "Choose how to support Paul Barry's 2,650-mile PCT walk for cancer. Pledge per mile for the foundations or support Paul directly on the trail.",
 };
 
 export default function DonateLayout({

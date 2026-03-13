@@ -21,9 +21,9 @@ export interface LocationData {
   stats: TrailStats;
 }
 
-// Donation types
+// Trail support gift types
 
-export interface DonationRecord {
+export interface SupportRecord {
   id: string;
   name: string;
   email: string;
@@ -31,10 +31,11 @@ export interface DonationRecord {
   message: string;
   anonymous: boolean;
   color: string;
+  giftTitle: string | null;
   createdAt: number;
 }
 
-export interface DonorPublic {
+export interface SupporterPublic {
   name: string;
   amount: string;
   amountNum: number;
@@ -43,12 +44,11 @@ export interface DonorPublic {
   color: string;
 }
 
-export interface DonationStats {
-  totalRaised: number;
-  donorCount: number;
-  averageDonation: number;
-  largestDonation: number;
-  goalAmount: number;
+export interface SupportStats {
+  totalGifts: number;
+  supporterCount: number;
+  averageGift: number;
+  largestGift: number;
 }
 
 // Journal types

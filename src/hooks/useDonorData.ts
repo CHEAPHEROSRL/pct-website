@@ -1,25 +1,25 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import type { DonorPublic, DonationStats } from "@/lib/types";
+import type { SupporterPublic, SupportStats } from "@/lib/types";
 
-interface DonorData {
-  donors: DonorPublic[];
-  stats: DonationStats;
+interface SupporterData {
+  supporters: SupporterPublic[];
+  stats: SupportStats;
 }
 
 export function useDonorData() {
-  const [data, setData] = useState<DonorData | null>(null);
+  const [data, setData] = useState<SupporterData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let active = true;
 
-    async function fetchDonors() {
+    async function fetchSupporters() {
       try {
         const res = await fetch("/api/donors");
         if (res.ok && active) {
-          const json: DonorData = await res.json();
+          const json: SupporterData = await res.json();
           setData(json);
         }
       } catch {
@@ -29,7 +29,7 @@ export function useDonorData() {
       }
     }
 
-    fetchDonors();
+    fetchSupporters();
     return () => {
       active = false;
     };

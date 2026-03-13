@@ -9,18 +9,21 @@ export const metadata: Metadata = {
   },
   description:
     "Paul is walking the entire Pacific Crest Trail to raise awareness and funds for cancer survivors, patients, and prevention.",
+  metadataBase: new URL("https://yeschapter.com"),
   openGraph: {
     type: "website",
     siteName: "YesChapter",
     title: "YesChapter — Walking for Cancer",
     description:
       "Walking 2,650 miles on the Pacific Crest Trail for cancer awareness, survivor support, and prevention education.",
+    images: [{ url: "/api/og", width: 1200, height: 630, alt: "YesChapter — Walking 2,650 Miles for Cancer" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "YesChapter — Walking for Cancer",
     description:
       "Walking 2,650 miles on the Pacific Crest Trail for cancer awareness, survivor support, and prevention education.",
+    images: ["/api/og"],
   },
 };
 

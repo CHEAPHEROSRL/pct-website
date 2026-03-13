@@ -14,17 +14,17 @@ const PER_PAGE = 6;
 
 export default function DonorsPage() {
   const { data } = useDonorData();
-  const donors = data?.donors ?? [];
+  const donors = data?.supporters ?? [];
   const stats = data?.stats;
 
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<SortKey>("RECENT");
   const [page, setPage] = useState(1);
 
-  const totalGifts = stats?.totalRaised ?? 12450;
-  const supporterCount = stats?.donorCount ?? 47;
-  const averageGift = stats?.averageDonation ?? 265;
-  const largestGift = stats?.largestDonation ?? 2000;
+  const totalGifts = stats?.totalGifts ?? 2450;
+  const supporterCount = stats?.supporterCount ?? 34;
+  const averageGift = stats?.averageGift ?? 72;
+  const largestGift = stats?.largestGift ?? 1000;
 
   const processed = useMemo(() => {
     let result = [...donors];
