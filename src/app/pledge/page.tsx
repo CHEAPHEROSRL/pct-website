@@ -10,17 +10,11 @@ import CountdownBanner from "@/components/CountdownBanner";
 
 const TOTAL_MILES = 2650;
 
-const intervals = [
-  { label: "Every Mile", value: 1 },
-  { label: "Every 10 Miles", value: 10 },
-  { label: "Every 100 Miles", value: 100 },
-] as const;
-
 const presets = [
-  { label: "1¢/mi", amount: 0.01, interval: 1 },
-  { label: "10¢/mi", amount: 0.1, interval: 1 },
-  { label: "25¢/mi", amount: 0.25, interval: 1 },
-  { label: "$1/mi", amount: 1, interval: 1 },
+  { label: "1¢/mi", amount: 0.01 },
+  { label: "10¢/mi", amount: 0.1 },
+  { label: "25¢/mi", amount: 0.25 },
+  { label: "$1/mi", amount: 1 },
 ];
 
 function formatCurrency(value: number): string {
@@ -34,7 +28,6 @@ function formatCurrency(value: number): string {
 
 export default function PledgePage() {
   const [amount, setAmount] = useState(0.1);
-  const [intervalValue, setIntervalValue] = useState<number>(1);
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
@@ -55,10 +48,8 @@ export default function PledgePage() {
       .catch(() => {});
   }, []);
 
-  const totalPledge = (amount * TOTAL_MILES) / intervalValue;
+  const totalPledge = amount * TOTAL_MILES;
   const perFoundation = totalPledge / 2;
-
-  const perMileEquivalent = amount / intervalValue;
 
   const handleSliderChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -81,7 +72,6 @@ export default function PledgePage() {
   const handlePreset = useCallback(
     (preset: (typeof presets)[number]) => {
       setAmount(preset.amount);
-      setIntervalValue(preset.interval);
     },
     []
   );
@@ -100,7 +90,7 @@ export default function PledgePage() {
           email,
           name: name || "Anonymous",
           amount,
-          interval: intervalValue,
+          interval: 1,
           anonymous: !name,
           message: message || undefined,
           ...geoRef.current,
@@ -206,37 +196,6 @@ export default function PledgePage() {
             </div>
           </div>
 
-          {/* Interval */}
-          <div className="flex flex-col gap-[12px]">
-            <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--text-muted)]">
-              PLEDGE INTERVAL
-            </span>
-            <div className="flex w-full">
-              {intervals.map((int) => (
-                <button
-                  key={int.value}
-                  type="button"
-                  onClick={() => setIntervalValue(int.value)}
-                  className={`flex items-center justify-center flex-1 h-[48px] cursor-pointer transition-colors ${
-                    intervalValue === int.value
-                      ? "bg-[var(--burnt-orange)] border border-[var(--burnt-orange)]"
-                      : "bg-[var(--bg-white)] border border-[var(--border-subtle)] hover:border-[var(--burnt-orange)]"
-                  }`}
-                >
-                  <span
-                    className={`font-label font-semibold text-[13px] tracking-[1px] ${
-                      intervalValue === int.value
-                        ? "text-[var(--text-white)]"
-                        : "text-[var(--text-secondary)]"
-                    }`}
-                  >
-                    {int.label}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
-
           {/* Slider */}
           <div className="flex flex-col gap-[12px]">
             <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--text-muted)]">
@@ -280,8 +239,7 @@ export default function PledgePage() {
             </span>
             <div className="flex gap-[12px] w-full">
               {presets.map((p) => {
-                const isActive =
-                  amount === p.amount && intervalValue === p.interval;
+                const isActive = amount === p.amount;
                 return (
                   <button
                     key={p.label}
@@ -374,7 +332,7 @@ export default function PledgePage() {
               </span>
               <p className="font-heading text-[14px] text-[var(--text-secondary)] text-center leading-[1.6]">
                 We&apos;ll email you at <strong>{email}</strong> when Paul
-                reaches Canada. Your pledge: {formatCurrency(perMileEquivalent)}
+                reaches Canada. Your pledge: {formatCurrency(amount)}
                 /mile = {formatCurrency(totalPledge)} total.
               </p>
             </div>
@@ -482,7 +440,7 @@ export default function PledgePage() {
           {/* Equation */}
           <div className="flex flex-col gap-[8px] bg-[var(--bg-white)] p-[20px]">
             <span className="font-heading font-semibold text-[18px] text-[var(--burnt-orange)]">
-              {formatCurrency(perMileEquivalent)}/mi × 2,650 miles ={" "}
+              {formatCurrency(amount)}/mi × 2,650 miles ={" "}
               {formatCurrency(totalPledge)}
             </span>
             <p className="font-heading text-[13px] leading-[1.5] text-[var(--text-secondary)]">
