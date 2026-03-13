@@ -95,7 +95,7 @@ export default function ChallengeBanner({ belowFixedHeader }: { belowFixedHeader
   };
 
   return (
-    <div className={`w-full bg-[var(--bg-dark)] text-white ${belowFixedHeader ? "mt-[60px] md:mt-[68px] lg:mt-[78px]" : ""}`}>
+    <div className={`w-full bg-[var(--bg-dark)] text-white ${belowFixedHeader ? "relative z-40" : ""}`}>
       {/* Compact bar */}
       <button
         onClick={() => setExpanded(!expanded)}

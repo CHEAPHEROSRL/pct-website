@@ -1,6 +1,14 @@
 import Link from "next/link";
 import { Mountain, Instagram, Youtube } from "lucide-react";
 
+function PatreonIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path d="M14.82 2.41c3.96 0 7.18 3.24 7.18 7.21 0 3.96-3.22 7.18-7.18 7.18-3.97 0-7.21-3.22-7.21-7.18 0-3.97 3.24-7.21 7.21-7.21M2 21.6h3.5V2.41H2V21.6z" />
+    </svg>
+  );
+}
+
 export default function Footer() {
   return (
     <footer className="flex flex-col gap-8 md:gap-[48px] px-6 md:px-12 lg:px-[120px] pt-[40px] md:pt-[60px] pb-[32px] bg-[var(--bg-dark)] w-full">
@@ -21,7 +29,19 @@ export default function Footer() {
           <div className="flex gap-[16px]">
             <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><Instagram className="w-[20px] h-[20px] text-[var(--text-muted)] hover:text-white cursor-pointer" /></a>
             <a href="https://www.youtube.com/@YesChapter" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><Youtube className="w-[20px] h-[20px] text-[var(--text-muted)] hover:text-white cursor-pointer" /></a>
+            <a href="https://www.patreon.com/YesChapter" target="_blank" rel="noopener noreferrer" aria-label="Patreon"><PatreonIcon className="w-[20px] h-[20px] text-[var(--text-muted)] hover:text-white cursor-pointer" /></a>
           </div>
+          <a
+            href="https://www.patreon.com/YesChapter"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-[8px] w-fit mt-[4px] group"
+          >
+            <PatreonIcon className="w-[16px] h-[16px] text-[var(--burnt-orange)]" />
+            <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--burnt-orange)] group-hover:text-white transition-colors">
+              JOIN ME ON PATREON
+            </span>
+          </a>
         </div>
 
         {/* Nav columns */}
@@ -52,6 +72,7 @@ export default function Footer() {
             </span>
             <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Instagram</a>
             <a href="https://www.youtube.com/@YesChapter" target="_blank" rel="noopener noreferrer" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">YouTube</a>
+            <a href="https://www.patreon.com/YesChapter" target="_blank" rel="noopener noreferrer" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Patreon</a>
             <a href="mailto:paul@yeschapter.com" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Contact Paul</a>
             <Link href="/press-kit" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Press Kit</Link>
             <Link href="/transparency" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Transparency</Link>

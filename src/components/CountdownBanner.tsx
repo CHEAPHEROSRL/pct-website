@@ -16,7 +16,7 @@ export default function CountdownBanner({ belowFixedHeader }: { belowFixedHeader
   if (isExpired) return <ChallengeBanner belowFixedHeader={belowFixedHeader} />;
 
   return (
-    <div className={`flex items-center justify-center gap-[16px] sm:gap-[32px] w-full px-4 sm:px-6 md:px-12 lg:px-[80px] py-[12px] bg-[var(--bg-dark)] ${belowFixedHeader ? "relative z-40 mt-[60px] md:mt-[68px] lg:mt-[78px]" : ""}`}>
+    <div className={`flex items-center justify-center gap-[16px] sm:gap-[32px] w-full px-4 sm:px-6 md:px-12 lg:px-[80px] py-[12px] bg-[var(--bg-dark)] ${belowFixedHeader ? "relative z-40" : ""}`}>
       {/* Left: label */}
       <div className="hidden sm:flex items-center gap-[10px]">
         <Mountain className="w-[16px] h-[16px] text-[var(--burnt-orange)]" />

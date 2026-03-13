@@ -27,8 +27,8 @@ export default function Home() {
       <Header transparent />
       <CountdownBanner belowFixedHeader />
 
-      {/* Hero Section */}
-      <section className="relative w-full h-[560px] md:h-[680px] lg:h-[800px] overflow-hidden">
+      {/* Hero Section — negative margin pulls it behind sticky header + banner */}
+      <section className="relative w-full h-[560px] md:h-[680px] lg:h-[800px] overflow-hidden -mt-[112px] md:-mt-[120px] lg:-mt-[132px]">
         <HeroParallax>
           <Image
             src="/images/hiking/FB_IMG_1771991299919.jpg"

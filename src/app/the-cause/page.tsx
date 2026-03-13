@@ -20,8 +20,8 @@ export default function TheCausePage() {
       <Header activeItem="The Cause" transparent />
       <CountdownBanner belowFixedHeader />
 
-      {/* Hero */}
-      <section className="relative w-full h-[400px] md:h-[480px] lg:h-[560px] overflow-hidden">
+      {/* Hero — negative margin pulls it behind sticky header + banner */}
+      <section className="relative w-full h-[400px] md:h-[480px] lg:h-[560px] overflow-hidden -mt-[112px] md:-mt-[120px] lg:-mt-[132px]">
         <HeroParallax>
           <Image
             src="/images/hiking/20250821_175814.jpg"

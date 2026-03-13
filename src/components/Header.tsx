@@ -34,7 +34,7 @@ export default function Header({ activeItem, transparent }: HeaderProps) {
   return (
     <header
       className={`flex items-center justify-between px-4 md:px-8 lg:px-[80px] py-[16px] md:py-[20px] w-full z-50 transition-colors duration-400 ${
-        transparent ? "fixed top-0 left-0" : "relative"
+        transparent ? "sticky top-0" : "relative"
       } ${isTransparent ? "bg-transparent" : "bg-[#FFFFFFEE]"}`}
     >
       <Link href="/" className="flex items-center gap-[12px]">
