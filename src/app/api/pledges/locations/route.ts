@@ -32,6 +32,7 @@ export async function GET() {
       if (typeof r.lat === "number" && typeof r.lng === "number") {
         locations.push({
           name: r.anonymous ? "Anonymous" : r.name,
+          message: r.message,
           city: r.city || "Unknown",
           country: r.country || "Unknown",
           lat: r.lat,

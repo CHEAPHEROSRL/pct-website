@@ -159,12 +159,20 @@ export default function TrailMapView({
               }}
             >
               <Popup>
-                <div style={{ fontFamily: "'Barlow Semi Condensed', sans-serif", textAlign: "center" }}>
+                <div style={{ fontFamily: "'Barlow Semi Condensed', sans-serif", textAlign: "center", maxWidth: 200 }}>
                   <strong style={{ fontSize: 13 }}>{loc.name}</strong>
                   <br />
                   <span style={{ fontSize: 11, color: "#5C5C5C" }}>
                     {loc.city}, {loc.country}
                   </span>
+                  {loc.message && (
+                    <>
+                      <br />
+                      <span style={{ fontSize: 11, color: "#1C1C1C", fontStyle: "italic", display: "block", marginTop: 4 }}>
+                        &ldquo;{loc.message}&rdquo;
+                      </span>
+                    </>
+                  )}
                 </div>
               </Popup>
             </CircleMarker>

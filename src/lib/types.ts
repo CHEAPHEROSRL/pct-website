@@ -126,6 +126,7 @@ export interface PledgeRecord {
   totalPledge: number;
   anonymous: boolean;
   boosts: PledgeBoost[];
+  message?: string;
   city?: string;
   country?: string;
   lat?: number;
@@ -136,6 +137,7 @@ export interface PledgeRecord {
 
 export interface PledgerLocation {
   name: string;
+  message?: string;
   city: string;
   country: string;
   lat: number;

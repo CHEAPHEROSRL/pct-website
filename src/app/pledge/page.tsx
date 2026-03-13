@@ -37,6 +37,7 @@ export default function PledgePage() {
   const [intervalValue, setIntervalValue] = useState<number>(1);
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
+  const [message, setMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -101,6 +102,7 @@ export default function PledgePage() {
           amount,
           interval: intervalValue,
           anonymous: !name,
+          message: message || undefined,
           ...geoRef.current,
         }),
       });
@@ -337,6 +339,24 @@ export default function PledgePage() {
                 className="flex-1 h-full px-[12px] font-heading text-[15px] italic text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none bg-transparent"
               />
             </div>
+          </div>
+
+          {/* Message */}
+          <div className="flex flex-col gap-[12px]">
+            <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-muted)]">
+              LEAVE A MESSAGE FOR PAUL (OPTIONAL)
+            </span>
+            <textarea
+              placeholder="Why are you pledging? Your message will appear on the trail map."
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              maxLength={280}
+              rows={3}
+              className="w-full px-[16px] py-[12px] font-heading text-[15px] italic text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none bg-[var(--bg-white)] border border-[var(--border-subtle)] resize-none"
+            />
+            <span className="font-label text-[11px] text-[var(--text-muted)] text-right">
+              {message.length}/280
+            </span>
           </div>
 
           {/* Submit */}
