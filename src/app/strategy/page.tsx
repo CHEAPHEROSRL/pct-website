@@ -74,10 +74,10 @@ export default function StrategyPage() {
           <span className="text-[var(--burnt-orange)]">Pledge Engagement</span>
         </h1>
         <p className="font-heading text-[18px] text-[#FFFFFFBB] max-w-[560px] leading-[1.6]">
-          Three email designs to keep pledgers connected during the hike and guide them through honoring their pledges when Paul reaches Canada.
+          Three email designs to keep pledgers connected during the hike and guide them through honoring their pledges when you reach Canada.
         </p>
         <span className="font-label font-semibold text-[11px] tracking-[2px] text-[#FFFFFF44] mt-[24px]">
-          PREPARED FOR PAUL BARRY &middot; MARCH 2026
+          YOUR EMAIL STRATEGY &middot; MARCH 2026
         </span>
       </section>
 
@@ -91,7 +91,7 @@ export default function StrategyPage() {
             Weekly <span className="text-[var(--burnt-orange)]">Update</span> Email
           </h2>
           <p className="font-heading text-[16px] text-[var(--text-secondary)] max-w-[600px] leading-[1.6]">
-            Sent every Monday during the hike. Keeps pledgers emotionally invested by showing Paul&apos;s progress and their growing pledge total. This is the heartbeat of engagement.
+            Sent every Monday during the hike. Keeps pledgers emotionally invested by showing your progress and their growing pledge total. This is the heartbeat of engagement.
           </p>
         </div>
 
@@ -157,10 +157,10 @@ export default function StrategyPage() {
           {/* Details */}
           <div className="flex flex-col gap-[20px] flex-1">
             <h3 className="font-heading font-semibold text-[18px] text-[var(--text-primary)]">Key Design Decisions</h3>
-            <DetailItem label="FREQUENCY">Sent every Monday morning. Pledgers start their week seeing Paul&apos;s progress.</DetailItem>
+            <DetailItem label="FREQUENCY">Sent every Monday morning. Pledgers start their week seeing your progress.</DetailItem>
             <DetailItem label="PERSONAL RUNNING TOTAL">The big orange number ($423.50) is the most important element. Watching it grow from $12 to $200 to $662 over 6 months creates ownership. It&apos;s <em>their</em> number.</DetailItem>
-            <DetailItem label="TRAIL PROGRESS BAR">Visual representation of how far Paul has walked. Green-to-orange gradient matches the brand. Percentage gives concrete sense of completion.</DetailItem>
-            <DetailItem label="JOURNAL EXCERPT">Emotional connection. A short quote from Paul&apos;s trail journal humanizes the numbers. Links to full entry on yeschapter.com to drive site traffic.</DetailItem>
+            <DetailItem label="TRAIL PROGRESS BAR">Visual representation of how far you&apos;ve walked. Green-to-orange gradient matches the brand. Percentage gives concrete sense of completion.</DetailItem>
+            <DetailItem label="JOURNAL EXCERPT">Emotional connection. A short quote from your trail journal humanizes the numbers. Links to full entry on yeschapter.com to drive site traffic.</DetailItem>
             <DetailItem label="50/50 SPLIT SHOWN">Every email reinforces where the money goes: half to Tower Cancer Research, half to Cancer Council NSW. Builds trust.</DetailItem>
             <DetailItem label="DYNAMIC CONTENT">Every field is personalized: pledge rate, total, miles, days, journal excerpt. No two pledgers see the same email.</DetailItem>
           </div>
@@ -245,7 +245,7 @@ export default function StrategyPage() {
               <strong>2,000 miles</strong> &mdash; Final stretch
             </DetailItem>
             <DetailItem label="BURNT ORANGE HERO">Full-bleed brand color creates a celebration moment. The mountain icon and &ldquo;MILESTONE REACHED&rdquo; badge make it feel like an achievement &mdash; because it is.</DetailItem>
-            <DetailItem label="&ldquo;YOUR PLEDGE IS NOW&rdquo;">Reframes the milestone around the pledger. It&apos;s not just Paul&apos;s achievement &mdash; the pledger&apos;s commitment grew too. This creates shared ownership.</DetailItem>
+            <DetailItem label="&ldquo;YOUR PLEDGE IS NOW&rdquo;">Reframes the milestone around the pledger. It&apos;s not just your achievement &mdash; the pledger&apos;s commitment grew too. This creates shared ownership.</DetailItem>
             <DetailItem label="COMMUNITY STATS">Social proof: 1,247 pledgers across 23 countries, $32,450 total pledged. Shows the pledger they&apos;re part of something big.</DetailItem>
             <DetailItem label="SHARE PROMPT">&ldquo;Share this milestone with friends&rdquo; encourages organic growth. Milestones are natural share moments.</DetailItem>
           </div>
@@ -262,7 +262,7 @@ export default function StrategyPage() {
             Paul Made It &mdash; <span className="text-[var(--burnt-orange)]">Honor</span> Email
           </h2>
           <p className="font-heading text-[16px] text-[var(--text-secondary)] max-w-[600px] leading-[1.6]">
-            The most important email we&apos;ll ever send. Triggered when Paul reaches Manning Park, BC. Converts 6 months of pledges into real donations to the two cancer foundations.
+            The most important email we&apos;ll ever send. Triggered when you reach Manning Park, BC. Converts 6 months of pledges into real donations to the two cancer foundations.
           </p>
         </div>
 
@@ -344,7 +344,7 @@ export default function StrategyPage() {
           <div className="flex flex-col gap-[20px] flex-1">
             <h3 className="font-heading font-semibold text-[18px] text-[var(--text-primary)]">Key Design Decisions</h3>
             <DetailItem label="FOREST GREEN HERO">Different color from weekly/milestone emails signals this is special. Green = completion, achievement, nature&apos;s finish line.</DetailItem>
-            <DetailItem label="FINISH LINE PHOTO">Real photo from Manning Park. Emotional anchor &mdash; the pledger sees the moment their journey with Paul ends.</DetailItem>
+            <DetailItem label="FINISH LINE PHOTO">Real photo from Manning Park. Emotional anchor &mdash; the pledger sees the moment their journey with you ends.</DetailItem>
             <DetailItem label="FINAL TOTAL — HUGE">$662.50 at 52px. This is the number they&apos;ve watched grow for 6 months. Now it&apos;s real and it&apos;s time to act.</DetailItem>
             <DetailItem label="TWO FOUNDATION BUTTONS">Color-coded cards with pre-calculated amounts. Green for Tower Cancer Research (US), Orange for Cancer Council NSW (AU). Each has a full-width honor button linking directly to the foundation&apos;s donation page. No math, no confusion.</DetailItem>
             <DetailItem label="TAX DEDUCTION INFO">Each card shows the tax status: 501(c)(3) for US donors, DGR for Australian donors. Direct donations = cleanest tax receipts.</DetailItem>
@@ -482,7 +482,7 @@ export default function StrategyPage() {
             Why <span className="text-[var(--burnt-orange)]">Pledge.to</span> Doesn&apos;t Work
           </h2>
           <p className="font-heading text-[16px] text-[var(--text-secondary)] max-w-[600px] leading-[1.6]">
-            We evaluated Pledge.to (formerly Pledgeling) thoroughly. Here&apos;s why our custom system is the right approach.
+            We evaluated Pledge.to (formerly Pledgeling) thoroughly. Here&apos;s why your custom system is the right approach.
           </p>
         </div>
 
@@ -497,7 +497,7 @@ export default function StrategyPage() {
             </thead>
             <tbody>
               {[
-                { req: "Paul never touches foundation money", pledgeto: "No — Paul's card gets charged", ours: "Yes — pledgers pay foundations directly" },
+                { req: "You never touch foundation money", pledgeto: "No — your card gets charged", ours: "Yes — pledgers pay foundations directly" },
                 { req: "Zero fees to foundations", pledgeto: "No — 5% + processing fees", ours: "Yes — 100% reaches foundations" },
                 { req: "Supports Australian charities", pledgeto: "No — US 501(c)(3) only", ours: "Yes — direct links to both foundations" },
                 { req: "Tax deductions for donors", pledgeto: "Unclear / problematic", ours: "Clean — direct donations to registered charities" },
@@ -529,7 +529,7 @@ export default function StrategyPage() {
       <section className="flex flex-col items-center gap-[32px] px-6 md:px-12 lg:px-[120px] py-[64px] bg-[var(--bg-dark)] w-full text-center">
         <SectionBadge>THE SHORT VERSION</SectionBadge>
         <h2 className="font-heading font-semibold text-[32px] tracking-[-0.5px] text-[var(--text-white)] max-w-[700px]">
-          Summary for <span className="text-[var(--burnt-orange)]">Paul</span>
+          Here&apos;s the <span className="text-[var(--burnt-orange)]">Deal</span>
         </h2>
 
         <div className="flex flex-col gap-[20px] max-w-[640px] text-left">
@@ -539,7 +539,7 @@ export default function StrategyPage() {
             "When you reach Canada, we send everyone a personalized email with their total and direct links to donate to each foundation.",
             "They click, they pay the foundations directly, they get proper tax receipts.",
             "You touch $0 of foundation money. Ever.",
-            "The only payments you receive are trail support gifts (meals, boots, hostel) through Stripe — completely separate and already working.",
+            "The only payments you receive are trail support gifts (meals, boots, hostel) through Stripe — completely separate and already working on the site.",
           ].map((item, i) => (
             <div key={i} className="flex gap-[16px] items-start">
               <span className="font-label font-bold text-[18px] text-[var(--burnt-orange)] shrink-0 w-[28px]">{i + 1}.</span>
