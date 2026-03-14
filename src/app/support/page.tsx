@@ -12,11 +12,15 @@ import {
   HeartHandshake,
   ArrowRight,
   Check,
+  X,
+  EyeOff,
 } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CountdownBanner from "@/components/CountdownBanner";
 import ScrollReveal from "@/components/ScrollReveal";
+import { useSupporterData } from "@/hooks/useSupporterData";
+import { GIFT_ESTIMATES } from "@/lib/gift-estimates";
 
 interface GiftOption {
   icon: React.ReactNode;
@@ -80,16 +84,42 @@ const giftOptions: GiftOption[] = [
 export default function SupportPage() {
   const [customAmount, setCustomAmount] = useState("");
   const [selectedGift, setSelectedGift] = useState<string | null>(null);
+  const [checkingOut, setCheckingOut] = useState(false);
+  const { data: supporterData } = useSupporterData();
+  const giftCounts = supporterData?.giftCounts ?? {};
 
-  const handleGift = async (title: string) => {
-    const gift = giftOptions.find((g) => g.title === title);
-    if (!gift) return;
-    setSelectedGift(title);
+  // Pre-checkout personalization
+  const [pendingGift, setPendingGift] = useState<{ title: string; price: number } | null>(null);
+  const [firstName, setFirstName] = useState("");
+  const [giftMessage, setGiftMessage] = useState("");
+  const [anonymous, setAnonymous] = useState(false);
+
+  const openCheckoutPanel = (title: string, price: number) => {
+    setPendingGift({ title, price });
+    setFirstName("");
+    setGiftMessage("");
+    setAnonymous(false);
+  };
+
+  const closeCheckoutPanel = () => {
+    setPendingGift(null);
+  };
+
+  const proceedToCheckout = async () => {
+    if (!pendingGift) return;
+    setCheckingOut(true);
+    setSelectedGift(pendingGift.title);
     try {
       const res = await fetch("/api/support", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: gift.price, giftTitle: gift.title }),
+        body: JSON.stringify({
+          amount: pendingGift.price,
+          giftTitle: pendingGift.title,
+          firstName: firstName.trim() || undefined,
+          message: giftMessage.trim() || undefined,
+          anonymous,
+        }),
       });
       const data = await res.json();
       if (data.url) {
@@ -97,26 +127,20 @@ export default function SupportPage() {
       }
     } catch {
       setSelectedGift(null);
+      setCheckingOut(false);
     }
   };
 
-  const handleCustom = async () => {
+  const handleGift = (title: string) => {
+    const gift = giftOptions.find((g) => g.title === title);
+    if (!gift) return;
+    openCheckoutPanel(gift.title, gift.price);
+  };
+
+  const handleCustom = () => {
     const amount = parseFloat(customAmount);
     if (!amount || amount <= 0) return;
-    setSelectedGift("Custom");
-    try {
-      const res = await fetch("/api/support", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: Math.round(amount), giftTitle: "" }),
-      });
-      const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url;
-      }
-    } catch {
-      setSelectedGift(null);
-    }
+    openCheckoutPanel("Custom Gift", Math.round(amount));
   };
 
   return (
@@ -173,6 +197,8 @@ export default function SupportPage() {
               gift={gift}
               selected={selectedGift === gift.title}
               onSelect={handleGift}
+              gifted={giftCounts[gift.title] ?? 0}
+              needed={GIFT_ESTIMATES[gift.title]?.needed}
             />
           ))}
         </ScrollReveal>
@@ -185,6 +211,8 @@ export default function SupportPage() {
               gift={gift}
               selected={selectedGift === gift.title}
               onSelect={handleGift}
+              gifted={giftCounts[gift.title] ?? 0}
+              needed={GIFT_ESTIMATES[gift.title]?.needed}
             />
           ))}
         </ScrollReveal>
@@ -197,6 +225,8 @@ export default function SupportPage() {
               gift={gift}
               selected={selectedGift === gift.title}
               onSelect={handleGift}
+              gifted={giftCounts[gift.title] ?? 0}
+              needed={GIFT_ESTIMATES[gift.title]?.needed}
             />
           ))}
 
@@ -274,6 +304,90 @@ export default function SupportPage() {
         </Link>
       </section>
 
+      {/* Pre-Checkout Personalization Panel */}
+      {pendingGift && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div className="flex flex-col gap-[20px] bg-[var(--bg-white)] w-full max-w-[480px] p-[32px] shadow-xl relative">
+            <button
+              onClick={closeCheckoutPanel}
+              className="absolute top-[16px] right-[16px] text-[var(--text-muted)] hover:text-[var(--text-primary)] cursor-pointer"
+            >
+              <X className="w-[20px] h-[20px]" />
+            </button>
+
+            <div className="flex flex-col gap-[8px]">
+              <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--forest-green)]">
+                PERSONALIZE YOUR GIFT
+              </span>
+              <span className="font-heading font-semibold text-[22px] text-[var(--text-primary)]">
+                {pendingGift.title} — ${pendingGift.price}
+              </span>
+              <p className="font-heading text-[14px] text-[var(--text-secondary)]">
+                Add your name and a message — or stay anonymous. All fields are optional.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-[12px]">
+              <input
+                type="text"
+                placeholder="First name (optional)"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                maxLength={50}
+                className="w-full h-[44px] px-[14px] font-heading text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] bg-[var(--bg-card)] border border-[var(--border-subtle)] outline-none focus:border-[var(--forest-green)]"
+              />
+              <textarea
+                placeholder="Leave a message for Paul (optional)"
+                value={giftMessage}
+                onChange={(e) => setGiftMessage(e.target.value)}
+                maxLength={200}
+                rows={3}
+                className="w-full px-[14px] py-[10px] font-heading text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] bg-[var(--bg-card)] border border-[var(--border-subtle)] outline-none focus:border-[var(--forest-green)] resize-none"
+              />
+              <div className="flex justify-between items-center">
+                <span className="font-label text-[11px] text-[var(--text-muted)]">
+                  {giftMessage.length}/200
+                </span>
+              </div>
+            </div>
+
+            <label className="flex items-center gap-[10px] cursor-pointer">
+              <div
+                onClick={() => setAnonymous(!anonymous)}
+                className={`flex items-center justify-center w-[20px] h-[20px] border-2 transition-colors cursor-pointer ${
+                  anonymous
+                    ? "bg-[var(--forest-green)] border-[var(--forest-green)]"
+                    : "bg-[var(--bg-white)] border-[var(--border-subtle)]"
+                }`}
+              >
+                {anonymous && <Check className="w-[14px] h-[14px] text-[var(--text-white)]" />}
+              </div>
+              <div className="flex items-center gap-[6px]">
+                <EyeOff className="w-[14px] h-[14px] text-[var(--text-muted)]" />
+                <span className="font-heading text-[14px] text-[var(--text-secondary)]">
+                  Keep my gift anonymous
+                </span>
+              </div>
+            </label>
+
+            <button
+              onClick={proceedToCheckout}
+              disabled={checkingOut}
+              className="flex items-center justify-center gap-[8px] h-[52px] w-full bg-[var(--forest-green)] cursor-pointer hover:opacity-90 transition-opacity disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              <span className="font-label font-bold text-[14px] tracking-[2px] text-[var(--text-white)]">
+                {checkingOut ? "REDIRECTING TO CHECKOUT..." : "PROCEED TO CHECKOUT"}
+              </span>
+              {!checkingOut && <ArrowRight className="w-[16px] h-[16px] text-[var(--text-white)]" />}
+            </button>
+
+            <p className="font-heading text-[12px] text-[var(--text-muted)] text-center">
+              Securely processed by Stripe. Your gift goes directly to Paul.
+            </p>
+          </div>
+        </div>
+      )}
+
       <Footer />
     </div>
   );
@@ -283,11 +397,17 @@ function GiftCard({
   gift,
   selected,
   onSelect,
+  gifted = 0,
+  needed,
 }: {
   gift: GiftOption;
   selected: boolean;
   onSelect: (title: string) => void;
+  gifted?: number;
+  needed?: number;
 }) {
+  const pct = needed ? Math.min(100, Math.round((gifted / needed) * 100)) : 0;
+
   return (
     <div className="flex flex-col gap-[16px] bg-[var(--bg-card)] border border-[var(--border-subtle)] p-[28px]">
       {gift.icon}
@@ -300,6 +420,19 @@ function GiftCard({
       <span className="font-label font-bold text-[28px] text-[var(--forest-green)]">
         ${gift.price}
       </span>
+      {needed != null && (
+        <div className="flex flex-col gap-[6px]">
+          <div className="w-full h-[3px] bg-[var(--warm-stone)] rounded-full overflow-hidden">
+            <div
+              className="h-full bg-[var(--forest-green)] rounded-full transition-all duration-500"
+              style={{ width: `${pct}%` }}
+            />
+          </div>
+          <span className="font-label font-semibold text-[11px] tracking-[0.5px] text-[var(--text-muted)]">
+            {gifted} of {needed} gifted
+          </span>
+        </div>
+      )}
       <button
         onClick={() => onSelect(gift.title)}
         className="flex items-center justify-center gap-[8px] h-[48px] w-full bg-[var(--forest-green)] cursor-pointer hover:opacity-90 transition-opacity"

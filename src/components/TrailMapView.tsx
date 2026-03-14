@@ -5,7 +5,7 @@ import { MapContainer, TileLayer, Polyline, Marker, Popup, CircleMarker, useMap 
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { pctRouteCoords } from "@/lib/trail";
-import type { PledgerLocation } from "@/lib/types";
+import type { PledgerLocation, SupportGiftLocation } from "@/lib/types";
 
 function FlyToHandler({ target }: { target?: [number, number, number] }) {
   const map = useMap();
@@ -47,6 +47,37 @@ function createMarkerIcon(dayNumber: number, locationName: string) {
   });
 }
 
+const GIFT_EMOJI: Record<string, string> = {
+  "A Trail Meal": "🍽️",
+  "Hiking Socks": "🧦",
+  "A Night at Camp": "⛺",
+  "A Resupply Box": "📦",
+  "A Rest Day in Town": "🛏️",
+  "Trail Boots": "🥾",
+};
+
+function createGiftIcon(giftTitle: string) {
+  const emoji = GIFT_EMOJI[giftTitle] || "💚";
+  return new L.DivIcon({
+    className: "",
+    html: `<div style="
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      background: #FFFFFF;
+      border: 2px solid #3D7A5A;
+      border-radius: 50%;
+      font-size: 16px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    ">${emoji}</div>`,
+    iconSize: [32, 32],
+    iconAnchor: [16, 16],
+    popupAnchor: [0, -20],
+  });
+}
+
 interface TrailMapViewProps {
   flyTo?: [number, number, number];
   currentPosition?: { lat: number; lng: number } | null;
@@ -54,8 +85,9 @@ interface TrailMapViewProps {
   nearestLocationName?: string;
   totalMiles?: number;
   currentElevation?: number;
-  mode?: "trail" | "pledgers";
+  mode?: "trail" | "pledgers" | "supporters";
   pledgerLocations?: PledgerLocation[];
+  supportGiftLocations?: SupportGiftLocation[];
 }
 
 // Default fallback position (Campo, CA — starting point)
@@ -70,6 +102,7 @@ export default function TrailMapView({
   currentElevation = 2915,
   mode = "trail",
   pledgerLocations = [],
+  supportGiftLocations = [],
 }: TrailMapViewProps) {
   const position: [number, number] = currentPosition
     ? [currentPosition.lat, currentPosition.lng]
@@ -80,7 +113,7 @@ export default function TrailMapView({
     [dayNumber, nearestLocationName]
   );
 
-  // For pledger mode, zoom out to world view
+  // For pledger mode, zoom out to world view; supporters mode uses trail view
   const effectiveFlyTo = mode === "pledgers"
     ? [20, -40, 2] as [number, number, number]
     : flyTo;
@@ -176,6 +209,60 @@ export default function TrailMapView({
                 </div>
               </Popup>
             </CircleMarker>
+          ))}
+        </>
+      )}
+
+      {mode === "supporters" && (
+        <>
+          {/* PCT Trail Route */}
+          <Polyline
+            positions={pctRouteCoords}
+            pathOptions={{
+              color: "#C45C26",
+              weight: 3,
+              opacity: 0.6,
+            }}
+          />
+
+          {/* Gift markers along the trail */}
+          {supportGiftLocations.map((gift, i) => (
+            <Marker
+              key={`gift-${gift.lat}-${gift.lng}-${i}`}
+              position={[gift.lat, gift.lng]}
+              icon={createGiftIcon(gift.giftTitle)}
+            >
+              <Popup>
+                <div style={{ fontFamily: "'Barlow Semi Condensed', sans-serif", textAlign: "center", maxWidth: 220 }}>
+                  <div style={{ fontSize: 20, marginBottom: 4 }}>
+                    {GIFT_EMOJI[gift.giftTitle] || "💚"}
+                  </div>
+                  <strong style={{ fontSize: 13, color: "#3D7A5A" }}>
+                    {gift.giftTitle}
+                  </strong>
+                  <br />
+                  <span style={{ fontSize: 12, color: "#1C1C1C" }}>
+                    {gift.name} — ${gift.amount}
+                  </span>
+                  <br />
+                  <span style={{ fontSize: 10, color: "#8C8A87" }}>
+                    Mile {gift.trailMile.toLocaleString("en-US")} · {gift.date}
+                  </span>
+                  {gift.message && (
+                    <div style={{ fontSize: 11, color: "#1C1C1C", fontStyle: "italic", marginTop: 6, borderTop: "1px solid #E8E5E0", paddingTop: 6 }}>
+                      &ldquo;{gift.message}&rdquo;
+                    </div>
+                  )}
+                  {gift.mediaUrl && (
+                    <img
+                      src={gift.mediaUrl}
+                      alt="Supporter photo"
+                      style={{ width: "100%", maxWidth: 180, borderRadius: 4, marginTop: 6 }}
+                    />
+                  )}
+                </div>
+              </Popup>
+            </Marker>
           ))}
         </>
       )}

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
+import { requireCronAuth } from "@/lib/security";
 import { sendWelcomeDay1, sendWelcomeDay3 } from "@/lib/email";
 import type { PledgeRecord } from "@/lib/types";
 
@@ -14,12 +15,8 @@ function getRedis() {
 // Schedule: every 6 hours to catch pledgers in the right time windows.
 
 export async function GET(request: NextRequest) {
-  const authHeader = request.headers.get("authorization");
-  const cronSecret = process.env.CRON_SECRET;
-
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const authError = requireCronAuth(request);
+  if (authError) return authError;
 
   const redis = getRedis();
   if (!redis) {

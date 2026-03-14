@@ -1,7 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
 import type { PledgeRecord } from "@/lib/types";
-import { sendPledgeConfirmation, sendPledgeIncreased, sendCommunityMilestone } from "@/lib/email";
+import { sendPledgeVerification, sendPledgeIncreased, sendCommunityMilestone, sendActionVerification } from "@/lib/email";
+import {
+  RATE_LIMITS,
+  verifyTurnstile,
+  generateEmailVerifyToken,
+  sanitizeText,
+  sanitizeEmail,
+  isHoneypotFilled,
+  getClientIp,
+} from "@/lib/security";
 import crypto from "crypto";
 
 const TOTAL_MILES = 2650;
@@ -17,8 +26,12 @@ function emailHash(email: string): string {
   return crypto.createHash("sha256").update(email.toLowerCase().trim()).digest("hex").slice(0, 16);
 }
 
-// POST — Register a new pledge
+// POST — Register a new pledge (creates pending pledge, sends verification email)
 export async function POST(req: NextRequest) {
+  // Rate limit
+  const rateLimited = await RATE_LIMITS.pledgeCreate(req);
+  if (rateLimited) return rateLimited;
+
   const redis = getRedis();
   if (!redis) {
     return NextResponse.json({ error: "Storage unavailable" }, { status: 503 });
@@ -26,11 +39,26 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { email, name, amount, interval, anonymous, message, city, country, lat, lng, referredBy } = body;
+    const { email: rawEmail, name: rawName, amount, interval, anonymous, message: rawMessage, city, country, lat, lng, referredBy, turnstileToken, website } = body;
 
-    if (!email || typeof email !== "string" || !email.includes("@")) {
+    // Honeypot check — "website" is a hidden field that should be empty
+    if (isHoneypotFilled(website)) {
+      // Silently accept but don't process (bot doesn't know it failed)
+      return NextResponse.json({ success: true, pending: true }, { status: 201 });
+    }
+
+    // Turnstile CAPTCHA verification
+    const ip = getClientIp(req);
+    if (!await verifyTurnstile(turnstileToken || "", ip)) {
+      return NextResponse.json({ error: "CAPTCHA verification failed. Please try again." }, { status: 400 });
+    }
+
+    // Sanitize inputs
+    const email = sanitizeEmail(rawEmail || "");
+    if (!email) {
       return NextResponse.json({ error: "Valid email is required" }, { status: 400 });
     }
+
     if (typeof amount !== "number" || amount < 0.01 || amount > 100) {
       return NextResponse.json({ error: "Amount must be between $0.01 and $100" }, { status: 400 });
     }
@@ -38,11 +66,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Interval must be 1, 10, or 100" }, { status: 400 });
     }
 
-    const hash = emailHash(email);
-    const key = `pledger:${hash}`;
+    const name = sanitizeText(rawName || "Anonymous", 100);
+    const message = rawMessage ? sanitizeText(rawMessage, 280) : undefined;
 
-    // Check if pledger already exists
-    const existing = await redis.get<string>(key);
+    const hash = emailHash(email);
+    const liveKey = `pledger:${hash}`;
+
+    // Check if pledger already exists (live)
+    const existing = await redis.get<string>(liveKey);
     if (existing) {
       const record: PledgeRecord = typeof existing === "string" ? JSON.parse(existing) : existing;
       return NextResponse.json({
@@ -60,56 +91,43 @@ export async function POST(req: NextRequest) {
 
     const record: PledgeRecord = {
       id: hash,
-      email: email.toLowerCase().trim(),
-      name: (name || "Anonymous").trim().slice(0, 100),
+      email,
+      name: name || "Anonymous",
       amount,
       interval,
       totalPledge,
-      anonymous: !!anonymous,
+      anonymous: !!anonymous || !rawName,
       boosts: [],
       unsubscribeToken,
       emailPreference: "all",
-      message: typeof message === "string" && message.trim() ? message.trim().slice(0, 280) : undefined,
-      city: typeof city === "string" ? city.trim().slice(0, 100) : undefined,
-      country: typeof country === "string" ? country.trim().slice(0, 100) : undefined,
+      message: message || undefined,
+      city: typeof city === "string" ? sanitizeText(city, 100) : undefined,
+      country: typeof country === "string" ? sanitizeText(country, 100) : undefined,
       lat: typeof lat === "number" && lat >= -90 && lat <= 90 ? lat : undefined,
       lng: typeof lng === "number" && lng >= -180 && lng <= 180 ? lng : undefined,
-      referredBy: typeof referredBy === "string" && referredBy.trim() ? referredBy.trim().slice(0, 100) : undefined,
+      referredBy: typeof referredBy === "string" && referredBy.trim() ? sanitizeText(referredBy, 100) : undefined,
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };
 
-    // Store pledger record
-    await redis.set(key, JSON.stringify(record));
+    // Store as PENDING pledge (not live yet, expires in 2 hours)
+    const pendingKey = `pending:${hash}`;
+    await redis.set(pendingKey, JSON.stringify(record), { ex: 7200 });
 
-    // Add to list (for leaderboard)
-    await redis.lpush("pledgers:list", JSON.stringify(record));
+    // Generate verification token that maps to the pending key
+    const verifyToken = await generateEmailVerifyToken(redis, pendingKey, "pledge", 3600);
 
-    // Update aggregates
-    await redis.incr("pledgers:count");
-    await redis.incrbyfloat("pledgers:total_pledged", totalPledge);
-
-    // Send confirmation email (fire-and-forget)
+    // Send verification email
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://yeschapter.com";
+    const verifyUrl = `${siteUrl}/api/pledges/verify?token=${verifyToken}`;
     const rate = `$${amount}/${interval === 1 ? "mi" : interval + "mi"}`;
-    sendPledgeConfirmation(record.email, record.name, rate, totalPledge).catch(() => {});
 
-    // Store unsubscribe token mapping for quick lookup
-    await redis.set(`unsub:${unsubscribeToken}`, record.email);
-
-    // Check community milestone thresholds (Gap 8)
-    const newCount = (await redis.get<number>("pledgers:count")) || 0;
-    const newTotal = (await redis.get<number>("pledgers:total_pledged")) || 0;
-    checkCommunityMilestones(redis, newCount, newTotal).catch(() => {});
+    sendPledgeVerification(email, record.name, rate, totalPledge, verifyUrl).catch(() => {});
 
     return NextResponse.json({
       success: true,
-      pledge: {
-        id: record.id,
-        name: record.anonymous ? "Anonymous" : record.name,
-        rate: `$${amount}/${interval === 1 ? "mi" : interval + "mi"}`,
-        totalPledge,
-        createdAt: record.createdAt,
-      },
+      pending: true,
+      message: "Check your email to confirm your pledge.",
     }, { status: 201 });
   } catch (err) {
     console.error("Failed to create pledge:", err);
@@ -119,6 +137,9 @@ export async function POST(req: NextRequest) {
 
 // GET — Retrieve a pledger's profile by email
 export async function GET(req: NextRequest) {
+  const rateLimited = await RATE_LIMITS.pledgeLookup(req);
+  if (rateLimited) return rateLimited;
+
   const redis = getRedis();
   if (!redis) {
     return NextResponse.json({ error: "Storage unavailable" }, { status: 503 });
@@ -158,11 +179,11 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// PUT — Update pledge amount (increase / boost)
-// Supports two modes:
-//   1. Manual increase: { email, addAmount } — pledger voluntarily increases their per-mile rate
-//   2. Challenge boost: { email, addAmount, challengeId, challengeTitle } — boost from a completed challenge
+// PUT — Request pledge amount increase (sends verification email)
 export async function PUT(req: NextRequest) {
+  const rateLimited = await RATE_LIMITS.pledgeBoost(req);
+  if (rateLimited) return rateLimited;
+
   const redis = getRedis();
   if (!redis) {
     return NextResponse.json({ error: "Storage unavailable" }, { status: 503 });
@@ -170,9 +191,10 @@ export async function PUT(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { email, addAmount, challengeId, challengeTitle } = body;
+    const { email: rawEmail, addAmount, challengeId, challengeTitle, verifyToken } = body;
 
-    if (!email || typeof email !== "string") {
+    const email = sanitizeEmail(rawEmail || "");
+    if (!email) {
       return NextResponse.json({ error: "Email required" }, { status: 400 });
     }
     if (typeof addAmount !== "number" || addAmount <= 0 || addAmount > 100) {
@@ -188,17 +210,43 @@ export async function PUT(req: NextRequest) {
     }
 
     const record: PledgeRecord = typeof raw === "string" ? JSON.parse(raw) : raw;
+
+    // If no verifyToken provided, send a verification email instead of applying immediately
+    if (!verifyToken) {
+      // Store the boost request as pending
+      const boostData = JSON.stringify({ email, addAmount, challengeId, challengeTitle });
+      const token = await generateEmailVerifyToken(redis, boostData, "boost", 3600);
+
+      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://yeschapter.com";
+      const verifyUrl = `${siteUrl}/api/pledges/boost-verify?token=${token}`;
+      const name = record.anonymous ? "Friend" : record.name;
+
+      sendActionVerification(
+        email,
+        name,
+        "Confirm Pledge Increase",
+        `You requested to increase your pledge by $${addAmount.toFixed(2)}/mile. Click to confirm.`,
+        verifyUrl
+      ).catch(() => {});
+
+      return NextResponse.json({
+        success: true,
+        pending: true,
+        message: "Check your email to confirm the pledge increase.",
+      });
+    }
+
+    // If verifyToken IS provided, this is the internal call after verification
+    // (The boost-verify endpoint calls this internally — not exposed to clients)
     const oldAmount = record.amount;
     const oldTotal = record.totalPledge;
 
-    // Apply increase
     record.amount += addAmount;
     record.totalPledge = (record.amount * TOTAL_MILES) / record.interval;
     record.updatedAt = Date.now();
 
     const isChallenge = !!challengeId;
 
-    // Record boost entry (for both challenge boosts and manual increases)
     record.boosts.push({
       challengeId: challengeId || "manual",
       challengeTitle: challengeTitle || "Manual increase",
@@ -206,14 +254,12 @@ export async function PUT(req: NextRequest) {
       addedAt: Date.now(),
     });
 
-    // Save updated record
     await redis.set(key, JSON.stringify(record));
 
-    // Update aggregate total
     const totalDiff = record.totalPledge - oldTotal;
     await redis.incrbyfloat("pledgers:total_pledged", totalDiff);
 
-    // Update list entry (replace old record)
+    // Update list entry
     const list = await redis.lrange<string>("pledgers:list", 0, -1);
     for (let i = 0; i < list.length; i++) {
       const item: PledgeRecord = typeof list[i] === "string" ? JSON.parse(list[i]) : list[i];
@@ -223,11 +269,10 @@ export async function PUT(req: NextRequest) {
       }
     }
 
-    // Send confirmation email for manual increases (fire-and-forget)
     if (!isChallenge) {
-      const name = record.anonymous ? "Pledger" : record.name;
+      const displayName = record.anonymous ? "Pledger" : record.name;
       const newRate = `$${record.amount}/mi`;
-      sendPledgeIncreased(record.email, name, oldAmount, record.amount, newRate, record.totalPledge).catch(() => {});
+      sendPledgeIncreased(record.email, displayName, oldAmount, record.amount, newRate, record.totalPledge).catch(() => {});
     }
 
     return NextResponse.json({
@@ -247,7 +292,7 @@ export async function PUT(req: NextRequest) {
   }
 }
 
-// --- Community Milestone Checks (Gap 8) ---
+// --- Community Milestone Checks ---
 
 const PLEDGER_THRESHOLDS = [25, 50, 100, 200, 500, 1000];
 const TOTAL_THRESHOLDS = [5000, 10000, 25000, 50000, 100000];
@@ -255,17 +300,15 @@ const TOTAL_THRESHOLDS = [5000, 10000, 25000, 50000, 100000];
 async function checkCommunityMilestones(redis: Redis, pledgerCount: number, totalPledged: number) {
   const sentSet = (await redis.smembers("emails:community:sent")) || [];
 
-  // Check pledger count thresholds
   for (const threshold of PLEDGER_THRESHOLDS) {
     const key = `pledgers:${threshold}`;
     if (pledgerCount >= threshold && !sentSet.includes(key)) {
       await sendCommunityMilestoneToAll(redis, "pledgers", threshold, pledgerCount, totalPledged);
       await redis.sadd("emails:community:sent", key);
-      break; // Only send one community milestone per pledge
+      break;
     }
   }
 
-  // Check total pledged thresholds
   for (const threshold of TOTAL_THRESHOLDS) {
     const key = `total:${threshold}`;
     if (totalPledged >= threshold && !sentSet.includes(key)) {
@@ -291,7 +334,6 @@ async function sendCommunityMilestoneToAll(
   let sent = 0;
   for (const record of records) {
     if (!record.email) continue;
-    // Respect email preferences — community milestones are "all" level
     if (record.emailPreference && record.emailPreference !== "all") continue;
 
     await sendCommunityMilestone(

@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import DistanceTracker from "@/components/DistanceTracker";
 import CountdownBanner from "@/components/CountdownBanner";
+import Turnstile from "@/components/Turnstile";
 
 const TOTAL_MILES = 2650;
 
@@ -34,6 +35,8 @@ export default function PledgePage() {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [honeypot, setHoneypot] = useState("");
 
   // Silent IP geolocation on mount
   const geoRef = useRef<{ city?: string; country?: string; lat?: number; lng?: number }>({});
@@ -93,6 +96,8 @@ export default function PledgePage() {
           interval: 1,
           anonymous: !name,
           message: message || undefined,
+          turnstileToken: turnstileToken || "",
+          website: honeypot, // honeypot field
           ...geoRef.current,
         }),
       });
@@ -324,16 +329,36 @@ export default function PledgePage() {
             </div>
           )}
 
+          {/* Honeypot field — hidden from humans, visible to bots */}
+          <div className="absolute opacity-0 h-0 overflow-hidden" aria-hidden="true" tabIndex={-1}>
+            <label htmlFor="website">Website</label>
+            <input
+              type="text"
+              id="website"
+              name="website"
+              autoComplete="off"
+              value={honeypot}
+              onChange={(e) => setHoneypot(e.target.value)}
+              tabIndex={-1}
+            />
+          </div>
+
+          {/* Turnstile CAPTCHA (invisible) */}
+          <Turnstile
+            onVerify={setTurnstileToken}
+            onExpire={() => setTurnstileToken(null)}
+          />
+
           {submitted ? (
             <div className="flex flex-col items-center gap-[12px] bg-[var(--forest-green-light)] border border-[var(--forest-green)] p-[24px]">
-              <Heart className="w-[28px] h-[28px] text-[var(--forest-green)]" />
+              <Mail className="w-[28px] h-[28px] text-[var(--forest-green)]" />
               <span className="font-heading font-semibold text-[18px] text-[var(--forest-green)]">
-                Pledge Registered!
+                Check Your Email!
               </span>
               <p className="font-heading text-[14px] text-[var(--text-secondary)] text-center leading-[1.6]">
-                We&apos;ll email you at <strong>{email}</strong> when Paul
-                reaches Canada. Your pledge: {formatCurrency(amount)}
-                /mile = {formatCurrency(totalPledge)} total.
+                We&apos;ve sent a confirmation link to <strong>{email}</strong>.
+                Click it to activate your pledge of {formatCurrency(amount)}
+                /mile ({formatCurrency(totalPledge)} total). The link expires in 1 hour.
               </p>
             </div>
           ) : (

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
+import { RATE_LIMITS } from "@/lib/security";
 
 function getRedis() {
   const url = process.env.KV_REST_API_URL;
@@ -10,6 +11,9 @@ function getRedis() {
 
 // GET — Admin endpoint for honor tracking stats
 export async function GET(request: NextRequest) {
+  const rateLimited = await RATE_LIMITS.general(request);
+  if (rateLimited) return rateLimited;
+
   const authHeader = request.headers.get("authorization");
   const cronSecret = process.env.CRON_SECRET;
 

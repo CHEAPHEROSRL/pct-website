@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
+import { requireCronAuth } from "@/lib/security";
 import { sendHonorReminder } from "@/lib/email";
 import type { PledgeRecord } from "@/lib/types";
 
@@ -15,12 +16,8 @@ function getRedis() {
 // The "finish" near-finish email (variant: "finish") counts as day 0.
 
 export async function GET(request: NextRequest) {
-  const authHeader = request.headers.get("authorization");
-  const cronSecret = process.env.CRON_SECRET;
-
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const authError = requireCronAuth(request);
+  if (authError) return authError;
 
   const redis = getRedis();
   if (!redis) {

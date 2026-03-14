@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
 import { getStripe } from "@/lib/stripe";
 import { avatarColor } from "@/lib/donor-utils";
+import { GIFT_ESTIMATES } from "@/lib/gift-estimates";
+import { snapToTrail } from "@/lib/trail";
 import type { SupportRecord } from "@/lib/types";
 import type Stripe from "stripe";
 
@@ -61,16 +63,40 @@ export async function POST(request: NextRequest) {
       ? "Anonymous"
       : `${meta.firstName || ""} ${meta.lastName || ""}`.trim() || "Supporter";
 
+    // Capture Paul's trail position at time of gift
+    let trailLat: number | undefined;
+    let trailLng: number | undefined;
+    let trailMile: number | undefined;
+    if (isTrailSupport) {
+      try {
+        const locRaw = await redis.get<string>("location:current");
+        if (locRaw) {
+          const loc = typeof locRaw === "string" ? JSON.parse(locRaw) : locRaw;
+          if (loc.lat && loc.lng) {
+            trailLat = loc.lat;
+            trailLng = loc.lng;
+            const snap = snapToTrail(loc.lat, loc.lng);
+            trailMile = Math.round(snap.miles);
+          }
+        }
+      } catch {
+        // Non-critical — gift is still recorded without position
+      }
+    }
+
     const record: SupportRecord = {
       id: session.id,
       name: displayName,
       email: meta.email || session.customer_email || "",
       amount: amountDollars,
-      message: isTrailSupport ? (meta.giftTitle || "Trail support gift") : (meta.message || ""),
+      message: isTrailSupport ? (meta.message || meta.giftTitle || "Trail support gift") : (meta.message || ""),
       anonymous: meta.anonymous === "true",
       color: avatarColor(meta.email || session.customer_email || session.id),
       giftTitle: meta.giftTitle || null,
       createdAt: Date.now(),
+      trailLat,
+      trailLng,
+      trailMile,
     };
 
     await redis.lpush(`${prefix}:list`, JSON.stringify(record));
@@ -80,6 +106,11 @@ export async function POST(request: NextRequest) {
     const currentLargest = (await redis.get<number>(`${prefix}:largest`)) || 0;
     if (amountDollars > currentLargest) {
       await redis.set(`${prefix}:largest`, amountDollars);
+    }
+
+    // Track per-gift-type counts for progress bars
+    if (isTrailSupport && meta.giftTitle && meta.giftTitle in GIFT_ESTIMATES) {
+      await redis.incr(`supporters:gift-count:${meta.giftTitle}`);
     }
 
     await redis.set(`${prefix}:processed:${session.id}`, "1", { ex: 60 * 60 * 24 * 30 });

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
+import { requireCronAuth } from "@/lib/security";
 import { sendMilestoneReached, sendPreMilestoneNudge, sendNearFinish } from "@/lib/email";
 import { snapToTrail } from "@/lib/trail";
 import type { PledgeRecord, GpsPoint } from "@/lib/types";
@@ -55,12 +56,8 @@ async function getMilesFromGps(redis: Redis): Promise<number> {
 
 // GET: Vercel Cron calls this to auto-check milestones from GPS
 export async function GET(request: NextRequest) {
-  const authHeader = request.headers.get("authorization");
-  const cronSecret = process.env.CRON_SECRET;
-
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const authError = requireCronAuth(request);
+  if (authError) return authError;
 
   const redis = getRedis();
   if (!redis) {
@@ -85,12 +82,8 @@ export async function GET(request: NextRequest) {
 
 // POST: Manual trigger with explicit miles
 export async function POST(request: NextRequest) {
-  const authHeader = request.headers.get("authorization");
-  const cronSecret = process.env.CRON_SECRET;
-
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const authError = requireCronAuth(request);
+  if (authError) return authError;
 
   const redis = getRedis();
   if (!redis) {

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
+import { RATE_LIMITS } from "@/lib/security";
 import type { ChallengeRecord, ChallengeCommitment } from "@/lib/types";
 import crypto from "crypto";
 
@@ -16,6 +17,9 @@ function emailHash(email: string): string {
 
 // POST — Pre-commit a boost for the active challenge
 export async function POST(req: NextRequest) {
+  const rateLimited = await RATE_LIMITS.challengeCommit(req);
+  if (rateLimited) return rateLimited;
+
   const redis = getRedis();
   if (!redis) {
     return NextResponse.json({ error: "Storage unavailable" }, { status: 503 });

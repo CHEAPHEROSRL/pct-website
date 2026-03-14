@@ -1,17 +1,29 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { Heart } from "lucide-react";
+import { Heart, Footprints, Mountain, Flame, Clock, TrendingUp, MapPin, Milestone, CalendarDays, Ruler, ArrowUp, Gift } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import ScrollReveal from "@/components/ScrollReveal";
+import CountUpStat from "@/components/CountUpStat";
 import { useLocationData } from "@/hooks/useLocationData";
+import { useGiftLocations } from "@/hooks/useGiftLocations";
 import { getTrailSectionIndex } from "@/lib/trail";
 import DistanceTracker from "@/components/DistanceTracker";
 import type { PledgerLocation } from "@/lib/types";
 
-type MapMode = "trail" | "pledgers";
+type MapMode = "trail" | "pledgers" | "supporters";
+
+const GIFT_EMOJI_MAP: Record<string, string> = {
+  "A Trail Meal": "🍽️",
+  "Hiking Socks": "🧦",
+  "A Night at Camp": "⛺",
+  "A Resupply Box": "📦",
+  "A Rest Day in Town": "🛏️",
+  "Trail Boots": "🥾",
+};
 
 const trailSections = [
   { name: "Southern California", info: "Mi 0 - 700 · Campo to Kennedy Meadows", center: [33.5, -117.0, 7] as [number, number, number] },
@@ -77,6 +89,9 @@ export default function TrailMapPage() {
   const [pledgerLocations, setPledgerLocations] = useState<PledgerLocation[]>([]);
   const [countryCount, setCountryCount] = useState(0);
 
+  // Gift locations for supporters mode
+  const { locations: giftLocations } = useGiftLocations();
+
   useEffect(() => {
     fetch("/api/pledges/locations")
       .then((res) => res.json())
@@ -106,6 +121,8 @@ export default function TrailMapPage() {
     }
   };
 
+  const totalGiftAmount = giftLocations.reduce((sum, g) => sum + g.amount, 0);
+
   return (
     <div className="flex flex-col w-full bg-[var(--bg-warm)]">
       <Header activeItem="Trail Map" />
@@ -127,7 +144,7 @@ export default function TrailMapPage() {
               <span className={`font-label font-bold text-[11px] tracking-[2px] ${
                 mode === "trail" ? "text-[var(--text-white)]" : "text-[var(--text-secondary)]"
               }`}>
-                TRAIL PROGRESS
+                TRAIL
               </span>
             </button>
             <button
@@ -141,12 +158,26 @@ export default function TrailMapPage() {
               <span className={`font-label font-bold text-[11px] tracking-[2px] ${
                 mode === "pledgers" ? "text-[var(--text-white)]" : "text-[var(--text-secondary)]"
               }`}>
-                GLOBAL PLEDGERS
+                PLEDGERS
+              </span>
+            </button>
+            <button
+              onClick={() => handleModeSwitch("supporters")}
+              className={`flex-1 flex items-center justify-center h-[48px] cursor-pointer transition-colors ${
+                mode === "supporters"
+                  ? "bg-[var(--forest-green)]"
+                  : "bg-[var(--bg-white)] hover:bg-[var(--bg-warm)]"
+              }`}
+            >
+              <span className={`font-label font-bold text-[11px] tracking-[2px] ${
+                mode === "supporters" ? "text-[var(--text-white)]" : "text-[var(--text-secondary)]"
+              }`}>
+                TRAIL GIFTS
               </span>
             </button>
           </div>
 
-          {mode === "trail" ? (
+          {mode === "trail" && (
             <>
               {/* Trail Sidebar */}
               <div className="flex flex-col gap-[12px] px-[24px] pt-[24px] pb-[16px]">
@@ -197,7 +228,9 @@ export default function TrailMapPage() {
                 <DistanceTracker compact />
               </div>
             </>
-          ) : (
+          )}
+
+          {mode === "pledgers" && (
             <>
               {/* Pledger Sidebar */}
               <div className="flex flex-col gap-[12px] px-[24px] pt-[24px] pb-[16px]">
@@ -259,6 +292,73 @@ export default function TrailMapPage() {
               </div>
             </>
           )}
+
+          {mode === "supporters" && (
+            <>
+              {/* Supporters Sidebar */}
+              <div className="flex flex-col gap-[12px] px-[24px] pt-[24px] pb-[16px]">
+                <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--forest-green)]">TRAIL GIFTS</span>
+                <span className="font-heading font-semibold text-[28px] tracking-[-0.5px] text-[var(--text-primary)]">Gifts on the Trail</span>
+                <p className="font-heading text-[14px] leading-[1.6] text-[var(--text-secondary)]">
+                  Every icon on the map is a real gift — meals, boots, camp nights — keeping Paul moving forward.
+                </p>
+              </div>
+
+              {/* Stats */}
+              <div className="flex gap-[16px] px-[24px] pb-[16px]">
+                <div className="flex flex-col gap-[4px] flex-1 bg-[var(--forest-green-light)] p-[16px]">
+                  <span className="font-heading font-semibold text-[28px] tracking-[-0.5px] text-[var(--forest-green)] leading-[1]">
+                    {giftLocations.length}
+                  </span>
+                  <span className="font-label font-bold text-[10px] tracking-[1px] text-[var(--text-muted)]">GIFTS</span>
+                </div>
+                <div className="flex flex-col gap-[4px] flex-1 bg-[var(--forest-green-light)] p-[16px]">
+                  <span className="font-heading font-semibold text-[28px] tracking-[-0.5px] text-[var(--forest-green)] leading-[1]">
+                    ${totalGiftAmount.toLocaleString("en-US")}
+                  </span>
+                  <span className="font-label font-bold text-[10px] tracking-[1px] text-[var(--text-muted)]">TOTAL</span>
+                </div>
+              </div>
+
+              <div className="w-full h-[1px] bg-[var(--border-subtle)]" />
+
+              {/* Recent Gifts List */}
+              <div className="flex flex-col w-full overflow-hidden">
+                <div className="px-[24px] py-[12px]">
+                  <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">RECENT GIFTS</span>
+                </div>
+                {giftLocations.slice(0, 12).map((gift, i) => (
+                  <div
+                    key={`gift-sidebar-${gift.lat}-${gift.lng}-${i}`}
+                    className="flex items-center gap-[12px] px-[24px] py-[10px] border-b border-[var(--border-subtle)]"
+                  >
+                    <span className="text-[18px] shrink-0">{GIFT_EMOJI_MAP[gift.giftTitle] || "💚"}</span>
+                    <div className="flex flex-col min-w-0">
+                      <span className="font-heading font-semibold text-[14px] text-[var(--text-primary)] truncate">
+                        {gift.name} — ${gift.amount}
+                      </span>
+                      <span className="font-label text-[11px] text-[var(--text-muted)]">
+                        {gift.giftTitle} · Mile {gift.trailMile.toLocaleString("en-US")}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* CTA */}
+              <div className="px-[24px] py-[20px]">
+                <Link
+                  href="/support"
+                  className="flex items-center justify-center gap-[8px] w-full h-[44px] bg-[var(--forest-green)] hover:opacity-90 transition-opacity"
+                >
+                  <Gift className="w-[14px] h-[14px] text-[var(--text-white)]" />
+                  <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-white)]">
+                    SUPPORT PAUL ON THE TRAIL
+                  </span>
+                </Link>
+              </div>
+            </>
+          )}
         </div>
 
         {/* Map Area */}
@@ -272,6 +372,7 @@ export default function TrailMapPage() {
             currentElevation={stats?.currentElevation}
             mode={mode}
             pledgerLocations={displayLocations}
+            supportGiftLocations={giftLocations}
           />
         </div>
       </div>
@@ -310,7 +411,160 @@ export default function TrailMapPage() {
         </div>
       </div>
 
+      {/* By the Numbers — Expedition Stats */}
+      <ExpeditionStats totalMiles={totalMiles} dayNumber={stats?.dayNumber ?? 0} currentElevation={stats?.currentElevation ?? 0} />
+
       <Footer />
     </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Expedition Stats Section
+// ---------------------------------------------------------------------------
+
+const STEPS_PER_MILE = 2200; // Average for trail hiking with pack
+const CALORIES_PER_MILE = 120; // Conservative hiking calorie burn (beyond BMR)
+const AVG_HIKING_SPEED_MPH = 2.8; // Typical PCT thru-hiker pace
+
+function ExpeditionStats({ totalMiles, dayNumber, currentElevation }: {
+  totalMiles: number;
+  dayNumber: number;
+  currentElevation: number;
+}) {
+  const computed = useMemo(() => {
+    const steps = Math.round(totalMiles * STEPS_PER_MILE);
+    const caloriesBurned = Math.round(totalMiles * CALORIES_PER_MILE);
+    const hoursWalked = Math.round(totalMiles / AVG_HIKING_SPEED_MPH);
+    const milesRemaining = Math.max(0, 2650 - totalMiles);
+    const avgDailyMiles = dayNumber > 0 ? Math.round((totalMiles / dayNumber) * 10) / 10 : 0;
+    const daysRemaining = avgDailyMiles > 0 ? Math.round(milesRemaining / avgDailyMiles) : 0;
+    const marathons = Math.round((totalMiles / 26.2) * 10) / 10;
+    const highestPoint = totalMiles >= 800 ? 13100 : currentElevation; // Mt. Whitney at mile 800
+    const statesCrossed = totalMiles >= 2147 ? 3 : totalMiles >= 1691 ? 2 : 1;
+
+    return {
+      steps, caloriesBurned, hoursWalked, milesRemaining,
+      avgDailyMiles, daysRemaining, marathons, highestPoint, statesCrossed,
+    };
+  }, [totalMiles, dayNumber, currentElevation]);
+
+  // Don't show section if hike hasn't started
+  if (dayNumber <= 0 && totalMiles <= 0) return null;
+
+  return (
+    <section className="flex flex-col items-center gap-[40px] px-6 md:px-12 lg:px-[120px] py-[48px] md:py-[64px] bg-[var(--bg-warm)] w-full">
+      <ScrollReveal animation="fade-up">
+        <div className="flex flex-col items-center gap-[12px]">
+          <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">BY THE NUMBERS</span>
+          <h2 className="font-heading font-semibold text-[28px] md:text-[34px] tracking-[-0.5px] text-[var(--text-primary)] text-center">
+            What {totalMiles.toLocaleString("en-US")} Miles Looks Like
+          </h2>
+          <p className="font-heading text-[15px] md:text-[16px] leading-[1.6] text-[var(--text-secondary)] text-center max-w-[600px]">
+            The physical reality of walking from Mexico to Canada — every step counted, every calorie earned.
+          </p>
+        </div>
+      </ScrollReveal>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-[16px] md:gap-[20px] w-full max-w-[1100px]">
+        <StatCard
+          icon={<Footprints className="w-[24px] h-[24px] text-[var(--burnt-orange)]" />}
+          value={computed.steps}
+          label="STEPS TAKEN"
+          color="var(--burnt-orange)"
+          separator=","
+        />
+        <StatCard
+          icon={<Flame className="w-[24px] h-[24px] text-[var(--burnt-orange)]" />}
+          value={computed.caloriesBurned}
+          label="CALORIES BURNED"
+          color="var(--burnt-orange)"
+          separator=","
+        />
+        <StatCard
+          icon={<Clock className="w-[24px] h-[24px] text-[var(--forest-green)]" />}
+          value={computed.hoursWalked}
+          label="HOURS WALKED"
+          color="var(--forest-green)"
+          separator=","
+        />
+        <StatCard
+          icon={<Mountain className="w-[24px] h-[24px] text-[var(--forest-green)]" />}
+          value={computed.highestPoint}
+          label="HIGHEST POINT (FT)"
+          color="var(--forest-green)"
+          separator=","
+        />
+        <StatCard
+          icon={<TrendingUp className="w-[24px] h-[24px] text-[var(--burnt-orange)]" />}
+          value={computed.avgDailyMiles}
+          label="AVG MILES / DAY"
+          color="var(--burnt-orange)"
+          decimals={1}
+        />
+        <StatCard
+          icon={<Ruler className="w-[24px] h-[24px] text-[var(--forest-green)]" />}
+          value={computed.marathons}
+          label="MARATHONS WALKED"
+          color="var(--forest-green)"
+          decimals={1}
+        />
+        <StatCard
+          icon={<MapPin className="w-[24px] h-[24px] text-[var(--burnt-orange)]" />}
+          value={computed.statesCrossed}
+          label="STATES CROSSED"
+          color="var(--burnt-orange)"
+        />
+        <StatCard
+          icon={<CalendarDays className="w-[24px] h-[24px] text-[var(--forest-green)]" />}
+          value={dayNumber}
+          label="DAYS ON TRAIL"
+          color="var(--forest-green)"
+        />
+        <StatCard
+          icon={<ArrowUp className="w-[24px] h-[24px] text-[var(--burnt-orange)]" />}
+          value={computed.milesRemaining}
+          label="MILES REMAINING"
+          color="var(--burnt-orange)"
+          separator=","
+        />
+        <StatCard
+          icon={<Milestone className="w-[24px] h-[24px] text-[var(--forest-green)]" />}
+          value={computed.daysRemaining}
+          label="EST. DAYS LEFT"
+          color="var(--forest-green)"
+        />
+      </div>
+
+      {/* Context note */}
+      <span className="font-label font-medium text-[11px] tracking-[0.5px] text-[var(--text-muted)] text-center">
+        Steps and calories are estimated from trail distance. Pace based on typical PCT thru-hiker averages.
+      </span>
+    </section>
+  );
+}
+
+function StatCard({ icon, value, label, color, separator, decimals }: {
+  icon: React.ReactNode;
+  value: number;
+  label: string;
+  color: string;
+  separator?: string;
+  decimals?: number;
+}) {
+  return (
+    <ScrollReveal animation="fade-up">
+      <div className="flex flex-col items-center gap-[12px] bg-[var(--bg-white)] border border-[var(--border-subtle)] p-[20px] md:p-[24px]">
+        {icon}
+        <CountUpStat
+          end={value}
+          label={label}
+          color={color}
+          separator={separator}
+          decimals={decimals}
+        />
+      </div>
+    </ScrollReveal>
   );
 }

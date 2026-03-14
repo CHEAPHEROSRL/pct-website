@@ -730,7 +730,7 @@ Sarah changed my day. She reminded me why I'm out here. Not just to raise money 
 
 Say yes to something today. Call someone you love. Book that trip. Have that conversation you've been avoiding. Start that thing you've been putting off.
 
-And if you want to be part of this journey, [pledge per mile →](/pledge) or [donate directly →](/donate). Every dollar goes to cancer research and patient support. Paul takes $0.`,
+And if you want to be part of this journey, [pledge per mile →](/pledge) for the cancer foundations, or [support Paul on the trail →](/support) with a gift. Every pledge goes to cancer research and patient support. Paul takes $0 from pledges.`,
     },
     prevPost: { slug: "sierra-nights", title: "Sierra Nights", dayNumber: 30 },
     nextPost: { slug: "trail-interview-marcus-and-elena", title: "YesChapter Interview: Marcus & Elena — A Couple on the Trail", dayNumber: 25 },
@@ -907,8 +907,8 @@ That's okay. The pledge is a commitment of intent, not a binding contract. Donat
 **Is my pledge anonymous?**
 If you leave the name field blank when pledging, you'll appear as "Anonymous" on the pledger wall. Your email is never displayed publicly.
 
-**Can I also make a one-time donation?**
-Absolutely. Visit the [Donate page](/donate) to make a one-time donation anytime. Donations also go 100% to the two cancer foundations.
+**Can I also support Paul directly?**
+Absolutely. Visit the [Support Paul](/support) page to buy Paul a trail meal, boots, or a rest day. Trail support goes directly to Paul and is completely separate from foundation pledges.
 
 **What about supporting Paul directly?**
 If you want to buy Paul a meal, new boots, or fund a rest day, visit the [Support Paul](/support) page. Trail support goes directly to Paul and is completely separate from the cancer foundation fundraiser.
@@ -1049,7 +1049,7 @@ That's what *As a Man Thinketh* taught me. That's what this trail is teaching me
 
 *As a Man Thinketh* by James Allen is in the public domain. You can read it for free online, or pick up a copy for a few dollars. It takes about 30 minutes to read. It might take a lifetime to fully absorb.
 
-If you read it, I'd love to hear what you think. Drop a message when you [pledge](/pledge) or [donate](/donate) — tell me your favorite line.
+If you read it, I'd love to hear what you think. Drop a message when you [pledge](/pledge) or [support Paul on the trail](/support) — tell me your favorite line.
 
 And if you're walking with me on this journey — literally or through your support — thank you. Every step, every pledge, every dollar is a thought made real. Allen would be proud.`,
     },
@@ -1216,7 +1216,7 @@ The only question is: what does your YesChapter look like?
 
 If this post resonated with you, I'd love to hear about it. Tell me your YesChapter moment. What did you say yes to? What are you saying yes to next?
 
-[Pledge per mile →](/pledge) and walk this trail with me. Or [donate directly →](/donate) to the cancer foundations. Either way, you're saying yes to something that matters.`,
+[Pledge per mile →](/pledge) and walk this trail with me. Or [support Paul directly on the trail →](/support). Either way, you're saying yes to something that matters.`,
     },
     prevPost: { slug: "as-a-man-thinketh", title: "As a Man Thinketh — The Book That Made Me Walk", dayNumber: 0 },
     nextPost: null,

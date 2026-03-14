@@ -104,6 +104,78 @@ export async function sendPledgeConfirmation(
   );
 }
 
+export async function sendPledgeVerification(
+  email: string,
+  name: string,
+  rate: string,
+  totalPledge: number,
+  verifyUrl: string
+): Promise<SendResult> {
+  const html = `
+    <div style="max-width: 600px; margin: 0 auto; background: #F4F1EC; font-family: Georgia, serif;">
+      <div style="background: #1C1F1A; padding: 16px 32px; display: flex; justify-content: space-between; align-items: center;">
+        <span style="color: #FFFFFF; font-family: sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 3px;">YESCHAPTER</span>
+        <span style="color: #FFFFFF66; font-family: sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 2px;">WALKING FOR CANCER</span>
+      </div>
+      <div style="background: #3D7A5A; padding: 48px 40px; text-align: center;">
+        <p style="margin: 0 0 16px; font-size: 13px; letter-spacing: 4px; font-family: sans-serif; font-weight: 700; color: #FFFFFF88;">CONFIRM YOUR PLEDGE</p>
+        <h1 style="margin: 0 0 12px; font-size: 28px; font-weight: 600; color: #FFFFFF;">One More Step, ${name}.</h1>
+        <p style="margin: 0; font-size: 15px; color: #FFFFFFCC; line-height: 1.6;">Click the button below to confirm your pledge of ${rate}<br/>and join the community walking with Paul.</p>
+      </div>
+      <div style="background: #FFFFFF; padding: 36px 40px; text-align: center;">
+        <p style="margin: 0 0 4px; font-size: 12px; letter-spacing: 3px; font-family: sans-serif; font-weight: 700; color: #8C8A87;">YOUR PLEDGE</p>
+        <p style="margin: 0 0 8px; font-size: 42px; font-weight: 600; color: #C45C26; letter-spacing: -1px;">$${totalPledge.toFixed(2)}</p>
+        <p style="margin: 0 0 24px; font-size: 15px; color: #5C5C5C;">${rate} × 2,650 miles</p>
+        <a href="${verifyUrl}" style="display: inline-block; background: #3D7A5A; color: #FFFFFF; padding: 16px 48px; font-family: sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 2px; text-decoration: none;">CONFIRM MY PLEDGE</a>
+        <p style="margin: 16px 0 0; font-size: 12px; color: #8C8A87;">This link expires in 1 hour.</p>
+      </div>
+      <div style="background: #F4F1EC; padding: 20px 40px; text-align: center;">
+        <p style="margin: 0; font-size: 13px; color: #8C8A87; line-height: 1.6;">If you didn't request this, you can safely ignore this email.<br/>No pledge will be created.</p>
+      </div>
+      <div style="background: #1C1F1A; padding: 20px 32px; text-align: center;">
+        <p style="margin: 0 0 8px; font-size: 12px; letter-spacing: 3px; font-family: sans-serif; font-weight: 700; color: #FFFFFF88;">YESCHAPTER</p>
+        <p style="margin: 0; font-size: 11px; color: #FFFFFF44;">
+          <a href="https://yeschapter.com" style="color: #FFFFFF66; text-decoration: none;">yeschapter.com</a>
+        </p>
+      </div>
+    </div>
+  `;
+
+  return send(email, "Confirm Your Pledge — YesChapter", html);
+}
+
+export async function sendActionVerification(
+  email: string,
+  name: string,
+  action: string,
+  description: string,
+  verifyUrl: string
+): Promise<SendResult> {
+  const html = `
+    <div style="max-width: 600px; margin: 0 auto; background: #F4F1EC; font-family: Georgia, serif;">
+      <div style="background: #1C1F1A; padding: 16px 32px;">
+        <span style="color: #FFFFFF; font-family: sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 3px;">YESCHAPTER</span>
+      </div>
+      <div style="background: #3D7A5A; padding: 40px; text-align: center;">
+        <p style="margin: 0 0 12px; font-size: 13px; letter-spacing: 4px; font-family: sans-serif; font-weight: 700; color: #FFFFFF88;">VERIFY YOUR ACTION</p>
+        <h1 style="margin: 0 0 12px; font-size: 24px; font-weight: 600; color: #FFFFFF;">Hi ${name},</h1>
+        <p style="margin: 0; font-size: 15px; color: #FFFFFFCC; line-height: 1.6;">${description}</p>
+      </div>
+      <div style="background: #FFFFFF; padding: 32px 40px; text-align: center;">
+        <a href="${verifyUrl}" style="display: inline-block; background: #C45C26; color: #FFFFFF; padding: 14px 40px; font-family: sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 2px; text-decoration: none;">${action.toUpperCase()}</a>
+        <p style="margin: 16px 0 0; font-size: 12px; color: #8C8A87;">This link expires in 1 hour. If you didn't request this, ignore this email.</p>
+      </div>
+      <div style="background: #1C1F1A; padding: 16px 32px; text-align: center;">
+        <p style="margin: 0; font-size: 11px; color: #FFFFFF44;">
+          <a href="https://yeschapter.com" style="color: #FFFFFF66; text-decoration: none;">yeschapter.com</a>
+        </p>
+      </div>
+    </div>
+  `;
+
+  return send(email, `Verify: ${action} — YesChapter`, html);
+}
+
 export async function sendWeeklyUpdate(
   email: string,
   name: string,

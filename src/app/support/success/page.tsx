@@ -1,11 +1,74 @@
 "use client";
 
+import { useState, useRef } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Check, Mail, HeartHandshake } from "lucide-react";
+import { Check, Mail, HeartHandshake, Camera, Upload, Youtube, X } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 export default function SupportSuccessPage() {
+  const searchParams = useSearchParams();
+  const sessionId = searchParams.get("session_id") || "";
+
+  // Media upload state
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [youtubeUrl, setYoutubeUrl] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const [uploaded, setUploaded] = useState(false);
+  const [uploadError, setUploadError] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      setUploadError("Image must be under 5MB");
+      return;
+    }
+    setImageFile(file);
+    setUploadError("");
+    const reader = new FileReader();
+    reader.onload = (ev) => setImagePreview(ev.target?.result as string);
+    reader.readAsDataURL(file);
+  };
+
+  const clearImage = () => {
+    setImageFile(null);
+    setImagePreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const handleUpload = async () => {
+    if (!sessionId || (!imageFile && !youtubeUrl.trim())) return;
+    setUploading(true);
+    setUploadError("");
+
+    try {
+      const formData = new FormData();
+      formData.append("sessionId", sessionId);
+      if (imageFile) formData.append("image", imageFile);
+      if (youtubeUrl.trim()) formData.append("youtubeUrl", youtubeUrl.trim());
+
+      const res = await fetch("/api/support/media", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (res.ok) {
+        setUploaded(true);
+      } else {
+        const data = await res.json();
+        setUploadError(data.error || "Upload failed. Please try again.");
+      }
+    } catch {
+      setUploadError("Upload failed. Please try again.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
   return (
     <div className="flex flex-col w-full bg-[var(--bg-warm)]">
       <Header />
@@ -32,6 +95,113 @@ export default function SupportSuccessPage() {
           </span>
         </div>
       </section>
+
+      {/* Leave Your Mark — Media Upload */}
+      {sessionId && !uploaded && (
+        <section className="flex flex-col items-center gap-[24px] px-6 md:px-12 lg:px-[120px] py-[48px] bg-[var(--bg-white)] border-t border-[var(--border-subtle)] w-full">
+          <div className="flex flex-col items-center gap-[12px] max-w-[520px]">
+            <Camera className="w-[28px] h-[28px] text-[var(--forest-green)]" />
+            <span className="font-label font-bold text-[11px] tracking-[3px] text-[var(--forest-green)]">
+              LEAVE YOUR MARK ON THE TRAIL
+            </span>
+            <p className="font-heading text-[15px] leading-[1.6] text-[var(--text-secondary)] text-center">
+              Share a photo or video message — it&apos;ll appear on Paul&apos;s trail map for everyone to see. Completely optional!
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-[16px] w-full max-w-[480px]">
+            {/* Image upload */}
+            <div className="flex flex-col gap-[8px]">
+              <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                PHOTO (OPTIONAL)
+              </span>
+              {imagePreview ? (
+                <div className="relative">
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    className="w-full max-h-[240px] object-cover rounded-[4px] border border-[var(--border-subtle)]"
+                  />
+                  <button
+                    onClick={clearImage}
+                    className="absolute top-2 right-2 flex items-center justify-center w-[28px] h-[28px] bg-white/90 rounded-full cursor-pointer hover:bg-white"
+                  >
+                    <X className="w-[14px] h-[14px] text-[var(--text-primary)]" />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex flex-col items-center justify-center gap-[8px] h-[120px] w-full border-2 border-dashed border-[var(--border-subtle)] bg-[var(--bg-card)] hover:border-[var(--forest-green)] transition-colors cursor-pointer"
+                >
+                  <Upload className="w-[20px] h-[20px] text-[var(--text-muted)]" />
+                  <span className="font-label font-medium text-[12px] text-[var(--text-muted)]">
+                    Click to upload a photo (max 5MB)
+                  </span>
+                </button>
+              )}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={handleImageSelect}
+                className="hidden"
+              />
+            </div>
+
+            {/* YouTube URL */}
+            <div className="flex flex-col gap-[8px]">
+              <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                YOUTUBE VIDEO LINK (OPTIONAL)
+              </span>
+              <div className="flex items-center gap-[10px] h-[44px] px-[14px] bg-[var(--bg-card)] border border-[var(--border-subtle)]">
+                <Youtube className="w-[16px] h-[16px] text-[var(--text-muted)] shrink-0" />
+                <input
+                  type="url"
+                  placeholder="https://youtube.com/watch?v=..."
+                  value={youtubeUrl}
+                  onChange={(e) => setYoutubeUrl(e.target.value)}
+                  className="flex-1 h-full font-heading text-[14px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none bg-transparent"
+                />
+              </div>
+            </div>
+
+            {uploadError && (
+              <p className="font-heading text-[13px] text-red-600">{uploadError}</p>
+            )}
+
+            <button
+              onClick={handleUpload}
+              disabled={uploading || (!imageFile && !youtubeUrl.trim())}
+              className="flex items-center justify-center gap-[8px] h-[48px] w-full bg-[var(--forest-green)] cursor-pointer hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Upload className="w-[16px] h-[16px] text-[var(--text-white)]" />
+              <span className="font-label font-bold text-[13px] tracking-[2px] text-[var(--text-white)]">
+                {uploading ? "UPLOADING..." : "SHARE ON THE TRAIL MAP"}
+              </span>
+            </button>
+
+            <p className="font-heading text-[12px] text-[var(--text-muted)] text-center">
+              Your photo will be reviewed before appearing on the map.
+            </p>
+          </div>
+        </section>
+      )}
+
+      {/* Upload success message */}
+      {uploaded && (
+        <section className="flex flex-col items-center gap-[16px] px-6 md:px-12 lg:px-[120px] py-[40px] bg-[var(--forest-green-light)] border-t border-[var(--border-subtle)] w-full">
+          <div className="flex items-center gap-[10px]">
+            <Check className="w-[20px] h-[20px] text-[var(--forest-green)]" />
+            <span className="font-heading font-semibold text-[16px] text-[var(--forest-green)]">
+              Your photo has been submitted!
+            </span>
+          </div>
+          <p className="font-heading text-[14px] text-[var(--text-secondary)] text-center">
+            It will appear on the trail map once reviewed. Thank you for leaving your mark on Paul&apos;s journey.
+          </p>
+        </section>
+      )}
 
       {/* Cross-sell */}
       <section className="flex flex-col items-center gap-[32px] px-6 md:px-12 lg:px-[120px] py-[48px] bg-[var(--bg-warm)] w-full">

@@ -33,6 +33,26 @@ export interface SupportRecord {
   color: string;
   giftTitle: string | null;
   createdAt: number;
+  trailLat?: number;
+  trailLng?: number;
+  trailMile?: number;
+  mediaUrl?: string;
+  mediaType?: "image" | "video_link";
+  videoUrl?: string;
+  mediaApproved?: boolean;
+}
+
+export interface SupportGiftLocation {
+  giftTitle: string;
+  name: string;
+  amount: number;
+  lat: number;
+  lng: number;
+  trailMile: number;
+  date: string;
+  message?: string;
+  mediaUrl?: string;
+  videoUrl?: string;
 }
 
 export interface SupporterPublic {

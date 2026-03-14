@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
+import { RATE_LIMITS } from "@/lib/security";
 import type { PledgeRecord } from "@/lib/types";
 
 function getRedis() {
@@ -11,6 +12,9 @@ function getRedis() {
 
 // GET — Retrieve current email preferences by unsubscribe token
 export async function GET(req: NextRequest) {
+  const rateLimited = await RATE_LIMITS.unsubscribe(req);
+  if (rateLimited) return rateLimited;
+
   const redis = getRedis();
   if (!redis) {
     return NextResponse.json({ error: "Storage unavailable" }, { status: 503 });
@@ -46,6 +50,9 @@ export async function GET(req: NextRequest) {
 
 // PUT — Update email preferences
 export async function PUT(req: NextRequest) {
+  const rateLimited = await RATE_LIMITS.unsubscribe(req);
+  if (rateLimited) return rateLimited;
+
   const redis = getRedis();
   if (!redis) {
     return NextResponse.json({ error: "Storage unavailable" }, { status: 503 });

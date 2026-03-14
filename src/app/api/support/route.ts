@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getStripe } from "@/lib/stripe";
+import { RATE_LIMITS, sanitizeText } from "@/lib/security";
 
 export async function POST(request: NextRequest) {
+  const rateLimited = await RATE_LIMITS.support(request);
+  if (rateLimited) return rateLimited;
+
   const stripe = getStripe();
   if (!stripe) {
     return NextResponse.json(
@@ -11,7 +15,7 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { amount, giftTitle } = body;
+  const { amount, giftTitle, firstName, message, anonymous } = body;
 
   const amountNum = Number(amount);
   if (!amountNum || amountNum < 1 || amountNum > 10000) {
@@ -47,6 +51,9 @@ export async function POST(request: NextRequest) {
         type: "trail_support",
         giftTitle: giftTitle || "Custom Amount",
         amount: String(amountNum),
+        firstName: firstName ? sanitizeText(String(firstName), 50) : "",
+        message: message ? sanitizeText(String(message), 200) : "",
+        anonymous: anonymous ? "true" : "false",
       },
       success_url: `${origin}/support/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/support/cancelled`,
