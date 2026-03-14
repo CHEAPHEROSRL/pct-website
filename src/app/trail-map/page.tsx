@@ -10,6 +10,7 @@ import ScrollReveal from "@/components/ScrollReveal";
 import CountUpStat from "@/components/CountUpStat";
 import { useLocationData } from "@/hooks/useLocationData";
 import { useGiftLocations } from "@/hooks/useGiftLocations";
+import { getTrailFundingPercent } from "@/lib/trail-funding";
 import { getTrailSectionIndex } from "@/lib/trail";
 import DistanceTracker from "@/components/DistanceTracker";
 import type { PledgerLocation } from "@/lib/types";
@@ -300,8 +301,27 @@ export default function TrailMapPage() {
                 <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--forest-green)]">TRAIL GIFTS</span>
                 <span className="font-heading font-semibold text-[28px] tracking-[-0.5px] text-[var(--text-primary)]">Gifts on the Trail</span>
                 <p className="font-heading text-[14px] leading-[1.6] text-[var(--text-secondary)]">
-                  Every icon on the map is a real gift — meals, boots, camp nights — keeping Paul moving forward.
+                  Every icon on the map is a real gift — meals, boots, camp nights — keeping Paul moving forward. Green segments show supported trail sections.
                 </p>
+              </div>
+
+              {/* Trail Coverage Bar */}
+              <div className="flex flex-col gap-[8px] px-[24px] pb-[16px]">
+                <div className="flex items-center justify-between">
+                  <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">TRAIL COVERAGE</span>
+                  <span className="font-label font-bold text-[12px] text-[var(--forest-green)]">
+                    {getTrailFundingPercent(giftLocations)}%
+                  </span>
+                </div>
+                <div className="w-full h-[6px] bg-[var(--border-subtle)] rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-[var(--forest-green)] rounded-full transition-all duration-1000 ease-out"
+                    style={{ width: `${getTrailFundingPercent(giftLocations)}%` }}
+                  />
+                </div>
+                <span className="font-heading text-[12px] text-[var(--text-muted)]">
+                  Segments with gifts light up green on the map
+                </span>
               </div>
 
               {/* Stats */}

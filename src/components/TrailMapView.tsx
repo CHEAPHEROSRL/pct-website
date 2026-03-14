@@ -4,7 +4,7 @@ import { useEffect, useMemo } from "react";
 import { MapContainer, TileLayer, Polyline, Marker, Popup, CircleMarker, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { pctRouteCoords } from "@/lib/trail";
+import { pctRouteCoords, pctWaypoints } from "@/lib/trail";
 import type { PledgerLocation, SupportGiftLocation } from "@/lib/types";
 
 function FlyToHandler({ target }: { target?: [number, number, number] }) {
@@ -78,6 +78,28 @@ function createGiftIcon(giftTitle: string) {
   });
 }
 
+/**
+ * Build funded/unfunded trail segments based on gift locations.
+ * Each waypoint-to-waypoint segment is checked: if any gift falls within that
+ * mile range, the segment is "funded" (green). Otherwise it's grey.
+ */
+function buildFundedSegments(gifts: SupportGiftLocation[]) {
+  const segments: { coords: [number, number][]; funded: boolean }[] = [];
+  const giftMiles = gifts.map((g) => g.trailMile);
+
+  for (let i = 0; i < pctWaypoints.length - 1; i++) {
+    const start = pctWaypoints[i];
+    const end = pctWaypoints[i + 1];
+    const funded = giftMiles.some((m) => m >= start.miles && m < end.miles);
+    segments.push({
+      coords: [[start.lat, start.lng], [end.lat, end.lng]],
+      funded,
+    });
+  }
+  return segments;
+}
+
+
 interface TrailMapViewProps {
   flyTo?: [number, number, number];
   currentPosition?: { lat: number; lng: number } | null;
@@ -111,6 +133,11 @@ export default function TrailMapView({
   const icon = useMemo(
     () => createMarkerIcon(dayNumber, nearestLocationName),
     [dayNumber, nearestLocationName]
+  );
+
+  const fundedSegments = useMemo(
+    () => buildFundedSegments(supportGiftLocations),
+    [supportGiftLocations]
   );
 
   // For pledger mode, zoom out to world view; supporters mode uses trail view
@@ -215,15 +242,43 @@ export default function TrailMapView({
 
       {mode === "supporters" && (
         <>
-          {/* PCT Trail Route */}
+          {/* Base trail — unfunded grey */}
           <Polyline
             positions={pctRouteCoords}
             pathOptions={{
-              color: "#C45C26",
+              color: "#B0ADA8",
               weight: 3,
-              opacity: 0.6,
+              opacity: 0.4,
             }}
           />
+
+          {/* Funded segments — glowing green overlay */}
+          {fundedSegments
+            .filter((s) => s.funded)
+            .map((s, i) => (
+              <Polyline
+                key={`funded-glow-${i}`}
+                positions={s.coords}
+                pathOptions={{
+                  color: "#3D7A5A",
+                  weight: 7,
+                  opacity: 0.25,
+                }}
+              />
+            ))}
+          {fundedSegments
+            .filter((s) => s.funded)
+            .map((s, i) => (
+              <Polyline
+                key={`funded-${i}`}
+                positions={s.coords}
+                pathOptions={{
+                  color: "#3D7A5A",
+                  weight: 4,
+                  opacity: 0.9,
+                }}
+              />
+            ))}
 
           {/* Gift markers along the trail */}
           {supportGiftLocations.map((gift, i) => (

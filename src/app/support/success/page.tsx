@@ -18,6 +18,7 @@ export default function SupportSuccessPage() {
   const [uploading, setUploading] = useState(false);
   const [uploaded, setUploaded] = useState(false);
   const [uploadError, setUploadError] = useState("");
+  const [consentMap, setConsentMap] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -166,13 +167,26 @@ export default function SupportSuccessPage() {
               </div>
             </div>
 
+            {/* Consent checkbox */}
+            <label className="flex items-start gap-[10px] cursor-pointer">
+              <input
+                type="checkbox"
+                checked={consentMap}
+                onChange={(e) => setConsentMap(e.target.checked)}
+                className="mt-[3px] w-[16px] h-[16px] accent-[var(--forest-green)] cursor-pointer"
+              />
+              <span className="font-heading text-[13px] leading-[1.5] text-[var(--text-secondary)]">
+                I agree to display my photo, video, and message on the public trail map. All submissions are reviewed before appearing.
+              </span>
+            </label>
+
             {uploadError && (
               <p className="font-heading text-[13px] text-red-600">{uploadError}</p>
             )}
 
             <button
               onClick={handleUpload}
-              disabled={uploading || (!imageFile && !youtubeUrl.trim())}
+              disabled={uploading || !consentMap || (!imageFile && !youtubeUrl.trim())}
               className="flex items-center justify-center gap-[8px] h-[48px] w-full bg-[var(--forest-green)] cursor-pointer hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Upload className="w-[16px] h-[16px] text-[var(--text-white)]" />
