@@ -12,9 +12,9 @@ interface HeaderProps {
 }
 
 const navLinks = [
-  { href: "/", label: "The Journey" },
+  { href: "/", label: "Journey" },
   { href: "/trail-map", label: "Trail Map" },
-  { href: "/the-cause", label: "The Cause" },
+  { href: "/the-cause", label: "Cause" },
   { href: "/journal", label: "Journal" },
   { href: "/pledgers", label: "Pledgers" },
 ];
