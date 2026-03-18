@@ -10,6 +10,8 @@ import ScrollReveal from "@/components/ScrollReveal";
 import type { JournalPostPublic } from "@/lib/types";
 import { useInstagramPosts } from "@/hooks/useInstagramPosts";
 import type { InstagramPost } from "@/lib/instagram";
+import { useYoutubeVideos } from "@/hooks/useYoutubeVideos";
+import type { YoutubeVideo } from "@/lib/youtube-feed";
 
 const filterOptions = ["ALL", "BLOG", "VLOG", "INTERVIEWS", "PHOTOS"] as const;
 type Filter = (typeof filterOptions)[number];
@@ -69,6 +71,7 @@ export default function JournalPage() {
   const [dynamicEntries, setDynamicEntries] = useState<JournalEntry[] | null>(null);
 
   const { posts: instagramPosts } = useInstagramPosts();
+  const { videos: youtubeVideos } = useYoutubeVideos();
 
   useEffect(() => {
     fetch("/api/journal")
@@ -246,6 +249,11 @@ export default function JournalPage() {
         )}
       </section>
 
+      {/* YouTube Vlog Gallery — only rendered when videos are available */}
+      {youtubeVideos.length > 0 && (
+        <YoutubeGallery videos={youtubeVideos} />
+      )}
+
       {/* Instagram Gallery — only rendered when posts are available */}
       {instagramPosts.length > 0 && (
         <InstagramGallery posts={instagramPosts} handle={INSTAGRAM_HANDLE} profileUrl={INSTAGRAM_URL} />
@@ -380,6 +388,131 @@ function InstagramCard({ post }: { post: InstagramPost }) {
           <ExternalLink className="w-[10px] h-[10px] text-white/60" />
           <span className="font-label font-semibold text-[10px] tracking-[1px] text-white/60">
             VIEW ON INSTAGRAM
+          </span>
+        </div>
+      </div>
+    </a>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// YouTube Gallery
+// ---------------------------------------------------------------------------
+
+const YOUTUBE_CHANNEL_URL = "https://www.youtube.com/@YesChapter";
+
+function YoutubeGallery({ videos }: { videos: YoutubeVideo[] }) {
+  const visible = videos.slice(0, 6);
+
+  return (
+    <section className="flex flex-col gap-[48px] px-6 md:px-12 lg:px-[120px] py-[64px] bg-[var(--bg-dark)] w-full">
+      {/* Header */}
+      <div className="flex flex-col gap-[12px]">
+        <div className="flex items-center gap-[8px]">
+          <Play className="w-[14px] h-[14px] text-[var(--burnt-orange)]" fill="currentColor" />
+          <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">
+            PAUL&apos;S VLOGS
+          </span>
+        </div>
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-[16px]">
+          <h2 className="font-heading font-semibold text-[28px] md:text-[36px] tracking-[-0.5px] text-[var(--text-white)]">
+            Watch the Journey{" "}
+            <span className="text-[#FFFFFF66] font-normal">@YesChapter</span>
+          </h2>
+          <a
+            href={YOUTUBE_CHANNEL_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-[8px] bg-[#FF0000] px-[20px] py-[10px] hover:opacity-90 transition-opacity shrink-0 self-start sm:self-auto"
+          >
+            <Play className="w-[13px] h-[13px] text-white" fill="white" />
+            <span className="font-label font-bold text-[11px] tracking-[2px] text-white">
+              SUBSCRIBE ON YOUTUBE
+            </span>
+            <ExternalLink className="w-[11px] h-[11px] text-white/60" />
+          </a>
+        </div>
+        <p className="font-heading text-[15px] md:text-[16px] leading-[1.6] text-[#FFFFFFAA] max-w-[640px]">
+          Every video Paul publishes on his YouTube channel appears here automatically. Watch raw trail footage, daily vlogs, and stories from the PCT.
+        </p>
+      </div>
+
+      {/* Grid — 2 cols mobile, 3 cols desktop */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[20px] w-full">
+        {visible.map((video) => (
+          <YoutubeCard key={video.id} video={video} />
+        ))}
+      </div>
+
+      {/* Bottom CTA */}
+      <div className="flex items-center justify-center">
+        <a
+          href={YOUTUBE_CHANNEL_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-[10px] border border-[#FFFFFF33] px-[32px] py-[14px] hover:bg-white/10 transition-colors"
+        >
+          <Play className="w-[14px] h-[14px] text-[#FFFFFFAA]" />
+          <span className="font-label font-bold text-[12px] tracking-[2px] text-[#FFFFFFAA]">
+            VIEW ALL VIDEOS ON YOUTUBE
+          </span>
+          <ArrowRight className="w-[14px] h-[14px] text-[#FFFFFFAA]" />
+        </a>
+      </div>
+    </section>
+  );
+}
+
+function YoutubeCard({ video }: { video: YoutubeVideo }) {
+  const date = new Date(video.publishedAt).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+
+  return (
+    <a
+      href={video.videoUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group flex flex-col bg-[#FFFFFF0D] border border-[#FFFFFF1A] overflow-hidden hover:border-[#FFFFFF33] transition-colors"
+    >
+      {/* Thumbnail */}
+      <div className="relative w-full aspect-video overflow-hidden bg-[#111]">
+        <Image
+          src={`https://img.youtube.com/vi/${video.id}/hqdefault.jpg`}
+          alt={video.title}
+          fill
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+        />
+        {/* Play button overlay */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-[52px] h-[52px] rounded-full bg-black/60 flex items-center justify-center group-hover:bg-[#FF0000] transition-colors duration-300">
+            <Play className="w-[22px] h-[22px] text-white ml-[2px]" fill="white" />
+          </div>
+        </div>
+        {/* YouTube badge */}
+        <div className="absolute top-[10px] right-[10px] bg-[#FF0000] px-[8px] py-[3px]">
+          <span className="font-label font-bold text-[9px] tracking-[1px] text-white">YOUTUBE</span>
+        </div>
+      </div>
+
+      {/* Info */}
+      <div className="flex flex-col gap-[8px] p-[18px]">
+        <span className="font-label font-medium text-[11px] tracking-[1px] text-[#FFFFFF66]">{date}</span>
+        <h3 className="font-heading font-semibold text-[16px] leading-[1.4] text-[var(--text-white)] line-clamp-2">
+          {video.title}
+        </h3>
+        {video.description && (
+          <p className="font-heading text-[13px] leading-[1.5] text-[#FFFFFFAA] line-clamp-2">
+            {video.description}
+          </p>
+        )}
+        <div className="flex items-center gap-[6px] mt-[4px]">
+          <ExternalLink className="w-[10px] h-[10px] text-[#FFFFFF44]" />
+          <span className="font-label font-semibold text-[10px] tracking-[1px] text-[#FFFFFF44]">
+            WATCH ON YOUTUBE
           </span>
         </div>
       </div>

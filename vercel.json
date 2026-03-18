@@ -5,6 +5,10 @@
       "schedule": "0 14 * * *"
     },
     {
+      "path": "/api/automation/youtube-sync",
+      "schedule": "0 15 * * *"
+    },
+    {
       "path": "/api/emails/weekly",
       "schedule": "0 15 * * 1"
     },
