@@ -3449,7 +3449,8 @@
               "content": "Paul carries everything on his back for 2,650 miles. Buy him a meal, a pair of boots, or a rest day. These go directly to Paul — keeping him on the trail so he can walk for the cause.",
               "lineHeight": 1.6,
               "fontFamily": "Source Serif 4",
-              "fontSize": 16
+              "fontSize": 16,
+              "fontWeight": "normal"
             }
           ]
         },
@@ -3538,6 +3539,7 @@
               "content": "Two causes. One journey. They never mix.",
               "fontFamily": "Source Serif 4",
               "fontSize": 13,
+              "fontWeight": "normal",
               "fontStyle": "italic"
             }
           ]
@@ -3654,6 +3656,50 @@
                           "letterSpacing": 2
                         }
                       ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bJ2mM",
+                      "name": "Progress Bar Meal",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "pBGpa",
+                          "name": "barBg",
+                          "width": "fill_container",
+                          "height": 3,
+                          "fill": "#E8E5E0",
+                          "cornerRadius": 2,
+                          "layout": "none",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "kegN5",
+                              "x": 0,
+                              "y": 0,
+                              "name": "barFill",
+                              "width": 100,
+                              "height": 3,
+                              "fill": "$forest-green",
+                              "cornerRadius": 2
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "KIAKb",
+                          "name": "bar1label",
+                          "fill": "$text-muted",
+                          "content": "12 of 450 gifted",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 11,
+                          "fontWeight": "500",
+                          "letterSpacing": 0.5
+                        }
+                      ]
                     }
                   ]
                 },
@@ -3736,6 +3782,50 @@
                           "letterSpacing": 2
                         }
                       ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Axw7V",
+                      "name": "Progress Bar Socks",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "sODiI",
+                          "name": "barBg",
+                          "width": "fill_container",
+                          "height": 3,
+                          "fill": "#E8E5E0",
+                          "cornerRadius": 2,
+                          "layout": "none",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "m3I6U",
+                              "x": 0,
+                              "y": 0,
+                              "name": "barFill",
+                              "width": 65,
+                              "height": 3,
+                              "fill": "$forest-green",
+                              "cornerRadius": 2
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "yBWeh",
+                          "name": "bar2label",
+                          "fill": "$text-muted",
+                          "content": "5 of 25 gifted",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 11,
+                          "fontWeight": "500",
+                          "letterSpacing": 0.5
+                        }
+                      ]
                     }
                   ]
                 },
@@ -3816,6 +3906,50 @@
                           "fontSize": 12,
                           "fontWeight": "700",
                           "letterSpacing": 2
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "b9gEs",
+                      "name": "Progress Bar Camp",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "yzrH7",
+                          "name": "barBg",
+                          "width": "fill_container",
+                          "height": 3,
+                          "fill": "#E8E5E0",
+                          "cornerRadius": 2,
+                          "layout": "none",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "iUAiT",
+                              "x": 0,
+                              "y": 0,
+                              "name": "barFill",
+                              "width": 50,
+                              "height": 3,
+                              "fill": "$forest-green",
+                              "cornerRadius": 2
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "xWtY2",
+                          "name": "bar3label",
+                          "fill": "$text-muted",
+                          "content": "18 of 120 gifted",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 11,
+                          "fontWeight": "500",
+                          "letterSpacing": 0.5
                         }
                       ]
                     }
@@ -3909,6 +4043,50 @@
                           "letterSpacing": 2
                         }
                       ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "SBddl",
+                      "name": "Progress Bar Resupply",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "3v3Rg",
+                          "name": "barBg",
+                          "width": "fill_container",
+                          "height": 3,
+                          "fill": "#E8E5E0",
+                          "cornerRadius": 2,
+                          "layout": "none",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "CiMLe",
+                              "x": 0,
+                              "y": 0,
+                              "name": "barFill",
+                              "width": 80,
+                              "height": 3,
+                              "fill": "$forest-green",
+                              "cornerRadius": 2
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "gZKkY",
+                          "name": "lbl4",
+                          "fill": "$text-muted",
+                          "content": "8 of 30 gifted",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 11,
+                          "fontWeight": "500",
+                          "letterSpacing": 0.5
+                        }
+                      ]
                     }
                   ]
                 },
@@ -3989,6 +4167,50 @@
                           "fontSize": 12,
                           "fontWeight": "700",
                           "letterSpacing": 2
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "GuAfQ",
+                      "name": "Progress Bar Rest Day",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "dMjmc",
+                          "name": "barBg",
+                          "width": "fill_container",
+                          "height": 3,
+                          "fill": "#E8E5E0",
+                          "cornerRadius": 2,
+                          "layout": "none",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "zMnXf",
+                              "x": 0,
+                              "y": 0,
+                              "name": "barFill",
+                              "width": 45,
+                              "height": 3,
+                              "fill": "$forest-green",
+                              "cornerRadius": 2
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "L4Bde",
+                          "name": "lbl5",
+                          "fill": "$text-muted",
+                          "content": "2 of 15 gifted",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 11,
+                          "fontWeight": "500",
+                          "letterSpacing": 0.5
                         }
                       ]
                     }
@@ -4083,6 +4305,50 @@
                           "fontSize": 13,
                           "fontWeight": "700",
                           "letterSpacing": 2
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "xCiDK",
+                      "name": "Progress Bar Boots",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "lYAYe",
+                          "name": "barBg",
+                          "width": "fill_container",
+                          "height": 3,
+                          "fill": "#E8E5E0",
+                          "cornerRadius": 2,
+                          "layout": "none",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "xX3iz",
+                              "x": 0,
+                              "y": 0,
+                              "name": "barFill",
+                              "width": 60,
+                              "height": 3,
+                              "fill": "$forest-green",
+                              "cornerRadius": 2
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "x5B52",
+                          "name": "lbl6",
+                          "fill": "$text-muted",
+                          "content": "1 of 5 gifted",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 11,
+                          "fontWeight": "500",
+                          "letterSpacing": 0.5
                         }
                       ]
                     }
@@ -13151,6 +13417,552 @@
         },
         {
           "type": "frame",
+          "id": "Sgtxo",
+          "name": "Trail Gifts Sidebar (Supporters Mode)",
+          "width": 400,
+          "fill": "$bg-white",
+          "stroke": {
+            "thickness": {
+              "right": 1
+            },
+            "fill": "$border-subtle"
+          },
+          "layout": "vertical",
+          "children": [
+            {
+              "type": "frame",
+              "id": "y2oPD",
+              "name": "gsHeader",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 12,
+              "padding": [
+                24,
+                24,
+                16,
+                24
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Z58Is",
+                  "name": "gsLabel",
+                  "fill": "$forest-green",
+                  "content": "TRAIL GIFTS",
+                  "fontFamily": "Barlow Semi Condensed",
+                  "fontSize": 12,
+                  "fontWeight": "700",
+                  "letterSpacing": 3
+                },
+                {
+                  "type": "text",
+                  "id": "nYtrx",
+                  "name": "gsTitle",
+                  "fill": "$text-primary",
+                  "content": "Gifts on the Trail",
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 28,
+                  "fontWeight": "600",
+                  "letterSpacing": -0.5
+                },
+                {
+                  "type": "text",
+                  "id": "GiLyG",
+                  "name": "gsDesc",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Every icon on the map is a real gift — meals, boots, camp nights — keeping Paul moving forward. Green segments show supported trail sections.",
+                  "lineHeight": 1.6,
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "vFyFk",
+              "name": "Trail Coverage",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 8,
+              "padding": [
+                0,
+                24,
+                16,
+                24
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "ItsAY",
+                  "name": "coverageRow",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "xfQ0t",
+                      "name": "coverageLabel",
+                      "fill": "$text-muted",
+                      "content": "TRAIL COVERAGE",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 10,
+                      "fontWeight": "700",
+                      "letterSpacing": 2
+                    },
+                    {
+                      "type": "text",
+                      "id": "WXPGG",
+                      "name": "coveragePct",
+                      "fill": "$forest-green",
+                      "content": "13%",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 12,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "1MuM1",
+                  "name": "coverageBarBg",
+                  "width": "fill_container",
+                  "height": 6,
+                  "fill": "$border-subtle",
+                  "cornerRadius": 3,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "VN3Wa",
+                      "x": 0,
+                      "y": 0,
+                      "name": "coverageBarFill",
+                      "width": 46,
+                      "height": 6,
+                      "fill": "$forest-green",
+                      "cornerRadius": 3
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "iDuPF",
+                  "name": "coverageNote",
+                  "fill": "$text-muted",
+                  "content": "Segments with gifts light up green on the map",
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "NhOiX",
+              "name": "Gift Stats",
+              "width": "fill_container",
+              "gap": 16,
+              "padding": [
+                0,
+                24,
+                16,
+                24
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "khbJn",
+                  "name": "statGifts",
+                  "width": "fill_container",
+                  "fill": "$forest-green-light",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Osj9F",
+                      "name": "statGiftsVal",
+                      "fill": "$forest-green",
+                      "content": "8",
+                      "lineHeight": 1,
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 28,
+                      "fontWeight": "600",
+                      "letterSpacing": -0.5
+                    },
+                    {
+                      "type": "text",
+                      "id": "B92kg",
+                      "name": "statGiftsLbl",
+                      "fill": "$text-muted",
+                      "content": "GIFTS",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 10,
+                      "fontWeight": "700",
+                      "letterSpacing": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "sd8dl",
+                  "name": "statTotal",
+                  "width": "fill_container",
+                  "fill": "$forest-green-light",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "XOCtx",
+                      "name": "statTotalVal",
+                      "fill": "$forest-green",
+                      "content": "$435",
+                      "lineHeight": 1,
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 28,
+                      "fontWeight": "600",
+                      "letterSpacing": -0.5
+                    },
+                    {
+                      "type": "text",
+                      "id": "4bA3a",
+                      "name": "statTotalLbl",
+                      "fill": "$text-muted",
+                      "content": "TOTAL",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 10,
+                      "fontWeight": "700",
+                      "letterSpacing": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "b9esy",
+              "name": "divider",
+              "width": "fill_container",
+              "height": 1,
+              "fill": "$border-subtle"
+            },
+            {
+              "type": "frame",
+              "id": "o7Qkb",
+              "name": "Recent Gifts List",
+              "width": "fill_container",
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "oSEmw",
+                  "name": "listLabelWrap",
+                  "width": "fill_container",
+                  "padding": [
+                    12,
+                    24
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "1LUIM",
+                      "name": "giftsListLabelT",
+                      "fill": "$text-muted",
+                      "content": "RECENT GIFTS",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 10,
+                      "fontWeight": "700",
+                      "letterSpacing": 2
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "bTVo2",
+                  "name": "Gift Item 1",
+                  "width": "fill_container",
+                  "stroke": {
+                    "thickness": {
+                      "bottom": 1
+                    },
+                    "fill": "$border-subtle"
+                  },
+                  "gap": 12,
+                  "padding": [
+                    10,
+                    24
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "dikhr",
+                      "name": "gift1emoji",
+                      "content": "🍽️",
+                      "fontFamily": "Inter",
+                      "fontSize": 18,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "yYLtd",
+                      "name": "gift1info",
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "K6F3S",
+                          "name": "gift1name",
+                          "fill": "$text-primary",
+                          "content": "Sarah M. — $15",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "UPbSP",
+                          "name": "gift1detail",
+                          "fill": "$text-muted",
+                          "content": "A Trail Meal · Mile 100",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "6uOtt",
+                  "name": "Gift Item 2",
+                  "width": "fill_container",
+                  "stroke": {
+                    "thickness": {
+                      "bottom": 1
+                    },
+                    "fill": "$border-subtle"
+                  },
+                  "gap": 12,
+                  "padding": [
+                    10,
+                    24
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "NovtN",
+                      "name": "gift2emoji",
+                      "content": "🥾",
+                      "fontFamily": "Inter",
+                      "fontSize": 18,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "1nDRU",
+                      "name": "gift2info",
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "NMjQg",
+                          "name": "gift2name",
+                          "fill": "$text-primary",
+                          "content": "Robert W. — $150",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "pxzXu",
+                          "name": "gift2detail",
+                          "fill": "$text-muted",
+                          "content": "Trail Boots · Mile 120",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "zcoVf",
+                  "name": "Gift Item 3",
+                  "width": "fill_container",
+                  "stroke": {
+                    "thickness": {
+                      "bottom": 1
+                    },
+                    "fill": "$border-subtle"
+                  },
+                  "gap": 12,
+                  "padding": [
+                    10,
+                    24
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "gJThq",
+                      "name": "gift3emoji",
+                      "content": "⛺",
+                      "fontFamily": "Inter",
+                      "fontSize": 18,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "BsQxQ",
+                      "name": "gift3info",
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "BNPE1",
+                          "name": "gift3name",
+                          "fill": "$text-primary",
+                          "content": "Anonymous — $25",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Yx5OC",
+                          "name": "gift3detail",
+                          "fill": "$text-muted",
+                          "content": "A Night at Camp · Mile 180",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "teuNP",
+                  "name": "Gift Item 4",
+                  "width": "fill_container",
+                  "stroke": {
+                    "thickness": {
+                      "bottom": 1
+                    },
+                    "fill": "$border-subtle"
+                  },
+                  "gap": 12,
+                  "padding": [
+                    10,
+                    24
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "h2VMx",
+                      "name": "gift4emoji",
+                      "content": "📦",
+                      "fontFamily": "Inter",
+                      "fontSize": 18,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "WJ4aX",
+                      "name": "gift4info",
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "izHBg",
+                          "name": "gift4name",
+                          "fill": "$text-primary",
+                          "content": "James K. — $75",
+                          "fontFamily": "Source Serif 4",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "bPFOu",
+                          "name": "gift4detail",
+                          "fill": "$text-muted",
+                          "content": "A Resupply Box · Mile 280",
+                          "fontFamily": "Barlow Semi Condensed",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "ASUkU",
+              "name": "CTA Wrap",
+              "width": "fill_container",
+              "padding": [
+                20,
+                24
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "coDpl",
+                  "name": "Support CTA",
+                  "width": "fill_container",
+                  "height": 44,
+                  "fill": "$forest-green",
+                  "gap": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "IK5BQ",
+                      "name": "ctaIcon",
+                      "width": 14,
+                      "height": 14,
+                      "iconFontName": "gift",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-white"
+                    },
+                    {
+                      "type": "text",
+                      "id": "PxhjD",
+                      "name": "ctaText",
+                      "fill": "$text-white",
+                      "content": "SUPPORT PAUL ON THE TRAIL",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 12,
+                      "fontWeight": "700",
+                      "letterSpacing": 2
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
           "id": "IOfMf",
           "name": "Map Main",
           "width": "fill_container",
@@ -13907,6 +14719,618 @@
                   "fontWeight": "600"
                 }
               ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "pdk3l",
+          "name": "By the Numbers Section",
+          "width": "fill_container",
+          "fill": "$bg-warm",
+          "layout": "vertical",
+          "gap": 48,
+          "padding": [
+            64,
+            80
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "Oc3MJ",
+              "name": "Section Header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "lpGj9",
+                  "name": "Section Label",
+                  "fill": "$burnt-orange",
+                  "content": "BY THE NUMBERS",
+                  "fontFamily": "Barlow Semi Condensed",
+                  "fontSize": 10,
+                  "fontWeight": "700",
+                  "letterSpacing": 3
+                },
+                {
+                  "type": "text",
+                  "id": "K1qEc",
+                  "name": "Section Heading",
+                  "fill": "$text-primary",
+                  "content": "What 2,650 Miles Looks Like",
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 36,
+                  "fontWeight": "600",
+                  "letterSpacing": -1
+                },
+                {
+                  "type": "text",
+                  "id": "89Tte",
+                  "name": "Section Description",
+                  "fill": "$text-secondary",
+                  "content": "Real-time expedition statistics calculated from Paul's GPS position on the Pacific Crest Trail.",
+                  "textAlign": "center",
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "paJtg",
+              "name": "Stats Row 1",
+              "width": "fill_container",
+              "gap": 24,
+              "justifyContent": "space_between",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "HFzPy",
+                  "name": "Stat Card - Steps",
+                  "width": "fill_container",
+                  "fill": "$bg-white",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$border-subtle"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    32,
+                    24
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Kk3lK",
+                      "name": "Icon Placeholder",
+                      "content": "👣",
+                      "fontFamily": "Inter",
+                      "fontSize": 24,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "u0XcW",
+                      "name": "Stat Value",
+                      "fill": "$burnt-orange",
+                      "content": "5,830,000",
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 30,
+                      "fontWeight": "600",
+                      "letterSpacing": -1
+                    },
+                    {
+                      "type": "text",
+                      "id": "UVFsn",
+                      "name": "Stat Label",
+                      "fill": "$text-muted",
+                      "content": "STEPS TAKEN",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 9,
+                      "fontWeight": "700",
+                      "letterSpacing": 3
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "dJePx",
+                  "name": "Stat Card - Calories",
+                  "width": "fill_container",
+                  "fill": "$bg-white",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$border-subtle"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    32,
+                    24
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "oFEH6",
+                      "name": "Icon Placeholder",
+                      "content": "🔥",
+                      "fontFamily": "Inter",
+                      "fontSize": 24,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "wCqbf",
+                      "name": "Stat Value",
+                      "fill": "$forest-green",
+                      "content": "318,000",
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 30,
+                      "fontWeight": "600",
+                      "letterSpacing": -1
+                    },
+                    {
+                      "type": "text",
+                      "id": "xj5dK",
+                      "name": "Stat Label",
+                      "fill": "$text-muted",
+                      "content": "CALORIES BURNED",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 9,
+                      "fontWeight": "700",
+                      "letterSpacing": 3
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "U0caG",
+                  "name": "Stat Card - Hours Walked",
+                  "width": "fill_container",
+                  "fill": "$bg-white",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$border-subtle"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    32,
+                    24
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "G8WAn",
+                      "name": "Icon Placeholder",
+                      "content": "⏱️",
+                      "fontFamily": "Inter",
+                      "fontSize": 24,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "6JhWP",
+                      "name": "Stat Value",
+                      "fill": "$burnt-orange",
+                      "content": "946",
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 30,
+                      "fontWeight": "600",
+                      "letterSpacing": -1
+                    },
+                    {
+                      "type": "text",
+                      "id": "Lp5nO",
+                      "name": "Stat Label",
+                      "fill": "$text-muted",
+                      "content": "HOURS ON TRAIL",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 9,
+                      "fontWeight": "700",
+                      "letterSpacing": 3
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "heZpZ",
+                  "name": "Stat Card - Miles Left",
+                  "width": "fill_container",
+                  "fill": "$bg-white",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$border-subtle"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    32,
+                    24
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "pvJaW",
+                      "name": "Icon Placeholder",
+                      "content": "🧭",
+                      "fontFamily": "Inter",
+                      "fontSize": 24,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "dXi5D",
+                      "name": "Stat Value",
+                      "fill": "$forest-green",
+                      "content": "1,325",
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 30,
+                      "fontWeight": "600",
+                      "letterSpacing": -1
+                    },
+                    {
+                      "type": "text",
+                      "id": "s0Hzw",
+                      "name": "Stat Label",
+                      "fill": "$text-muted",
+                      "content": "MILES REMAINING",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 9,
+                      "fontWeight": "700",
+                      "letterSpacing": 3
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "uZnjv",
+                  "name": "Stat Card - Avg Daily",
+                  "width": "fill_container",
+                  "fill": "$bg-white",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$border-subtle"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    32,
+                    24
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "2yL8Y",
+                      "name": "Icon Placeholder",
+                      "content": "📊",
+                      "fontFamily": "Inter",
+                      "fontSize": 24,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "y9HrH",
+                      "name": "Stat Value",
+                      "fill": "$burnt-orange",
+                      "content": "22.1",
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 30,
+                      "fontWeight": "600",
+                      "letterSpacing": -1
+                    },
+                    {
+                      "type": "text",
+                      "id": "128OG",
+                      "name": "Stat Label",
+                      "fill": "$text-muted",
+                      "content": "AVG MILES / DAY",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 9,
+                      "fontWeight": "700",
+                      "letterSpacing": 3
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "ZJ1rj",
+              "name": "Stats Row 2",
+              "width": "fill_container",
+              "gap": 24,
+              "justifyContent": "space_between",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "cL6Ux",
+                  "name": "Stat Card - Days Left",
+                  "width": "fill_container",
+                  "fill": "$bg-white",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$border-subtle"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    32,
+                    24
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "hrpgo",
+                      "name": "Icon Placeholder",
+                      "content": "📅",
+                      "fontFamily": "Inter",
+                      "fontSize": 24,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "mIBO5",
+                      "name": "Stat Value",
+                      "fill": "$forest-green",
+                      "content": "60",
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 30,
+                      "fontWeight": "600",
+                      "letterSpacing": -1
+                    },
+                    {
+                      "type": "text",
+                      "id": "4iiOA",
+                      "name": "Stat Label",
+                      "fill": "$text-muted",
+                      "content": "EST. DAYS LEFT",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 9,
+                      "fontWeight": "700",
+                      "letterSpacing": 3
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "S8CHt",
+                  "name": "Stat Card - Marathons",
+                  "width": "fill_container",
+                  "fill": "$bg-white",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$border-subtle"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    32,
+                    24
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "xLCbj",
+                      "name": "Icon Placeholder",
+                      "content": "🏃",
+                      "fontFamily": "Inter",
+                      "fontSize": 24,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "X7coY",
+                      "name": "Stat Value",
+                      "fill": "$burnt-orange",
+                      "content": "50.6",
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 30,
+                      "fontWeight": "600",
+                      "letterSpacing": -1
+                    },
+                    {
+                      "type": "text",
+                      "id": "TaHMC",
+                      "name": "Stat Label",
+                      "fill": "$text-muted",
+                      "content": "MARATHONS EQUIV.",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 9,
+                      "fontWeight": "700",
+                      "letterSpacing": 3
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "b0u7m",
+                  "name": "Stat Card - Elevation",
+                  "width": "fill_container",
+                  "fill": "$bg-white",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$border-subtle"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    32,
+                    24
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "exlSE",
+                      "name": "Icon Placeholder",
+                      "content": "⛰️",
+                      "fontFamily": "Inter",
+                      "fontSize": 24,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "j3pF3",
+                      "name": "Stat Value",
+                      "fill": "$forest-green",
+                      "content": "13,100",
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 30,
+                      "fontWeight": "600",
+                      "letterSpacing": -1
+                    },
+                    {
+                      "type": "text",
+                      "id": "1zMGg",
+                      "name": "Stat Label",
+                      "fill": "$text-muted",
+                      "content": "HIGHEST POINT (FT)",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 9,
+                      "fontWeight": "700",
+                      "letterSpacing": 3
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "TJVH8",
+                  "name": "Stat Card - States",
+                  "width": "fill_container",
+                  "fill": "$bg-white",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$border-subtle"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    32,
+                    24
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "DF0ew",
+                      "name": "Icon Placeholder",
+                      "content": "🗺️",
+                      "fontFamily": "Inter",
+                      "fontSize": 24,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "zM7Kr",
+                      "name": "Stat Value",
+                      "fill": "$burnt-orange",
+                      "content": "3",
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 30,
+                      "fontWeight": "600",
+                      "letterSpacing": -1
+                    },
+                    {
+                      "type": "text",
+                      "id": "8ezeV",
+                      "name": "Stat Label",
+                      "fill": "$text-muted",
+                      "content": "STATES CROSSED",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 9,
+                      "fontWeight": "700",
+                      "letterSpacing": 3
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "eyMjq",
+                  "name": "Stat Card - Current Elev",
+                  "width": "fill_container",
+                  "fill": "$bg-white",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$border-subtle"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    32,
+                    24
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "X3Jov",
+                      "name": "Icon Placeholder",
+                      "content": "📍",
+                      "fontFamily": "Inter",
+                      "fontSize": 24,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "4wQgV",
+                      "name": "Stat Value",
+                      "fill": "$forest-green",
+                      "content": "6,150",
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 30,
+                      "fontWeight": "600",
+                      "letterSpacing": -1
+                    },
+                    {
+                      "type": "text",
+                      "id": "P7vyB",
+                      "name": "Stat Label",
+                      "fill": "$text-muted",
+                      "content": "CURRENT ELEV. (FT)",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 9,
+                      "fontWeight": "700",
+                      "letterSpacing": 3
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "MDZWs",
+              "name": "Disclaimer Note",
+              "fill": "$text-muted",
+              "content": "Steps, calories, and hours are estimates based on trail distance. Actual values may vary based on terrain, pace, and conditions.",
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 12,
+              "fontWeight": "normal",
+              "fontStyle": "italic"
             }
           ]
         },
@@ -23001,6 +24425,278 @@
         },
         {
           "type": "frame",
+          "id": "vmuVQ",
+          "name": "Leave Your Mark Section",
+          "width": "fill_container",
+          "fill": "$bg-white",
+          "stroke": {
+            "thickness": {
+              "top": 1
+            },
+            "fill": "$border-subtle"
+          },
+          "layout": "vertical",
+          "gap": 24,
+          "padding": [
+            48,
+            120
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "NRnAl",
+              "name": "Media Header",
+              "width": 520,
+              "layout": "vertical",
+              "gap": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "7q0lK",
+                  "name": "camIcon",
+                  "width": 28,
+                  "height": 28,
+                  "iconFontName": "camera",
+                  "iconFontFamily": "lucide",
+                  "fill": "$forest-green"
+                },
+                {
+                  "type": "text",
+                  "id": "owAR4",
+                  "name": "camLabel",
+                  "fill": "$forest-green",
+                  "content": "LEAVE YOUR MARK ON THE TRAIL",
+                  "fontFamily": "Barlow Semi Condensed",
+                  "fontSize": 11,
+                  "fontWeight": "700",
+                  "letterSpacing": 3
+                },
+                {
+                  "type": "text",
+                  "id": "vtH5j",
+                  "name": "camDesc",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": 520,
+                  "content": "Share a photo or video message — it'll appear on Paul's trail map for everyone to see. Completely optional!",
+                  "lineHeight": 1.6,
+                  "textAlign": "center",
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "w2ny9",
+              "name": "Upload Form",
+              "width": 480,
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "sbsgR",
+                  "name": "photoLabel",
+                  "fill": "$text-muted",
+                  "content": "PHOTO (OPTIONAL)",
+                  "fontFamily": "Barlow Semi Condensed",
+                  "fontSize": 10,
+                  "fontWeight": "700",
+                  "letterSpacing": 2
+                },
+                {
+                  "type": "frame",
+                  "id": "yvE9i",
+                  "name": "Photo Dropzone",
+                  "width": "fill_container",
+                  "height": 120,
+                  "fill": "$bg-card",
+                  "stroke": {
+                    "thickness": 2,
+                    "fill": "$border-subtle"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "ZYsOq",
+                      "name": "uploadIcon",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "upload",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "yaXmG",
+                      "name": "uploadText",
+                      "fill": "$text-muted",
+                      "content": "Click to upload a photo (max 5MB)",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "z0dVa",
+                  "name": "ytLabel",
+                  "fill": "$text-muted",
+                  "content": "YOUTUBE VIDEO LINK (OPTIONAL)",
+                  "fontFamily": "Barlow Semi Condensed",
+                  "fontSize": 10,
+                  "fontWeight": "700",
+                  "letterSpacing": 2
+                },
+                {
+                  "type": "frame",
+                  "id": "uLkFA",
+                  "name": "YouTube Input",
+                  "width": "fill_container",
+                  "height": 44,
+                  "fill": "$bg-card",
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$border-subtle"
+                  },
+                  "gap": 10,
+                  "padding": [
+                    0,
+                    14
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "8w5KC",
+                      "name": "ytIcon",
+                      "width": 16,
+                      "height": 16,
+                      "iconFontName": "youtube",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "HOMUB",
+                      "name": "ytPlaceholder",
+                      "fill": "$text-muted",
+                      "content": "https://youtube.com/watch?v=...",
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "3aA5x",
+                  "name": "Consent Checkbox",
+                  "width": "fill_container",
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "XaEAB",
+                      "name": "checkbox",
+                      "width": 16,
+                      "height": 16,
+                      "fill": "$forest-green",
+                      "cornerRadius": 2,
+                      "stroke": {
+                        "thickness": 2,
+                        "fill": "$forest-green"
+                      },
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "t2ckV",
+                          "name": "checkMark",
+                          "width": 12,
+                          "height": 12,
+                          "iconFontName": "check",
+                          "iconFontFamily": "lucide",
+                          "fill": "#FFFFFF"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "ACnW4",
+                      "name": "consentText",
+                      "fill": "$text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": 440,
+                      "content": "I agree to display my photo, video, and message on the public trail map. All submissions are reviewed before appearing.",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "m5s5i",
+                  "name": "Submit Button",
+                  "width": "fill_container",
+                  "height": 48,
+                  "fill": "$forest-green",
+                  "gap": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "r2rpx",
+                      "name": "submitIcon",
+                      "width": 16,
+                      "height": 16,
+                      "iconFontName": "upload",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-white"
+                    },
+                    {
+                      "type": "text",
+                      "id": "0TXa1",
+                      "name": "submitText",
+                      "fill": "$text-white",
+                      "content": "SHARE ON THE TRAIL MAP",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 13,
+                      "fontWeight": "700",
+                      "letterSpacing": 2
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "sl7VP",
+                  "name": "reviewNote",
+                  "fill": "$text-muted",
+                  "content": "Your photo will be reviewed before appearing on the map.",
+                  "textAlign": "center",
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
           "id": "mc5B8",
           "name": "What Your Gift Covers",
           "width": "fill_container",
@@ -26205,7 +27901,8 @@
               "content": "Set a pledge per mile. Pay nothing now. When Paul reaches Canada, you'll be invited to donate your total — 100% goes to cancer foundations.",
               "lineHeight": 1.6,
               "fontFamily": "Source Serif 4",
-              "fontSize": 16
+              "fontSize": 16,
+              "fontWeight": "normal"
             }
           ]
         },
@@ -26614,6 +28311,7 @@
                           "content": "your@email.com",
                           "fontFamily": "Source Serif 4",
                           "fontSize": 15,
+                          "fontWeight": "normal",
                           "fontStyle": "italic"
                         }
                       ]
@@ -26672,6 +28370,7 @@
                       "lineHeight": 1.5,
                       "fontFamily": "Source Serif 4",
                       "fontSize": 13,
+                      "fontWeight": "normal",
                       "fontStyle": "italic"
                     }
                   ]
@@ -26718,6 +28417,7 @@
                   "content": "if Paul completes all 2,650 miles",
                   "fontFamily": "Source Serif 4",
                   "fontSize": 14,
+                  "fontWeight": "normal",
                   "fontStyle": "italic"
                 },
                 {
@@ -26986,7 +28686,8 @@
                       "content": "Paul receives $0. Every cent goes directly to cancer research and patient support.",
                       "lineHeight": 1.5,
                       "fontFamily": "Source Serif 4",
-                      "fontSize": 13
+                      "fontSize": 13,
+                      "fontWeight": "normal"
                     }
                   ]
                 }
@@ -27088,7 +28789,8 @@
                       "content": "Choose how much to pledge per mile. No account needed — just your email so we can reach you.",
                       "lineHeight": 1.6,
                       "fontFamily": "Source Serif 4",
-                      "fontSize": 14
+                      "fontSize": 14,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -27145,7 +28847,8 @@
                       "content": "Follow his journey in real-time on the trail map. 2,650 miles from Mexico to Canada for cancer awareness.",
                       "lineHeight": 1.6,
                       "fontFamily": "Source Serif 4",
-                      "fontSize": 14
+                      "fontSize": 14,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -27202,7 +28905,8 @@
                       "content": "When Paul reaches Canada, you'll get a video + email inviting you to donate your pledge — 50/50 to two cancer foundations.",
                       "lineHeight": 1.6,
                       "fontFamily": "Source Serif 4",
-                      "fontSize": 14
+                      "fontSize": 14,
+                      "fontWeight": "normal"
                     }
                   ]
                 }
@@ -27651,7 +29355,8 @@
               "content": "Enter your city to see how far Paul is from you right now — and get notified when he's near your area.",
               "lineHeight": 1.6,
               "fontFamily": "Source Serif 4",
-              "fontSize": 14
+              "fontSize": 14,
+              "fontWeight": "normal"
             },
             {
               "type": "frame",
@@ -27689,6 +29394,7 @@
                   "content": "Enter your city (e.g., Portland, OR)",
                   "fontFamily": "Source Serif 4",
                   "fontSize": 14,
+                  "fontWeight": "normal",
                   "fontStyle": "italic"
                 }
               ]
@@ -28582,7 +30288,8 @@
               "fill": "$text-secondary",
               "content": "miles away",
               "fontFamily": "Source Serif 4",
-              "fontSize": 18
+              "fontSize": 18,
+              "fontWeight": "normal"
             }
           ]
         },
@@ -28611,7 +30318,8 @@
               "fill": "$text-secondary",
               "content": "Your location: Portland, OR",
               "fontFamily": "Source Serif 4",
-              "fontSize": 14
+              "fontSize": 14,
+              "fontWeight": "normal"
             },
             {
               "type": "text",
@@ -28754,7 +30462,8 @@
               "fill": "$text-secondary",
               "content": "miles away",
               "fontFamily": "Source Serif 4",
-              "fontSize": 20
+              "fontSize": 20,
+              "fontWeight": "normal"
             }
           ]
         },
@@ -28768,7 +30477,8 @@
           "content": "Paul is hiking near your area right now! Want to walk a few miles with him? Reach out and join Paul on the trail.",
           "lineHeight": 1.6,
           "fontFamily": "Source Serif 4",
-          "fontSize": 15
+          "fontSize": 15,
+          "fontWeight": "normal"
         },
         {
           "type": "frame",
@@ -28829,7 +30539,8 @@
               "fill": "$text-secondary",
               "content": "Your location: San Diego, CA",
               "fontFamily": "Source Serif 4",
-              "fontSize": 13
+              "fontSize": 13,
+              "fontWeight": "normal"
             },
             {
               "type": "text",
@@ -32468,7 +34179,8 @@
               "content": "Mile 1,694 of 2,650 — Day 87 on the Pacific Crest Trail",
               "textAlign": "center",
               "fontFamily": "Source Serif 4",
-              "fontSize": 15
+              "fontSize": 15,
+              "fontWeight": "normal"
             },
             {
               "type": "rectangle",
@@ -32524,7 +34236,8 @@
               "content": "$0.25/mile × 1,694 miles walked",
               "textAlign": "center",
               "fontFamily": "Source Serif 4",
-              "fontSize": 14
+              "fontSize": 14,
+              "fontWeight": "normal"
             },
             {
               "type": "text",
@@ -32844,6 +34557,7 @@
               "lineHeight": 1.6,
               "fontFamily": "Source Serif 4",
               "fontSize": 15,
+              "fontWeight": "normal",
               "fontStyle": "italic"
             },
             {
@@ -32880,7 +34594,8 @@
               "content": "Follow Paul's journey in real-time",
               "textAlign": "center",
               "fontFamily": "Source Serif 4",
-              "fontSize": 15
+              "fontSize": 15,
+              "fontWeight": "normal"
             },
             {
               "type": "frame",
@@ -32955,7 +34670,8 @@
               "lineHeight": 1.6,
               "textAlign": "center",
               "fontFamily": "Source Serif 4",
-              "fontSize": 12
+              "fontSize": 12,
+              "fontWeight": "normal"
             },
             {
               "type": "text",
@@ -33091,7 +34807,8 @@
               "lineHeight": 1.6,
               "textAlign": "center",
               "fontFamily": "Source Serif 4",
-              "fontSize": 14
+              "fontSize": 14,
+              "fontWeight": "normal"
             },
             {
               "type": "rectangle",
@@ -33147,7 +34864,8 @@
               "content": "$0.25/mile × 1,000 miles = $250.00 pledged so far",
               "textAlign": "center",
               "fontFamily": "Source Serif 4",
-              "fontSize": 14
+              "fontSize": 14,
+              "fontWeight": "normal"
             },
             {
               "type": "text",
@@ -33485,7 +35203,8 @@
               "lineHeight": 1.6,
               "textAlign": "center",
               "fontFamily": "Source Serif 4",
-              "fontSize": 11
+              "fontSize": 11,
+              "fontWeight": "normal"
             }
           ]
         }
@@ -33608,7 +35327,8 @@
               "lineHeight": 1.6,
               "textAlign": "center",
               "fontFamily": "Source Serif 4",
-              "fontSize": 15
+              "fontSize": 15,
+              "fontWeight": "normal"
             },
             {
               "type": "rectangle",
@@ -33676,7 +35396,8 @@
               "fill": "$text-secondary",
               "content": "$0.25/mile × 2,650 miles",
               "fontFamily": "Source Serif 4",
-              "fontSize": 15
+              "fontSize": 15,
+              "fontWeight": "normal"
             },
             {
               "type": "text",
@@ -33689,7 +35410,8 @@
               "lineHeight": 1.6,
               "textAlign": "center",
               "fontFamily": "Source Serif 4",
-              "fontSize": 13
+              "fontSize": 13,
+              "fontWeight": "normal"
             }
           ]
         },
@@ -33909,7 +35631,8 @@
               "content": "After you've donated to both foundations:",
               "textAlign": "center",
               "fontFamily": "Source Serif 4",
-              "fontSize": 14
+              "fontSize": 14,
+              "fontWeight": "normal"
             },
             {
               "type": "frame",
@@ -33998,7 +35721,8 @@
               "lineHeight": 1.6,
               "textAlign": "center",
               "fontFamily": "Source Serif 4",
-              "fontSize": 13
+              "fontSize": 13,
+              "fontWeight": "normal"
             },
             {
               "type": "text",
@@ -34048,7 +35772,8 @@
               "lineHeight": 1.6,
               "textAlign": "center",
               "fontFamily": "Source Serif 4",
-              "fontSize": 12
+              "fontSize": 12,
+              "fontWeight": "normal"
             },
             {
               "type": "text",
@@ -34478,11 +36203,11 @@
     {
       "type": "frame",
       "id": "iIMSp",
-      "x": 1800,
-      "y": 21004,
+      "x": 0,
+      "y": 24307,
       "name": "Engagement Audit — V2 Gaps",
       "width": 1440,
-      "height": 3200,
+      "height": 4771,
       "fill": "#1C1F1A",
       "layout": "vertical",
       "gap": 48,
@@ -34608,8 +36333,8 @@
               "type": "text",
               "id": "RCp3H",
               "name": "g6badge",
-              "fill": "#FF4444",
-              "content": "GAP 6 — CRITICAL",
+              "fill": "#3D7A5A",
+              "content": "GAP 6 — ✅ DONE",
               "fontFamily": "Barlow Semi Condensed",
               "fontSize": 11,
               "fontWeight": "700",
@@ -34620,7 +36345,7 @@
               "id": "aTwdG",
               "name": "g6title",
               "fill": "#FFFFFF",
-              "content": "Unsubscribe & Email Frequency Preferences",
+              "content": "Unsubscribe & Email Frequency Preferences — BUILT",
               "fontFamily": "Source Serif 4",
               "fontSize": 24,
               "fontWeight": "600"
@@ -34658,8 +36383,8 @@
               "type": "text",
               "id": "aGf3u",
               "name": "g7badge",
-              "fill": "#C45C26",
-              "content": "GAP 7 — HIGH PRIORITY",
+              "fill": "#3D7A5A",
+              "content": "GAP 7 — ✅ DONE",
               "fontFamily": "Barlow Semi Condensed",
               "fontSize": 11,
               "fontWeight": "700",
@@ -34670,7 +36395,7 @@
               "id": "Ruw8c",
               "name": "g7title",
               "fill": "#FFFFFF",
-              "content": "Welcome Drip Sequence (Post-Pledge Onboarding)",
+              "content": "Welcome Drip Sequence (Post-Pledge Onboarding) — BUILT",
               "fontFamily": "Source Serif 4",
               "fontSize": 24,
               "fontWeight": "600"
@@ -34708,8 +36433,8 @@
               "type": "text",
               "id": "f5f1z",
               "name": "g8badge",
-              "fill": "#C45C26",
-              "content": "GAP 8 — MEDIUM PRIORITY",
+              "fill": "#3D7A5A",
+              "content": "GAP 8 — ✅ DONE",
               "fontFamily": "Barlow Semi Condensed",
               "fontSize": 11,
               "fontWeight": "700",
@@ -34720,7 +36445,7 @@
               "id": "p0X9q",
               "name": "g8title",
               "fill": "#FFFFFF",
-              "content": "Community Milestone Notifications",
+              "content": "Community Milestone Notifications — BUILT",
               "fontFamily": "Source Serif 4",
               "fontSize": 24,
               "fontWeight": "600"
@@ -34758,8 +36483,8 @@
               "type": "text",
               "id": "2UHW9",
               "name": "g9badge",
-              "fill": "#C45C26",
-              "content": "GAP 9 — MEDIUM PRIORITY",
+              "fill": "#3D7A5A",
+              "content": "GAP 9 — ✅ DONE",
               "fontFamily": "Barlow Semi Condensed",
               "fontSize": 11,
               "fontWeight": "700",
@@ -34770,7 +36495,7 @@
               "id": "DWYp9",
               "name": "g9title",
               "fill": "#FFFFFF",
-              "content": "Honor Confirmation & Thank-You Email",
+              "content": "Honor Confirmation & Thank-You Email — BUILT",
               "fontFamily": "Source Serif 4",
               "fontSize": 24,
               "fontWeight": "600"
@@ -34808,8 +36533,8 @@
               "type": "text",
               "id": "7vuPs",
               "name": "g10badge",
-              "fill": "#8C8A87",
-              "content": "GAP 10 — NICE TO HAVE",
+              "fill": "#3D7A5A",
+              "content": "GAP 10 — ✅ DONE",
               "fontFamily": "Barlow Semi Condensed",
               "fontSize": 11,
               "fontWeight": "700",
@@ -34820,7 +36545,7 @@
               "id": "ac5aC",
               "name": "g10title",
               "fill": "#FFFFFF",
-              "content": "Referral Landing Page & Share Tracking",
+              "content": "Referral Landing Page & Share Tracking — BUILT",
               "fontFamily": "Source Serif 4",
               "fontSize": 24,
               "fontWeight": "600"
@@ -34978,6 +36703,2539 @@
                   ]
                 }
               ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "jrrL4",
+      "x": 2220,
+      "y": 19100,
+      "name": "Email — Welcome Day 1",
+      "width": 600,
+      "fill": "$bg-warm",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "LGG1o",
+          "name": "Header Bar",
+          "width": "fill_container",
+          "fill": "$bg-dark",
+          "padding": [
+            16,
+            32
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "QoJWT",
+              "name": "Logo",
+              "fill": "$text-white",
+              "content": "YESCHAPTER",
+              "fontFamily": "Barlow Semi Condensed",
+              "fontSize": 16,
+              "fontWeight": "700",
+              "letterSpacing": 3
+            },
+            {
+              "type": "text",
+              "id": "D6bUN",
+              "name": "Tagline",
+              "fill": "#FFFFFF66",
+              "content": "WALKING FOR CANCER",
+              "fontFamily": "Barlow Semi Condensed",
+              "fontSize": 10,
+              "fontWeight": "600",
+              "letterSpacing": 2
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "dUdko",
+          "name": "Welcome Hero",
+          "width": "fill_container",
+          "fill": "$forest-green",
+          "layout": "vertical",
+          "gap": 16,
+          "padding": [
+            48,
+            40
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon_font",
+              "id": "VMmDU",
+              "name": "Icon",
+              "width": 48,
+              "height": 48,
+              "iconFontName": "footprints",
+              "iconFontFamily": "lucide",
+              "fill": "$text-white"
+            },
+            {
+              "type": "frame",
+              "id": "B15z1",
+              "name": "Badge",
+              "fill": "#FFFFFF22",
+              "cornerRadius": 2,
+              "padding": [
+                8,
+                20
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "u7uxu",
+                  "name": "e1badgeT",
+                  "fill": "$text-white",
+                  "content": "WELCOME ABOARD",
+                  "fontFamily": "Barlow Semi Condensed",
+                  "fontSize": 13,
+                  "fontWeight": "700",
+                  "letterSpacing": 4
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "ju3Tk",
+              "name": "Title",
+              "fill": "$text-white",
+              "content": "You're Walking\nWith Paul Now.",
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 34,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "rwZka",
+              "name": "Subtitle",
+              "fill": "#FFFFFFCC",
+              "textGrowth": "fixed-width",
+              "width": 480,
+              "content": "Your pledge of $0.25/mile means $662.50 for cancer research\nif Paul completes all 2,650 miles. Here's what happens next.",
+              "lineHeight": 1.6,
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "rectangle",
+              "id": "9iuJm",
+              "name": "Divider",
+              "fill": "#FFFFFF44",
+              "width": 60,
+              "height": 2
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "e8bAJ",
+          "name": "Your Pledge",
+          "width": "fill_container",
+          "fill": "$bg-white",
+          "layout": "vertical",
+          "gap": 8,
+          "padding": [
+            36,
+            40
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "RWlnF",
+              "name": "e1plabel",
+              "fill": "$text-muted",
+              "content": "YOUR PLEDGE",
+              "fontFamily": "Barlow Semi Condensed",
+              "fontSize": 12,
+              "fontWeight": "700",
+              "letterSpacing": 3
+            },
+            {
+              "type": "text",
+              "id": "ekpfS",
+              "name": "e1pamount",
+              "fill": "$burnt-orange",
+              "content": "$662.50",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 52,
+              "fontWeight": "600",
+              "letterSpacing": -1
+            },
+            {
+              "type": "text",
+              "id": "RfKJ6",
+              "name": "e1prate",
+              "fill": "$text-secondary",
+              "content": "$0.25/mile × 2,650 miles",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "pz5ls",
+              "name": "e1pnote",
+              "fill": "$text-muted",
+              "textGrowth": "fixed-width",
+              "width": 460,
+              "content": "This is a pledge — not a charge. At the end of Paul's hike,\nyou'll donate directly to the cancer foundations.",
+              "lineHeight": 1.6,
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 13,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "rectangle",
+          "id": "nnAAa",
+          "name": "Divider",
+          "fill": "$border-subtle",
+          "width": "fill_container",
+          "height": 1
+        },
+        {
+          "type": "frame",
+          "id": "hRjV8",
+          "name": "What To Do Next",
+          "width": "fill_container",
+          "fill": "$bg-white",
+          "layout": "vertical",
+          "gap": 20,
+          "padding": [
+            28,
+            40
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "yPkgE",
+              "name": "e1clabel",
+              "fill": "$text-muted",
+              "content": "WHAT TO DO NEXT",
+              "fontFamily": "Barlow Semi Condensed",
+              "fontSize": 11,
+              "fontWeight": "700",
+              "letterSpacing": 3
+            },
+            {
+              "type": "frame",
+              "id": "FPgXa",
+              "name": "Dashboard Card",
+              "width": "fill_container",
+              "fill": "$forest-green-light",
+              "cornerRadius": 4,
+              "layout": "vertical",
+              "gap": 12,
+              "padding": [
+                20,
+                24
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "s6OrT",
+                  "name": "Card Header",
+                  "width": "fill_container",
+                  "gap": 10,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "jZuZv",
+                      "name": "card1icon",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "layout-dashboard",
+                      "iconFontFamily": "lucide",
+                      "fill": "$forest-green"
+                    },
+                    {
+                      "type": "text",
+                      "id": "txIJl",
+                      "name": "card1title",
+                      "fill": "$text-primary",
+                      "content": "Your Pledge Dashboard",
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "tz7OX",
+                  "name": "card1desc",
+                  "fill": "$text-secondary",
+                  "content": "Bookmark yeschapter.com/my-pledge — enter your email to see\nyour running total, pledge history, and progress.",
+                  "lineHeight": 1.6,
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "wnGKv",
+                  "name": "Card CTA",
+                  "width": "fill_container",
+                  "height": 40,
+                  "fill": "$forest-green",
+                  "gap": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "HAsbH",
+                      "name": "card1btnT",
+                      "fill": "$text-white",
+                      "content": "VIEW MY PLEDGE DASHBOARD",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 12,
+                      "fontWeight": "700",
+                      "letterSpacing": 2
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "0XNrM",
+                      "name": "card1btnI",
+                      "width": 14,
+                      "height": 14,
+                      "iconFontName": "arrow-right",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-white"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "MuxJF",
+              "name": "Trail Map Card",
+              "width": "fill_container",
+              "fill": "$burnt-orange-light",
+              "cornerRadius": 4,
+              "layout": "vertical",
+              "gap": 12,
+              "padding": [
+                20,
+                24
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "TvfF9",
+                  "name": "Card Header",
+                  "width": "fill_container",
+                  "gap": 10,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "CqCpx",
+                      "name": "card2icon",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "map-pin",
+                      "iconFontFamily": "lucide",
+                      "fill": "$burnt-orange"
+                    },
+                    {
+                      "type": "text",
+                      "id": "rHMmk",
+                      "name": "card2title",
+                      "fill": "$text-primary",
+                      "content": "Live Trail Map",
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "rqt9O",
+                  "name": "card2desc",
+                  "fill": "$text-secondary",
+                  "content": "Watch Paul move in real time — see his GPS position, elevation,\nand the pledger map showing where supporters are from.",
+                  "lineHeight": 1.6,
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "8cfgN",
+                  "name": "Card CTA",
+                  "width": "fill_container",
+                  "height": 40,
+                  "fill": "$burnt-orange",
+                  "gap": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "xn3Gp",
+                      "name": "card2btnT",
+                      "fill": "$text-white",
+                      "content": "OPEN TRAIL MAP",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 12,
+                      "fontWeight": "700",
+                      "letterSpacing": 2
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "7lBKE",
+                      "name": "card2btnI",
+                      "width": 14,
+                      "height": 14,
+                      "iconFontName": "arrow-right",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-white"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Hr0wH",
+          "name": "Community Band",
+          "width": "fill_container",
+          "fill": "$bg-warm",
+          "layout": "vertical",
+          "gap": 12,
+          "padding": [
+            28,
+            40
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon_font",
+              "id": "RwlWR",
+              "name": "e1commIcon",
+              "width": 24,
+              "height": 24,
+              "iconFontName": "users",
+              "iconFontFamily": "lucide",
+              "fill": "$forest-green"
+            },
+            {
+              "type": "text",
+              "id": "sBIEM",
+              "name": "e1commTitle",
+              "fill": "$text-primary",
+              "content": "You're one of 247 pledgers",
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 17,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "AC2qu",
+              "name": "e1commDesc",
+              "fill": "$text-secondary",
+              "textGrowth": "fixed-width",
+              "width": 460,
+              "content": "Every Monday, you'll receive a progress update with Paul's miles,\nyour running total, and a journal excerpt from the trail.",
+              "lineHeight": 1.6,
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "rectangle",
+          "id": "kOMtF",
+          "name": "Divider",
+          "fill": "$border-subtle",
+          "width": "fill_container",
+          "height": 1
+        },
+        {
+          "type": "frame",
+          "id": "MOgGx",
+          "name": "Email Preferences",
+          "width": "fill_container",
+          "fill": "$bg-white",
+          "layout": "vertical",
+          "gap": 8,
+          "padding": [
+            24,
+            40
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "xHYgE",
+              "name": "e1emailTitle",
+              "fill": "$text-primary",
+              "content": "Customize your updates",
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 15,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "uI717",
+              "name": "e1emailDesc",
+              "fill": "$text-muted",
+              "textGrowth": "fixed-width",
+              "width": 460,
+              "content": "Get all updates, milestones only, or just the finish notification.\nChange anytime from your pledge dashboard.",
+              "lineHeight": 1.6,
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 13,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "vsHbg",
+              "name": "e1emailLink",
+              "fill": "$burnt-orange",
+              "content": "Manage email preferences →",
+              "fontFamily": "Barlow Semi Condensed",
+              "fontSize": 12,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "mMvac",
+          "name": "Footer",
+          "width": "fill_container",
+          "fill": "$bg-dark",
+          "layout": "vertical",
+          "gap": 12,
+          "padding": [
+            24,
+            40
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "y9zAs",
+              "name": "e1flogo",
+              "fill": "#FFFFFF88",
+              "content": "YESCHAPTER",
+              "fontFamily": "Barlow Semi Condensed",
+              "fontSize": 13,
+              "fontWeight": "700",
+              "letterSpacing": 3
+            },
+            {
+              "type": "text",
+              "id": "IO2pn",
+              "name": "e1ftext",
+              "fill": "#FFFFFF66",
+              "textGrowth": "fixed-width",
+              "width": 480,
+              "content": "You're receiving this because you pledged at yeschapter.com.\nYour pledge: $0.25/mile · Potential total: $662.50",
+              "lineHeight": 1.6,
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "4NI0N",
+              "name": "e1flinks",
+              "fill": "#FFFFFF44",
+              "content": "View My Pledge  ·  Email Preferences  ·  Unsubscribe",
+              "fontFamily": "Barlow Semi Condensed",
+              "fontSize": 11,
+              "fontWeight": "500",
+              "letterSpacing": 0.5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "aF7L7",
+      "x": 2880,
+      "y": 19100,
+      "name": "Email — Welcome Day 3",
+      "width": 600,
+      "fill": "$bg-warm",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "KIfBy",
+          "name": "Header Bar",
+          "width": "fill_container",
+          "fill": "$bg-dark",
+          "padding": [
+            16,
+            32
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "tcF8J",
+              "name": "e2logo",
+              "fill": "$text-white",
+              "content": "YESCHAPTER",
+              "fontFamily": "Barlow Semi Condensed",
+              "fontSize": 16,
+              "fontWeight": "700",
+              "letterSpacing": 3
+            },
+            {
+              "type": "text",
+              "id": "0L7JI",
+              "name": "e2tag",
+              "fill": "#FFFFFF66",
+              "content": "WALKING FOR CANCER",
+              "fontFamily": "Barlow Semi Condensed",
+              "fontSize": 10,
+              "fontWeight": "600",
+              "letterSpacing": 2
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "pSohv",
+          "name": "Share Hero",
+          "width": "fill_container",
+          "fill": "$burnt-orange",
+          "layout": "vertical",
+          "gap": 16,
+          "padding": [
+            48,
+            40
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon_font",
+              "id": "QVqeb",
+              "name": "e2icon",
+              "width": 48,
+              "height": 48,
+              "iconFontName": "heart-handshake",
+              "iconFontFamily": "lucide",
+              "fill": "$text-white"
+            },
+            {
+              "type": "frame",
+              "id": "ZtT92",
+              "name": "Badge",
+              "fill": "#FFFFFF22",
+              "cornerRadius": 2,
+              "padding": [
+                8,
+                20
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "sfdTt",
+                  "name": "e2badgeT",
+                  "fill": "$text-white",
+                  "content": "SPREAD THE WORD",
+                  "fontFamily": "Barlow Semi Condensed",
+                  "fontSize": 13,
+                  "fontWeight": "700",
+                  "letterSpacing": 4
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "eOW9O",
+              "name": "e2title",
+              "fill": "$text-white",
+              "content": "Know Someone\nWho'd Care?",
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 34,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "jH3hb",
+              "name": "e2sub",
+              "fill": "#FFFFFFCC",
+              "textGrowth": "fixed-width",
+              "width": 480,
+              "content": "You're part of a community of 247 pledgers walking with Paul.\nEvery new person who joins makes the impact bigger.",
+              "lineHeight": 1.6,
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "rectangle",
+              "id": "8ujiQ",
+              "name": "Divider",
+              "fill": "#FFFFFF44",
+              "width": 60,
+              "height": 2
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Fu9VD",
+          "name": "Share Section",
+          "width": "fill_container",
+          "fill": "$bg-white",
+          "layout": "vertical",
+          "gap": 20,
+          "padding": [
+            36,
+            40
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "qpdv7",
+              "name": "e2slabel",
+              "fill": "$text-muted",
+              "content": "YOUR PERSONAL REFERRAL LINK",
+              "fontFamily": "Barlow Semi Condensed",
+              "fontSize": 11,
+              "fontWeight": "700",
+              "letterSpacing": 3
+            },
+            {
+              "type": "frame",
+              "id": "mSRF5",
+              "name": "Link Box",
+              "width": "fill_container",
+              "fill": "$bg-warm",
+              "cornerRadius": 4,
+              "stroke": {
+                "thickness": 1,
+                "fill": "$border-subtle"
+              },
+              "padding": [
+                16,
+                20
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "vBNSv",
+                  "name": "e2linkUrl",
+                  "fill": "$text-primary",
+                  "content": "yeschapter.com/join?ref=Sarah",
+                  "fontFamily": "Source Serif 4",
+                  "fontSize": 15,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "6idmL",
+                  "name": "Copy Button",
+                  "fill": "$forest-green",
+                  "cornerRadius": 2,
+                  "gap": 6,
+                  "padding": [
+                    8,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Njwpe",
+                      "name": "e2linkCopyT",
+                      "fill": "$text-white",
+                      "content": "COPY",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 11,
+                      "fontWeight": "700",
+                      "letterSpacing": 2
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "p5M04",
+              "name": "e2shareDesc",
+              "fill": "$text-secondary",
+              "textGrowth": "fixed-width",
+              "width": 460,
+              "content": "When someone pledges through your link, they'll see your name\nand a personalized welcome. You'll both be part of the story.",
+              "lineHeight": 1.6,
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "GEv2d",
+              "name": "Share CTA",
+              "width": "fill_container",
+              "height": 48,
+              "fill": "$burnt-orange",
+              "gap": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "8fG72",
+                  "name": "e2shareBtnT",
+                  "fill": "$text-white",
+                  "content": "SHARE WITH A FRIEND",
+                  "fontFamily": "Barlow Semi Condensed",
+                  "fontSize": 13,
+                  "fontWeight": "700",
+                  "letterSpacing": 2
+                },
+                {
+                  "type": "icon_font",
+                  "id": "1VS3j",
+                  "name": "e2shareBtnI",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "arrow-right",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-white"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "rectangle",
+          "id": "F35d6",
+          "name": "Divider",
+          "fill": "$border-subtle",
+          "width": "fill_container",
+          "height": 1
+        },
+        {
+          "type": "frame",
+          "id": "MHG8d",
+          "name": "Increase Section",
+          "width": "fill_container",
+          "fill": "$bg-white",
+          "layout": "vertical",
+          "gap": 8,
+          "padding": [
+            28,
+            40
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon_font",
+              "id": "cxW8S",
+              "name": "e2incIcon",
+              "width": 24,
+              "height": 24,
+              "iconFontName": "trending-up",
+              "iconFontFamily": "lucide",
+              "fill": "$forest-green"
+            },
+            {
+              "type": "text",
+              "id": "jhzYl",
+              "name": "e2incTitle",
+              "fill": "$text-primary",
+              "content": "Want to do even more?",
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 17,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "7KS1M",
+              "name": "e2incDesc",
+              "fill": "$text-secondary",
+              "textGrowth": "fixed-width",
+              "width": 460,
+              "content": "You can increase your pledge rate anytime from your dashboard.\nEven a small bump adds up over 2,650 miles.",
+              "lineHeight": 1.6,
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "erfUj",
+              "name": "e2incLink",
+              "fill": "$burnt-orange",
+              "content": "Update my pledge →",
+              "fontFamily": "Barlow Semi Condensed",
+              "fontSize": 12,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "WY6WF",
+          "name": "Footer",
+          "width": "fill_container",
+          "fill": "$bg-dark",
+          "layout": "vertical",
+          "gap": 12,
+          "padding": [
+            24,
+            40
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "bTJSq",
+              "name": "e2flogo",
+              "fill": "#FFFFFF88",
+              "content": "YESCHAPTER",
+              "fontFamily": "Barlow Semi Condensed",
+              "fontSize": 13,
+              "fontWeight": "700",
+              "letterSpacing": 3
+            },
+            {
+              "type": "text",
+              "id": "Is2rl",
+              "name": "e2ftext",
+              "fill": "#FFFFFF66",
+              "textGrowth": "fixed-width",
+              "width": 480,
+              "content": "You're receiving this because you pledged at yeschapter.com.\nShare your link: yeschapter.com/join?ref=Sarah",
+              "lineHeight": 1.6,
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "zWg9b",
+              "name": "e2flinks",
+              "fill": "#FFFFFF44",
+              "content": "View My Pledge  ·  Email Preferences  ·  Unsubscribe",
+              "fontFamily": "Barlow Semi Condensed",
+              "fontSize": 11,
+              "fontWeight": "500",
+              "letterSpacing": 0.5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "jDKf2",
+      "x": 2220,
+      "y": 20400,
+      "name": "Email — Honor Confirmation",
+      "width": 600,
+      "fill": "$bg-warm",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "NgGqq",
+          "name": "Header Bar",
+          "width": "fill_container",
+          "fill": "$bg-dark",
+          "padding": [
+            16,
+            32
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "Ge3Py",
+              "name": "e3logo",
+              "fill": "$text-white",
+              "content": "YESCHAPTER",
+              "fontFamily": "Barlow Semi Condensed",
+              "fontSize": 16,
+              "fontWeight": "700",
+              "letterSpacing": 3
+            },
+            {
+              "type": "text",
+              "id": "ifzDg",
+              "name": "e3tag",
+              "fill": "#FFFFFF66",
+              "content": "WALKING FOR CANCER",
+              "fontFamily": "Barlow Semi Condensed",
+              "fontSize": 10,
+              "fontWeight": "600",
+              "letterSpacing": 2
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "RdCXt",
+          "name": "Honor Hero",
+          "width": "fill_container",
+          "fill": "$forest-green",
+          "layout": "vertical",
+          "gap": 16,
+          "padding": [
+            48,
+            40
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon_font",
+              "id": "KeyZ4",
+              "name": "e3icon",
+              "width": 48,
+              "height": 48,
+              "iconFontName": "circle-check-big",
+              "iconFontFamily": "lucide",
+              "fill": "$text-white"
+            },
+            {
+              "type": "frame",
+              "id": "wCyb8",
+              "name": "Badge",
+              "fill": "#FFFFFF22",
+              "cornerRadius": 2,
+              "padding": [
+                8,
+                20
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "JVgFX",
+                  "name": "e3badgeT",
+                  "fill": "$text-white",
+                  "content": "PLEDGE HONORED",
+                  "fontFamily": "Barlow Semi Condensed",
+                  "fontSize": 13,
+                  "fontWeight": "700",
+                  "letterSpacing": 4
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "HUZRx",
+              "name": "e3title",
+              "fill": "$text-white",
+              "content": "Thank You, Sarah.",
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 34,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "Zamxi",
+              "name": "e3sub",
+              "fill": "#FFFFFFCC",
+              "textGrowth": "fixed-width",
+              "width": 480,
+              "content": "You honored your pledge. Every dollar goes directly to the\nfoundations — Paul never touches a cent.",
+              "lineHeight": 1.6,
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "rectangle",
+              "id": "euog2",
+              "name": "Divider",
+              "fill": "#FFFFFF44",
+              "width": 60,
+              "height": 2
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "4A65F",
+          "name": "Pledge Total",
+          "width": "fill_container",
+          "fill": "$bg-white",
+          "layout": "vertical",
+          "gap": 8,
+          "padding": [
+            36,
+            40
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "ljqcA",
+              "name": "e3alabel",
+              "fill": "$text-muted",
+              "content": "YOUR HONORED PLEDGE",
+              "fontFamily": "Barlow Semi Condensed",
+              "fontSize": 12,
+              "fontWeight": "700",
+              "letterSpacing": 3
+            },
+            {
+              "type": "text",
+              "id": "QAk6y",
+              "name": "e3avalue",
+              "fill": "$forest-green",
+              "content": "$662.50",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 52,
+              "fontWeight": "600",
+              "letterSpacing": -1
+            },
+            {
+              "type": "text",
+              "id": "Al6jv",
+              "name": "e3arate",
+              "fill": "$text-secondary",
+              "content": "$0.25/mile × 2,650 miles",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "rectangle",
+          "id": "lgPyw",
+          "name": "Divider",
+          "fill": "$border-subtle",
+          "width": "fill_container",
+          "height": 1
+        },
+        {
+          "type": "frame",
+          "id": "4rQEe",
+          "name": "Foundation Split",
+          "width": "fill_container",
+          "fill": "$bg-white",
+          "layout": "vertical",
+          "gap": 20,
+          "padding": [
+            28,
+            40
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "8C3zA",
+              "name": "e3slabel",
+              "fill": "$text-muted",
+              "content": "YOUR 50/50 SPLIT",
+              "fontFamily": "Barlow Semi Condensed",
+              "fontSize": 11,
+              "fontWeight": "700",
+              "letterSpacing": 3
+            },
+            {
+              "type": "frame",
+              "id": "dQF9O",
+              "name": "Tower Cancer Research",
+              "width": "fill_container",
+              "fill": "$forest-green-light",
+              "cornerRadius": 4,
+              "layout": "vertical",
+              "gap": 12,
+              "padding": [
+                20,
+                24
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "683eQ",
+                  "name": "Fnd Header",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "DBRRu",
+                      "name": "e3fnd1name",
+                      "fill": "$text-primary",
+                      "content": "Tower Cancer Research Foundation",
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 15,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "g8MG2",
+                      "name": "e3fnd1amt",
+                      "fill": "$forest-green",
+                      "content": "$331.25",
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 18,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "GmA6d",
+                  "name": "e3fnd1loc",
+                  "fill": "$text-muted",
+                  "content": "Los Angeles, California  ·  501(c)(3)  ·  Tax deductible in the US",
+                  "fontFamily": "Barlow Semi Condensed",
+                  "fontSize": 11,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "fh96C",
+              "name": "Cancer Council NSW",
+              "width": "fill_container",
+              "fill": "$burnt-orange-light",
+              "cornerRadius": 4,
+              "layout": "vertical",
+              "gap": 12,
+              "padding": [
+                20,
+                24
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "tLuLb",
+                  "name": "Fnd Header",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "qKqMb",
+                      "name": "e3fnd2name",
+                      "fill": "$text-primary",
+                      "content": "Cancer Council NSW",
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 15,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Tnd41",
+                      "name": "e3fnd2amt",
+                      "fill": "$burnt-orange",
+                      "content": "$331.25",
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 18,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "2V7dw",
+                  "name": "e3fnd2loc",
+                  "fill": "$text-muted",
+                  "content": "Sydney, Australia  ·  DGR Registered  ·  Tax deductible in Australia",
+                  "fontFamily": "Barlow Semi Condensed",
+                  "fontSize": 11,
+                  "fontWeight": "500"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "cmyIx",
+          "name": "Community Stats",
+          "width": "fill_container",
+          "fill": "$bg-warm",
+          "layout": "vertical",
+          "gap": 16,
+          "padding": [
+            28,
+            40
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon_font",
+              "id": "k2gRP",
+              "name": "e3statsIcon",
+              "width": 28,
+              "height": 28,
+              "iconFontName": "trophy",
+              "iconFontFamily": "lucide",
+              "fill": "$burnt-orange"
+            },
+            {
+              "type": "text",
+              "id": "l3Njo",
+              "name": "e3statsTitle",
+              "fill": "$text-primary",
+              "content": "You're on the Wall of Honor",
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 17,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "IlrAC",
+              "name": "Stats Row",
+              "width": "fill_container",
+              "gap": 40,
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "sHeIg",
+                  "name": "Stat 1",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "QzwOo",
+                      "name": "e3stat1v",
+                      "fill": "$forest-green",
+                      "content": "89",
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 36,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "JgTQj",
+                      "name": "e3stat1l",
+                      "fill": "$text-muted",
+                      "content": "HONORED",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 10,
+                      "fontWeight": "700",
+                      "letterSpacing": 2
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Sblmh",
+                  "name": "Stat 2",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "ul8ds",
+                      "name": "e3stat2v",
+                      "fill": "$text-primary",
+                      "content": "124",
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 36,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "h1FCj",
+                      "name": "e3stat2l",
+                      "fill": "$text-muted",
+                      "content": "TOTAL PLEDGERS",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 10,
+                      "fontWeight": "700",
+                      "letterSpacing": 2
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "WxNpk",
+                  "name": "Stat 3",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "H3Vz9",
+                      "name": "e3stat3v",
+                      "fill": "$burnt-orange",
+                      "content": "72%",
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 36,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "eGrnk",
+                      "name": "e3stat3l",
+                      "fill": "$text-muted",
+                      "content": "HONOR RATE",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 10,
+                      "fontWeight": "700",
+                      "letterSpacing": 2
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "AyKu1",
+              "name": "e3statsDesc",
+              "fill": "$text-secondary",
+              "content": "89 of 124 pledgers have honored so far. You're part of something real.",
+              "lineHeight": 1.6,
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "rectangle",
+          "id": "xQnsg",
+          "name": "Divider",
+          "fill": "$border-subtle",
+          "width": "fill_container",
+          "height": 1
+        },
+        {
+          "type": "frame",
+          "id": "8Dh4H",
+          "name": "Share CTA",
+          "width": "fill_container",
+          "fill": "$bg-white",
+          "layout": "vertical",
+          "gap": 12,
+          "padding": [
+            28,
+            40
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "WCCoq",
+              "name": "e3shareTitle",
+              "fill": "$text-primary",
+              "content": "Inspire someone else to join",
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 17,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "O3Jop",
+              "name": "e3shareDesc",
+              "fill": "$text-secondary",
+              "textGrowth": "fixed-width",
+              "width": 460,
+              "content": "Share your story and invite a friend to pledge.\nEvery new pledger makes the wall bigger.",
+              "lineHeight": 1.6,
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "Bn63q",
+              "name": "Share Button",
+              "width": "fill_container",
+              "height": 48,
+              "fill": "$burnt-orange",
+              "gap": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "jSTTT",
+                  "name": "e3shareBtnT",
+                  "fill": "$text-white",
+                  "content": "TELL A FRIEND WHAT YOU DID",
+                  "fontFamily": "Barlow Semi Condensed",
+                  "fontSize": 13,
+                  "fontWeight": "700",
+                  "letterSpacing": 2
+                },
+                {
+                  "type": "icon_font",
+                  "id": "Gp2WL",
+                  "name": "e3shareBtnI",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "arrow-right",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-white"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Iv50H",
+          "name": "Footer",
+          "width": "fill_container",
+          "fill": "$bg-dark",
+          "layout": "vertical",
+          "gap": 12,
+          "padding": [
+            24,
+            40
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "wL89a",
+              "name": "e3flogo",
+              "fill": "#FFFFFF88",
+              "content": "YESCHAPTER",
+              "fontFamily": "Barlow Semi Condensed",
+              "fontSize": 13,
+              "fontWeight": "700",
+              "letterSpacing": 3
+            },
+            {
+              "type": "text",
+              "id": "6WgTa",
+              "name": "e3ftext",
+              "fill": "#FFFFFF66",
+              "textGrowth": "fixed-width",
+              "width": 480,
+              "content": "Thank you for walking with Paul — from Mexico to Canada.\nYour honored pledge: $662.50 to cancer research.",
+              "lineHeight": 1.6,
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "dFYUg",
+              "name": "e3flinks",
+              "fill": "#FFFFFF44",
+              "content": "View My Pledge  ·  Wall of Honor  ·  yeschapter.com",
+              "fontFamily": "Barlow Semi Condensed",
+              "fontSize": 11,
+              "fontWeight": "500",
+              "letterSpacing": 0.5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "ybXkV",
+      "x": 2880,
+      "y": 20400,
+      "name": "Email — Community Milestone",
+      "width": 600,
+      "fill": "$bg-warm",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "0DJKJ",
+          "name": "Header Bar",
+          "width": "fill_container",
+          "fill": "$bg-dark",
+          "padding": [
+            16,
+            32
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "dXAmI",
+              "name": "e4logo",
+              "fill": "$text-white",
+              "content": "YESCHAPTER",
+              "fontFamily": "Barlow Semi Condensed",
+              "fontSize": 16,
+              "fontWeight": "700",
+              "letterSpacing": 3
+            },
+            {
+              "type": "text",
+              "id": "AI85W",
+              "name": "e4tag",
+              "fill": "#FFFFFF66",
+              "content": "WALKING FOR CANCER",
+              "fontFamily": "Barlow Semi Condensed",
+              "fontSize": 10,
+              "fontWeight": "600",
+              "letterSpacing": 2
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "fPWsk",
+          "name": "Milestone Hero",
+          "width": "fill_container",
+          "fill": "$burnt-orange",
+          "layout": "vertical",
+          "gap": 16,
+          "padding": [
+            48,
+            40
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon_font",
+              "id": "n0m2j",
+              "name": "e4icon",
+              "width": 48,
+              "height": 48,
+              "iconFontName": "party-popper",
+              "iconFontFamily": "lucide",
+              "fill": "$text-white"
+            },
+            {
+              "type": "frame",
+              "id": "mFRyg",
+              "name": "Badge",
+              "fill": "#FFFFFF22",
+              "cornerRadius": 2,
+              "padding": [
+                8,
+                20
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "E3TWS",
+                  "name": "e4badgeT",
+                  "fill": "$text-white",
+                  "content": "COMMUNITY MILESTONE",
+                  "fontFamily": "Barlow Semi Condensed",
+                  "fontSize": 13,
+                  "fontWeight": "700",
+                  "letterSpacing": 4
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "Go3II",
+              "name": "e4title",
+              "fill": "$text-white",
+              "content": "100 People Are\nWalking With Paul.",
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 34,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "UeKGu",
+              "name": "e4sub",
+              "fill": "#FFFFFFCC",
+              "textGrowth": "fixed-width",
+              "width": 480,
+              "content": "The YesChapter community just hit 100 pledgers.\nThat's 100 people who believe every mile matters.",
+              "lineHeight": 1.6,
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "rectangle",
+              "id": "gvZaO",
+              "name": "Divider",
+              "fill": "#FFFFFF44",
+              "width": 60,
+              "height": 2
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "kJMgs",
+          "name": "Stats Section",
+          "width": "fill_container",
+          "fill": "$bg-white",
+          "layout": "vertical",
+          "gap": 20,
+          "padding": [
+            36,
+            40
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "SksSf",
+              "name": "e4slabel",
+              "fill": "$text-muted",
+              "content": "COMMUNITY IMPACT",
+              "fontFamily": "Barlow Semi Condensed",
+              "fontSize": 11,
+              "fontWeight": "700",
+              "letterSpacing": 3
+            },
+            {
+              "type": "frame",
+              "id": "TrgRa",
+              "name": "Stats Row",
+              "width": "fill_container",
+              "gap": 48,
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "7RKIF",
+                  "name": "Stat Pledgers",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "CHmaU",
+                      "name": "e4s1v",
+                      "fill": "$forest-green",
+                      "content": "100",
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 48,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "5p4kH",
+                      "name": "e4s1l",
+                      "fill": "$text-muted",
+                      "content": "PLEDGERS",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 10,
+                      "fontWeight": "700",
+                      "letterSpacing": 2
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "BSZHa",
+                  "name": "Stat Total",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "GB8Uw",
+                      "name": "e4s2v",
+                      "fill": "$burnt-orange",
+                      "content": "$12,450",
+                      "fontFamily": "Source Serif 4",
+                      "fontSize": 48,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "UAry0",
+                      "name": "e4s2l",
+                      "fill": "$text-muted",
+                      "content": "TOTAL PLEDGED",
+                      "fontFamily": "Barlow Semi Condensed",
+                      "fontSize": 10,
+                      "fontWeight": "700",
+                      "letterSpacing": 2
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "0n7kO",
+              "name": "e4sdesc",
+              "fill": "$text-secondary",
+              "textGrowth": "fixed-width",
+              "width": 460,
+              "content": "Together, this community has pledged $12,450 for cancer research.\nThat's real impact — and Paul hasn't even started yet.",
+              "lineHeight": 1.6,
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "rectangle",
+          "id": "l0LtF",
+          "name": "Divider",
+          "fill": "$border-subtle",
+          "width": "fill_container",
+          "height": 1
+        },
+        {
+          "type": "frame",
+          "id": "HSpFn",
+          "name": "Your Pledge",
+          "width": "fill_container",
+          "fill": "$bg-white",
+          "layout": "vertical",
+          "gap": 16,
+          "padding": [
+            28,
+            40
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon_font",
+              "id": "pBSQj",
+              "name": "e4yIcon",
+              "width": 24,
+              "height": 24,
+              "iconFontName": "trending-up",
+              "iconFontFamily": "lucide",
+              "fill": "$forest-green"
+            },
+            {
+              "type": "text",
+              "id": "czt41",
+              "name": "e4yTitle",
+              "fill": "$text-primary",
+              "content": "Want to go bigger?",
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 17,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "hBXNr",
+              "name": "e4yDesc",
+              "fill": "$text-secondary",
+              "textGrowth": "fixed-width",
+              "width": 460,
+              "content": "Your current pledge: $0.25/mile ($662.50 total).\nIncrease your rate to celebrate this milestone.",
+              "lineHeight": 1.6,
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "7H62a",
+              "name": "Increase CTA",
+              "width": "fill_container",
+              "height": 48,
+              "fill": "$forest-green",
+              "gap": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "h6Vwe",
+                  "name": "e4yBtnT",
+                  "fill": "$text-white",
+                  "content": "INCREASE MY PLEDGE",
+                  "fontFamily": "Barlow Semi Condensed",
+                  "fontSize": 13,
+                  "fontWeight": "700",
+                  "letterSpacing": 2
+                },
+                {
+                  "type": "icon_font",
+                  "id": "PkeX3",
+                  "name": "e4yBtnI",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "arrow-right",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-white"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "rectangle",
+          "id": "JNkbh",
+          "name": "Divider",
+          "fill": "$border-subtle",
+          "width": "fill_container",
+          "height": 1
+        },
+        {
+          "type": "frame",
+          "id": "kLOSy",
+          "name": "Share Section",
+          "width": "fill_container",
+          "fill": "$bg-warm",
+          "layout": "vertical",
+          "gap": 12,
+          "padding": [
+            28,
+            40
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "cZa4m",
+              "name": "e4shareTitle",
+              "fill": "$text-primary",
+              "content": "Help us reach 200",
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 17,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "D0iOJ",
+              "name": "e4shareDesc",
+              "fill": "$text-secondary",
+              "textGrowth": "fixed-width",
+              "width": 460,
+              "content": "Share your personal link and bring the next pledger in.\nThe bigger the community, the bigger the impact.",
+              "lineHeight": 1.6,
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "BXgI0",
+              "name": "Share CTA",
+              "width": "fill_container",
+              "height": 48,
+              "fill": "$burnt-orange",
+              "gap": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "s086o",
+                  "name": "e4shareBtnT",
+                  "fill": "$text-white",
+                  "content": "SHARE WITH A FRIEND",
+                  "fontFamily": "Barlow Semi Condensed",
+                  "fontSize": 13,
+                  "fontWeight": "700",
+                  "letterSpacing": 2
+                },
+                {
+                  "type": "icon_font",
+                  "id": "g2woR",
+                  "name": "e4shareBtnI",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "arrow-right",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-white"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "WEPxl",
+          "name": "Footer",
+          "width": "fill_container",
+          "fill": "$bg-dark",
+          "layout": "vertical",
+          "gap": 12,
+          "padding": [
+            24,
+            40
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "2UQYH",
+              "name": "e4flogo",
+              "fill": "#FFFFFF88",
+              "content": "YESCHAPTER",
+              "fontFamily": "Barlow Semi Condensed",
+              "fontSize": 13,
+              "fontWeight": "700",
+              "letterSpacing": 3
+            },
+            {
+              "type": "text",
+              "id": "DzrUn",
+              "name": "e4ftext",
+              "fill": "#FFFFFF66",
+              "textGrowth": "fixed-width",
+              "width": 480,
+              "content": "100 pledgers strong. Thank you for being one of them.\nYour pledge: $0.25/mile · Current total: $662.50",
+              "lineHeight": 1.6,
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "XJiEc",
+              "name": "e4flinks",
+              "fill": "#FFFFFF44",
+              "content": "View My Pledge  ·  Email Preferences  ·  Unsubscribe",
+              "fontFamily": "Barlow Semi Condensed",
+              "fontSize": 11,
+              "fontWeight": "500",
+              "letterSpacing": 0.5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "gRx0A",
+      "x": 2220,
+      "y": 21765,
+      "name": "Email — Pledge Verification",
+      "width": 600,
+      "fill": "$bg-warm",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "qyflO",
+          "name": "Header Bar",
+          "width": "fill_container",
+          "fill": "$bg-dark",
+          "padding": [
+            16,
+            32
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "gTvni",
+              "name": "evlogo",
+              "fill": "$text-white",
+              "content": "YESCHAPTER",
+              "fontFamily": "Barlow Semi Condensed",
+              "fontSize": 16,
+              "fontWeight": "700",
+              "letterSpacing": 3
+            },
+            {
+              "type": "text",
+              "id": "yb7G7",
+              "name": "evtag",
+              "fill": "#FFFFFF66",
+              "content": "WALKING FOR CANCER",
+              "fontFamily": "Barlow Semi Condensed",
+              "fontSize": 10,
+              "fontWeight": "600",
+              "letterSpacing": 2
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "vUsI6",
+          "name": "Verify Hero",
+          "width": "fill_container",
+          "fill": "$forest-green",
+          "layout": "vertical",
+          "gap": 16,
+          "padding": [
+            48,
+            40
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon_font",
+              "id": "mKhEf",
+              "name": "evicon",
+              "width": 48,
+              "height": 48,
+              "iconFontName": "shield-check",
+              "iconFontFamily": "lucide",
+              "fill": "$text-white"
+            },
+            {
+              "type": "frame",
+              "id": "5Y73a",
+              "name": "Badge",
+              "fill": "#FFFFFF22",
+              "cornerRadius": 2,
+              "padding": [
+                8,
+                20
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "2fzdC",
+                  "name": "evbadgeT",
+                  "fill": "$text-white",
+                  "content": "CONFIRM YOUR PLEDGE",
+                  "fontFamily": "Barlow Semi Condensed",
+                  "fontSize": 13,
+                  "fontWeight": "700",
+                  "letterSpacing": 4
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "ywvBv",
+              "name": "evtitle",
+              "fill": "$text-white",
+              "content": "One More Step,\nSarah.",
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 34,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "2hw74",
+              "name": "evsub",
+              "fill": "#FFFFFFCC",
+              "textGrowth": "fixed-width",
+              "width": 480,
+              "content": "Click the button below to confirm your pledge of $0.25/mile\nand join the community walking with Paul.",
+              "lineHeight": 1.6,
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "rectangle",
+              "id": "HATT5",
+              "name": "Divider",
+              "fill": "#FFFFFF44",
+              "width": 60,
+              "height": 2
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "P4uvE",
+          "name": "Pledge Amount",
+          "width": "fill_container",
+          "fill": "$bg-white",
+          "layout": "vertical",
+          "gap": 8,
+          "padding": [
+            36,
+            40
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "fkcOp",
+              "name": "evplabel",
+              "fill": "$text-muted",
+              "content": "YOUR PLEDGE",
+              "fontFamily": "Barlow Semi Condensed",
+              "fontSize": 12,
+              "fontWeight": "700",
+              "letterSpacing": 3
+            },
+            {
+              "type": "text",
+              "id": "pYqTz",
+              "name": "evpamt",
+              "fill": "$burnt-orange",
+              "content": "$662.50",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 52,
+              "fontWeight": "600",
+              "letterSpacing": -1
+            },
+            {
+              "type": "text",
+              "id": "MAbGO",
+              "name": "evprate",
+              "fill": "$text-secondary",
+              "content": "$0.25/mile × 2,650 miles",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "n31iZ",
+              "name": "Confirm CTA",
+              "width": "fill_container",
+              "height": 52,
+              "fill": "$forest-green",
+              "gap": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "yTh9l",
+                  "name": "evbtnT",
+                  "fill": "$text-white",
+                  "content": "CONFIRM MY PLEDGE",
+                  "fontFamily": "Barlow Semi Condensed",
+                  "fontSize": 14,
+                  "fontWeight": "700",
+                  "letterSpacing": 2
+                },
+                {
+                  "type": "icon_font",
+                  "id": "7yN1M",
+                  "name": "evbtnI",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "arrow-right",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-white"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "NYVBE",
+              "name": "evexp",
+              "fill": "$text-muted",
+              "content": "This link expires in 1 hour.",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "fYLkF",
+          "name": "Note",
+          "width": "fill_container",
+          "fill": "$bg-warm",
+          "layout": "vertical",
+          "gap": 4,
+          "padding": [
+            20,
+            40
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "DxWPJ",
+              "name": "evnoteT",
+              "fill": "$text-muted",
+              "textGrowth": "fixed-width",
+              "width": 460,
+              "content": "If you didn't request this, you can safely ignore this email.\nNo pledge will be created.",
+              "lineHeight": 1.6,
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 13,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "VSHyh",
+          "name": "Footer",
+          "width": "fill_container",
+          "fill": "$bg-dark",
+          "layout": "vertical",
+          "gap": 12,
+          "padding": [
+            24,
+            40
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "8x0oJ",
+              "name": "evflogo",
+              "fill": "#FFFFFF88",
+              "content": "YESCHAPTER",
+              "fontFamily": "Barlow Semi Condensed",
+              "fontSize": 13,
+              "fontWeight": "700",
+              "letterSpacing": 3
+            },
+            {
+              "type": "text",
+              "id": "brSRW",
+              "name": "evflinks",
+              "fill": "#FFFFFF44",
+              "content": "yeschapter.com",
+              "fontFamily": "Barlow Semi Condensed",
+              "fontSize": 11,
+              "fontWeight": "500",
+              "letterSpacing": 0.5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "zaD0r",
+      "x": 2880,
+      "y": 21765,
+      "name": "Email — Action Verification",
+      "width": 600,
+      "fill": "$bg-warm",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "RT1lp",
+          "name": "Header Bar",
+          "width": "fill_container",
+          "fill": "$bg-dark",
+          "padding": [
+            16,
+            32
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "xFDXI",
+              "name": "ealogo",
+              "fill": "$text-white",
+              "content": "YESCHAPTER",
+              "fontFamily": "Barlow Semi Condensed",
+              "fontSize": 16,
+              "fontWeight": "700",
+              "letterSpacing": 3
+            },
+            {
+              "type": "text",
+              "id": "0mWmZ",
+              "name": "eatag",
+              "fill": "#FFFFFF66",
+              "content": "WALKING FOR CANCER",
+              "fontFamily": "Barlow Semi Condensed",
+              "fontSize": 10,
+              "fontWeight": "600",
+              "letterSpacing": 2
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "BL7aU",
+          "name": "Action Hero",
+          "width": "fill_container",
+          "fill": "$forest-green",
+          "layout": "vertical",
+          "gap": 12,
+          "padding": 40,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon_font",
+              "id": "feCTA",
+              "name": "eaicon",
+              "width": 36,
+              "height": 36,
+              "iconFontName": "lock",
+              "iconFontFamily": "lucide",
+              "fill": "$text-white"
+            },
+            {
+              "type": "frame",
+              "id": "By0da",
+              "name": "Badge",
+              "fill": "#FFFFFF22",
+              "cornerRadius": 2,
+              "padding": [
+                8,
+                20
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "8cmkx",
+                  "name": "eabadgeT",
+                  "fill": "$text-white",
+                  "content": "VERIFY YOUR ACTION",
+                  "fontFamily": "Barlow Semi Condensed",
+                  "fontSize": 13,
+                  "fontWeight": "700",
+                  "letterSpacing": 4
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "YtTo0",
+              "name": "eatitle",
+              "fill": "$text-white",
+              "content": "Hi Sarah,",
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 24,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "sanpm",
+              "name": "easub",
+              "fill": "#FFFFFFCC",
+              "textGrowth": "fixed-width",
+              "width": 460,
+              "content": "You requested to increase your pledge by $0.10/mile.\nClick to confirm this change.",
+              "lineHeight": 1.6,
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "DNIM9",
+          "name": "CTA Section",
+          "width": "fill_container",
+          "fill": "$bg-white",
+          "layout": "vertical",
+          "gap": 16,
+          "padding": [
+            32,
+            40
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "6jEiF",
+              "name": "Action CTA",
+              "width": "fill_container",
+              "height": 48,
+              "fill": "$burnt-orange",
+              "gap": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "7wOZX",
+                  "name": "eabtnT",
+                  "fill": "$text-white",
+                  "content": "CONFIRM PLEDGE INCREASE",
+                  "fontFamily": "Barlow Semi Condensed",
+                  "fontSize": 13,
+                  "fontWeight": "700",
+                  "letterSpacing": 2
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "dHfZ3",
+              "name": "eanote",
+              "fill": "$text-muted",
+              "content": "This link expires in 1 hour. If you didn't request this, ignore this email.",
+              "textAlign": "center",
+              "fontFamily": "Source Serif 4",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "cGREW",
+          "name": "Footer",
+          "width": "fill_container",
+          "fill": "$bg-dark",
+          "layout": "vertical",
+          "gap": 8,
+          "padding": [
+            20,
+            40
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "qQUzK",
+              "name": "eaflinks",
+              "fill": "#FFFFFF44",
+              "content": "yeschapter.com",
+              "fontFamily": "Barlow Semi Condensed",
+              "fontSize": 11,
+              "fontWeight": "500",
+              "letterSpacing": 0.5
             }
           ]
         }

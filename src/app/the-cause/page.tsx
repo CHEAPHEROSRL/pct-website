@@ -88,6 +88,61 @@ export default function TheCausePage() {
         </ScrollReveal>
       </section>
 
+      {/* Interview Videos */}
+      <section className="flex flex-col items-center gap-[40px] md:gap-[48px] px-6 md:px-12 lg:px-[120px] py-[64px] md:py-[80px] bg-[var(--bg-dark)] w-full">
+        <ScrollReveal animation="fade-up">
+          <div className="flex flex-col items-center gap-[16px] text-center">
+            <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">IN HIS OWN WORDS</span>
+            <h2 className="font-heading font-semibold text-[32px] md:text-[40px] tracking-[-0.5px] text-[var(--text-white)]">Hear Paul&apos;s Story</h2>
+            <p className="font-heading text-[17px] leading-[1.6] text-[#FFFFFFAA] max-w-[600px]">
+              Two conversations about what drives a father&apos;s son to walk 2,650 miles.
+            </p>
+          </div>
+        </ScrollReveal>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-[24px] w-full">
+          {/* Video 1 */}
+          <ScrollReveal animation="slide-right">
+            <div className="flex flex-col rounded overflow-hidden border border-[#FFFFFF15]">
+              <div className="relative w-full h-[240px] md:h-[300px] bg-[#2A2D28] flex items-center justify-center group cursor-pointer">
+                <div className="w-16 h-16 rounded-full bg-[#FFFFFF20] flex items-center justify-center group-hover:bg-[#FFFFFF30] transition-colors">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="translate-x-[2px]">
+                    <polygon points="5,3 19,12 5,21" fill="white" />
+                  </svg>
+                </div>
+                <span className="absolute bottom-3 right-3 font-label text-[11px] font-bold tracking-[1px] text-[#FFFFFFAA] bg-[#00000066] px-2 py-1 rounded">COMING SOON</span>
+              </div>
+              <div className="flex flex-col gap-[8px] p-[20px] md:p-[24px] bg-[#1C1F1A]">
+                <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--burnt-orange)]">INTERVIEW · 8 MIN</span>
+                <h3 className="font-heading font-semibold text-[20px] leading-[1.3] text-[var(--text-white)]">&ldquo;Why I Said Yes to This Chapter&rdquo;</h3>
+                <p className="font-heading text-[14px] leading-[1.6] text-[#FFFFFFAA]">
+                  Paul talks about losing both parents, the decision to walk 2,650 miles, and what he hopes people take away from YesChapter.
+                </p>
+              </div>
+            </div>
+          </ScrollReveal>
+          {/* Video 2 */}
+          <ScrollReveal animation="slide-left">
+            <div className="flex flex-col rounded overflow-hidden border border-[#FFFFFF15]">
+              <div className="relative w-full h-[240px] md:h-[300px] bg-[#2A2D28] flex items-center justify-center group cursor-pointer">
+                <div className="w-16 h-16 rounded-full bg-[#FFFFFF20] flex items-center justify-center group-hover:bg-[#FFFFFF30] transition-colors">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="translate-x-[2px]">
+                    <polygon points="5,3 19,12 5,21" fill="white" />
+                  </svg>
+                </div>
+                <span className="absolute bottom-3 right-3 font-label text-[11px] font-bold tracking-[1px] text-[#FFFFFFAA] bg-[#00000066] px-2 py-1 rounded">COMING SOON</span>
+              </div>
+              <div className="flex flex-col gap-[8px] p-[20px] md:p-[24px] bg-[#1C1F1A]">
+                <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--burnt-orange)]">INTERVIEW · 12 MIN</span>
+                <h3 className="font-heading font-semibold text-[20px] leading-[1.3] text-[var(--text-white)]">&ldquo;Cancer Took My Parents — But Not My Hope&rdquo;</h3>
+                <p className="font-heading text-[14px] leading-[1.6] text-[#FFFFFFAA]">
+                  A raw, honest conversation about grief, purpose, and why Paul believes every mile walked makes a difference for future families.
+                </p>
+              </div>
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
+
       {/* Prevention Section */}
       <section className="flex flex-col items-center gap-[40px] md:gap-[60px] px-6 md:px-12 lg:px-[120px] py-[48px] md:py-[72px] lg:py-[100px] bg-[var(--bg-white)] w-full">
         <ScrollReveal animation="fade-up">

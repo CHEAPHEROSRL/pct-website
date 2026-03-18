@@ -102,8 +102,8 @@ export default function TransparencyPage() {
             his father in California and his mother in Sydney, Australia:
           </p>
           <ul>
-            <li>50% to Tower Cancer Research Foundation (California, USA)</li>
-            <li>50% to Cancer Council NSW (Sydney, Australia)</li>
+            <li>50% to City of Hope (Duarte, California, USA)</li>
+            <li>50% to the Leukaemia Foundation (Australia)</li>
           </ul>
           <p>
             This split reflects Paul&apos;s personal connection to both regions and ensures support reaches cancer patients

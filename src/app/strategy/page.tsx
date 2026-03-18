@@ -111,7 +111,7 @@ export default function StrategyPage() {
               <span className="font-label font-bold text-[10px] tracking-[3px] text-[var(--text-muted)]">YOUR RUNNING PLEDGE TOTAL</span>
               <span className="font-heading font-semibold text-[44px] tracking-[-1px] text-[var(--burnt-orange)]">$423.50</span>
               <span className="font-heading text-[12px] text-[var(--text-secondary)]">$0.25/mile &times; 1,694 miles walked</span>
-              <span className="font-label font-medium text-[10px] text-[var(--text-muted)]">$211.75 to Tower Cancer Research &middot; $211.75 to Cancer Council NSW</span>
+              <span className="font-label font-medium text-[10px] text-[var(--text-muted)]">$211.75 to City of Hope &middot; $211.75 to Leukaemia Foundation</span>
             </div>
             {/* Progress */}
             <div className="flex flex-col gap-[8px] px-[32px] py-[18px] bg-[var(--bg-white)]">
@@ -161,7 +161,7 @@ export default function StrategyPage() {
             <DetailItem label="PERSONAL RUNNING TOTAL">The big orange number ($423.50) is the most important element. Watching it grow from $12 to $200 to $662 over 6 months creates ownership. It&apos;s <em>their</em> number.</DetailItem>
             <DetailItem label="TRAIL PROGRESS BAR">Visual representation of how far you&apos;ve walked. Green-to-orange gradient matches the brand. Percentage gives concrete sense of completion.</DetailItem>
             <DetailItem label="JOURNAL EXCERPT">Emotional connection. A short quote from your trail journal humanizes the numbers. Links to full entry on yeschapter.com to drive site traffic.</DetailItem>
-            <DetailItem label="50/50 SPLIT SHOWN">Every email reinforces where the money goes: half to Tower Cancer Research, half to Cancer Council NSW. Builds trust.</DetailItem>
+            <DetailItem label="50/50 SPLIT SHOWN">Every email reinforces where the money goes: half to City of Hope, half to the Leukaemia Foundation. Builds trust.</DetailItem>
             <DetailItem label="DYNAMIC CONTENT">Every field is personalized: pledge rate, total, miles, days, journal excerpt. No two pledgers see the same email.</DetailItem>
           </div>
         </div>
@@ -200,7 +200,7 @@ export default function StrategyPage() {
               <span className="font-label font-bold text-[10px] tracking-[3px] text-[var(--text-muted)]">YOUR PLEDGE IS NOW</span>
               <span className="font-heading font-semibold text-[48px] tracking-[-1px] text-[var(--burnt-orange)]">$250.00</span>
               <span className="font-heading text-[12px] text-[var(--text-secondary)]">$0.25/mile &times; 1,000 miles = $250.00 pledged so far</span>
-              <span className="font-label font-medium text-[10px] text-[var(--text-muted)]">$125.00 to Tower Cancer Research &middot; $125.00 to Cancer Council NSW</span>
+              <span className="font-label font-medium text-[10px] text-[var(--text-muted)]">$125.00 to City of Hope &middot; $125.00 to Leukaemia Foundation</span>
             </div>
             {/* Progress */}
             <div className="flex flex-col gap-[8px] px-[32px] py-[18px] bg-[var(--bg-white)]">
@@ -300,23 +300,23 @@ export default function StrategyPage() {
               {/* Tower */}
               <div className="flex flex-col gap-[10px] bg-[var(--forest-green-light)] rounded-[4px] p-[16px]">
                 <div className="flex justify-between items-center">
-                  <span className="font-heading font-semibold text-[13px] text-[var(--text-primary)]">Tower Cancer Research Foundation</span>
+                  <span className="font-heading font-semibold text-[13px] text-[var(--text-primary)]">City of Hope</span>
                   <span className="font-heading font-semibold text-[17px] text-[var(--forest-green)]">$331.25</span>
                 </div>
-                <span className="font-label font-medium text-[10px] text-[var(--text-muted)]">Los Angeles, California &middot; 501(c)(3) &middot; Tax deductible in the US</span>
+                <span className="font-label font-medium text-[10px] text-[var(--text-muted)]">Duarte, California &middot; NCI-Designated &middot; Tax deductible in the US</span>
                 <div className="flex justify-center items-center py-[10px] bg-[var(--forest-green)]">
-                  <span className="font-label font-bold text-[10px] tracking-[1px] text-[var(--text-white)]">HONOR MY PLEDGE &mdash; TOWER CANCER RESEARCH ($331.25)</span>
+                  <span className="font-label font-bold text-[10px] tracking-[1px] text-[var(--text-white)]">HONOR MY PLEDGE &mdash; CITY OF HOPE ($331.25)</span>
                 </div>
               </div>
-              {/* Cancer Council */}
+              {/* Leukaemia Foundation */}
               <div className="flex flex-col gap-[10px] bg-[var(--burnt-orange-light)] rounded-[4px] p-[16px]">
                 <div className="flex justify-between items-center">
-                  <span className="font-heading font-semibold text-[13px] text-[var(--text-primary)]">Cancer Council NSW</span>
+                  <span className="font-heading font-semibold text-[13px] text-[var(--text-primary)]">Leukaemia Foundation</span>
                   <span className="font-heading font-semibold text-[17px] text-[var(--burnt-orange)]">$331.25</span>
                 </div>
-                <span className="font-label font-medium text-[10px] text-[var(--text-muted)]">Sydney, Australia &middot; DGR Registered &middot; Tax deductible in Australia</span>
+                <span className="font-label font-medium text-[10px] text-[var(--text-muted)]">Australia (National) &middot; ACNC Registered &middot; Tax deductible in Australia</span>
                 <div className="flex justify-center items-center py-[10px] bg-[var(--burnt-orange)]">
-                  <span className="font-label font-bold text-[10px] tracking-[1px] text-[var(--text-white)]">HONOR MY PLEDGE &mdash; CANCER COUNCIL NSW ($331.25)</span>
+                  <span className="font-label font-bold text-[10px] tracking-[1px] text-[var(--text-white)]">HONOR MY PLEDGE &mdash; LEUKAEMIA FOUNDATION ($331.25)</span>
                 </div>
               </div>
             </div>
@@ -346,7 +346,7 @@ export default function StrategyPage() {
             <DetailItem label="FOREST GREEN HERO">Different color from weekly/milestone emails signals this is special. Green = completion, achievement, nature&apos;s finish line.</DetailItem>
             <DetailItem label="FINISH LINE PHOTO">Real photo from Manning Park. Emotional anchor &mdash; the pledger sees the moment their journey with you ends.</DetailItem>
             <DetailItem label="FINAL TOTAL — HUGE">$662.50 at 52px. This is the number they&apos;ve watched grow for 6 months. Now it&apos;s real and it&apos;s time to act.</DetailItem>
-            <DetailItem label="TWO FOUNDATION BUTTONS">Color-coded cards with pre-calculated amounts. Green for Tower Cancer Research (US), Orange for Cancer Council NSW (AU). Each has a full-width honor button linking directly to the foundation&apos;s donation page. No math, no confusion.</DetailItem>
+            <DetailItem label="TWO FOUNDATION BUTTONS">Color-coded cards with pre-calculated amounts. Green for City of Hope (US), Orange for Leukaemia Foundation (AU). Each has a full-width honor button linking directly to the foundation&apos;s donation page. No math, no confusion.</DetailItem>
             <DetailItem label="TAX DEDUCTION INFO">Each card shows the tax status: 501(c)(3) for US donors, DGR for Australian donors. Direct donations = cleanest tax receipts.</DetailItem>
             <DetailItem label="&ldquo;I&apos;VE HONORED&rdquo; BUTTON">Self-report confirmation. Updates their profile, adds them to the Wall of Honor, changes their map bubble from grey to green.</DetailItem>
             <DetailItem label="INSTALLMENT OPTION">For large totals ($500+), honor over 3 months. Monthly reminders with 1/3 amount. Empathetic, not pushy.</DetailItem>
@@ -482,8 +482,8 @@ export default function StrategyPage() {
               <div className="flex flex-col gap-[6px] p-[20px] bg-[var(--bg-warm)]">
                 <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">YOUR DONATION SUMMARY</span>
                 <p className="font-heading text-[14px] text-[var(--text-secondary)] leading-[1.8]">
-                  $331.25 &rarr; Tower Cancer Research Foundation<br/>
-                  $331.25 &rarr; Cancer Council NSW<br/>
+                  $331.25 &rarr; City of Hope<br/>
+                  $331.25 &rarr; Leukaemia Foundation<br/>
                   <strong>$662.50 total to cancer research</strong>
                 </p>
               </div>
@@ -747,6 +747,103 @@ export default function StrategyPage() {
 
       {/* ═══════════════════════════════════════ */}
       {/* SUMMARY FOR PAUL */}
+      {/* ═══════════════════════════════════════ */}
+      {/* Compound Effect on Pledges */}
+      <section className="flex flex-col gap-[48px] px-6 md:px-12 lg:px-[120px] py-[64px] bg-[var(--bg-white)] w-full">
+        <div className="flex flex-col gap-[16px] max-w-[700px]">
+          <SectionBadge>THE COMPOUND EFFECT ON PLEDGES</SectionBadge>
+          <h2 className="font-heading font-semibold text-[32px] md:text-[38px] tracking-[-0.5px] text-[var(--text-primary)]">
+            Why Magic Links Generate More Pledges
+          </h2>
+          <p className="font-heading text-[17px] leading-[1.7] text-[var(--text-secondary)]">
+            Most fundraising platforms treat authentication as a security checkbox. We treat it as a growth mechanic. The magic link system isn&apos;t just about convenience — it&apos;s a psychological and social engine that multiplies pledge volume through four compounding forces.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-[32px]">
+          {/* Force 1 */}
+          <div className="flex flex-col gap-[16px] bg-[var(--bg-warm)] border border-[var(--border-subtle)] p-[32px]">
+            <div className="flex items-center gap-[12px]">
+              <div className="flex items-center justify-center w-[40px] h-[40px] bg-[var(--burnt-orange)] shrink-0">
+                <UserPlus className="w-[20px] h-[20px] text-white" />
+              </div>
+              <span className="font-label font-bold text-[13px] tracking-[2px] text-[var(--burnt-orange)]">ZERO-FRICTION PLEDGE</span>
+            </div>
+            <h3 className="font-heading font-semibold text-[20px] text-[var(--text-primary)]">The pledge takes 30 seconds — and so does re-entry</h3>
+            <p className="font-heading text-[14px] leading-[1.7] text-[var(--text-secondary)]">
+              Passwords kill conversion. Every &quot;forgot password&quot; click is a potential pledger lost. With magic links, there&apos;s no account to create and no password to remember. Email is identity. The link is the key. Someone pledging on a phone while watching a reel doesn&apos;t stop to invent a new password — they just pledge.
+            </p>
+            <div className="flex items-center gap-[8px] bg-[var(--bg-white)] p-[12px] border-l-[3px] border-[var(--burnt-orange)]">
+              <span className="font-heading italic text-[13px] text-[var(--text-secondary)]">&ldquo;The commitment happens at the moment of inspiration — not three screens later.&rdquo;</span>
+            </div>
+          </div>
+
+          {/* Force 2 */}
+          <div className="flex flex-col gap-[16px] bg-[var(--bg-warm)] border border-[var(--border-subtle)] p-[32px]">
+            <div className="flex items-center gap-[12px]">
+              <div className="flex items-center justify-center w-[40px] h-[40px] bg-[var(--forest-green)] shrink-0">
+                <Bell className="w-[20px] h-[20px] text-white" />
+              </div>
+              <span className="font-label font-bold text-[13px] tracking-[2px] text-[var(--forest-green)]">PASSIVE RE-AUTHENTICATION</span>
+            </div>
+            <h3 className="font-heading font-semibold text-[20px] text-[var(--text-primary)]">Weekly emails silently keep pledgers logged in</h3>
+            <p className="font-heading text-[14px] leading-[1.7] text-[var(--text-secondary)]">
+              Every milestone update email we send contains a magic link — not as a sign-in prompt, but as the natural &quot;View My Pledge&quot; button. Clicking it re-establishes the session invisibly. Pledgers feel they&apos;re just checking their dashboard; in reality they&apos;re re-engaging with the cause every week. Their pledge total grows as Paul hikes. The emotional investment deepens.
+            </p>
+            <div className="flex items-center gap-[8px] bg-[var(--bg-white)] p-[12px] border-l-[3px] border-[var(--forest-green)]">
+              <span className="font-heading italic text-[13px] text-[var(--text-secondary)]">&ldquo;Engagement without effort — for the pledger and for us.&rdquo;</span>
+            </div>
+          </div>
+
+          {/* Force 3 */}
+          <div className="flex flex-col gap-[16px] bg-[var(--bg-warm)] border border-[var(--border-subtle)] p-[32px]">
+            <div className="flex items-center gap-[12px]">
+              <div className="flex items-center justify-center w-[40px] h-[40px] bg-[var(--burnt-orange)] shrink-0">
+                <Share2 className="w-[20px] h-[20px] text-white" />
+              </div>
+              <span className="font-label font-bold text-[13px] tracking-[2px] text-[var(--burnt-orange)]">REFERRAL MECHANICS</span>
+            </div>
+            <h3 className="font-heading font-semibold text-[20px] text-[var(--text-primary)]">Authenticated pledgers share with personal referral codes</h3>
+            <p className="font-heading text-[14px] leading-[1.7] text-[var(--text-secondary)]">
+              Once authenticated, every pledger has a personal share badge with their name, rate, and a referral link. When their friend pledges through that link, both see it reflected in their dashboard. This creates a social layer — pledgers don&apos;t just watch Paul&apos;s progress, they watch their own social impact grow. A pledger who has referred three friends is invested in a fundamentally different way than one who hasn&apos;t.
+            </p>
+            <div className="flex items-center gap-[8px] bg-[var(--bg-white)] p-[12px] border-l-[3px] border-[var(--burnt-orange)]">
+              <span className="font-heading italic text-[13px] text-[var(--text-secondary)]">&ldquo;Identity and ownership — not just participation.&rdquo;</span>
+            </div>
+          </div>
+
+          {/* Force 4 */}
+          <div className="flex flex-col gap-[16px] bg-[var(--bg-warm)] border border-[var(--border-subtle)] p-[32px]">
+            <div className="flex items-center gap-[12px]">
+              <div className="flex items-center justify-center w-[40px] h-[40px] bg-[var(--forest-green)] shrink-0">
+                <Award className="w-[20px] h-[20px] text-white" />
+              </div>
+              <span className="font-label font-bold text-[13px] tracking-[2px] text-[var(--forest-green)]">COMMITMENT ESCALATION</span>
+            </div>
+            <h3 className="font-heading font-semibold text-[20px] text-[var(--text-primary)]">Logged-in pledgers are more likely to increase their pledge</h3>
+            <p className="font-heading text-[14px] leading-[1.7] text-[var(--text-secondary)]">
+              Seeing your running total update in real time — &ldquo;you&apos;ve committed $47.25 so far&rdquo; — creates a psychological anchor. Challenge boost prompts (e.g. &ldquo;Paul is attempting the hardest 100-mile stretch — will you commit an extra $0.05/mile?&rdquo;) are surfaced only to authenticated pledgers. The dashboard becomes a low-stakes game: pledgers return to see their number go up. Each return visit is another opportunity to boost.
+            </p>
+            <div className="flex items-center gap-[8px] bg-[var(--bg-white)] p-[12px] border-l-[3px] border-[var(--forest-green)]">
+              <span className="font-heading italic text-[13px] text-[var(--text-secondary)]">&ldquo;Watching your impact grow in real time is addictive in the best way.&rdquo;</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Summary */}
+        <div className="flex flex-col gap-[16px] bg-[var(--bg-dark)] p-[40px] max-w-[800px]">
+          <span className="font-label font-bold text-[11px] tracking-[3px] text-[var(--burnt-orange)]">THE NET RESULT</span>
+          <p className="font-heading text-[18px] leading-[1.7] text-[#FFFFFFCC]">
+            Each of these four forces compounds on the others. A zero-friction pledge creates a pledger. Weekly re-auth keeps them engaged. The social wall motivates them to share. The dashboard motivates them to boost. The result is a pledge base that grows in both <strong className="text-white">number</strong> and <strong className="text-white">value</strong> throughout the hike — without any manual outreach.
+          </p>
+          <div className="flex flex-wrap gap-[12px] mt-[8px]">
+            {["No passwords", "30-second pledge", "Weekly passive re-auth", "Social referral layer", "Challenge boosts", "Real-time totals"].map((tag) => (
+              <span key={tag} className="px-[12px] py-[6px] bg-[#FFFFFF11] font-label font-semibold text-[11px] tracking-[1px] text-[#FFFFFFAA]">{tag}</span>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ═══════════════════════════════════════ */}
       <section className="flex flex-col items-center gap-[32px] px-6 md:px-12 lg:px-[120px] py-[64px] bg-[var(--bg-dark)] w-full text-center">
         <SectionBadge>THE SHORT VERSION</SectionBadge>

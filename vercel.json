@@ -1,6 +1,10 @@
 {
   "crons": [
     {
+      "path": "/api/automation/instagram-sync",
+      "schedule": "0 14 * * *"
+    },
+    {
       "path": "/api/emails/weekly",
       "schedule": "0 15 * * 1"
     },

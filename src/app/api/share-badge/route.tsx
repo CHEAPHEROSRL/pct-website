@@ -139,9 +139,9 @@ export async function GET(request: NextRequest) {
               marginTop: 4,
             }}
           >
-            <span>50% Tower Cancer Research</span>
+            <span>50% City of Hope</span>
             <span style={{ color: "#FFFFFF33" }}>·</span>
-            <span>50% Cancer Council NSW</span>
+            <span>50% Leukaemia Foundation</span>
           </div>
         </div>
 

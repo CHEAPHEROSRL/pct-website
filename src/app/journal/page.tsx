@@ -3,11 +3,13 @@
 import { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Search, ArrowRight, ChevronRight, ChevronLeft } from "lucide-react";
+import { Search, ArrowRight, ChevronRight, ChevronLeft, Instagram, ExternalLink, Play, Images } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
 import type { JournalPostPublic } from "@/lib/types";
+import { useInstagramPosts } from "@/hooks/useInstagramPosts";
+import type { InstagramPost } from "@/lib/instagram";
 
 const filterOptions = ["ALL", "BLOG", "VLOG", "INTERVIEWS", "PHOTOS"] as const;
 type Filter = (typeof filterOptions)[number];
@@ -43,30 +45,21 @@ function mapPostToEntry(post: JournalPostPublic): JournalEntry {
 }
 
 const fallbackFeaturedPost: JournalEntry = {
-  slug: "the-first-step-standing-at-the-southern-terminus",
-  img: "/images/hiking/20220823_123521.jpg",
-  day: "DAY 1",
-  date: "MARCH 28, 2026",
-  title: "The First Step: Standing at the Southern Terminus",
-  excerpt: "Standing at the southern monument, looking north toward Canada. 2,650 miles of trail ahead. The sun is barely up and the desert air is still cool. This is the moment I\u2019ve been preparing for \u2014 the moment everything changes. For mom. For dad. For everyone still fighting.",
+  slug: "how-pledging-works",
+  img: "/images/hiking/FB_IMG_1771992929191.jpg",
+  day: "GUIDE",
+  date: "MARCH 10, 2026",
+  title: "How Pledging Works \u2014 A Complete Guide",
+  excerpt: "Everything you need to know about pledging per mile: how it works, when you pay, where the money goes, and why this model keeps Paul accountable.",
   tag: "BLOG",
 };
 
-const fallbackEntries: JournalEntry[] = [
-  { slug: "finding-my-rhythm", img: "/images/hiking/FB_IMG_1771992615412.jpg", day: "DAY 2", date: "MARCH 29, 2026", title: "Finding My Rhythm", excerpt: "20 miles in and my feet are already talking to me. But the desert sunrise was worth every blister.", tag: "BLOG" },
-  { slug: "water-and-gratitude", img: "/images/hiking/20220822_134557.jpg", day: "DAY 5", date: "APRIL 1, 2026", title: "Water and Gratitude", excerpt: "Found a perfect stream today. Sat with my feet in the cold water and thought about Mom\u2019s garden.", tag: "VLOG" },
-  { slug: "stars-like-ive-never-seen", img: "/images/hiking/20230821_165432.jpg", day: "DAY 8", date: "APRIL 4, 2026", title: "Stars Like I've Never Seen", excerpt: "No light pollution out here. The Milky Way stretches above like a river of light. Dad would have loved this.", tag: "PHOTOS" },
-  { slug: "through-the-desert-wind", img: "/images/hiking/20240128_110150.jpg", day: "DAY 15", date: "APRIL 11, 2026", title: "Through the Desert Wind", excerpt: "The heat is relentless, but the sunsets make it all worthwhile. Met a fellow hiker who lost her mother to breast cancer.", tag: "BLOG" },
-  { slug: "wildflower-season", img: "/images/hiking/Screenshot_20240316-175047_Gallery.jpg", day: "DAY 20", date: "APRIL 16, 2026", title: "Wildflower Season", excerpt: "The desert is blooming. Purple, yellow, orange \u2014 everywhere. Nature\u2019s reminder that beauty follows hardship.", tag: "PHOTOS" },
-  { slug: "sierra-nights", img: "/images/hiking/20220822_134051.jpg", day: "DAY 30", date: "APRIL 26, 2026", title: "Sierra Nights", excerpt: "The stars remind me of camping with my dad. I can feel him walking with me. Tonight\u2019s vlog is for him.", tag: "VLOG" },
-  { slug: "trail-interview-sarah-portland", img: "/images/hiking/20230831_135648.jpg", day: "DAY 12", date: "APRIL 8, 2026", title: "YesChapter Interview: Sarah from Portland", excerpt: "I asked Sarah the question: 'What's a time in your life where you could go back and change the answer to YES?' Her answer stopped me in my tracks.", tag: "INTERVIEWS" },
-  { slug: "trail-interview-marcus-and-elena", img: "/images/hiking/image1.jpeg", day: "DAY 25", date: "APRIL 21, 2026", title: "YesChapter Interview: Marcus & Elena — A Couple on the Trail", excerpt: "They both had different answers to the YesChapter question. Marcus wished he'd said yes to forgiving his father sooner. Elena wished she'd said yes to herself.", tag: "INTERVIEWS" },
-  { slug: "how-pledging-works", img: "/images/hiking/FB_IMG_1771992929191.jpg", day: "GUIDE", date: "MARCH 10, 2026", title: "How Pledging Works \u2014 A Complete Guide", excerpt: "Everything you need to know about pledging per mile: how it works, when you pay, where the money goes, and why this model keeps Paul accountable.", tag: "BLOG" },
-  { slug: "as-a-man-thinketh", img: "/images/portraits/20230823_190926.jpg", day: "REFLECTIONS", date: "MARCH 15, 2026", title: "As a Man Thinketh \u2014 The Book That Made Me Walk", excerpt: "A small book from 1903 changed how I see this entire journey. James Allen wrote that your thoughts shape your reality. I believe him.", tag: "BLOG" },
-  { slug: "finding-your-ikigai", img: "/images/hiking/FB_IMG_1771992939135.jpg", day: "REFLECTIONS", date: "MARCH 18, 2026", title: "Finding Your Ikigai \u2014 Why I Started YesChapter and Walked 2,650 Miles", excerpt: "Ikigai isn\u2019t something you find sitting still. It\u2019s something you build through consistent, hard, fulfilling, and meaningful work.", tag: "BLOG" },
-];
+const fallbackEntries: JournalEntry[] = [];
 
 const PER_PAGE = 6;
+
+const INSTAGRAM_HANDLE = process.env.NEXT_PUBLIC_INSTAGRAM_HANDLE || "@yeschapter";
+const INSTAGRAM_URL = `https://www.instagram.com/${INSTAGRAM_HANDLE.replace("@", "")}`;
 
 export default function JournalPage() {
   const [activeFilter, setActiveFilter] = useState<Filter>("ALL");
@@ -74,6 +67,8 @@ export default function JournalPage() {
   const [page, setPage] = useState(1);
   const [dynamicFeatured, setDynamicFeatured] = useState<JournalEntry | null>(null);
   const [dynamicEntries, setDynamicEntries] = useState<JournalEntry[] | null>(null);
+
+  const { posts: instagramPosts } = useInstagramPosts();
 
   useEffect(() => {
     fetch("/api/journal")
@@ -251,10 +246,150 @@ export default function JournalPage() {
         )}
       </section>
 
+      {/* Instagram Gallery — only rendered when posts are available */}
+      {instagramPosts.length > 0 && (
+        <InstagramGallery posts={instagramPosts} handle={INSTAGRAM_HANDLE} profileUrl={INSTAGRAM_URL} />
+      )}
+
       <Footer />
     </div>
   );
 }
+
+// ---------------------------------------------------------------------------
+// Instagram Gallery
+// ---------------------------------------------------------------------------
+
+function InstagramGallery({
+  posts,
+  handle,
+  profileUrl,
+}: {
+  posts: InstagramPost[];
+  handle: string;
+  profileUrl: string;
+}) {
+  // Show at most 12 posts in the grid (3×4 on desktop, 2×6 on tablet, 1×12 on mobile)
+  const visible = posts.slice(0, 12);
+
+  return (
+    <section className="flex flex-col gap-[48px] px-6 md:px-12 lg:px-[120px] py-[64px] bg-[var(--bg-white)] w-full border-t border-[var(--border-subtle)]">
+      {/* Header */}
+      <div className="flex flex-col gap-[12px]">
+        {/* Label row */}
+        <div className="flex items-center gap-[8px]">
+          <Instagram className="w-[14px] h-[14px] text-[var(--burnt-orange)]" />
+          <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">
+            FOLLOW THE JOURNEY
+          </span>
+        </div>
+        {/* Title + CTA */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-[16px]">
+          <h2 className="font-heading font-semibold text-[28px] md:text-[36px] tracking-[-0.5px] text-[var(--text-primary)]">
+            From the Trail{" "}
+            <span className="text-[var(--text-muted)] font-normal">{handle}</span>
+          </h2>
+          <a
+            href={profileUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-[8px] bg-[var(--bg-dark)] px-[20px] py-[10px] hover:opacity-90 transition-opacity shrink-0 self-start sm:self-auto"
+          >
+            <Instagram className="w-[14px] h-[14px] text-white" />
+            <span className="font-label font-bold text-[11px] tracking-[2px] text-white">
+              FOLLOW ON INSTAGRAM
+            </span>
+            <ExternalLink className="w-[11px] h-[11px] text-white/60" />
+          </a>
+        </div>
+        <p className="font-heading text-[15px] md:text-[16px] leading-[1.6] text-[var(--text-secondary)] max-w-[640px]">
+          Paul shares daily moments, landscapes, wildlife encounters and camp life between journal posts. Follow along in real time.
+        </p>
+      </div>
+
+      {/* Grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-[8px] md:gap-[12px] w-full">
+        {visible.map((post) => (
+          <InstagramCard key={post.id} post={post} />
+        ))}
+      </div>
+
+      {/* Bottom CTA */}
+      <div className="flex items-center justify-center">
+        <a
+          href={profileUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-[10px] border border-[var(--border-subtle)] px-[32px] py-[14px] hover:bg-[var(--bg-warm)] transition-colors"
+        >
+          <Instagram className="w-[16px] h-[16px] text-[var(--text-secondary)]" />
+          <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-secondary)]">
+            VIEW ALL POSTS ON INSTAGRAM
+          </span>
+          <ArrowRight className="w-[14px] h-[14px] text-[var(--text-secondary)]" />
+        </a>
+      </div>
+    </section>
+  );
+}
+
+function InstagramCard({ post }: { post: InstagramPost }) {
+  const isVideo = post.mediaType === "VIDEO";
+  const isCarousel = post.mediaType === "CAROUSEL_ALBUM";
+
+  // Truncate caption for the overlay
+  const shortCaption =
+    post.caption.length > 90
+      ? post.caption.slice(0, 90).trimEnd() + "…"
+      : post.caption;
+
+  return (
+    <a
+      href={post.permalink}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group relative block aspect-square overflow-hidden bg-[var(--warm-stone)]"
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={post.mediaUrl}
+        alt={shortCaption || "Instagram post"}
+        loading="lazy"
+        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+      />
+
+      {/* Media type badge — top right */}
+      {(isVideo || isCarousel) && (
+        <div className="absolute top-[8px] right-[8px]">
+          {isVideo ? (
+            <Play className="w-[16px] h-[16px] text-white drop-shadow-md" fill="white" />
+          ) : (
+            <Images className="w-[16px] h-[16px] text-white drop-shadow-md" />
+          )}
+        </div>
+      )}
+
+      {/* Caption overlay — slides up on hover */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-[12px] md:p-[14px]">
+        {shortCaption && (
+          <p className="font-heading text-[12px] md:text-[13px] leading-[1.5] text-white line-clamp-3">
+            {shortCaption}
+          </p>
+        )}
+        <div className="flex items-center gap-[4px] mt-[6px]">
+          <ExternalLink className="w-[10px] h-[10px] text-white/60" />
+          <span className="font-label font-semibold text-[10px] tracking-[1px] text-white/60">
+            VIEW ON INSTAGRAM
+          </span>
+        </div>
+      </div>
+    </a>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Blog Card
+// ---------------------------------------------------------------------------
 
 function BlogCard({ slug, img, day, date, title, excerpt, tag }: JournalEntry) {
   const tagStyle =

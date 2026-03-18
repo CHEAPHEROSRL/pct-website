@@ -14,7 +14,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CountdownBanner from "@/components/CountdownBanner";
 import ScrollReveal from "@/components/ScrollReveal";
-import type { PledgePublic, PledgeStats, ChallengePublic } from "@/lib/types";
+import type { PledgePublic, PledgeStats, ChallengePublic, PledgerComment } from "@/lib/types";
+import { useSession } from "@/hooks/useSession";
 
 function formatCurrency(value: number): string {
   return value.toLocaleString("en-US", {
@@ -42,18 +43,27 @@ function timeAgo(timestamp: number): string {
   return `${days}d ago`;
 }
 
+type SortOrder = "amount" | "chronological";
+
 export default function PledgersPage() {
   const [stats, setStats] = useState<PledgeStats | null>(null);
   const [topPledgers, setTopPledgers] = useState<PledgePublic[]>([]);
   const [challenges, setChallenges] = useState<ChallengePublic[]>([]);
+  const [sortOrder, setSortOrder] = useState<SortOrder>("amount");
+  const [comments, setComments] = useState<PledgerComment[]>([]);
+  const [commentBody, setCommentBody] = useState("");
+  const [commentLoading, setCommentLoading] = useState(false);
+  const [commentError, setCommentError] = useState<string | null>(null);
+  const { user } = useSession();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const [pledgeRes, challengeRes] = await Promise.all([
+        const [pledgeRes, challengeRes, commentsRes] = await Promise.all([
           fetch("/api/pledges/stats"),
           fetch("/api/challenges"),
+          fetch("/api/comments"),
         ]);
 
         if (pledgeRes.ok) {
@@ -66,6 +76,11 @@ export default function PledgersPage() {
           const data = await challengeRes.json();
           setChallenges(data.history || []);
         }
+
+        if (commentsRes.ok) {
+          const data = await commentsRes.json();
+          setComments(data.comments || []);
+        }
       } catch {
         // Silently fail — show empty state
       } finally {
@@ -76,6 +91,40 @@ export default function PledgersPage() {
   }, []);
 
   const succeededChallenges = challenges.filter((c) => c.status === "succeeded");
+
+  async function submitComment(e: React.FormEvent) {
+    e.preventDefault();
+    if (!commentBody.trim()) return;
+    setCommentLoading(true);
+    setCommentError(null);
+    try {
+      const res = await fetch("/api/comments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ body: commentBody }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setCommentError(data.error ?? "Failed to post comment.");
+      } else {
+        setComments((prev) => [data.comment, ...prev]);
+        setCommentBody("");
+      }
+    } catch {
+      setCommentError("Something went wrong. Please try again.");
+    } finally {
+      setCommentLoading(false);
+    }
+  }
+
+  async function deleteComment(id: string) {
+    await fetch(`/api/comments?id=${id}`, { method: "DELETE" });
+    setComments((prev) => prev.filter((c) => c.id !== id));
+  }
+
+  const sortedPledgers = [...topPledgers].sort((a, b) =>
+    sortOrder === "chronological" ? b.createdAt - a.createdAt : b.totalPledge - a.totalPledge
+  );
 
   return (
     <div className="flex flex-col w-full bg-[var(--bg-warm)]">
@@ -146,20 +195,39 @@ export default function PledgersPage() {
 
       {/* Top Pledgers Table */}
       <section className="flex flex-col gap-[24px] px-6 md:px-12 lg:px-[120px] py-[48px] bg-[var(--bg-white)] w-full">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-[12px]">
           <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-muted)]">
-            TOP PLEDGERS
+            {sortOrder === "amount" ? "TOP PLEDGERS" : "ALL PLEDGERS"}
           </span>
-          <span className="font-heading text-[13px] text-[var(--text-muted)]">
-            Ranked by total pledge if Paul completes the PCT
-          </span>
+          <div className="flex items-center gap-[0px] border border-[var(--border-subtle)]">
+            <button
+              onClick={() => setSortOrder("amount")}
+              className={`font-label font-bold text-[11px] tracking-[2px] px-[16px] py-[8px] transition-colors ${
+                sortOrder === "amount"
+                  ? "bg-[var(--burnt-orange)] text-[var(--text-white)]"
+                  : "bg-[var(--bg-white)] text-[var(--text-muted)] hover:bg-[var(--bg-warm)]"
+              }`}
+            >
+              BY AMOUNT
+            </button>
+            <button
+              onClick={() => setSortOrder("chronological")}
+              className={`font-label font-bold text-[11px] tracking-[2px] px-[16px] py-[8px] transition-colors ${
+                sortOrder === "chronological"
+                  ? "bg-[var(--burnt-orange)] text-[var(--text-white)]"
+                  : "bg-[var(--bg-white)] text-[var(--text-muted)] hover:bg-[var(--bg-warm)]"
+              }`}
+            >
+              CHRONOLOGICAL
+            </button>
+          </div>
         </div>
 
         <div className="flex flex-col bg-[var(--bg-card)] border border-[var(--border-subtle)]">
           {/* Table header */}
           <div className="hidden md:flex items-center px-[24px] py-[12px] bg-[var(--warm-stone)] border-b border-[var(--border-subtle)]">
             <span className="w-[60px] font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
-              RANK
+              {sortOrder === "chronological" ? "DATE" : "RANK"}
             </span>
             <span className="flex-1 font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
               NAME
@@ -191,21 +259,23 @@ export default function PledgersPage() {
               </span>
             </div>
           ) : (
-            topPledgers.map((pledger, i) => (
+            sortedPledgers.map((pledger, i) => (
               <div
                 key={i}
                 className={`flex flex-col md:flex-row md:items-center gap-[8px] md:gap-0 px-[24px] py-[16px] border-b border-[var(--border-subtle)] last:border-b-0 ${
-                  i < 3 ? "bg-[var(--bg-white)]" : ""
+                  sortOrder === "amount" && i < 3 ? "bg-[var(--bg-white)]" : ""
                 }`}
               >
                 <span className={`w-[60px] font-heading font-semibold text-[16px] ${
-                  i === 0
+                  sortOrder === "chronological"
+                    ? "text-[var(--text-muted)]"
+                    : i === 0
                     ? "text-[var(--burnt-orange)]"
                     : i < 3
                     ? "text-[var(--forest-green)]"
                     : "text-[var(--text-muted)]"
                 }`}>
-                  #{i + 1}
+                  {sortOrder === "chronological" ? formatDate(pledger.createdAt) : `#${i + 1}`}
                 </span>
                 <div className="flex-1 flex items-center gap-[10px]">
                   <span className="font-heading font-semibold text-[15px] text-[var(--text-primary)]">
@@ -297,6 +367,103 @@ export default function PledgersPage() {
           </div>
         </section>
       )}
+
+      {/* Pledger Comments */}
+      <section className="flex flex-col gap-[32px] px-6 md:px-12 lg:px-[120px] py-[48px] bg-[var(--bg-white)] border-t border-[var(--border-subtle)] w-full">
+        <div className="flex flex-col gap-[8px]">
+          <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-muted)]">
+            PLEDGER COMMENTS
+          </span>
+          <h2 className="font-heading font-semibold text-[24px] tracking-[-0.5px] text-[var(--text-primary)]">
+            Words from the Wall
+          </h2>
+          <p className="font-heading text-[14px] text-[var(--text-secondary)]">
+            Pledgers with an account can leave a message of support.
+          </p>
+        </div>
+
+        {/* Post a comment */}
+        {user?.pledgeId ? (
+          <form onSubmit={submitComment} className="flex flex-col gap-[12px] max-w-[600px]">
+            <textarea
+              value={commentBody}
+              onChange={(e) => setCommentBody(e.target.value)}
+              placeholder="Leave a message of support for Paul..."
+              maxLength={300}
+              rows={3}
+              className="w-full font-heading text-[15px] text-[var(--text-primary)] border border-[var(--border-subtle)] bg-[var(--bg-warm)] px-[16px] py-[12px] resize-none placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--burnt-orange)]"
+            />
+            <div className="flex items-center justify-between">
+              <span className="font-heading text-[12px] text-[var(--text-muted)]">
+                {commentBody.length}/300
+              </span>
+              <button
+                type="submit"
+                disabled={commentLoading || !commentBody.trim()}
+                className="font-label font-bold text-[11px] tracking-[2px] bg-[var(--burnt-orange)] text-[var(--text-white)] px-[24px] py-[10px] disabled:opacity-50 transition-opacity hover:opacity-90"
+              >
+                {commentLoading ? "POSTING…" : "POST COMMENT"}
+              </button>
+            </div>
+            {commentError && (
+              <p className="font-heading text-[13px] text-red-600">{commentError}</p>
+            )}
+          </form>
+        ) : user && !user.pledgeId ? (
+          <div className="flex flex-col gap-[8px] max-w-[600px] bg-[var(--bg-warm)] border border-[var(--border-subtle)] px-[20px] py-[16px]">
+            <p className="font-heading text-[14px] text-[var(--text-secondary)]">
+              You&apos;re signed in, but don&apos;t have an active pledge yet.{" "}
+              <Link href="/pledge" className="text-[var(--burnt-orange)] hover:underline">
+                Set a pledge
+              </Link>{" "}
+              to unlock comments.
+            </p>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-[8px] max-w-[600px] bg-[var(--bg-warm)] border border-[var(--border-subtle)] px-[20px] py-[16px]">
+            <p className="font-heading text-[14px] text-[var(--text-secondary)]">
+              <Link href="/pledge" className="text-[var(--burnt-orange)] hover:underline font-semibold">
+                Pledge per mile
+              </Link>{" "}
+              and create an account to leave a comment.
+            </p>
+          </div>
+        )}
+
+        {/* Comment list */}
+        {comments.length > 0 && (
+          <div className="flex flex-col gap-[0] border border-[var(--border-subtle)] max-w-[700px]">
+            {comments.map((c) => (
+              <div
+                key={c.id}
+                className="flex flex-col gap-[6px] px-[20px] py-[16px] border-b border-[var(--border-subtle)] last:border-b-0"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-[10px]">
+                    <span className="font-heading font-semibold text-[14px] text-[var(--text-primary)]">
+                      {c.displayName}
+                    </span>
+                    <span className="font-heading text-[12px] text-[var(--text-muted)]">
+                      {timeAgo(c.createdAt)}
+                    </span>
+                  </div>
+                  {user?.pledgeId === c.pledgeId && (
+                    <button
+                      onClick={() => deleteComment(c.id)}
+                      className="font-label text-[10px] tracking-[1px] text-[var(--text-muted)] hover:text-red-500 transition-colors"
+                    >
+                      DELETE
+                    </button>
+                  )}
+                </div>
+                <p className="font-heading text-[14px] leading-[1.6] text-[var(--text-secondary)]">
+                  {c.body}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
 
       {/* CTA */}
       <section className="flex flex-col items-center gap-[20px] px-6 md:px-12 lg:px-[120px] py-[48px] bg-[var(--bg-warm)] w-full">

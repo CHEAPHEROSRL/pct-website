@@ -303,6 +303,25 @@ export default function AdminPage() {
     setStatus("");
   }
 
+  // Toggle publish/unpublish inline
+  async function handleTogglePublish(post: JournalPost) {
+    try {
+      const res = await fetch("/api/journal", {
+        method: "PUT",
+        headers: authHeaders(),
+        body: JSON.stringify({ id: post.id, published: !post.published }),
+      });
+      if (res.ok) {
+        setPosts((prev) =>
+          prev.map((p) => (p.id === post.id ? { ...p, published: !post.published } : p))
+        );
+        setStatus(post.published ? `"${post.title}" unpublished` : `"${post.title}" published!`);
+      }
+    } catch {
+      setStatus("Toggle failed");
+    }
+  }
+
   // Delete
   async function handleDelete(id: string) {
     if (!confirm("Delete this post? This cannot be undone.")) return;
@@ -684,10 +703,10 @@ export default function AdminPage() {
               <span className="w-[120px] font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
                 DATE
               </span>
-              <span className="w-[110px] font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+              <span className="w-[130px] font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
                 STATUS
               </span>
-              <span className="w-[130px] font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+              <span className="w-[100px] font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
                 ACTIONS
               </span>
             </div>
@@ -727,18 +746,20 @@ export default function AdminPage() {
                   <span className="w-[120px] font-heading text-[13px] text-[var(--text-secondary)]">
                     {post.date}
                   </span>
-                  <div className="w-[110px]">
-                    <span
-                      className={`inline-block px-[10px] py-[4px] font-label font-bold text-[10px] tracking-[1px] ${
+                  <div className="w-[130px]">
+                    <button
+                      onClick={() => handleTogglePublish(post)}
+                      className={`inline-flex items-center gap-[6px] px-[10px] py-[4px] font-label font-bold text-[10px] tracking-[1px] cursor-pointer hover:opacity-70 transition-opacity ${
                         post.published
                           ? "bg-[var(--forest-green-light)] text-[var(--forest-green)]"
                           : "bg-[var(--burnt-orange-light)] text-[var(--burnt-orange)]"
                       }`}
+                      title={post.published ? "Click to unpublish" : "Click to publish"}
                     >
-                      {post.published ? "PUBLISHED" : "DRAFT"}
-                    </span>
+                      {post.published ? "● PUBLISHED" : "○ DRAFT"}
+                    </button>
                   </div>
-                  <div className="flex gap-[8px] w-[130px]">
+                  <div className="flex gap-[8px] w-[100px]">
                     <button
                       onClick={() => {
                         setEditingPost({ ...post });
@@ -755,9 +776,7 @@ export default function AdminPage() {
                       onClick={() => handleDelete(post.id)}
                       className="px-[12px] py-[6px] border border-[var(--border-subtle)] hover:border-red-400 transition-colors cursor-pointer"
                     >
-                      <span className="font-label font-bold text-[10px] tracking-[1px] text-[#8B2020]">
-                        DELETE
-                      </span>
+                      <Trash2 className="w-[12px] h-[12px] text-[#8B2020]" />
                     </button>
                   </div>
                 </div>

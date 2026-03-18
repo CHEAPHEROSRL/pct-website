@@ -1,12 +1,22 @@
-import { Resend } from "resend";
+import { google } from "googleapis";
 
-function getResend(): Resend | null {
-  const key = process.env.RESEND_API_KEY;
-  if (!key) return null;
-  return new Resend(key);
+// ---------------------------------------------------------------------------
+// Gmail API client (Google Workspace OAuth2)
+// ---------------------------------------------------------------------------
+
+function getGmailClient() {
+  const clientId = process.env.GMAIL_CLIENT_ID;
+  const clientSecret = process.env.GMAIL_CLIENT_SECRET;
+  const refreshToken = process.env.GMAIL_REFRESH_TOKEN;
+
+  if (!clientId || !clientSecret || !refreshToken) return null;
+
+  const oauth2Client = new google.auth.OAuth2(clientId, clientSecret);
+  oauth2Client.setCredentials({ refresh_token: refreshToken });
+  return google.gmail({ version: "v1", auth: oauth2Client });
 }
 
-const FROM = process.env.EMAIL_FROM || "YesChapter <noreply@yeschapter.com>";
+const FROM = process.env.EMAIL_FROM || "YesChapter <paul@yeschapter.com>";
 
 interface SendResult {
   success: boolean;
@@ -14,14 +24,31 @@ interface SendResult {
 }
 
 async function send(to: string, subject: string, html: string): Promise<SendResult> {
-  const resend = getResend();
-  if (!resend) {
-    console.warn("Resend not configured — email skipped:", subject);
+  const gmail = getGmailClient();
+  if (!gmail) {
+    console.warn("Gmail not configured — email skipped:", subject);
     return { success: false, error: "Email service not configured" };
   }
 
   try {
-    await resend.emails.send({ from: FROM, to, subject, html });
+    // Build RFC 2822 message
+    const message = [
+      `To: ${to}`,
+      `From: ${FROM}`,
+      `Subject: ${subject}`,
+      "MIME-Version: 1.0",
+      "Content-Type: text/html; charset=utf-8",
+      "",
+      html,
+    ].join("\r\n");
+
+    const raw = Buffer.from(message).toString("base64url");
+
+    await gmail.users.messages.send({
+      userId: "me",
+      requestBody: { raw },
+    });
+
     return { success: true };
   } catch (err) {
     console.error("Failed to send email:", err);
@@ -230,7 +257,7 @@ export async function sendWeeklyUpdate(
         <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 3px; color: #8C8A87;">YOUR RUNNING PLEDGE TOTAL</div>
         <div style="font-size: 44px; font-weight: 600; letter-spacing: -1px; color: #C45C26; margin: 6px 0;">$${totalFormatted}</div>
         <div style="font-size: 12px; color: #5C5C5C;">${rateFormatted} &times; ${milesWalked.toLocaleString()} miles walked</div>
-        <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 500; font-size: 10px; color: #8C8A87; margin-top: 4px;">$${halfTotal} to Tower Cancer Research &middot; $${halfTotal} to Cancer Council NSW</div>
+        <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 500; font-size: 10px; color: #8C8A87; margin-top: 4px;">$${halfTotal} to City of Hope &middot; $${halfTotal} to Leukaemia Foundation</div>
       </div>
       <!-- Progress Bar -->
       <div style="padding: 18px 32px; background: #FFFFFF;">
@@ -335,7 +362,7 @@ export async function sendMilestoneReached(
         <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 3px; color: #8C8A87;">YOUR PLEDGE IS NOW</div>
         <div style="font-size: 48px; font-weight: 600; letter-spacing: -1px; color: #C45C26; margin: 6px 0;">$${totalFormatted}</div>
         <div style="font-size: 12px; color: #5C5C5C;">${rateFormatted} &times; ${milesWalked.toLocaleString()} miles = $${totalFormatted} pledged so far</div>
-        <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 500; font-size: 10px; color: #8C8A87; margin-top: 4px;">$${halfTotal} to Tower Cancer Research &middot; $${halfTotal} to Cancer Council NSW</div>
+        <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 500; font-size: 10px; color: #8C8A87; margin-top: 4px;">$${halfTotal} to City of Hope &middot; $${halfTotal} to Leukaemia Foundation</div>
       </div>
       <!-- Progress Bar -->
       <div style="padding: 18px 32px; background: #FFFFFF;">
@@ -438,7 +465,7 @@ export async function sendPledgeIncreased(
       <div style="text-align: center; padding: 24px 32px; background: #F4F1EC;">
         <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 3px; color: #8C8A87; margin-bottom: 6px;">NEW TOTAL IF PAUL FINISHES</div>
         <div style="font-size: 44px; font-weight: 600; letter-spacing: -1px; color: #C45C26;">${totalFormatted}</div>
-        <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 500; font-size: 10px; color: #8C8A87; margin-top: 4px;">$${halfTotal} to Tower Cancer Research &middot; $${halfTotal} to Cancer Council NSW</div>
+        <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 500; font-size: 10px; color: #8C8A87; margin-top: 4px;">$${halfTotal} to City of Hope &middot; $${halfTotal} to Leukaemia Foundation</div>
       </div>
       <div style="text-align: center; padding: 20px 32px; background: #FFFFFF;">
         <p style="font-size: 13px; color: #5C5C5C; margin: 0 0 10px;">Know someone who&rsquo;d walk alongside Paul (from their couch)?</p>
@@ -607,7 +634,7 @@ export async function sendNearFinish(
           <div style="font-size: 40px; font-weight: 600; letter-spacing: -1px; color: #C45C26; margin: 6px 0;">$${runningFormatted}</div>
           <div style="font-size: 13px; color: #5C5C5C; line-height: 1.6;">
             When Paul finishes, your total pledge of <strong>${finalFormatted}</strong> will go directly to the foundations:<br/>
-            $${halfFinal} to Tower Cancer Research &middot; $${halfFinal} to Cancer Council NSW
+            $${halfFinal} to City of Hope &middot; $${halfFinal} to Leukaemia Foundation
           </div>
         </div>
         <div style="text-align: center; padding: 24px 32px; background: #F4F1EC;">
@@ -654,7 +681,7 @@ export async function sendNearFinish(
         <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 3px; color: #8C8A87;">YOUR FINAL PLEDGE</div>
         <div style="font-size: 52px; font-weight: 600; letter-spacing: -1px; color: #C45C26; margin: 8px 0;">${finalFormatted}</div>
         <div style="font-size: 13px; color: #5C5C5C;">${rateFormatted} &times; 2,650 miles</div>
-        <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 500; font-size: 11px; color: #8C8A87; margin-top: 8px;">$${halfFinal} to Tower Cancer Research &middot; $${halfFinal} to Cancer Council NSW</div>
+        <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 500; font-size: 11px; color: #8C8A87; margin-top: 8px;">$${halfFinal} to City of Hope &middot; $${halfFinal} to Leukaemia Foundation</div>
       </div>
       <div style="text-align: center; padding: 32px; background: #3D7A5A;">
         <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 3px; color: #FFFFFF; margin-bottom: 12px;">HONOR YOUR PLEDGE</div>
@@ -713,7 +740,7 @@ export async function sendHonorReminder(
         <div style="text-align: center; padding: 28px 32px; background: #FFFFFF;">
           <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 3px; color: #8C8A87;">YOUR PLEDGE</div>
           <div style="font-size: 44px; font-weight: 600; letter-spacing: -1px; color: #C45C26; margin: 6px 0;">${finalFormatted}</div>
-          <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 500; font-size: 11px; color: #8C8A87; margin-top: 4px;">$${halfTotal} to Tower Cancer Research &middot; $${halfTotal} to Cancer Council NSW</div>
+          <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 500; font-size: 11px; color: #8C8A87; margin-top: 4px;">$${halfTotal} to City of Hope &middot; $${halfTotal} to Leukaemia Foundation</div>
         </div>
         <div style="text-align: center; padding: 24px 32px; background: #F4F1EC;">
           <p style="font-size: 13px; color: #5C5C5C; margin: 0 0 14px;">${honoredCount} of ${pledgerCount} pledgers have already honored (${honorRate}%)</p>
@@ -751,7 +778,7 @@ export async function sendHonorReminder(
       </div>
       <div style="text-align: center; padding: 28px 32px; background: #FFFFFF;">
         <div style="font-size: 44px; font-weight: 600; letter-spacing: -1px; color: #C45C26; margin: 6px 0;">${finalFormatted}</div>
-        <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 500; font-size: 11px; color: #8C8A87; margin-top: 4px;">$${halfTotal} to Tower Cancer Research &middot; $${halfTotal} to Cancer Council NSW</div>
+        <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 500; font-size: 11px; color: #8C8A87; margin-top: 4px;">$${halfTotal} to City of Hope &middot; $${halfTotal} to Leukaemia Foundation</div>
       </div>
       <div style="text-align: center; padding: 24px 32px; background: #3D7A5A;">
         <a href="https://yeschapter.com/honor" style="display: inline-block; background: #C45C26; color: #FFFFFF; padding: 14px 36px; text-decoration: none; font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 2px;">HONOR MY PLEDGE NOW &rarr;</a>
@@ -1002,8 +1029,8 @@ export async function sendHonorConfirmation(
         <div style="background: #F4F1EC; padding: 20px; margin: 0 0 24px;">
           <p style="margin: 0 0 6px; font-size: 11px; letter-spacing: 2px; font-family: sans-serif; font-weight: 700; color: #8C8A87;">YOUR DONATION SUMMARY</p>
           <p style="margin: 0; font-size: 14px; color: #5C5C5C; line-height: 1.8;">
-            ${half} → Tower Cancer Research Foundation<br/>
-            ${half} → Cancer Council NSW<br/>
+            ${half} → City of Hope<br/>
+            ${half} → Leukaemia Foundation<br/>
             <strong style="color: #1C1C1C;">${total} total to cancer research</strong>
           </p>
         </div>
@@ -1049,7 +1076,7 @@ export async function sendCommunityMilestone(
   };
   const descriptions: Record<string, string> = {
     pledgers: `The YesChapter community just reached <strong>${value.toLocaleString()} pledgers</strong>. That's ${value.toLocaleString()} people who believe every mile matters.`,
-    total: `Together, the community has pledged <strong>$${value.toLocaleString()}</strong> for cancer research and patient support — split equally between Tower Cancer Research and Cancer Council NSW.`,
+    total: `Together, the community has pledged <strong>$${value.toLocaleString()}</strong> for cancer research and patient support — split equally between City of Hope and the Leukaemia Foundation.`,
     countries: `Pledgers from <strong>${value} countries</strong> are now walking with Paul. This started as one man's walk, and it's become a global movement.`,
   };
   const shareLink = shareUrl(name);
@@ -1091,6 +1118,42 @@ export async function sendCommunityMilestone(
         </div>
       </div>
       ${emailFooter(unsubscribeToken)}
+    </div>
+    `
+  );
+}
+
+export async function sendMagicLink(
+  email: string,
+  magicUrl: string,
+  name?: string
+): Promise<{ success: boolean; error?: string }> {
+  const greeting = name ? `Hi ${name},` : "Hi there,";
+  return send(
+    email,
+    "Your YesChapter sign-in link",
+    `
+    <div style="background: #F4F1EC; font-family: Georgia, serif; padding: 0; margin: 0;">
+      <div style="background: #1C1F1A; padding: 20px 32px; text-align: center;">
+        <p style="margin: 0; font-size: 14px; letter-spacing: 3px; font-family: sans-serif; font-weight: 700; color: #3D7A5A;">YESCHAPTER</p>
+      </div>
+      <div style="padding: 48px 32px; max-width: 560px; margin: 0 auto; background: #FFFFFF;">
+        <p style="font-size: 12px; letter-spacing: 3px; font-family: sans-serif; font-weight: 700; color: #8C8A87; margin: 0 0 16px;">MAGIC SIGN-IN LINK</p>
+        <h2 style="font-size: 32px; font-weight: 600; color: #1C1C1C; margin: 0 0 16px; letter-spacing: -0.5px;">${greeting}</h2>
+        <p style="font-size: 16px; color: #5C5C5C; line-height: 1.6; margin: 0 0 32px;">
+          Click the button below to sign in to your YesChapter pledge dashboard. No password required — this link expires in <strong>15 minutes</strong>.
+        </p>
+        <div style="text-align: center; margin: 32px 0;">
+          <a href="${magicUrl}" style="display: inline-block; background: #3D7A5A; color: #FFFFFF; padding: 16px 36px; text-decoration: none; font-family: sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 2px;">SIGN IN TO MY DASHBOARD &rarr;</a>
+        </div>
+        <p style="font-size: 13px; color: #8C8A87; line-height: 1.6; margin: 24px 0 0; border-top: 1px solid #D9D7D4; padding-top: 24px;">
+          If you didn&apos;t request this link, you can safely ignore this email. Links can only be used once.
+        </p>
+        <p style="font-size: 12px; color: #8C8A87; margin: 8px 0 0; word-break: break-all;">
+          Or copy this URL: <span style="color: #3D7A5A;">${magicUrl}</span>
+        </p>
+      </div>
+      ${emailFooter()}
     </div>
     `
   );

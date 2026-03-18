@@ -61,17 +61,6 @@ export default function PledgePage() {
     []
   );
 
-  const handleAmountStep = useCallback(
-    (direction: "up" | "down") => {
-      setAmount((prev) => {
-        const step = prev < 0.1 ? 0.01 : prev < 1 ? 0.05 : 0.25;
-        const next = direction === "up" ? prev + step : prev - step;
-        return Math.max(0.01, Math.min(5, parseFloat(next.toFixed(2))));
-      });
-    },
-    []
-  );
-
   const handlePreset = useCallback(
     (preset: (typeof presets)[number]) => {
       setAmount(preset.amount);
@@ -107,10 +96,22 @@ export default function PledgePage() {
       if (res.status === 409) {
         // Already pledged — still show success
         setSubmitted(true);
+        // Send magic link so they can access dashboard
+        fetch("/api/auth/magic", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, name: name || undefined }),
+        }).catch(() => {});
       } else if (!res.ok) {
         setSubmitError(data.error || "Something went wrong. Please try again.");
       } else {
         setSubmitted(true);
+        // Automatically send magic sign-in link so new pledger can access their dashboard
+        fetch("/api/auth/magic", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, name: name || undefined }),
+        }).catch(() => {});
       }
     } catch {
       setSubmitError("Network error. Please check your connection and try again.");
@@ -156,9 +157,7 @@ export default function PledgePage() {
           Support Paul&apos;s Journey — One Mile at a Time
         </h1>
         <p className="font-heading text-[16px] leading-[1.6] text-[var(--text-secondary)] max-w-[700px]">
-          Set a pledge per mile. Pay nothing now. When Paul reaches Canada,
-          you&apos;ll be invited to donate your total — 100% goes to cancer
-          foundations.
+          Make a commitment today — pay nothing now. When Paul reaches Canada, you&apos;ll receive an email reminder to honour your pledge and donate directly to the foundations. 100% goes to cancer research.
         </p>
       </section>
 
@@ -174,30 +173,10 @@ export default function PledgePage() {
             <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--text-muted)]">
               YOUR PLEDGE AMOUNT
             </span>
-            <div className="flex items-center w-full">
-              <button
-                type="button"
-                onClick={() => handleAmountStep("down")}
-                className="flex items-center justify-center w-[48px] h-[56px] bg-[var(--bg-warm)] border border-[var(--border-subtle)] cursor-pointer hover:bg-[var(--warm-stone)] transition-colors select-none"
-              >
-                <span className="font-heading text-[24px] font-semibold text-[var(--text-primary)]">
-                  −
-                </span>
-              </button>
-              <div className="flex items-center justify-center flex-1 h-[56px] border-t border-b border-[var(--border-subtle)] bg-[var(--bg-white)]">
-                <span className="font-heading text-[32px] font-semibold tracking-[-0.5px] text-[var(--text-primary)]">
-                  {formatCurrency(amount)}
-                </span>
-              </div>
-              <button
-                type="button"
-                onClick={() => handleAmountStep("up")}
-                className="flex items-center justify-center w-[48px] h-[56px] bg-[var(--burnt-orange-light)] border border-[var(--burnt-orange)] cursor-pointer hover:opacity-80 transition-opacity select-none"
-              >
-                <span className="font-heading text-[24px] font-semibold text-[var(--burnt-orange)]">
-                  +
-                </span>
-              </button>
+            <div className="flex items-center justify-center w-full h-[56px] border border-[var(--border-subtle)] bg-[var(--bg-white)]">
+              <span className="font-heading text-[32px] font-semibold tracking-[-0.5px] text-[var(--text-primary)]">
+                {formatCurrency(amount)}
+              </span>
             </div>
           </div>
 
@@ -353,12 +332,12 @@ export default function PledgePage() {
             <div className="flex flex-col items-center gap-[12px] bg-[var(--forest-green-light)] border border-[var(--forest-green)] p-[24px]">
               <Mail className="w-[28px] h-[28px] text-[var(--forest-green)]" />
               <span className="font-heading font-semibold text-[18px] text-[var(--forest-green)]">
-                Check Your Email!
+                Pledge set — check your email!
               </span>
               <p className="font-heading text-[14px] text-[var(--text-secondary)] text-center leading-[1.6]">
-                We&apos;ve sent a confirmation link to <strong>{email}</strong>.
-                Click it to activate your pledge of {formatCurrency(amount)}
-                /mile ({formatCurrency(totalPledge)} total). The link expires in 1 hour.
+                We&apos;ve emailed <strong>{email}</strong> a magic sign-in link.
+                Click it to open your personal pledge dashboard — no password needed.
+                Your pledge: {formatCurrency(amount)}/mile ({formatCurrency(totalPledge)} total).
               </p>
             </div>
           ) : (
@@ -379,9 +358,7 @@ export default function PledgePage() {
           )}
 
           <p className="font-heading italic text-[13px] leading-[1.5] text-[var(--text-muted)]">
-            No payment is collected. This is a pledge of intent. When Paul
-            reaches Canada, you&apos;ll receive an email to donate directly to
-            the foundations.{" "}
+            <strong className="not-italic text-[var(--text-secondary)]">PLEDGE ONLY — No money is collected today.</strong> This is a promise of intent. When Paul finishes the trail, you&apos;ll be emailed a reminder to honour your pledge and donate directly to the foundations. Paul never touches this money.{" "}
             <Link href="/journal/how-pledging-works" className="text-[var(--burnt-orange)] not-italic hover:underline">
               How does this work?
             </Link>
@@ -503,8 +480,7 @@ export default function PledgePage() {
               Set Your Pledge
             </span>
             <p className="font-heading text-[14px] leading-[1.6] text-[var(--text-secondary)]">
-              Choose how much to pledge per mile. No account needed — just your
-              email so we can reach you.
+              Choose how much to pledge per mile. <strong>No payment today</strong> — this is a commitment, not a charge.
             </p>
           </div>
 
@@ -532,11 +508,10 @@ export default function PledgePage() {
               </span>
             </div>
             <span className="font-heading font-semibold text-[18px] text-[var(--text-primary)]">
-              Donate at the Finish
+              Honour Your Pledge at the Finish
             </span>
             <p className="font-heading text-[14px] leading-[1.6] text-[var(--text-secondary)]">
-              When Paul reaches Canada, you&apos;ll get a video + email inviting
-              you to donate your pledge — 50/50 to two cancer foundations.
+              When Paul reaches Canada, you&apos;ll receive an email reminder to honour your pledge — donating directly to the foundations. Paul never handles this money.
             </p>
           </div>
         </div>

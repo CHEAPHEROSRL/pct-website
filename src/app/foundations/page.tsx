@@ -8,54 +8,53 @@ import ScrollReveal from "@/components/ScrollReveal";
 export const metadata: Metadata = {
   title: "Our Partner Foundations — YesChapter",
   description:
-    "Meet the two cancer foundations receiving 100% of YesChapter pledges. Tower Cancer Research Foundation (California) and Cancer Council NSW (Sydney).",
+    "Meet the two cancer foundations receiving 100% of YesChapter pledges. City of Hope (California) and the Leukaemia Foundation of Australia.",
 };
 
 const foundations = [
   {
-    region: "CALIFORNIA, USA",
-    regionColor: "var(--burnt-orange)",
-    name: "Tower Cancer Research Foundation",
-    tagline:
-      "Advancing groundbreaking cancer research and providing profound support to those affected by the disease.",
-    about:
-      "Founded in 1996, Tower Cancer Research Foundation is a 501(c)(3) non-profit based in Beverly Hills, California. They have conducted over 400 clinical trials for the development of new and more effective cancer treatments. Their work spans research, patient support, and community education — creating outsized impact in Southern California and nationally.",
-    programs: [
-      "Clinical Research — Over 400 clinical trials developing new cancer treatments",
-      "Magnolia House — Free survivorship program with 130+ monthly classes, workshops, and holistic services for patients and families",
-      "Community Grants — Funding for childhood/young adult cancer organizations and support for underserved communities",
-    ],
-    facts: [
-      { label: "Founded", value: "1996" },
-      { label: "Location", value: "Beverly Hills, California" },
-      { label: "Tax Status", value: "501(c)(3) Non-Profit\nEIN: 95-4596354" },
-      { label: "Website", value: "towercancer.org", url: "https://www.towercancer.org" },
-    ],
-    bgClass: "bg-[var(--bg-white)]",
-    honor: "Honoring Paul\u2019s father",
-  },
-  {
-    region: "SYDNEY, AUSTRALIA",
+    region: "AUSTRALIA",
     regionColor: "var(--forest-green)",
-    name: "Cancer Council NSW",
+    name: "Leukaemia Foundation",
     tagline:
-      "Supporting people affected by cancer, funding research, and empowering communities to reduce cancer risk.",
+      "Cure and conquer every blood cancer — zero lives lost to blood cancer by 2035.",
     about:
-      "Cancer Council NSW is one of Australia\u2019s leading cancer charities, headquartered in Sydney. They fund more than $45 million annually in cancer research, alongside education, prevention programs, and direct support services assisting thousands of patients and families across New South Wales.",
+      "The Leukaemia Foundation is Australia\u2019s only national charity dedicated exclusively to blood cancers, founded in 1975 and now operating across all states. They serve the ~150,000 Australians currently living with blood cancer — 18 of whom die every day — through patient support services, research funding, and national advocacy.",
     programs: [
-      "Cancer Research — $45M+ annually funding new detection and treatment methods",
-      "Patient Support — Free counseling, transport, accommodation, and financial assistance for cancer patients",
-      "Cancer Prevention — Community education programs promoting healthy lifestyles and early detection",
-      "Cancer Information — 13 11 20 helpline providing expert information and emotional support",
+      "Patient Support — Free accommodation for regional/rural patients travelling for treatment (700+ families/year) and transport services covering 1M+ km/year, plus counselling and financial assistance",
+      "Research Funding — $61M+ committed to blood cancer research since 2000, funding clinical trials and laboratory research across Australia",
+      "Advocacy — Developed Australia\u2019s National Strategic Action Plan for Blood Cancer; campaigns for equitable treatment access across all states",
     ],
     facts: [
-      { label: "Location", value: "Sydney, NSW, Australia" },
-      { label: "Annual Research Funding", value: "$45M+ per year" },
-      { label: "Tax Status", value: "Registered Charity (ACNC)\nABN: 51 116 463 846" },
-      { label: "Website", value: "cancercouncil.com.au", url: "https://www.cancercouncil.com.au" },
+      { label: "Founded", value: "1975" },
+      { label: "Location", value: "National (HQ Brisbane, QLD)" },
+      { label: "Research Funding", value: "$61M+ since 2000" },
+      { label: "Website", value: "leukaemia.org.au", url: "https://www.leukaemia.org.au" },
     ],
     bgClass: "bg-[var(--bg-warm)]",
     honor: "Honoring Paul\u2019s mother",
+  },
+  {
+    region: "CALIFORNIA, USA",
+    regionColor: "var(--burnt-orange)",
+    name: "City of Hope",
+    tagline:
+      "The Miracle of Science With Soul — pioneering cancer research and compassionate treatment since 1913.",
+    about:
+      "Founded in 1913, City of Hope is one of the largest cancer research and treatment organisations in the United States, located in Duarte, California. As one of only 57 NCI-designated comprehensive cancer centres, they combine world-class research with compassionate patient care — treating ~134,000 patients annually across their national network.",
+    programs: [
+      "Breakthrough Research — Developed synthetic human insulin and the foundational monoclonal antibody technology behind blockbuster cancer drugs Herceptin, Rituxan, and Avastin",
+      "Cancer Treatment — World-class care for blood cancers, solid tumors, and rare cancers; 13,000+ stem cell transplants performed with outcomes exceeding national averages",
+      "Clinical Trials — Hundreds of blood cancer trials yearly; first centre to offer CAR T-cell therapy targeting acute myeloid leukemia",
+    ],
+    facts: [
+      { label: "Founded", value: "1913" },
+      { label: "Location", value: "Duarte, California" },
+      { label: "NCI Status", value: "NCI-Designated Comprehensive\nCancer Center (since 1998)" },
+      { label: "Website", value: "cityofhope.org", url: "https://www.cityofhope.org" },
+    ],
+    bgClass: "bg-[var(--bg-white)]",
+    honor: "Honoring Paul\u2019s father",
   },
 ];
 
@@ -78,31 +77,49 @@ export default function FoundationsPage() {
         </p>
       </section>
 
-      {/* 50/50 Split */}
-      <section className="flex flex-col items-center gap-[24px] px-6 md:px-12 lg:px-[120px] py-[40px] md:py-[48px] bg-[var(--bg-warm)] w-full">
-        <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--forest-green)]">
-          50 / 50 SPLIT
-        </span>
-        <p className="font-heading text-[16px] leading-[1.7] text-[var(--text-secondary)] text-center max-w-[700px]">
-          Paul lost his father in California and his mother in Sydney. In their honor, pledges are divided
-          equally between foundations in each region — ensuring the communities closest to his family&apos;s story
-          receive direct support.
-        </p>
-        <div className="flex flex-col md:flex-row gap-[24px] md:gap-[32px] justify-center">
+      {/* Two Foundations */}
+      <section className="flex flex-col items-center gap-[32px] px-6 md:px-12 lg:px-[120px] py-[48px] md:py-[64px] bg-[var(--bg-warm)] w-full">
+        <ScrollReveal animation="fade-up">
+          <div className="flex flex-col items-center gap-[12px] text-center max-w-[700px]">
+            <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--forest-green)]">WHERE YOUR PLEDGE GOES</span>
+            <p className="font-heading text-[16px] leading-[1.7] text-[var(--text-secondary)]">
+              Paul lost his father in California and his mother in Sydney. Pledges are split equally between one foundation in each region — honoring both of his parents.
+            </p>
+          </div>
+        </ScrollReveal>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-[24px] w-full">
           <ScrollReveal animation="slide-right">
-            <div className="flex flex-col items-center gap-[12px] bg-[var(--bg-white)] border border-[var(--border-subtle)] rounded-[12px] px-[40px] py-[32px] w-[280px] md:w-[360px]">
-              <span className="text-[32px]">&#127482;&#127480;</span>
-              <span className="font-label font-bold text-[40px] text-[var(--burnt-orange)]">50%</span>
-              <span className="font-heading font-semibold text-[18px] text-[var(--text-primary)]">California, USA</span>
-              <span className="font-heading text-[14px] text-[var(--text-muted)]">Honoring Paul&apos;s father</span>
+            <div className="flex flex-col gap-[16px] bg-[var(--bg-white)] border border-[var(--border-subtle)] rounded-[4px] p-[32px] md:p-[40px] h-full">
+              <span className="font-label font-bold text-[11px] tracking-[3px] text-[var(--forest-green)]">SYDNEY, AUSTRALIA &#127462;&#127482;</span>
+              <h3 className="font-heading font-semibold text-[26px] tracking-[-0.5px] text-[var(--text-primary)]">Leukaemia Foundation</h3>
+              <div className="w-[48px] h-[3px] bg-[var(--forest-green)]" />
+              <p className="font-heading text-[15px] leading-[1.8] text-[var(--text-secondary)]">
+                Australia&apos;s only national charity exclusively for blood cancers. Founded 1975, serving 150,000 Australians living with blood cancer — 18 of whom die every day. Free support services for patients and families nationwide.
+              </p>
+              <ul className="flex flex-col gap-[8px]">
+                {["Free accommodation for 700+ regional families travelling for treatment", "Transport covering 1M+ km/year so patients can access care", "Counselling, financial assistance, and blood cancer research funding"].map(p => (
+                  <li key={p} className="flex items-start gap-[10px] font-heading text-[14px] leading-[1.6] text-[var(--text-secondary)]">
+                    <span className="text-[var(--forest-green)] mt-[3px] shrink-0">→</span>{p}
+                  </li>
+                ))}
+              </ul>
             </div>
           </ScrollReveal>
           <ScrollReveal animation="slide-left">
-            <div className="flex flex-col items-center gap-[12px] bg-[var(--bg-white)] border border-[var(--border-subtle)] rounded-[12px] px-[40px] py-[32px] w-[280px] md:w-[360px]">
-              <span className="text-[32px]">&#127462;&#127482;</span>
-              <span className="font-label font-bold text-[40px] text-[var(--forest-green)]">50%</span>
-              <span className="font-heading font-semibold text-[18px] text-[var(--text-primary)]">Sydney, Australia</span>
-              <span className="font-heading text-[14px] text-[var(--text-muted)]">Honoring Paul&apos;s mother</span>
+            <div className="flex flex-col gap-[16px] bg-[var(--bg-white)] border border-[var(--border-subtle)] rounded-[4px] p-[32px] md:p-[40px] h-full">
+              <span className="font-label font-bold text-[11px] tracking-[3px] text-[var(--burnt-orange)]">CALIFORNIA, USA &#127482;&#127480;</span>
+              <h3 className="font-heading font-semibold text-[26px] tracking-[-0.5px] text-[var(--text-primary)]">City of Hope</h3>
+              <div className="w-[48px] h-[3px] bg-[var(--burnt-orange)]" />
+              <p className="font-heading text-[15px] leading-[1.8] text-[var(--text-secondary)]">
+                One of only 57 NCI-designated comprehensive cancer centres in the US. Founded 1913, treating ~134,000 patients annually. Developed the foundational science behind Herceptin, Rituxan, and Avastin.
+              </p>
+              <ul className="flex flex-col gap-[8px]">
+                {["Breakthrough cancer research & clinical trials", "13,000+ stem cell transplants — outcomes above national averages", "First centre to offer CAR T-cell therapy for acute myeloid leukemia"].map(p => (
+                  <li key={p} className="flex items-start gap-[10px] font-heading text-[14px] leading-[1.6] text-[var(--text-secondary)]">
+                    <span className="text-[var(--burnt-orange)] mt-[3px] shrink-0">→</span>{p}
+                  </li>
+                ))}
+              </ul>
             </div>
           </ScrollReveal>
         </div>

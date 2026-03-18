@@ -99,7 +99,7 @@ function JoinContent() {
               100% TO FOUNDATIONS
             </span>
             <p className="font-heading text-[14px] text-[var(--text-secondary)]">
-              Tower Cancer Research + Cancer Council NSW
+              City of Hope + Leukaemia Foundation
             </p>
           </div>
         </div>

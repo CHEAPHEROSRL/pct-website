@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, FormEvent } from "react";
+import { useState, useCallback, FormEvent, useEffect } from "react";
 import Link from "next/link";
 import {
   Mail,
@@ -12,11 +12,13 @@ import {
   Check,
   Plus,
   Minus,
+  Loader,
 } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CountdownBanner from "@/components/CountdownBanner";
 import { useLocationData } from "@/hooks/useLocationData";
+import { useSession } from "@/hooks/useSession";
 import type { PledgeBoost } from "@/lib/types";
 
 const TOTAL_MILES = 2650;
@@ -330,17 +332,29 @@ function IncreasePledgeForm({
 
 export default function MyPledgePage() {
   const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [lookupLoading, setLookupLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pledge, setPledge] = useState<PledgeData | null>(null);
+  const [magicSent, setMagicSent] = useState(false);
+  const [magicSending, setMagicSending] = useState(false);
 
+  const { user, loading: sessionLoading } = useSession();
   const { data: locationData } = useLocationData(30000);
   const totalMiles = locationData?.stats?.totalMiles ?? 0;
+
+  // Auto-load pledge from session email
+  useEffect(() => {
+    if (!user?.email || pledge) return;
+    fetch(`/api/pledges?email=${encodeURIComponent(user.email)}`)
+      .then((res) => res.ok ? res.json() : null)
+      .then((data) => { if (data?.pledge) { setPledge(data.pledge); setEmail(user.email); } })
+      .catch(() => {});
+  }, [user, pledge]);
 
   const handleLookup = async (e: FormEvent) => {
     e.preventDefault();
     if (!email.trim()) return;
-    setLoading(true);
+    setLookupLoading(true);
     setError(null);
 
     try {
@@ -361,7 +375,24 @@ export default function MyPledgePage() {
     } catch {
       setError("Network error. Please try again.");
     } finally {
-      setLoading(false);
+      setLookupLoading(false);
+    }
+  };
+
+  const handleSendMagicLink = async () => {
+    if (!email.trim() || magicSending) return;
+    setMagicSending(true);
+    try {
+      await fetch("/api/auth/magic", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim() }),
+      });
+      setMagicSent(true);
+    } catch {
+      // Silently fail
+    } finally {
+      setMagicSending(false);
     }
   };
 
@@ -403,54 +434,77 @@ export default function MyPledgePage() {
       {!pledge ? (
         /* Lookup Form */
         <section className="flex flex-col gap-[24px] px-6 md:px-12 lg:px-[120px] py-[48px] bg-[var(--bg-white)] w-full max-w-[600px] mx-auto lg:max-w-none">
-          <div className="flex flex-col gap-[16px] bg-[var(--bg-card)] border border-[var(--border-subtle)] p-[32px] max-w-[500px] mx-auto w-full">
-            <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-muted)]">
-              FIND YOUR PLEDGE
-            </span>
-            <p className="font-heading text-[14px] leading-[1.6] text-[var(--text-secondary)]">
-              Enter the email you used when setting your pledge.
-            </p>
-            <form onSubmit={handleLookup} className="flex flex-col gap-[12px]">
-              <div className="flex items-center w-full h-[48px] bg-[var(--bg-white)] border border-[var(--border-subtle)]">
-                <Mail className="w-[18px] h-[18px] text-[var(--text-muted)] ml-[16px] shrink-0" />
-                <input
-                  type="email"
-                  required
-                  placeholder="your@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="flex-1 h-full px-[12px] font-heading text-[15px] italic text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none bg-transparent"
-                />
-              </div>
-              {error && (
-                <span className="font-heading text-[13px] text-red-600">
-                  {error}
-                </span>
+          {sessionLoading ? (
+            <div className="flex items-center justify-center py-[48px]">
+              <Loader className="w-[28px] h-[28px] text-[var(--forest-green)] animate-spin" />
+            </div>
+          ) : (
+            <div className="flex flex-col gap-[16px] bg-[var(--bg-card)] border border-[var(--border-subtle)] p-[32px] max-w-[500px] mx-auto w-full">
+              <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-muted)]">
+                FIND YOUR PLEDGE
+              </span>
+              <p className="font-heading text-[14px] leading-[1.6] text-[var(--text-secondary)]">
+                Enter the email you used when setting your pledge.
+              </p>
+              <form onSubmit={handleLookup} className="flex flex-col gap-[12px]">
+                <div className="flex items-center w-full h-[48px] bg-[var(--bg-white)] border border-[var(--border-subtle)]">
+                  <Mail className="w-[18px] h-[18px] text-[var(--text-muted)] ml-[16px] shrink-0" />
+                  <input
+                    type="email"
+                    required
+                    placeholder="your@email.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="flex-1 h-full px-[12px] font-heading text-[15px] italic text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none bg-transparent"
+                  />
+                </div>
+                {error && (
+                  <span className="font-heading text-[13px] text-red-600">
+                    {error}
+                  </span>
+                )}
+                <button
+                  type="submit"
+                  disabled={lookupLoading}
+                  className={`flex items-center justify-center gap-[8px] h-[48px] w-full transition-opacity ${
+                    lookupLoading
+                      ? "bg-[var(--text-muted)] cursor-not-allowed"
+                      : "bg-[var(--burnt-orange)] cursor-pointer hover:opacity-90"
+                  }`}
+                >
+                  <span className="font-label font-bold text-[13px] tracking-[2px] text-[var(--text-white)]">
+                    {lookupLoading ? "LOOKING UP..." : "VIEW MY PLEDGE"}
+                  </span>
+                </button>
+              </form>
+
+              {/* Magic link option */}
+              {email.trim() && !magicSent && (
+                <button
+                  onClick={handleSendMagicLink}
+                  disabled={magicSending}
+                  className="font-heading text-[13px] text-[var(--forest-green)] hover:underline text-center cursor-pointer disabled:opacity-50 transition-opacity"
+                >
+                  {magicSending ? "Sending..." : "Or get a magic sign-in link →"}
+                </button>
               )}
-              <button
-                type="submit"
-                disabled={loading}
-                className={`flex items-center justify-center gap-[8px] h-[48px] w-full transition-opacity ${
-                  loading
-                    ? "bg-[var(--text-muted)] cursor-not-allowed"
-                    : "bg-[var(--burnt-orange)] cursor-pointer hover:opacity-90"
-                }`}
-              >
-                <span className="font-label font-bold text-[13px] tracking-[2px] text-[var(--text-white)]">
-                  {loading ? "LOOKING UP..." : "VIEW MY PLEDGE"}
-                </span>
-              </button>
-            </form>
-            <p className="font-heading text-[13px] text-[var(--text-muted)] text-center">
-              Don&apos;t have a pledge yet?{" "}
-              <Link
-                href="/pledge"
-                className="text-[var(--burnt-orange)] font-semibold hover:underline"
-              >
-                Set one now
-              </Link>
-            </p>
-          </div>
+              {magicSent && (
+                <p className="font-heading text-[13px] text-[var(--forest-green)] text-center">
+                  Magic link sent! Check your inbox.
+                </p>
+              )}
+
+              <p className="font-heading text-[13px] text-[var(--text-muted)] text-center">
+                Don&apos;t have a pledge yet?{" "}
+                <Link
+                  href="/pledge"
+                  className="text-[var(--burnt-orange)] font-semibold hover:underline"
+                >
+                  Set one now
+                </Link>
+              </p>
+            </div>
+          )}
         </section>
       ) : (
         /* Dashboard */

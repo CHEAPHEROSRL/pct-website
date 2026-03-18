@@ -50,6 +50,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Coordinates out of range" }, { status: 400 });
   }
 
+  // Sanity-check: must be within PCT corridor (California to British Columbia)
+  const inPctCorridor = lat >= 30 && lat <= 50 && lng >= -125 && lng <= -115;
+  if (!inPctCorridor) {
+    return NextResponse.json({ error: "Coordinates outside PCT corridor" }, { status: 400 });
+  }
+
   // Rate limit: reject if last update was < 10s ago
   const lastTimestamp = await redis.get<number>("location:last_timestamp");
   if (lastTimestamp && Date.now() - lastTimestamp < 10000) {
@@ -74,6 +80,20 @@ export async function POST(request: NextRequest) {
   await redis.expire(`location:history:${today}`, 90 * 24 * 60 * 60);
 
   return NextResponse.json({ success: true });
+}
+
+/** DELETE /api/location — clear test/bad location data (requires TRACKER_AUTH_TOKEN) */
+export async function DELETE(request: NextRequest) {
+  const authHeader = request.headers.get("authorization");
+  const token = authHeader?.replace("Bearer ", "") ?? "";
+  if (!token || token !== process.env.TRACKER_AUTH_TOKEN) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const redis = getRedis();
+  if (!redis) return NextResponse.json({ error: "Storage not configured" }, { status: 503 });
+  await redis.del("location:current");
+  await redis.del("location:last_timestamp");
+  return NextResponse.json({ ok: true, message: "Location reset to default (Campo, CA)" });
 }
 
 export async function GET() {

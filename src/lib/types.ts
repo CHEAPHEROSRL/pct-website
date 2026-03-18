@@ -184,6 +184,29 @@ export interface PledgeStats {
   totalBoosts: number;
 }
 
+// Comment types
+
+export interface PledgerComment {
+  id: string;
+  pledgeId: string;
+  name: string;
+  /** Display name with optional city suffix */
+  displayName: string;
+  body: string;
+  createdAt: number;
+}
+
+// Auth / Session types
+
+export interface AuthSession {
+  sessionId: string;
+  email: string;
+  name: string;
+  pledgeId: string | null;
+  createdAt: number;
+  expiresAt: number;
+}
+
 // Challenge types
 
 export type ChallengeStatus = "active" | "succeeded" | "failed" | "cancelled";

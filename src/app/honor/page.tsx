@@ -190,16 +190,16 @@ export default function HonorPage() {
             <div className="flex flex-col md:flex-row gap-[16px] max-w-[700px] mx-auto w-full">
               <div className="flex flex-col items-center gap-[12px] flex-1 bg-[var(--forest-green-light)] border border-[var(--forest-green)] p-[28px]">
                 <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--forest-green)]">
-                  50% — TOWER CANCER RESEARCH
+                  50% — CITY OF HOPE
                 </span>
                 <span className="font-heading font-semibold text-[28px] text-[var(--forest-green)]">
                   {formatCurrency(halfPledge)}
                 </span>
                 <span className="font-heading text-[13px] text-[var(--text-secondary)] text-center leading-[1.5]">
-                  Cancer research and patient support — California, USA
+                  Cancer research and treatment — California, USA
                 </span>
                 <a
-                  href="https://towercancer.org/donate"
+                  href="https://www.cityofhope.org/giving/why-give-to-city-hope"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-[8px] bg-[var(--forest-green)] px-[24px] py-[12px] hover:opacity-90 transition-opacity mt-[4px]"
@@ -213,16 +213,16 @@ export default function HonorPage() {
 
               <div className="flex flex-col items-center gap-[12px] flex-1 bg-[var(--burnt-orange-light)] border border-[var(--burnt-orange)] p-[28px]">
                 <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--burnt-orange)]">
-                  50% — CANCER COUNCIL NSW
+                  50% — LEUKAEMIA FOUNDATION
                 </span>
                 <span className="font-heading font-semibold text-[28px] text-[var(--burnt-orange)]">
                   {formatCurrency(halfPledge)}
                 </span>
                 <span className="font-heading text-[13px] text-[var(--text-secondary)] text-center leading-[1.5]">
-                  Cancer prevention and support — Sydney, Australia
+                  Blood cancer support and research — Australia
                 </span>
                 <a
-                  href="https://www.cancercouncil.com.au/donate"
+                  href="https://www.leukaemia.org.au/make-a-difference/give/donate/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-[8px] bg-[var(--burnt-orange)] px-[24px] py-[12px] hover:opacity-90 transition-opacity mt-[4px]"
