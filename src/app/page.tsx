@@ -8,7 +8,6 @@ import CountdownBanner from "@/components/CountdownBanner";
 import CountdownSection from "@/components/CountdownSection";
 import ScrollReveal from "@/components/ScrollReveal";
 import HeroParallax from "@/components/HeroParallax";
-import CountUpStat from "@/components/CountUpStat";
 import {
   Heart,
   Calendar,
@@ -34,7 +33,7 @@ export default function Home() {
             src="/images/hiking/FB_IMG_1771991299919.jpg"
             alt="Pacific Crest Trail"
             fill
-            className="object-cover"
+            className="object-cover object-[center_30%]"
             priority
           />
         </HeroParallax>
@@ -42,25 +41,25 @@ export default function Home() {
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(to bottom, #1C1F1ACC 0%, #1C1F1A99 50%, #1C1F1AEE 100%)",
+              "linear-gradient(to bottom, #1C1F1A88 0%, #1C1F1A44 40%, #1C1F1ADD 100%)",
           }}
         />
         <div className="relative flex flex-col justify-end gap-[16px] md:gap-[24px] h-full px-6 md:px-12 lg:px-[120px] pb-[40px] md:pb-[60px] lg:pb-[80px]">
           <div className="animate-fade-up flex items-center bg-[var(--burnt-orange)] px-[16px] py-[6px] w-fit">
             <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-white)]">
-              PACIFIC CREST TRAIL &nbsp;&middot;&nbsp; 2,650 MILES &nbsp;&middot;&nbsp; MARCH 2026
+              247 PLEDGERS &nbsp;&middot;&nbsp; $12,450 PLEDGED &nbsp;&middot;&nbsp; PCT 2026
             </span>
           </div>
           <h1 className="animate-fade-up stagger-2 font-heading font-semibold text-[28px] md:text-[40px] lg:text-[56px] leading-[1.1] tracking-[-1px] text-[var(--text-white)] w-full lg:w-[800px]">
             One man. One trail.{"\n"}One cause worth walking for.
           </h1>
-          <p className="animate-fade-up stagger-4 font-heading text-[16px] md:text-[18px] lg:text-[20px] leading-[1.6] text-[#FFFFFFCC] w-full lg:w-[700px]">
-            Paul Barry is walking the entire Pacific Crest Trail to raise awareness{"\n"}and pledges for <Link href="/foundations" className="underline hover:text-white">two cancer foundations</Link>. Paul takes nothing — every pledge{"\n"}goes to research, patient support, and prevention.
+          <p className="animate-fade-up stagger-4 font-heading text-[16px] md:text-[18px] leading-[1.6] text-[#FFFFFFCC]">
+            2,650 miles. Mexico to Canada. Walking for cancer.
           </p>
           <div className="animate-fade-up stagger-5 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-[16px]">
             <Link
               href="/pledge"
-              className="flex items-center justify-center gap-[10px] bg-[var(--burnt-orange)] px-[28px] lg:px-[40px] py-[14px] lg:py-[18px] hover:opacity-90 transition-opacity"
+              className="flex items-center justify-center gap-[10px] border-2 border-white px-[28px] lg:px-[40px] py-[14px] lg:py-[18px] hover:bg-white/10 transition-colors"
             >
               <span className="font-label font-bold text-[13px] lg:text-[14px] tracking-[2px] text-[var(--text-white)]">
                 PLEDGE NOW
@@ -69,27 +68,14 @@ export default function Home() {
             </Link>
             <Link
               href="/trail-map"
-              className="flex items-center justify-center gap-[10px] border border-[#FFFFFF66] px-[28px] lg:px-[40px] py-[14px] lg:py-[18px] hover:bg-white/10 transition-colors"
+              className="flex items-center justify-center gap-[10px] px-[28px] lg:px-[40px] py-[14px] lg:py-[18px] hover:bg-white/10 transition-colors"
             >
-              <span className="font-label font-bold text-[13px] lg:text-[14px] tracking-[2px] text-[var(--text-white)]">
+              <span className="font-label font-bold text-[13px] lg:text-[14px] tracking-[2px] text-[#FFFFFF66]">
                 FOLLOW THE JOURNEY
               </span>
             </Link>
           </div>
         </div>
-      </section>
-
-      {/* Stats Bar */}
-      <section className="grid grid-cols-2 md:grid-cols-4 gap-4 px-6 md:px-12 lg:px-[80px] py-[20px] md:py-[28px] bg-[var(--bg-dark)] w-full">
-        <CountUpStat end={2650} separator="," label="MILES TO WALK" color="var(--burnt-orange)" />
-        <div className="flex flex-col items-center gap-[4px]">
-          <ScrollReveal animation="fade-up">
-            <span className="font-heading font-semibold text-[24px] md:text-[30px] lg:text-[36px] tracking-[-1px] text-[var(--burnt-orange)]">6-7</span>
-          </ScrollReveal>
-          <span className="font-label font-bold text-[9px] md:text-[10px] tracking-[3px] text-[var(--text-muted)]">MONTHS ON TRAIL</span>
-        </div>
-        <CountUpStat end={3} label="STATES TRAVERSED" color="var(--burnt-orange)" />
-        <CountUpStat end={50} prefix="$" suffix="K" label="PLEDGE GOAL" color="var(--forest-green)" />
       </section>
 
       {/* Countdown to Trail Start */}
