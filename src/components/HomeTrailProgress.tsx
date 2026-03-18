@@ -4,7 +4,6 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { useLocationData } from "@/hooks/useLocationData";
-import DistanceTracker from "@/components/DistanceTracker";
 
 const TrailMapView = dynamic(() => import("@/components/TrailMapView"), {
   ssr: false,
@@ -14,13 +13,6 @@ const TrailMapView = dynamic(() => import("@/components/TrailMapView"), {
     </div>
   ),
 });
-
-const milestones = [
-  { name: "Campo, CA", mile: 0 },
-  { name: "Kennedy Meadows", mile: 702 },
-  { name: "Ashland, OR", mile: 1719 },
-  { name: "Manning Park, BC", mile: 2650 },
-];
 
 export default function HomeTrailProgress() {
   const { data } = useLocationData(30000);
@@ -32,76 +24,65 @@ export default function HomeTrailProgress() {
   const dayNumber = stats?.dayNumber ?? 0;
 
   return (
-    <section className="flex flex-col gap-[32px] md:gap-[48px] px-6 md:px-12 lg:px-[120px] py-[48px] md:py-[64px] lg:py-[80px] bg-[var(--bg-warm)] w-full">
-      <div className="flex flex-col items-center gap-[16px] w-full">
+    <section className="flex flex-col gap-[24px] px-6 md:px-12 lg:px-[120px] py-[48px] bg-[var(--bg-warm)] w-full">
+      <div className="flex flex-col gap-[8px]">
         <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">TRAIL PROGRESS</span>
-        <h2 className="font-heading font-semibold text-[28px] md:text-[34px] lg:text-[40px] tracking-[-0.5px] text-[var(--text-primary)] text-center">
+        <h2 className="font-heading font-semibold text-[24px] md:text-[28px] tracking-[-0.5px] text-[var(--text-primary)]">
           Follow Paul on the Trail
         </h2>
-        <p className="font-heading text-[18px] leading-[1.6] text-[var(--text-secondary)] text-center">
-          Track the journey in real-time as Paul walks from Mexico to Canada.
+        <p className="font-label text-[13px] tracking-[0.5px] text-[var(--text-muted)]">
+          Live GPS · Updates every 30 seconds
         </p>
       </div>
-      <div className="flex flex-col lg:flex-row gap-[24px] lg:gap-[32px] w-full">
-        {/* Live Map */}
-        <div className="relative w-full lg:w-[720px] h-[300px] md:h-[400px] lg:h-[560px] bg-[#E8E5E0] border border-[var(--border-subtle)] overflow-hidden shrink-0">
-          <TrailMapView
-            currentPosition={data?.current ? { lat: data.current.lat, lng: data.current.lng } : null}
-            dayNumber={dayNumber}
-            nearestLocationName={locationName}
-            totalMiles={totalMiles}
-            currentElevation={stats?.currentElevation}
-          />
+
+      {/* Full-width map */}
+      <div className="relative w-full h-[300px] md:h-[400px] bg-[#E8E5E0] border border-[var(--border-subtle)] overflow-hidden">
+        <TrailMapView
+          currentPosition={data?.current ? { lat: data.current.lat, lng: data.current.lng } : null}
+          dayNumber={dayNumber}
+          nearestLocationName={locationName}
+          totalMiles={totalMiles}
+          currentElevation={stats?.currentElevation}
+        />
+      </div>
+
+      {/* Compact stats strip */}
+      <div className="flex flex-wrap items-center justify-between gap-4 bg-[var(--bg-white)] border border-[var(--border-subtle)] px-[24px] py-[16px]">
+        <div className="flex flex-col gap-[2px]">
+          <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">NEAR</span>
+          <span className="font-heading font-semibold text-[18px] text-[var(--text-primary)]">{locationName}</span>
         </div>
-
-        {/* Map Sidebar */}
-        <div className="flex flex-col gap-[24px] flex-1">
-          {/* Current Location */}
-          <div className="flex flex-col gap-[12px] bg-[var(--bg-white)] border border-[var(--border-subtle)] p-[24px]">
-            <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--burnt-orange)]">CURRENT LOCATION</span>
-            <span className="font-heading font-semibold text-[24px] text-[var(--text-primary)]">{locationName}</span>
-            <span className="font-heading text-[15px] text-[var(--text-secondary)]">
-              Mile {totalMiles.toLocaleString("en-US")} of 2,650
-            </span>
-            <div className="relative w-full h-[8px] bg-[#E8E5E0]">
-              <div
-                className="absolute top-0 left-0 h-[8px] bg-[var(--forest-green)] transition-all duration-1000"
-                style={{ width: `max(10px, ${progressPercent}%)` }}
-              />
-            </div>
-            <span className="font-label font-medium text-[11px] tracking-[0.5px] text-[var(--text-muted)]">
-              {progressPercent}% Complete{dayNumber > 0 ? ` — Day ${dayNumber}` : " — Journey begins March 28, 2026"}
-            </span>
-          </div>
-
-          {/* Key Milestones */}
-          <div className="flex flex-col gap-[12px] bg-[var(--bg-white)] border border-[var(--border-subtle)] p-[24px]">
-            <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--burnt-orange)]">KEY MILESTONES</span>
-            {milestones.map((m) => {
-              const reached = totalMiles >= m.mile;
-              return (
-                <div key={m.name} className="flex items-center gap-[12px]">
-                  <div className={`w-[10px] h-[10px] shrink-0 ${reached ? "bg-[var(--forest-green)]" : "bg-[#D9D7D4]"}`} />
-                  <span className={`font-heading text-[14px] ${reached ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"}`}>
-                    {m.name} — Mile {m.mile.toLocaleString("en-US")}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Distance Tracker */}
-          <DistanceTracker compact />
-
-          {/* Link to full map */}
-          <Link
-            href="/trail-map"
-            className="flex items-center justify-center gap-[8px] border border-[var(--border-subtle)] px-[24px] py-[14px] hover:bg-[var(--bg-white)] transition-colors"
-          >
-            <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-secondary)]">VIEW FULL TRAIL MAP</span>
-            <ArrowRight className="w-[14px] h-[14px] text-[var(--text-secondary)]" />
-          </Link>
+        <div className="hidden md:block w-[1px] h-[32px] bg-[var(--border-subtle)]" />
+        <div className="flex flex-col gap-[2px] items-center">
+          <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">MILES WALKED</span>
+          <span className="font-heading font-semibold text-[18px] text-[var(--burnt-orange)]">
+            {totalMiles.toLocaleString("en-US")} / 2,650
+          </span>
         </div>
+        <div className="hidden md:block w-[1px] h-[32px] bg-[var(--border-subtle)]" />
+        <div className="flex flex-col gap-[6px] items-center">
+          <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">PROGRESS</span>
+          <div className="relative w-[160px] md:w-[200px] h-[6px] bg-[#E8E5E0]">
+            <div
+              className="absolute top-0 left-0 h-[6px] bg-[var(--forest-green)] transition-all duration-1000"
+              style={{ width: `max(4px, ${progressPercent}%)` }}
+            />
+          </div>
+        </div>
+        <div className="hidden md:block w-[1px] h-[32px] bg-[var(--border-subtle)]" />
+        <div className="flex flex-col gap-[2px] items-center">
+          <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">DAY</span>
+          <span className="font-heading font-semibold text-[18px] text-[var(--text-primary)]">
+            {dayNumber > 0 ? dayNumber : "—"}
+          </span>
+        </div>
+        <Link
+          href="/trail-map"
+          className="flex items-center gap-[8px] border border-[var(--border-subtle)] px-[20px] py-[10px] hover:bg-[var(--bg-warm)] transition-colors ml-auto"
+        >
+          <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-secondary)]">FULL MAP</span>
+          <ArrowRight className="w-[13px] h-[13px] text-[var(--text-secondary)]" />
+        </Link>
       </div>
     </section>
   );
