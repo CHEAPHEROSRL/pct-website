@@ -4,8 +4,6 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ShareButton from "@/components/ShareButton";
 import HomeTrailProgress from "@/components/HomeTrailProgress";
-import CountdownBanner from "@/components/CountdownBanner";
-import CountdownSection from "@/components/CountdownSection";
 import ScrollReveal from "@/components/ScrollReveal";
 import HeroParallax from "@/components/HeroParallax";
 import {
@@ -24,8 +22,6 @@ export default function Home() {
   return (
     <div className="flex flex-col w-full bg-[var(--bg-warm)]">
       <Header transparent />
-      <CountdownBanner belowFixedHeader />
-
       {/* Hero Section — negative margin pulls it behind sticky header + banner */}
       <section className="relative w-full h-[560px] md:h-[680px] lg:h-[800px] overflow-hidden -mt-[112px] md:-mt-[120px] lg:-mt-[132px]">
         <HeroParallax>
@@ -33,7 +29,7 @@ export default function Home() {
             src="/images/hiking/FB_IMG_1771991299919.jpg"
             alt="Pacific Crest Trail"
             fill
-            className="object-cover object-[center_30%]"
+            className="object-cover object-[center_70%]"
             priority
           />
         </HeroParallax>
@@ -77,9 +73,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* Countdown to Trail Start */}
-      <CountdownSection />
 
       {/* About The Journey */}
       <section className="flex flex-col gap-[32px] md:gap-[48px] px-6 md:px-12 lg:px-[120px] py-[48px] md:py-[64px] lg:py-[80px] bg-[var(--bg-white)] w-full">
