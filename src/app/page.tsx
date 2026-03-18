@@ -94,27 +94,31 @@ export default function Home() {
             </p>
           </div>
         </ScrollReveal>
-        <div className="flex flex-col md:flex-row gap-[24px] w-full">
-          <ScrollReveal animation="fade-up" className="flex-1">
-            <div className="flex flex-col gap-[20px] h-full bg-[var(--bg-card)] border border-[var(--border-subtle)] p-[24px] md:p-[32px]">
-              <Calendar className="w-[32px] h-[32px] text-[var(--forest-green)]" />
-              <span className="font-heading font-semibold text-[20px] text-[var(--text-primary)]">Starting March 2026</span>
-              <p className="font-heading text-[15px] leading-[1.6] text-[var(--text-secondary)]">
-                Beginning at the Southern Terminus near Campo, CA. Walking northbound through California, Oregon, and Washington.
-              </p>
-            </div>
-          </ScrollReveal>
-          <ScrollReveal animation="fade-up" delay={120} className="flex-1">
-            <div className="flex flex-col gap-[20px] h-full bg-[var(--bg-card)] border border-[var(--border-subtle)] p-[24px] md:p-[32px]">
-              <Tent className="w-[32px] h-[32px] text-[var(--forest-green)]" />
-              <span className="font-heading font-semibold text-[20px] text-[var(--text-primary)]">Living Simply</span>
-              <p className="font-heading text-[15px] leading-[1.6] text-[var(--text-secondary)]">
-                Sleeping in a tent, carrying everything on his back. No luxury — just the trail, the sky, and the mission that drives him forward every day.
-              </p>
-            </div>
-          </ScrollReveal>
-          <ScrollReveal animation="fade-up" delay={240} className="flex-1">
-            <div className="flex flex-col gap-[20px] h-full bg-[var(--bg-card)] border border-[var(--border-subtle)] p-[24px] md:p-[32px]">
+        <div className="flex flex-col gap-[24px] w-full">
+          {/* Row 1 */}
+          <div className="flex flex-col md:flex-row gap-[24px]">
+            <ScrollReveal animation="fade-up" className="flex-1">
+              <div className="flex flex-col gap-[20px] h-full bg-[var(--bg-card)] border border-[var(--border-subtle)] p-[24px] md:p-[32px]">
+                <Calendar className="w-[32px] h-[32px] text-[var(--forest-green)]" />
+                <span className="font-heading font-semibold text-[20px] text-[var(--text-primary)]">Starting March 2026</span>
+                <p className="font-heading text-[15px] leading-[1.6] text-[var(--text-secondary)]">
+                  Beginning at the Southern Terminus near Campo, CA. Walking northbound through California, Oregon, and Washington.
+                </p>
+              </div>
+            </ScrollReveal>
+            <ScrollReveal animation="fade-up" delay={120} className="flex-1">
+              <div className="flex flex-col gap-[20px] h-full bg-[var(--bg-card)] border border-[var(--border-subtle)] p-[24px] md:p-[32px]">
+                <Tent className="w-[32px] h-[32px] text-[var(--forest-green)]" />
+                <span className="font-heading font-semibold text-[20px] text-[var(--text-primary)]">Living Simply</span>
+                <p className="font-heading text-[15px] leading-[1.6] text-[var(--text-secondary)]">
+                  Sleeping in a tent, carrying everything on his back. No luxury — just the trail, the sky, and the mission that drives him forward every day.
+                </p>
+              </div>
+            </ScrollReveal>
+          </div>
+          {/* Row 2 */}
+          <ScrollReveal animation="fade-up" delay={240}>
+            <div className="flex flex-col gap-[20px] w-full bg-[var(--bg-card)] border border-[var(--border-subtle)] p-[24px] md:p-[32px]">
               <Smartphone className="w-[32px] h-[32px] text-[var(--forest-green)]" />
               <span className="font-heading font-semibold text-[20px] text-[var(--text-primary)]">Daily Documentation</span>
               <p className="font-heading text-[15px] leading-[1.6] text-[var(--text-secondary)]">
