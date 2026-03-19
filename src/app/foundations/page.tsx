@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { ExternalLink, ArrowRight, Heart } from "lucide-react";
 import Header from "@/components/Header";
@@ -74,6 +75,10 @@ const foundations = [
       { label: "Annual Impact", value: "700+ families housed · 1M+ km transport" },
       { label: "Website", value: "leukaemia.org.au", url: "https://www.leukaemia.org.au" },
     ],
+    photos: [
+      { src: "https://images.unsplash.com/photo-1588451732612-a1a1809500c1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080", alt: "Medical researcher at work" },
+      { src: "https://images.unsplash.com/photo-1576086686350-2f5dba3ffeb3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080", alt: "Cancer cells under microscope" },
+    ],
     quote: "\"18 Australians die from blood cancer every single day. The Leukaemia Foundation exists so that one day, not one more family has to go through what Paul's did.\"",
     quoteSource: "Leukaemia Foundation, Annual Report",
     quoteColor: "var(--forest-green)",
@@ -101,6 +106,10 @@ const foundations = [
       { label: "Annual Patients", value: "~134,000 across national network" },
       { label: "Stem Cell Transplants", value: "13,000+ with above-average outcomes" },
       { label: "Website", value: "cityofhope.org", url: "https://www.cityofhope.org" },
+    ],
+    photos: [
+      { src: "https://images.unsplash.com/photo-1586534556685-acb83e021a4c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080", alt: "Hospital emergency entrance" },
+      { src: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080", alt: "Medical team in a hospital" },
     ],
     quote: "\"City of Hope is not just a hospital. It's a place where the science of cancer meets the humanity of healing — where researchers and doctors work side-by-side to turn today's discoveries into tomorrow's cures.\"",
     quoteSource: "City of Hope, Mission Statement",
@@ -154,8 +163,14 @@ export default function FoundationsPage() {
           </p>
         </div>
         <div className="relative flex-1 min-h-[300px] lg:min-h-0 bg-[var(--bg-dark)] overflow-hidden">
-          {/* Gradient background approximating a landscape image */}
-          <div className="absolute inset-0 bg-gradient-to-br from-[#2A4A35] via-[#1C3028] to-[#0F1A13]" />
+          <Image
+            src="https://images.unsplash.com/photo-1716896495108-14fb4c283e10?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080"
+            alt="Hikers walking through a forest trail"
+            fill
+            className="object-cover opacity-60"
+            sizes="(max-width: 1024px) 100vw, 50vw"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0F1A13CC] to-transparent" />
           <div className="absolute inset-0 flex items-end p-[40px]">
             <blockquote className="font-heading italic text-[18px] leading-[1.6] text-[#FFFFFFCC] max-w-[380px] border-l-[3px] border-[var(--forest-green)] pl-[20px]">
               &ldquo;I&apos;m walking 2,650 miles because I couldn&apos;t save them. But maybe I can help
@@ -314,6 +329,21 @@ export default function FoundationsPage() {
                 </div>
               ))}
             </div>
+          </div>
+
+          {/* Photo Row */}
+          <div className="grid grid-cols-2 gap-[12px] h-[280px] md:h-[340px]">
+            {f.photos.map((photo) => (
+              <div key={photo.src} className="relative overflow-hidden rounded-[2px]">
+                <Image
+                  src={photo.src}
+                  alt={photo.alt}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 50vw, 33vw"
+                />
+              </div>
+            ))}
           </div>
 
           {/* Quote block */}
