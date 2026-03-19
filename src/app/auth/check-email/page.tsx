@@ -57,7 +57,7 @@ export default function CheckEmailPage() {
             <Mail className="w-[24px] h-[24px] text-[var(--burnt-orange)]" />
             <span className="font-heading font-semibold text-[16px] text-[var(--text-primary)]">Check your email</span>
             <p className="font-heading text-[13px] leading-[1.6] text-[var(--text-secondary)]">
-              Open the email from paul@yeschapter.com and click the link inside.
+              Open the email from info@yeschapter.com and click the link inside.
             </p>
           </div>
           <div className="flex flex-col items-center gap-[10px] bg-[var(--bg-warm)] p-[24px] flex-1 text-center">

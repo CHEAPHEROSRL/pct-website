@@ -16,7 +16,7 @@ function getGmailClient() {
   return google.gmail({ version: "v1", auth: oauth2Client });
 }
 
-const FROM = process.env.EMAIL_FROM || "YesChapter <paul@yeschapter.com>";
+const FROM = process.env.EMAIL_FROM || "YesChapter <info@yeschapter.com>";
 
 interface SendResult {
   success: boolean;

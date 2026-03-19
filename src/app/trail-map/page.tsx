@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { Heart, Footprints, Mountain, Flame, Clock, TrendingUp, MapPin, Milestone, CalendarDays, Ruler, ArrowUp, Gift } from "lucide-react";
@@ -91,6 +91,9 @@ export default function TrailMapPage() {
   const [countryCount, setCountryCount] = useState(0);
   const [totalPledged, setTotalPledged] = useState(0);
 
+  // Track whether pledgers world-view has been shown once — sticky map
+  const pledgersVisited = useRef(false);
+
   // Gift locations for supporters mode
   const { locations: giftLocations } = useGiftLocations();
 
@@ -125,11 +128,14 @@ export default function TrailMapPage() {
 
   const handleModeSwitch = (newMode: MapMode) => {
     setMode(newMode);
-    if (newMode === "pledgers") {
+    // Only fly to world view the first time pledgers tab is opened.
+    // After that, keep whatever viewport the user is on (sticky map).
+    if (newMode === "pledgers" && !pledgersVisited.current) {
+      pledgersVisited.current = true;
       setFlyTo([20, -40, 2]);
-    } else {
-      setFlyTo([40.0, -120.0, 6]);
     }
+    // Switching back to trail/supporters does NOT reset the viewport —
+    // the user stays wherever they were looking.
   };
 
   const totalGiftAmount = giftLocations.reduce((sum, g) => sum + g.amount, 0);

@@ -77,7 +77,7 @@ export default function PrivacyPolicyPage() {
           <p>
             Emails are sent via Resend, a third-party email delivery service. You can opt out of challenge notifications
             by contacting us at{" "}
-            <a href="mailto:paul@yeschapter.com" className="text-[var(--burnt-orange)] hover:underline">paul@yeschapter.com</a>.
+            <a href="mailto:info@yeschapter.com" className="text-[var(--burnt-orange)] hover:underline">info@yeschapter.com</a>.
             Pledge confirmation emails cannot be opted out of as they serve as your receipt.
           </p>
         </LegalSection>
@@ -109,7 +109,7 @@ export default function PrivacyPolicyPage() {
           </ul>
           <p>
             To exercise any of these rights, contact us at{" "}
-            <a href="mailto:paul@yeschapter.com" className="text-[var(--burnt-orange)] hover:underline">paul@yeschapter.com</a>.
+            <a href="mailto:info@yeschapter.com" className="text-[var(--burnt-orange)] hover:underline">info@yeschapter.com</a>.
             We will respond to data requests within 30 days.
           </p>
           <p>
@@ -134,7 +134,7 @@ export default function PrivacyPolicyPage() {
           <p>
             This website is not directed at children under 13. We do not knowingly collect personal information
             from children. If you believe a child has provided us with personal data, please contact us at{" "}
-            <a href="mailto:paul@yeschapter.com" className="text-[var(--burnt-orange)] hover:underline">paul@yeschapter.com</a>{" "}
+            <a href="mailto:info@yeschapter.com" className="text-[var(--burnt-orange)] hover:underline">info@yeschapter.com</a>{" "}
             and we will promptly delete the information.
           </p>
         </LegalSection>
@@ -149,7 +149,7 @@ export default function PrivacyPolicyPage() {
         <LegalSection title="10. Contact Us">
           <p>
             If you have questions about this Privacy Policy or wish to exercise your data rights, please contact us at{" "}
-            <a href="mailto:paul@yeschapter.com" className="text-[var(--burnt-orange)] hover:underline">paul@yeschapter.com</a>.
+            <a href="mailto:info@yeschapter.com" className="text-[var(--burnt-orange)] hover:underline">info@yeschapter.com</a>.
           </p>
         </LegalSection>
       </section>

@@ -131,18 +131,43 @@ export default function PledgersPage() {
       <Header />
       <CountdownBanner />
 
-      {/* Hero */}
-      <section className="flex flex-col gap-[16px] px-6 md:px-12 lg:px-[120px] py-[40px] md:py-[56px] bg-[var(--bg-white)] w-full">
-        <span className="animate-fade-up font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">
-          PLEDGER WALL
+      {/* Clarity Banner — foundations vs Paul */}
+      <section className="flex flex-col sm:flex-row items-center gap-[12px] sm:gap-[32px] px-6 md:px-12 lg:px-[120px] py-[14px] bg-[var(--bg-dark)] w-full">
+        <div className="flex items-center gap-[10px]">
+          <div className="w-[8px] h-[8px] rounded-full bg-[var(--forest-green)] shrink-0" />
+          <span className="font-heading font-semibold text-[13px] text-[var(--text-white)]">
+            Pledges go <strong>100% to cancer foundations</strong> — Paul collects nothing
+          </span>
+        </div>
+        <div className="hidden sm:block w-[1px] h-[20px] bg-[#FFFFFF22]" />
+        <span className="font-heading italic text-[12px] text-[#FFFFFF66]">
+          Payments are made <em>directly</em> to the foundations by pledgers at the end of the hike
         </span>
-        <h1 className="animate-fade-up stagger-2 font-heading font-semibold text-[28px] md:text-[34px] lg:text-[36px] tracking-[-0.5px] text-[var(--text-primary)]">
-          People Walking With Paul
+      </section>
+
+      {/* Hero */}
+      <section className="flex flex-col gap-[16px] px-6 md:px-12 lg:px-[120px] py-[40px] md:py-[56px] bg-[var(--bg-white)] w-full border-b-[4px] border-[var(--forest-green)]">
+        <span className="animate-fade-up font-label font-bold text-[12px] tracking-[3px] text-[var(--forest-green)]">
+          FOUNDATION PLEDGES
+        </span>
+        <h1 className="animate-fade-up stagger-2 font-heading font-semibold text-[28px] md:text-[34px] lg:text-[40px] tracking-[-0.5px] text-[var(--text-primary)]">
+          People Pledging for Cancer Research
         </h1>
         <p className="animate-fade-up stagger-4 font-heading text-[16px] leading-[1.6] text-[var(--text-secondary)] max-w-[650px]">
-          Every mile Paul walks, these pledgers are right there with him — turning
-          steps into dollars for cancer research and patient support.
+          These pledgers have committed to donate per mile Paul walks — directly to the
+          Leukaemia Foundation and City of Hope. <strong>No money changes hands until Paul
+          finishes the trail</strong>, then pledgers pay the foundations directly. Paul receives nothing.
         </p>
+        <div className="animate-fade-up stagger-6 flex flex-col sm:flex-row gap-[16px] sm:gap-[32px] pt-[8px]">
+          <div className="flex items-center gap-[10px]">
+            <div className="w-[10px] h-[10px] rounded-full bg-[var(--forest-green)] shrink-0" />
+            <span className="font-label font-semibold text-[12px] text-[var(--text-secondary)]">Leukaemia Foundation — Sydney, Australia 🇦🇺</span>
+          </div>
+          <div className="flex items-center gap-[10px]">
+            <div className="w-[10px] h-[10px] rounded-full bg-[var(--burnt-orange)] shrink-0" />
+            <span className="font-label font-semibold text-[12px] text-[var(--text-secondary)]">City of Hope — California, USA 🇺🇸</span>
+          </div>
+        </div>
       </section>
 
       {/* Stats Bar */}

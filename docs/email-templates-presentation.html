@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YesChapter — Email Templates for Paul</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Barlow+Semi+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-card: #FDFCFA;
+    --bg-dark: #1C1F1A;
+    --bg-warm: #F4F1EC;
+    --bg-white: #FFFFFF;
+    --border-subtle: #D9D7D4;
+    --burnt-orange: #C45C26;
+    --burnt-orange-light: #FEF3EC;
+    --forest-green: #3D7A5A;
+    --forest-green-light: #E8F0EB;
+    --text-muted: #8C8A87;
+    --text-primary: #1C1C1C;
+    --text-secondary: #5C5C5C;
+    --text-white: #FFFFFF;
+    --warm-stone: #EBE8E3;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    background: #F4F1EC;
+    color: var(--text-primary);
+    line-height: 1.6;
+  }
+
+  .label {
+    font-family: 'Barlow Semi Condensed', sans-serif;
+  }
+
+  /* ─── Cover Page ─── */
+  .cover {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: var(--bg-dark);
+    color: var(--text-white);
+    text-align: center;
+    padding: 80px 40px;
+    page-break-after: always;
+  }
+
+  .cover-logo {
+    font-family: 'Barlow Semi Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: 6px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 48px;
+  }
+
+  .cover h1 {
+    font-size: 42px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+  }
+
+  .cover h1 span { color: var(--burnt-orange); }
+
+  .cover p {
+    font-size: 18px;
+    color: rgba(255,255,255,0.7);
+    max-width: 560px;
+  }
+
+  .cover-meta {
+    margin-top: 64px;
+    font-family: 'Barlow Semi Condensed', sans-serif;
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.35);
+  }
+
+  /* ─── Section Pages ─── */
+  .section-page {
+    padding: 64px 80px;
+    max-width: 1100px;
+    margin: 0 auto;
+    page-break-after: always;
+  }
+
+  .section-page h2 {
+    font-size: 32px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+  }
+
+  .section-page h2 span { color: var(--burnt-orange); }
+
+  .section-badge {
+    display: inline-block;
+    font-family: 'Barlow Semi Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--burnt-orange);
+    margin-bottom: 12px;
+  }
+
+  .section-desc {
+    font-size: 16px;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin-bottom: 40px;
+  }
+
+  .template-container {
+    display: flex;
+    gap: 48px;
+    align-items: flex-start;
+  }
+
+  .template-render {
+    width: 480px;
+    flex-shrink: 0;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06);
+  }
+
+  .template-details {
+    flex: 1;
+    min-width: 280px;
+  }
+
+  .template-details h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+
+  .detail-item {
+    margin-bottom: 16px;
+  }
+
+  .detail-item .detail-label {
+    font-family: 'Barlow Semi Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+
+  .detail-item p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  /* ─── Email Template Rendering ─── */
+  .email {
+    width: 100%;
+    background: var(--bg-warm);
+  }
+
+  .email-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 28px;
+    background: var(--bg-dark);
+  }
+
+  .email-header-logo {
+    font-family: 'Barlow Semi Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 3px;
+    color: var(--text-white);
+  }
+
+  .email-header-tag {
+    font-family: 'Barlow Semi Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.4);
+  }
+
+  .email-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 20px 32px;
+    background: var(--bg-dark);
+  }
+
+  .email-footer-logo {
+    font-family: 'Barlow Semi Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 3px;
+    color: rgba(255,255,255,0.5);
+  }
+
+  .email-footer-text {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  .email-footer-links {
+    font-family: 'Barlow Semi Condensed', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.25);
+  }
+
+  /* Shared email elements */
+  .email-badge {
+    display: inline-block;
+    font-family: 'Barlow Semi Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 2px;
+    padding: 5px 14px;
+    border-radius: 2px;
+  }
+
+  .email-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Barlow Semi Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 2px;
+    padding: 12px 28px;
+    text-decoration: none;
+    color: var(--text-white);
+  }
+
+  .pledge-amount {
+    font-size: 44px;
+    font-weight: 600;
+    color: var(--burnt-orange);
+    letter-spacing: -1px;
+  }
+
+  .pledge-label {
+    font-family: 'Barlow Semi Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--text-muted);
+  }
+
+  .progress-bar {
+    width: 100%;
+    height: 10px;
+    background: var(--warm-stone);
+    border-radius: 5px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 5px;
+    background: linear-gradient(90deg, var(--forest-green), var(--burnt-orange));
+  }
+
+  .progress-labels {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Barlow Semi Condensed', sans-serif;
+    font-weight: 500;
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+  }
+
+  /* ─── Weekly Email Specific ─── */
+  .weekly-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 36px 32px;
+    background: var(--bg-dark);
+    text-align: center;
+  }
+
+  .weekly-hero h3 {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-white);
+  }
+
+  .weekly-hero p {
+    font-size: 13px;
+    color: rgba(255,255,255,0.65);
+  }
+
+  .weekly-pledge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 28px 32px;
+    background: var(--bg-white);
+  }
+
+  .weekly-progress {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 18px 32px;
+    background: var(--bg-white);
+  }
+
+  .weekly-stats {
+    display: flex;
+    justify-content: space-around;
+    padding: 18px 32px;
+    background: var(--bg-warm);
+  }
+
+  .stat-item {
+    text-align: center;
+  }
+
+  .stat-value {
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .stat-label {
+    font-family: 'Barlow Semi Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 8px;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+  }
+
+  .weekly-journal {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 28px 32px;
+    background: var(--bg-white);
+  }
+
+  .journal-photo {
+    width: 100%;
+    height: 140px;
+    border-radius: 4px;
+    background: linear-gradient(135deg, #8BA886 0%, #D4A574 50%, #E8C9A0 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Barlow Semi Condensed', sans-serif;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.7);
+  }
+
+  .journal-quote {
+    font-style: italic;
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .journal-link {
+    font-family: 'Barlow Semi Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--burnt-orange);
+    text-decoration: none;
+  }
+
+  .weekly-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 24px 32px;
+    background: var(--bg-warm);
+  }
+
+  .weekly-cta p {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  /* ─── Milestone Email Specific ─── */
+  .milestone-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 40px 32px;
+    background: var(--burnt-orange);
+    text-align: center;
+  }
+
+  .milestone-hero svg { color: var(--text-white); }
+
+  .milestone-hero h3 {
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--text-white);
+  }
+
+  .milestone-hero p {
+    font-size: 12px;
+    color: rgba(255,255,255,0.8);
+    line-height: 1.6;
+    max-width: 380px;
+  }
+
+  .milestone-pledge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 28px 32px;
+    background: var(--bg-white);
+  }
+
+  .milestone-pledge .pledge-amount { font-size: 48px; }
+
+  .milestone-community {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding: 24px 32px;
+    background: var(--bg-warm);
+  }
+
+  .community-row {
+    display: flex;
+    gap: 36px;
+  }
+
+  .community-stat { text-align: center; }
+
+  .community-stat .val {
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .community-stat .lbl {
+    font-family: 'Barlow Semi Condensed', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text-muted);
+  }
+
+  .milestone-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 24px 32px;
+    background: var(--bg-white);
+  }
+
+  .share-link {
+    font-family: 'Barlow Semi Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 11px;
+    color: var(--burnt-orange);
+  }
+
+  /* ─── Honor Email Specific ─── */
+  .honor-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding: 44px 32px;
+    background: var(--forest-green);
+    text-align: center;
+  }
+
+  .honor-hero h3 {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--text-white);
+  }
+
+  .honor-hero p {
+    font-size: 13px;
+    color: rgba(255,255,255,0.8);
+    line-height: 1.6;
+    max-width: 400px;
+  }
+
+  .honor-photo {
+    width: 100%;
+    height: 180px;
+    background: linear-gradient(135deg, #D4A574 0%, #E8A040 40%, #F5D0A0 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Barlow Semi Condensed', sans-serif;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.7);
+  }
+
+  .honor-pledge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 32px;
+    background: var(--bg-white);
+    text-align: center;
+  }
+
+  .honor-pledge .pledge-amount { font-size: 52px; }
+
+  .honor-pledge .note {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    max-width: 400px;
+  }
+
+  .honor-split {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 24px 32px;
+    background: var(--bg-white);
+  }
+
+  .foundation-card {
+    border-radius: 4px;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .foundation-card.green { background: var(--forest-green-light); }
+  .foundation-card.orange { background: var(--burnt-orange-light); }
+
+  .foundation-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .foundation-name {
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .foundation-amount {
+    font-size: 17px;
+    font-weight: 600;
+  }
+
+  .foundation-meta {
+    font-family: 'Barlow Semi Condensed', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text-muted);
+  }
+
+  .foundation-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 16px;
+    font-family: 'Barlow Semi Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: var(--text-white);
+  }
+
+  .foundation-btn.green-btn { background: var(--forest-green); }
+  .foundation-btn.orange-btn { background: var(--burnt-orange); }
+
+  .honor-confirm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 24px 32px;
+    background: var(--bg-warm);
+  }
+
+  .confirm-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 24px;
+    background: var(--bg-white);
+    border: 1px solid var(--border-subtle);
+    font-family: 'Barlow Semi Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--forest-green);
+  }
+
+  .honor-installment {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 20px 32px;
+    background: var(--bg-white);
+    text-align: center;
+  }
+
+  .honor-installment h4 {
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .honor-installment p {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    max-width: 380px;
+  }
+
+  .installment-link {
+    font-family: 'Barlow Semi Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 11px;
+    color: var(--burnt-orange);
+  }
+
+  /* ─── Dividers ─── */
+  .orange-divider {
+    width: 50px;
+    height: 2px;
+    background: var(--burnt-orange);
+  }
+
+  .white-divider {
+    width: 50px;
+    height: 2px;
+    background: rgba(255,255,255,0.25);
+  }
+
+  .subtle-divider {
+    width: 100%;
+    height: 1px;
+    background: var(--border-subtle);
+  }
+
+  /* ─── Schedule Table ─── */
+  .schedule-page {
+    padding: 64px 80px;
+    max-width: 1100px;
+    margin: 0 auto;
+    page-break-after: always;
+  }
+
+  .schedule-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 32px;
+  }
+
+  .schedule-table th {
+    font-family: 'Barlow Semi Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 2px solid var(--border-subtle);
+  }
+
+  .schedule-table td {
+    font-size: 14px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border-subtle);
+    vertical-align: top;
+  }
+
+  .schedule-table td:first-child {
+    font-family: 'Barlow Semi Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text-primary);
+    white-space: nowrap;
+  }
+
+  .schedule-table td:nth-child(2) {
+    font-weight: 600;
+  }
+
+  .schedule-table td:last-child {
+    color: var(--text-secondary);
+    font-size: 13px;
+  }
+
+  .phase-badge {
+    display: inline-block;
+    font-family: 'Barlow Semi Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 9px;
+    letter-spacing: 2px;
+    padding: 3px 10px;
+    border-radius: 2px;
+    margin-right: 8px;
+  }
+
+  .phase-badge.during { background: var(--forest-green-light); color: var(--forest-green); }
+  .phase-badge.milestone { background: var(--burnt-orange-light); color: var(--burnt-orange); }
+  .phase-badge.honor { background: #E8E8E8; color: var(--text-primary); }
+
+  @media print {
+    body { background: white; }
+    .section-page, .schedule-page { padding: 48px 40px; }
+    .template-container { gap: 32px; }
+    .template-render { width: 380px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════ -->
+<!-- COVER PAGE -->
+<!-- ════════════════════════════════════════ -->
+<div class="cover">
+  <div class="cover-logo">YESCHAPTER</div>
+  <h1>Email Templates for<br><span>Pledge Engagement</span></h1>
+  <p>Three email designs to keep pledgers connected during the hike and guide them through honoring their pledges when Paul reaches Canada.</p>
+  <div class="cover-meta">PREPARED FOR PAUL BARRY &middot; MARCH 2026</div>
+</div>
+
+<!-- ════════════════════════════════════════ -->
+<!-- TEMPLATE 1: WEEKLY UPDATE -->
+<!-- ════════════════════════════════════════ -->
+<div class="section-page">
+  <div class="section-badge">TEMPLATE 1 OF 3</div>
+  <h2>Weekly <span>Update</span> Email</h2>
+  <p class="section-desc">Sent every week during the hike. Keeps pledgers emotionally invested by showing Paul's progress and their growing pledge total. This is the heartbeat of engagement.</p>
+
+  <div class="template-container">
+    <div class="template-render">
+      <div class="email">
+        <!-- Header -->
+        <div class="email-header">
+          <span class="email-header-logo">YESCHAPTER</span>
+          <span class="email-header-tag">WALKING FOR CANCER</span>
+        </div>
+        <!-- Hero -->
+        <div class="weekly-hero">
+          <div class="email-badge" style="background: var(--burnt-orange); color: white;">WEEK 12 UPDATE</div>
+          <h3>Paul Crossed Into Oregon</h3>
+          <p>Mile 1,694 of 2,650 — Day 87 on the Pacific Crest Trail</p>
+          <div class="orange-divider" style="background: var(--burnt-orange);"></div>
+        </div>
+        <!-- Pledge Total -->
+        <div class="weekly-pledge">
+          <div class="pledge-label">YOUR RUNNING PLEDGE TOTAL</div>
+          <div class="pledge-amount">$423.50</div>
+          <div style="font-size: 12px; color: var(--text-secondary);">$0.25/mile &times; 1,694 miles walked</div>
+          <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-size: 10px; font-weight: 500; color: var(--text-muted);">$211.75 to Tower Cancer Research &middot; $211.75 to Cancer Council NSW</div>
+        </div>
+        <!-- Progress -->
+        <div class="weekly-progress">
+          <div class="pledge-label">TRAIL PROGRESS</div>
+          <div class="progress-bar"><div class="progress-fill" style="width: 64%;"></div></div>
+          <div class="progress-labels">
+            <span>Campo, CA</span>
+            <span style="color: var(--burnt-orange); font-weight: 700;">64% complete</span>
+            <span>Manning Park, BC</span>
+          </div>
+        </div>
+        <!-- Stats -->
+        <div class="weekly-stats">
+          <div class="stat-item"><div class="stat-value">1,694</div><div class="stat-label">MILES WALKED</div></div>
+          <div class="stat-item"><div class="stat-value">87</div><div class="stat-label">DAYS ON TRAIL</div></div>
+          <div class="stat-item"><div class="stat-value">6,200 ft</div><div class="stat-label">ELEVATION</div></div>
+          <div class="stat-item"><div class="stat-value" style="color: var(--forest-green);">1,247</div><div class="stat-label">PLEDGERS</div></div>
+        </div>
+        <!-- Journal -->
+        <div class="weekly-journal">
+          <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 3px; color: var(--burnt-orange);">FROM PAUL'S JOURNAL</div>
+          <div class="journal-photo">TRAIL PHOTO</div>
+          <div class="journal-quote">"Today I woke up above the clouds. The trail dropped into a valley of wildflowers and I thought about Mom. She would have loved this view. 87 days in and every step still feels like it matters."</div>
+          <a class="journal-link" href="#">Read the full journal entry &rarr;</a>
+        </div>
+        <!-- CTA -->
+        <div class="weekly-cta">
+          <p>Follow Paul's journey in real-time</p>
+          <div class="email-btn" style="background: var(--burnt-orange);">VIEW TRAIL MAP &rarr;</div>
+        </div>
+        <!-- Footer -->
+        <div class="email-footer">
+          <div class="email-footer-logo">YESCHAPTER</div>
+          <div class="email-footer-text">You're receiving this because you pledged to walk with Paul.<br>Your pledge: $0.25/mile &middot; Total so far: $423.50</div>
+          <div class="email-footer-links">View My Pledge &middot; Unsubscribe &middot; yeschapter.com</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="template-details">
+      <h3>Key Design Decisions</h3>
+      <div class="detail-item">
+        <div class="detail-label">FREQUENCY</div>
+        <p>Sent every Monday morning. Pledgers start their week seeing Paul's progress.</p>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">PERSONAL RUNNING TOTAL</div>
+        <p>The big orange number ($423.50) is the most important element. Watching it grow from $12 to $200 to $662 over 6 months creates ownership. It's <em>their</em> number.</p>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">TRAIL PROGRESS BAR</div>
+        <p>Visual representation of how far Paul has walked. Green-to-orange gradient matches the brand. Percentage gives concrete sense of completion.</p>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">JOURNAL EXCERPT</div>
+        <p>Emotional connection. A short quote from Paul's trail journal humanizes the numbers. Links to full entry on yeschapter.com to drive site traffic.</p>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">50/50 SPLIT SHOWN</div>
+        <p>Every email reinforces where the money goes: half to Tower Cancer Research, half to Cancer Council NSW. Builds trust.</p>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">DYNAMIC CONTENT</div>
+        <p>Every field is personalized: pledge rate, total, miles, days, journal excerpt. No two pledgers see the same email.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ -->
+<!-- TEMPLATE 2: MILESTONE -->
+<!-- ════════════════════════════════════════ -->
+<div class="section-page">
+  <div class="section-badge">TEMPLATE 2 OF 3</div>
+  <h2>Milestone <span>Celebration</span> Email</h2>
+  <p class="section-desc">Triggered at key trail milestones: 500 miles, 1,000 miles, halfway (1,325), state crossings. Celebrates progress and shows the pledger's growing total.</p>
+
+  <div class="template-container">
+    <div class="template-render">
+      <div class="email">
+        <!-- Header -->
+        <div class="email-header">
+          <span class="email-header-logo">YESCHAPTER</span>
+          <span class="email-header-tag">WALKING FOR CANCER</span>
+        </div>
+        <!-- Hero -->
+        <div class="milestone-hero">
+          <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m8 3 4 8 5-5 2 15H2L8 3z"/></svg>
+          <div class="email-badge" style="background: rgba(255,255,255,0.15); color: white;">MILESTONE REACHED</div>
+          <h3>Paul Hit 1,000 Miles!</h3>
+          <p>From the Mexican border through the deserts of Southern California and into the Sierra Nevada — one thousand miles walked for cancer.</p>
+          <div class="white-divider"></div>
+        </div>
+        <!-- Pledge -->
+        <div class="milestone-pledge">
+          <div class="pledge-label">YOUR PLEDGE IS NOW</div>
+          <div class="pledge-amount" style="font-size: 48px;">$250.00</div>
+          <div style="font-size: 12px; color: var(--text-secondary);">$0.25/mile &times; 1,000 miles = $250.00 pledged so far</div>
+          <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-size: 10px; font-weight: 500; color: var(--text-muted);">$125.00 to Tower Cancer Research &middot; $125.00 to Cancer Council NSW</div>
+        </div>
+        <!-- Progress -->
+        <div class="weekly-progress">
+          <div class="pledge-label">TRAIL PROGRESS &mdash; 38% COMPLETE</div>
+          <div class="progress-bar"><div class="progress-fill" style="width: 38%;"></div></div>
+          <div class="progress-labels"><span>Mexico</span><span>Canada</span></div>
+        </div>
+        <!-- Community -->
+        <div class="milestone-community">
+          <div class="pledge-label">THE YESCHAPTER COMMUNITY</div>
+          <div class="community-row">
+            <div class="community-stat"><div class="val" style="color: var(--forest-green);">1,247</div><div class="lbl">pledgers</div></div>
+            <div class="community-stat"><div class="val" style="color: var(--burnt-orange);">$32,450</div><div class="lbl">total pledged</div></div>
+            <div class="community-stat"><div class="val">23</div><div class="lbl">countries</div></div>
+          </div>
+        </div>
+        <!-- CTA -->
+        <div class="milestone-cta">
+          <div class="email-btn" style="background: var(--burnt-orange);">SEE PAUL'S LOCATION ON THE MAP</div>
+          <div class="share-link">Share this milestone with friends &rarr;</div>
+        </div>
+        <!-- Footer -->
+        <div class="email-footer">
+          <div class="email-footer-logo">YESCHAPTER</div>
+          <div class="email-footer-text">You're receiving this because you pledged to walk with Paul.<br>View My Pledge &middot; Unsubscribe &middot; yeschapter.com</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="template-details">
+      <h3>Key Design Decisions</h3>
+      <div class="detail-item">
+        <div class="detail-label">TRIGGER EVENTS</div>
+        <p><strong>500 miles</strong> — Desert survived<br><strong>1,000 miles</strong> — Sierra entered<br><strong>1,325 miles</strong> — Halfway point<br><strong>State crossings</strong> — CA&rarr;OR, OR&rarr;WA<br><strong>2,000 miles</strong> — Final stretch</p>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">BURNT ORANGE HERO</div>
+        <p>Full-bleed brand color creates a celebration moment. The mountain icon and "MILESTONE REACHED" badge make it feel like an achievement — because it is.</p>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">"YOUR PLEDGE IS NOW"</div>
+        <p>Reframes the milestone around the pledger. It's not just Paul's achievement — the pledger's commitment grew too. This creates shared ownership.</p>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">COMMUNITY STATS</div>
+        <p>Social proof: 1,247 pledgers across 23 countries, $32,450 total pledged. Shows the pledger they're part of something big.</p>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">SHARE PROMPT</div>
+        <p>"Share this milestone with friends" link encourages organic growth. Milestones are natural share moments.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ -->
+<!-- TEMPLATE 3: HONOR EMAIL -->
+<!-- ════════════════════════════════════════ -->
+<div class="section-page">
+  <div class="section-badge">TEMPLATE 3 OF 3</div>
+  <h2>Paul Made It — <span>Honor</span> Email</h2>
+  <p class="section-desc">The most important email we'll ever send. Triggered when Paul reaches Manning Park, BC. Converts 6 months of pledges into real donations to the two cancer foundations.</p>
+
+  <div class="template-container">
+    <div class="template-render">
+      <div class="email">
+        <!-- Header -->
+        <div class="email-header">
+          <span class="email-header-logo">YESCHAPTER</span>
+          <span class="email-header-tag">WALKING FOR CANCER</span>
+        </div>
+        <!-- Hero -->
+        <div class="honor-hero">
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg>
+          <div class="email-badge" style="background: rgba(255,255,255,0.15); color: white; font-size: 12px; letter-spacing: 4px;">HE MADE IT</div>
+          <h3>Paul Reached Canada.</h3>
+          <p>2,650 miles. 6 months. Every step for cancer research, patient support, and prevention — in honor of his parents.</p>
+          <div class="white-divider"></div>
+        </div>
+        <!-- Photo -->
+        <div class="honor-photo">FINISH LINE PHOTO</div>
+        <!-- Pledge Total -->
+        <div class="honor-pledge">
+          <div class="pledge-label">YOUR FINAL PLEDGE TOTAL</div>
+          <div class="pledge-amount" style="font-size: 52px;">$662.50</div>
+          <div style="font-size: 13px; color: var(--text-secondary);">$0.25/mile &times; 2,650 miles</div>
+          <div class="note">It's time to honor your pledge. Pay the foundations directly — Paul receives $0. Every cent goes to cancer research.</div>
+        </div>
+        <div class="subtle-divider"></div>
+        <!-- Foundation Split -->
+        <div class="honor-split">
+          <div class="pledge-label">YOUR 50/50 SPLIT</div>
+          <!-- Tower -->
+          <div class="foundation-card green">
+            <div class="foundation-top">
+              <div class="foundation-name">Tower Cancer Research Foundation</div>
+              <div class="foundation-amount" style="color: var(--forest-green);">$331.25</div>
+            </div>
+            <div class="foundation-meta">Los Angeles, California &middot; 501(c)(3) &middot; Tax deductible in the US</div>
+            <div class="foundation-btn green-btn">HONOR MY PLEDGE &mdash; TOWER CANCER RESEARCH ($331.25)</div>
+          </div>
+          <!-- Cancer Council -->
+          <div class="foundation-card orange">
+            <div class="foundation-top">
+              <div class="foundation-name">Cancer Council NSW</div>
+              <div class="foundation-amount" style="color: var(--burnt-orange);">$331.25</div>
+            </div>
+            <div class="foundation-meta">Sydney, Australia &middot; DGR Registered &middot; Tax deductible in Australia</div>
+            <div class="foundation-btn orange-btn">HONOR MY PLEDGE &mdash; CANCER COUNCIL NSW ($331.25)</div>
+          </div>
+        </div>
+        <!-- Confirm -->
+        <div class="honor-confirm">
+          <div style="font-size: 12px; color: var(--text-secondary);">After you've donated to both foundations:</div>
+          <div class="confirm-btn">&check; I'VE HONORED MY PLEDGE</div>
+          <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-size: 10px; font-weight: 500; color: var(--text-muted);">This updates your profile and adds you to the Wall of Honor</div>
+        </div>
+        <!-- Installment -->
+        <div class="honor-installment">
+          <h4>Need more time? Honor over 3 months.</h4>
+          <p>We'll send you a reminder each month: $220.83 &times; 3 payments. No pressure. No guilt. Just a gentle nudge.</p>
+          <div class="installment-link">Set up installment plan &rarr;</div>
+        </div>
+        <!-- Footer -->
+        <div class="email-footer">
+          <div class="email-footer-logo">YESCHAPTER</div>
+          <div class="email-footer-text">Thank you for walking with Paul — from Mexico to Canada.<br>Your pledge: $0.25/mile &middot; Final total: $662.50</div>
+          <div class="email-footer-links">View My Pledge &middot; Wall of Honor &middot; yeschapter.com</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="template-details">
+      <h3>Key Design Decisions</h3>
+      <div class="detail-item">
+        <div class="detail-label">FOREST GREEN HERO</div>
+        <p>Different color from weekly/milestone emails signals this is special. Green = completion, achievement, nature's finish line.</p>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">FINISH LINE PHOTO</div>
+        <p>Real photo from Manning Park. Emotional anchor — the pledger sees the moment their journey with Paul ends.</p>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">FINAL TOTAL — HUGE</div>
+        <p>$662.50 at 52px. This is the number they've watched grow for 6 months. Now it's real and it's time to act.</p>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">TWO FOUNDATION BUTTONS</div>
+        <p>Color-coded cards with pre-calculated amounts. Green for Tower Cancer Research (US), Orange for Cancer Council NSW (AU). Each has a full-width honor button linking directly to the foundation's donation page. No math, no confusion.</p>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">TAX DEDUCTION INFO</div>
+        <p>Each card shows the tax status: 501(c)(3) for US donors, DGR for Australian donors. Direct donations = cleanest tax receipts.</p>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">"I'VE HONORED" BUTTON</div>
+        <p>Self-report confirmation. Updates their profile, adds them to the Wall of Honor, changes their map bubble from grey to green.</p>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">INSTALLMENT OPTION</div>
+        <p>For large totals ($500+), honor over 3 months. Monthly reminders with 1/3 amount. Empathetic, not pushy.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ -->
+<!-- EMAIL SCHEDULE -->
+<!-- ════════════════════════════════════════ -->
+<div class="schedule-page">
+  <div class="section-badge">EMAIL SCHEDULE</div>
+  <h2>The Full <span>Communication</span> Plan</h2>
+  <p class="section-desc">Every email a pledger receives from Day 1 to the finish and beyond. Empathy first, never spam.</p>
+
+  <table class="schedule-table">
+    <thead>
+      <tr>
+        <th>WHEN</th>
+        <th>EMAIL</th>
+        <th>PURPOSE</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Day 1</td>
+        <td><span class="phase-badge during">DURING</span> "Paul just started!"</td>
+        <td>Excitement + pledge confirmation</td>
+      </tr>
+      <tr>
+        <td>Every Monday</td>
+        <td><span class="phase-badge during">DURING</span> Weekly Update</td>
+        <td>Running total + trail progress + journal excerpt</td>
+      </tr>
+      <tr>
+        <td>500 / 1000 / 1325 mi</td>
+        <td><span class="phase-badge milestone">MILESTONE</span> Milestone Celebration</td>
+        <td>Celebrate achievement + growing pledge total</td>
+      </tr>
+      <tr>
+        <td>State crossings</td>
+        <td><span class="phase-badge milestone">MILESTONE</span> "Paul entered Oregon!"</td>
+        <td>Geographic progress + local connection</td>
+      </tr>
+      <tr>
+        <td>200 miles from Canada</td>
+        <td><span class="phase-badge during">DURING</span> "Almost there"</td>
+        <td>Anticipation + approximate final total</td>
+      </tr>
+      <tr>
+        <td>Paul finishes</td>
+        <td><span class="phase-badge honor">HONOR</span> "Paul Made It!"</td>
+        <td>Final total + foundation links + honor buttons</td>
+      </tr>
+      <tr>
+        <td>+3 days</td>
+        <td><span class="phase-badge honor">HONOR</span> Gentle reminder</td>
+        <td>"Your pledge links are ready"</td>
+      </tr>
+      <tr>
+        <td>+7 days</td>
+        <td><span class="phase-badge honor">HONOR</span> Social proof</td>
+        <td>"X% of pledgers have honored!"</td>
+      </tr>
+      <tr>
+        <td>+14 days</td>
+        <td><span class="phase-badge honor">HONOR</span> Understanding</td>
+        <td>"No rush — here are your links"</td>
+      </tr>
+      <tr>
+        <td>+30 days</td>
+        <td><span class="phase-badge honor">HONOR</span> Purpose</td>
+        <td>"The foundations are counting on us"</td>
+      </tr>
+      <tr>
+        <td>+45 days</td>
+        <td><span class="phase-badge honor">HONOR</span> Installment offer</td>
+        <td>"Honor over 3 months" — then we stop</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style="margin-top: 40px; padding: 24px; background: var(--bg-white); border-left: 3px solid var(--burnt-orange);">
+    <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 2px; color: var(--burnt-orange); margin-bottom: 8px;">KEY PRINCIPLE</div>
+    <p style="font-size: 15px; color: var(--text-primary); line-height: 1.6;">Every email includes the pledger's <strong>personal running total</strong>. Watching it grow from $12 to $200 to $662 over 6 months creates ownership. It's not abstract — it's <em>their</em> number. After 45 days post-finish, we stop. No guilt. No harassment.</p>
+  </div>
+</div>
+
+</body>
+</html>

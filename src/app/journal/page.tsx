@@ -13,7 +13,7 @@ import type { InstagramPost } from "@/lib/instagram";
 import { useYoutubeVideos } from "@/hooks/useYoutubeVideos";
 import type { YoutubeVideo } from "@/lib/youtube-feed";
 
-const filterOptions = ["ALL", "BLOG", "VLOG", "INTERVIEWS", "PHOTOS"] as const;
+const filterOptions = ["ALL", "BLOG", "VLOG", "GIF", "INTERVIEWS", "PHOTOS"] as const;
 type Filter = (typeof filterOptions)[number];
 
 interface JournalEntry {
@@ -23,7 +23,9 @@ interface JournalEntry {
   date: string;
   title: string;
   excerpt: string;
-  tag: "BLOG" | "VLOG" | "INTERVIEWS" | "PHOTOS";
+  tag: "BLOG" | "VLOG" | "GIF" | "INTERVIEWS" | "PHOTOS";
+  videoUrl?: string;
+  gifUrl?: string;
 }
 
 function mapPostToEntry(post: JournalPostPublic): JournalEntry {
@@ -42,7 +44,8 @@ function mapPostToEntry(post: JournalPostPublic): JournalEntry {
       .toUpperCase(),
     title: post.title,
     excerpt: post.excerpt,
-    tag: (post.tags[0] as "BLOG" | "VLOG" | "INTERVIEWS" | "PHOTOS") || "BLOG",
+    tag: (post.tags[0] as "BLOG" | "VLOG" | "GIF" | "INTERVIEWS" | "PHOTOS") || "BLOG",
+    videoUrl: post.youtubeUrl || undefined,
   };
 }
 
@@ -117,14 +120,28 @@ export default function JournalPage() {
       <Header activeItem="Journal" />
 
       {/* Hero */}
-      <section className="flex flex-col items-center gap-[16px] px-6 md:px-12 lg:px-[120px] py-[40px] md:py-[52px] lg:py-[64px] bg-[var(--bg-white)] w-full">
-        <span className="animate-fade-up font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">TRAIL JOURNAL</span>
-        <h1 className="animate-fade-up stagger-2 font-heading font-semibold text-[28px] md:text-[38px] lg:text-[48px] tracking-[-0.5px] text-[var(--text-primary)] text-center">
-          Stories From the Trail
-        </h1>
-        <p className="animate-fade-up stagger-4 font-heading text-[16px] md:text-[18px] leading-[1.6] text-[var(--text-secondary)] text-center w-full lg:w-[640px]">
-          Daily photos, videos, and reflections from Paul&apos;s 2,650-mile PCT journey. Follow along as he walks from Mexico to Canada.
-        </p>
+      <section className="relative flex flex-col items-center gap-[16px] px-6 md:px-12 lg:px-[120px] py-[52px] md:py-[72px] lg:py-[88px] w-full overflow-hidden">
+        {/* Background image */}
+        <div className="absolute inset-0">
+          <Image
+            src="/images/hiking/20230903_090215.jpg"
+            alt=""
+            fill
+            className="object-cover object-center"
+            priority
+          />
+          <div className="absolute inset-0 bg-[var(--bg-white)]/88" />
+        </div>
+        {/* Content */}
+        <div className="relative z-10 flex flex-col items-center gap-[16px]">
+          <span className="animate-fade-up font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">TRAIL JOURNAL</span>
+          <h1 className="animate-fade-up stagger-2 font-heading font-semibold text-[28px] md:text-[38px] lg:text-[48px] tracking-[-0.5px] text-[var(--text-primary)] text-center">
+            Stories From the Trail
+          </h1>
+          <p className="animate-fade-up stagger-4 font-heading text-[16px] md:text-[18px] leading-[1.6] text-[var(--text-secondary)] text-center w-full lg:w-[640px]">
+            Daily photos, videos, and reflections from Paul&apos;s 2,650-mile PCT journey. Follow along as he walks from Mexico to Canada.
+          </p>
+        </div>
       </section>
 
       {/* Filter Bar */}
@@ -524,17 +541,43 @@ function YoutubeCard({ video }: { video: YoutubeVideo }) {
 // Blog Card
 // ---------------------------------------------------------------------------
 
-function BlogCard({ slug, img, day, date, title, excerpt, tag }: JournalEntry) {
+function BlogCard({ slug, img, day, date, title, excerpt, tag, videoUrl, gifUrl }: JournalEntry) {
   const tagStyle =
     tag === "INTERVIEWS"
       ? "bg-[#EDE9FE] text-[#6D28D9]"
       : tag === "VLOG"
         ? "bg-[var(--burnt-orange-light)] text-[var(--burnt-orange)]"
-        : "bg-[var(--forest-green-light)] text-[var(--forest-green)]";
+        : tag === "GIF"
+          ? "bg-[#E0F2FE] text-[#0369A1]"
+          : "bg-[var(--forest-green-light)] text-[var(--forest-green)]";
+
+  const isVideo = tag === "VLOG" || !!videoUrl;
+  const isGif = tag === "GIF" || !!gifUrl;
+  const coverSrc = gifUrl || img;
+
   return (
-    <Link href={`/journal/${slug}`} className="flex flex-col bg-[var(--bg-white)] border border-[var(--border-subtle)] overflow-hidden hover:shadow-md transition-shadow cursor-pointer">
-      <div className="relative w-full h-[200px]">
-        <Image src={img} alt={title} fill className="object-cover" />
+    <Link href={`/journal/${slug}`} className="flex flex-col bg-[var(--bg-white)] border border-[var(--border-subtle)] overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
+      <div className="relative w-full h-[200px] overflow-hidden">
+        <Image
+          src={coverSrc}
+          alt={title}
+          fill
+          className={`object-cover transition-transform duration-500 group-hover:scale-[1.03]`}
+          unoptimized={isGif}
+        />
+        {/* Video play button overlay */}
+        {isVideo && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors">
+            <div className="w-[48px] h-[48px] rounded-full bg-black/60 flex items-center justify-center group-hover:bg-[var(--burnt-orange)] transition-colors duration-300">
+              <Play className="w-[20px] h-[20px] text-white ml-[2px]" fill="white" />
+            </div>
+          </div>
+        )}
+        {isGif && (
+          <div className="absolute top-[10px] left-[10px] bg-[#0369A1] px-[8px] py-[3px]">
+            <span className="font-label font-bold text-[9px] tracking-[1px] text-white">GIF</span>
+          </div>
+        )}
       </div>
       <div className="flex flex-col gap-[10px] p-[20px]">
         <div className="flex items-center gap-[8px]">

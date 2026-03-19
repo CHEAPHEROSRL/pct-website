@@ -121,7 +121,7 @@ export default function TermsOfUsePage() {
         <LegalSection title="10. Contact Information">
           <p>
             If you have questions about these Terms of Use, please contact us at{" "}
-            <a href="mailto:paul@yeschapter.com" className="text-[var(--burnt-orange)] hover:underline">paul@yeschapter.com</a>.
+            <a href="mailto:info@yeschapter.com" className="text-[var(--burnt-orange)] hover:underline">info@yeschapter.com</a>.
           </p>
         </LegalSection>
       </section>

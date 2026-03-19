@@ -73,7 +73,7 @@ export default function Footer() {
             <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Instagram</a>
             <a href="https://www.youtube.com/@YesChapter" target="_blank" rel="noopener noreferrer" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">YouTube</a>
             <a href="https://www.patreon.com/YesChapter" target="_blank" rel="noopener noreferrer" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Patreon</a>
-            <a href="mailto:paul@yeschapter.com" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Contact Paul</a>
+            <a href="mailto:info@yeschapter.com" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Contact Paul</a>
             <Link href="/press-kit" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Press Kit</Link>
             <Link href="/transparency" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Transparency</Link>
           </div>

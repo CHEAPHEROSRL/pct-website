@@ -1,18 +1,20 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Search, ChevronRight, ChevronLeft, Users, TrendingUp, Heart, Target } from "lucide-react";
+import { Search, ChevronRight, ChevronLeft, Users, TrendingUp, Heart, Target, Lock } from "lucide-react";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CountdownBanner from "@/components/CountdownBanner";
 import ScrollReveal from "@/components/ScrollReveal";
 import { useSupporterData } from "@/hooks/useSupporterData";
+import { useSession } from "@/hooks/useSession";
 
 type SortKey = "RECENT" | "AMOUNT" | "NAME";
 const PER_PAGE = 6;
 
 export default function SupportersPage() {
+  const { user, loading } = useSession();
   const { data } = useSupporterData();
   const supporters = data?.supporters ?? [];
   const stats = data?.stats;
@@ -20,6 +22,33 @@ export default function SupportersPage() {
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<SortKey>("RECENT");
   const [page, setPage] = useState(1);
+
+  if (!loading && (!user || !user.pledgeId)) {
+    return (
+      <div className="flex flex-col w-full bg-[var(--bg-warm)]">
+        <Header activeItem="Supporters" />
+        <section className="flex flex-col items-center justify-center gap-[24px] px-6 py-[120px] text-center">
+          <div className="flex items-center justify-center w-[64px] h-[64px] rounded-full bg-[var(--forest-green-light)]">
+            <Lock className="w-[28px] h-[28px] text-[var(--forest-green)]" />
+          </div>
+          <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--forest-green)]">PLEDGERS ONLY</span>
+          <h1 className="font-heading font-semibold text-[28px] md:text-[36px] tracking-[-0.5px] text-[var(--text-primary)] max-w-[480px]">
+            Trail Supporters
+          </h1>
+          <p className="font-heading text-[16px] leading-[1.7] text-[var(--text-secondary)] max-w-[420px]">
+            This section is exclusively for YesChapter pledgers. Pledge per mile to see who&apos;s keeping Paul going on trail.
+          </p>
+          <Link href="/pledge" className="flex items-center gap-[8px] bg-[var(--forest-green)] px-[32px] py-[14px] hover:opacity-90 transition-opacity mt-[8px]">
+            <span className="font-label font-bold text-[13px] tracking-[2px] text-white">PLEDGE NOW — IT&apos;S FREE UNTIL PAUL FINISHES</span>
+          </Link>
+          <Link href="/my-pledge" className="font-heading text-[14px] text-[var(--burnt-orange)] hover:underline">
+            Already pledged? Access your pledge dashboard →
+          </Link>
+        </section>
+        <Footer />
+      </div>
+    );
+  }
 
   const totalGifts = stats?.totalGifts ?? 2450;
   const supporterCount = stats?.supporterCount ?? 34;

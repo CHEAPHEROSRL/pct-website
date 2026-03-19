@@ -48,10 +48,10 @@ export default function TheCausePage() {
         <ScrollReveal animation="slide-right">
           <div className="relative w-full lg:w-[480px] h-[300px] md:h-[400px] lg:h-[580px] shrink-0">
             <Image
-              src="/images/family/FB_IMG_1761627851598.jpg"
-              alt="Paul"
+              src="/images/family/2026-03-18.jpeg"
+              alt="Paul with his parents at a restaurant, shortly before the hike"
               fill
-              className="object-cover"
+              className="object-cover object-top"
             />
           </div>
         </ScrollReveal>
