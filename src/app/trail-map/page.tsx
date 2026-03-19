@@ -89,6 +89,7 @@ export default function TrailMapPage() {
   // Pledger locations
   const [pledgerLocations, setPledgerLocations] = useState<PledgerLocation[]>([]);
   const [countryCount, setCountryCount] = useState(0);
+  const [totalPledged, setTotalPledged] = useState(0);
 
   // Gift locations for supporters mode
   const { locations: giftLocations } = useGiftLocations();
@@ -101,6 +102,15 @@ export default function TrailMapPage() {
           setPledgerLocations(data.locations);
           setCountryCount(data.countryCount || 0);
         }
+      })
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/pledges/stats")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.stats?.totalPledged) setTotalPledged(data.stats.totalPledged);
       })
       .catch(() => {});
   }, []);
@@ -123,6 +133,8 @@ export default function TrailMapPage() {
   };
 
   const totalGiftAmount = giftLocations.reduce((sum, g) => sum + g.amount, 0);
+  // Pledge coverage: totalPledged / $50,000 goal → % of trail "lit up"
+  const pledgeCoveragePercent = Math.min(100, Math.round((totalPledged / 50000) * 100));
 
   return (
     <div className="flex flex-col w-full bg-[var(--bg-warm)]">
@@ -256,6 +268,23 @@ export default function TrailMapPage() {
                   </span>
                   <span className="font-label font-bold text-[10px] tracking-[1px] text-[var(--text-muted)]">COUNTRIES</span>
                 </div>
+              </div>
+
+              {/* Pledge trail fill bar */}
+              <div className="flex flex-col gap-[8px] px-[24px] pb-[16px]">
+                <div className="flex items-center justify-between">
+                  <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">TRAIL COVERED BY PLEDGES</span>
+                  <span className="font-label font-bold text-[12px] text-[var(--burnt-orange)]">{pledgeCoveragePercent}%</span>
+                </div>
+                <div className="w-full h-[6px] bg-[var(--border-subtle)] rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-[var(--burnt-orange)] rounded-full transition-all duration-1000 ease-out"
+                    style={{ width: `max(6px, ${pledgeCoveragePercent}%)` }}
+                  />
+                </div>
+                <span className="font-heading text-[12px] text-[var(--text-muted)]">
+                  ${totalPledged.toLocaleString("en-US")} pledged toward $50,000 goal. The orange line on the map shows coverage.
+                </span>
               </div>
 
               <div className="w-full h-[1px] bg-[var(--border-subtle)]" />
@@ -393,6 +422,7 @@ export default function TrailMapPage() {
             mode={mode}
             pledgerLocations={displayLocations}
             supportGiftLocations={giftLocations}
+            pledgeCoveragePercent={pledgeCoveragePercent}
           />
         </div>
       </div>

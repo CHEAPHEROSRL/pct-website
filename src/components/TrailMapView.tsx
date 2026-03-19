@@ -7,6 +7,37 @@ import "leaflet/dist/leaflet.css";
 import { pctRouteCoords, pctWaypoints } from "@/lib/trail";
 import type { PledgerLocation, SupportGiftLocation } from "@/lib/types";
 
+/** Group pledgers by country for heatmap-style clusters */
+function buildCountryClusters(pledgers: PledgerLocation[]) {
+  const map = new Map<string, { lat: number; lng: number; count: number; country: string }>();
+  for (const p of pledgers) {
+    const key = p.country;
+    const existing = map.get(key);
+    if (existing) {
+      existing.lat = (existing.lat * existing.count + p.lat) / (existing.count + 1);
+      existing.lng = (existing.lng * existing.count + p.lng) / (existing.count + 1);
+      existing.count++;
+    } else {
+      map.set(key, { lat: p.lat, lng: p.lng, count: 1, country: key });
+    }
+  }
+  return Array.from(map.values());
+}
+
+/**
+ * Build a partial trail polyline showing pledge coverage.
+ * pledgeCoveragePercent (0–100) determines how far along the trail to fill.
+ */
+function buildPledgeCoverageCoords(pledgeCoveragePercent: number): [number, number][] {
+  const coverageMiles = (pledgeCoveragePercent / 100) * 2650;
+  const coords: [number, number][] = [];
+  for (const wp of pctWaypoints) {
+    coords.push([wp.lat, wp.lng]);
+    if (wp.miles >= coverageMiles) break;
+  }
+  return coords;
+}
+
 function FlyToHandler({ target }: { target?: [number, number, number] }) {
   const map = useMap();
   useEffect(() => {
@@ -110,6 +141,8 @@ interface TrailMapViewProps {
   mode?: "trail" | "pledgers" | "supporters";
   pledgerLocations?: PledgerLocation[];
   supportGiftLocations?: SupportGiftLocation[];
+  /** 0–100: how much of the trail to fill with pledge coverage colour */
+  pledgeCoveragePercent?: number;
 }
 
 // Default fallback position (Campo, CA — starting point)
@@ -125,6 +158,7 @@ export default function TrailMapView({
   mode = "trail",
   pledgerLocations = [],
   supportGiftLocations = [],
+  pledgeCoveragePercent = 0,
 }: TrailMapViewProps) {
   const position: [number, number] = currentPosition
     ? [currentPosition.lat, currentPosition.lng]
@@ -138,6 +172,16 @@ export default function TrailMapView({
   const fundedSegments = useMemo(
     () => buildFundedSegments(supportGiftLocations),
     [supportGiftLocations]
+  );
+
+  const countryClusters = useMemo(
+    () => buildCountryClusters(pledgerLocations),
+    [pledgerLocations]
+  );
+
+  const pledgeCoverageCoords = useMemo(
+    () => buildPledgeCoverageCoords(pledgeCoveragePercent),
+    [pledgeCoveragePercent]
   );
 
   // For pledger mode, zoom out to world view; supporters mode uses trail view
@@ -195,27 +239,53 @@ export default function TrailMapView({
 
       {mode === "pledgers" && (
         <>
-          {/* PCT Trail Route (faded) */}
+          {/* PCT Trail Route (faded grey base) */}
           <Polyline
             positions={pctRouteCoords}
-            pathOptions={{
-              color: "#C45C26",
-              weight: 2,
-              opacity: 0.3,
-            }}
+            pathOptions={{ color: "#B0ADA8", weight: 3, opacity: 0.35 }}
           />
 
-          {/* Pledger location markers */}
+          {/* Pledge coverage fill — glowing outer */}
+          {pledgeCoverageCoords.length > 1 && (
+            <Polyline
+              positions={pledgeCoverageCoords}
+              pathOptions={{ color: "#C45C26", weight: 9, opacity: 0.18 }}
+            />
+          )}
+          {/* Pledge coverage fill — solid inner */}
+          {pledgeCoverageCoords.length > 1 && (
+            <Polyline
+              positions={pledgeCoverageCoords}
+              pathOptions={{ color: "#C45C26", weight: 4, opacity: 0.9 }}
+            />
+          )}
+
+          {/* Country heatmap clusters — large translucent circles */}
+          {countryClusters.map((cluster) => (
+            <CircleMarker
+              key={`cluster-${cluster.country}`}
+              center={[cluster.lat, cluster.lng]}
+              radius={Math.min(6 + Math.sqrt(cluster.count) * 8, 40)}
+              pathOptions={{
+                color: "transparent",
+                weight: 0,
+                fillColor: "#C45C26",
+                fillOpacity: Math.min(0.08 + cluster.count * 0.04, 0.35),
+              }}
+            />
+          ))}
+
+          {/* Individual pledger dots */}
           {pledgerLocations.map((loc, i) => (
             <CircleMarker
-              key={`${loc.lat}-${loc.lng}-${i}`}
+              key={`pledger-${loc.lat}-${loc.lng}-${i}`}
               center={[loc.lat, loc.lng]}
-              radius={7}
+              radius={6}
               pathOptions={{
                 color: "#FFFFFF",
-                weight: 2,
+                weight: 1.5,
                 fillColor: "#C45C26",
-                fillOpacity: 0.85,
+                fillOpacity: 0.9,
               }}
             >
               <Popup>
