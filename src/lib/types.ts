@@ -151,6 +151,7 @@ export interface PledgeRecord {
   country?: string;
   lat?: number;
   lng?: number;
+  avatar?: string;
   honored?: boolean;
   honoredAt?: number;
   unsubscribeToken?: string;
@@ -167,6 +168,7 @@ export interface PledgerLocation {
   country: string;
   lat: number;
   lng: number;
+  avatar?: string;
 }
 
 export interface PledgePublic {

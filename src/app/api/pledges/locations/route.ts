@@ -37,6 +37,7 @@ export async function GET() {
           country: r.country || "Unknown",
           lat: r.lat,
           lng: r.lng,
+          avatar: r.avatar,
         });
         if (r.country) countries.add(r.country);
       }

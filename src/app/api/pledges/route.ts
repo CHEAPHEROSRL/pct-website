@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { email: rawEmail, name: rawName, amount, interval, anonymous, message: rawMessage, city, country, lat, lng, referredBy, turnstileToken, website } = body;
+    const { email: rawEmail, name: rawName, amount, interval, anonymous, message: rawMessage, city, country, lat, lng, avatar, referredBy, turnstileToken, website } = body;
 
     // Honeypot check — "website" is a hidden field that should be empty
     if (isHoneypotFilled(website)) {
@@ -105,6 +105,7 @@ export async function POST(req: NextRequest) {
       country: typeof country === "string" ? sanitizeText(country, 100) : undefined,
       lat: typeof lat === "number" && lat >= -90 && lat <= 90 ? lat : undefined,
       lng: typeof lng === "number" && lng >= -180 && lng <= 180 ? lng : undefined,
+      avatar: typeof avatar === "string" && avatar.length <= 10 ? avatar : undefined,
       referredBy: typeof referredBy === "string" && referredBy.trim() ? sanitizeText(referredBy, 100) : undefined,
       createdAt: Date.now(),
       updatedAt: Date.now(),

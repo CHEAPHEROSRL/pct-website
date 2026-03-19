@@ -37,6 +37,7 @@ export default function PledgePage() {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [honeypot, setHoneypot] = useState("");
+  const [avatar, setAvatar] = useState<string>("💚");
 
   // Silent IP geolocation on mount
   const geoRef = useRef<{ city?: string; country?: string; lat?: number; lng?: number }>({});
@@ -85,6 +86,7 @@ export default function PledgePage() {
           interval: 1,
           anonymous: !name,
           message: message || undefined,
+          avatar,
           turnstileToken: turnstileToken || "",
           website: honeypot, // honeypot field
           ...geoRef.current,
@@ -298,6 +300,44 @@ export default function PledgePage() {
             />
             <span className="font-label text-[11px] text-[var(--text-muted)] text-right">
               {message.length}/280
+            </span>
+          </div>
+
+          {/* Avatar Picker */}
+          <div className="flex flex-col gap-[12px]">
+            <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-muted)]">
+              YOUR TRAIL AVATAR (SHOWS ON THE MAP)
+            </span>
+            <div className="flex flex-wrap gap-[10px]">
+              {[
+                { emoji: "💚", label: "Supporter" },
+                { emoji: "🍽️", label: "Trail Meal" },
+                { emoji: "🧦", label: "Hiking Socks" },
+                { emoji: "⛺", label: "Camp Night" },
+                { emoji: "📦", label: "Resupply" },
+                { emoji: "🛏️", label: "Rest Day" },
+                { emoji: "🥾", label: "Trail Boots" },
+                { emoji: "🏃", label: "Runner" },
+                { emoji: "🌲", label: "Nature" },
+                { emoji: "❤️", label: "Heart" },
+              ].map(({ emoji, label }) => (
+                <button
+                  key={emoji}
+                  type="button"
+                  title={label}
+                  onClick={() => setAvatar(emoji)}
+                  className={`flex items-center justify-center w-[44px] h-[44px] text-[22px] transition-all border-2 rounded-full ${
+                    avatar === emoji
+                      ? "border-[var(--burnt-orange)] bg-[var(--burnt-orange-light)] scale-110"
+                      : "border-[var(--border-subtle)] bg-[var(--bg-warm)] hover:border-[var(--burnt-orange)]"
+                  }`}
+                >
+                  {emoji}
+                </button>
+              ))}
+            </div>
+            <span className="font-label text-[11px] text-[var(--text-muted)]">
+              Your avatar will appear as a pin on the trail map.
             </span>
           </div>
 

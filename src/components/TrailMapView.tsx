@@ -78,6 +78,27 @@ function createMarkerIcon(dayNumber: number, locationName: string) {
   });
 }
 
+function createPledgerIcon(avatar: string) {
+  return new L.DivIcon({
+    className: "",
+    html: `<div style="
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      background: #FFFFFF;
+      border: 2px solid #C45C26;
+      border-radius: 50%;
+      font-size: 14px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    ">${avatar}</div>`,
+    iconSize: [30, 30],
+    iconAnchor: [15, 15],
+    popupAnchor: [0, -18],
+  });
+}
+
 const GIFT_EMOJI: Record<string, string> = {
   "A Trail Meal": "🍽️",
   "Hiking Socks": "🧦",
@@ -275,21 +296,16 @@ export default function TrailMapView({
             />
           ))}
 
-          {/* Individual pledger dots */}
+          {/* Individual pledger avatar markers */}
           {pledgerLocations.map((loc, i) => (
-            <CircleMarker
+            <Marker
               key={`pledger-${loc.lat}-${loc.lng}-${i}`}
-              center={[loc.lat, loc.lng]}
-              radius={6}
-              pathOptions={{
-                color: "#FFFFFF",
-                weight: 1.5,
-                fillColor: "#C45C26",
-                fillOpacity: 0.9,
-              }}
+              position={[loc.lat, loc.lng]}
+              icon={createPledgerIcon(loc.avatar || "💚")}
             >
               <Popup>
                 <div style={{ fontFamily: "'Barlow Semi Condensed', sans-serif", textAlign: "center", maxWidth: 200 }}>
+                  <div style={{ fontSize: 22, marginBottom: 4 }}>{loc.avatar || "💚"}</div>
                   <strong style={{ fontSize: 13 }}>{loc.name}</strong>
                   <br />
                   <span style={{ fontSize: 11, color: "#5C5C5C" }}>
@@ -305,7 +321,7 @@ export default function TrailMapView({
                   )}
                 </div>
               </Popup>
-            </CircleMarker>
+            </Marker>
           ))}
         </>
       )}
