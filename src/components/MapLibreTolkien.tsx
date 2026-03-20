@@ -336,23 +336,119 @@ function villageIcon(): ImageData {
 }
 
 /** Pine tree — for forest areas at higher zoom */
-function treeIcon(): ImageData {
+/** Layered pine — classic conifer with 3 tiers */
+function treePineIcon(): ImageData {
   const c = document.createElement("canvas");
-  c.width = 18; c.height = 26;
+  c.width = 20; c.height = 28;
   const ctx = c.getContext("2d")!;
-  ctx.strokeStyle = "#4a5830";
+  ctx.strokeStyle = "#3a4a28"; ctx.lineJoin = "round"; ctx.lineWidth = 1;
+
+  // Top tier (narrow)
+  ctx.fillStyle = "#7a9860";
+  ctx.beginPath(); ctx.moveTo(10, 1); ctx.lineTo(4, 9); ctx.lineTo(16, 9);
+  ctx.closePath(); ctx.fill(); ctx.stroke();
+
+  // Mid tier
+  ctx.fillStyle = "#6a8850";
+  ctx.beginPath(); ctx.moveTo(10, 6); ctx.lineTo(2, 16); ctx.lineTo(18, 16);
+  ctx.closePath(); ctx.fill(); ctx.stroke();
+
+  // Bottom tier (widest)
+  ctx.fillStyle = "#5a7840";
+  ctx.beginPath(); ctx.moveTo(10, 12); ctx.lineTo(0, 24); ctx.lineTo(20, 24);
+  ctx.closePath(); ctx.fill(); ctx.stroke();
+
+  // Trunk
+  ctx.fillStyle = "#8a6040"; ctx.strokeStyle = "#5a3810"; ctx.lineWidth = 1;
+  ctx.fillRect(8, 24, 4, 4); ctx.strokeRect(8, 24, 4, 4);
+
+  return ctx.getImageData(0, 0, c.width, c.height);
+}
+
+/** Round deciduous oak — fluffy crown on a thick trunk */
+function treeOakIcon(): ImageData {
+  const c = document.createElement("canvas");
+  c.width = 24; c.height = 28;
+  const ctx = c.getContext("2d")!;
+  ctx.lineWidth = 1; ctx.lineJoin = "round";
+
+  // Trunk
+  ctx.fillStyle = "#7a5530"; ctx.strokeStyle = "#5a3810";
+  ctx.fillRect(10, 18, 4, 9); ctx.strokeRect(10, 18, 4, 9);
+
+  // Back/shadow canopy blobs
+  ctx.fillStyle = "#508040"; ctx.strokeStyle = "#3a5828";
+  ctx.beginPath(); ctx.arc(8, 13, 6, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.arc(16, 14, 5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+
+  // Main front canopy blob
+  ctx.fillStyle = "#6a9850"; ctx.strokeStyle = "#3a5828";
+  ctx.beginPath(); ctx.arc(12, 11, 8, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+
+  // Highlight dot
+  ctx.fillStyle = "#80b060"; ctx.strokeStyle = "transparent";
+  ctx.beginPath(); ctx.arc(10, 8, 3.5, 0, Math.PI * 2); ctx.fill();
+
+  return ctx.getImageData(0, 0, c.width, c.height);
+}
+
+/** Tall narrow sequoia / dark pine — dramatic silhouette */
+function treeTallIcon(): ImageData {
+  const c = document.createElement("canvas");
+  c.width = 14; c.height = 32;
+  const ctx = c.getContext("2d")!;
   ctx.lineJoin = "round"; ctx.lineWidth = 1;
 
-  ctx.fillStyle = "#7a9860";
-  ctx.beginPath(); ctx.moveTo(9, 1); ctx.lineTo(1, 10); ctx.lineTo(17, 10);
+  // Trunk
+  ctx.fillStyle = "#7a5030"; ctx.strokeStyle = "#5a3810";
+  ctx.fillRect(5, 28, 4, 4); ctx.strokeRect(5, 28, 4, 4);
+
+  // Outer silhouette (darker, slightly wider)
+  ctx.fillStyle = "#4a7040"; ctx.strokeStyle = "#2a4020";
+  ctx.beginPath(); ctx.moveTo(7, 1); ctx.lineTo(0, 28); ctx.lineTo(14, 28);
   ctx.closePath(); ctx.fill(); ctx.stroke();
 
-  ctx.fillStyle = "#6a8850";
-  ctx.beginPath(); ctx.moveTo(9, 7); ctx.lineTo(0, 18); ctx.lineTo(18, 18);
-  ctx.closePath(); ctx.fill(); ctx.stroke();
+  // Inner highlight (lighter stripe up the center)
+  ctx.fillStyle = "#609050"; ctx.strokeStyle = "transparent";
+  ctx.beginPath(); ctx.moveTo(7, 4); ctx.lineTo(4, 26); ctx.lineTo(10, 26);
+  ctx.closePath(); ctx.fill();
 
-  ctx.fillStyle = "#8a6040"; ctx.strokeStyle = "#5a3810";
-  ctx.fillRect(7, 18, 4, 7); ctx.strokeRect(7, 18, 4, 7);
+  // Tiny horizontal branch marks
+  ctx.strokeStyle = "#3a5030"; ctx.lineWidth = 0.8;
+  for (let i = 0; i < 5; i++) {
+    const y = 10 + i * 4;
+    const half = 2 + i * 0.8;
+    ctx.beginPath(); ctx.moveTo(7 - half, y); ctx.lineTo(7 + half, y); ctx.stroke();
+  }
+
+  return ctx.getImageData(0, 0, c.width, c.height);
+}
+
+/** Shrubby bush cluster — for lower-density forest edges */
+function treeBushIcon(): ImageData {
+  const c = document.createElement("canvas");
+  c.width = 22; c.height = 18;
+  const ctx = c.getContext("2d")!;
+  ctx.lineWidth = 1; ctx.lineJoin = "round";
+
+  // Three overlapping rounded blobs
+  ctx.fillStyle = "#5a7840"; ctx.strokeStyle = "#3a5028";
+  ctx.beginPath(); ctx.arc(5, 12, 6, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.arc(17, 12, 6, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+
+  ctx.fillStyle = "#6a8848"; ctx.strokeStyle = "#3a5028";
+  ctx.beginPath(); ctx.arc(11, 9, 7, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+
+  // Highlights
+  ctx.fillStyle = "#80a058"; ctx.strokeStyle = "transparent";
+  ctx.beginPath(); ctx.arc(9, 7, 3, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(15, 8, 2, 0, Math.PI * 2); ctx.fill();
+
+  // Thin stick trunks
+  ctx.strokeStyle = "#6a4820"; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(5, 18); ctx.lineTo(5, 14); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(11, 18); ctx.lineTo(11, 14); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(17, 18); ctx.lineTo(17, 14); ctx.stroke();
 
   return ctx.getImageData(0, 0, c.width, c.height);
 }
@@ -447,7 +543,10 @@ export default function MapLibreTolkien() {
       map.addImage("fort",           fortifiedTownIcon());
       map.addImage("watchtower",     watchtowerIcon());
       map.addImage("village-house",  villageIcon());
-      map.addImage("tree",           treeIcon());
+      map.addImage("tree-pine",      treePineIcon());
+      map.addImage("tree-oak",       treeOakIcon());
+      map.addImage("tree-tall",      treeTallIcon());
+      map.addImage("tree-bush",      treeBushIcon());
 
       // ── MOUNTAINS ───────────────────────────────────────────────────────
 
@@ -607,20 +706,40 @@ export default function MapLibreTolkien() {
         },
       });
 
-      // Forest tree icons at zoom 10+
-      map.addLayer({
-        id: "forest-trees", type: "symbol", source: "ofm", "source-layer": "landcover",
-        filter: ["==", ["get", "class"], "wood"],
+      // Forest trees — 4 types interleaved, all pointing up via viewport alignment
+      const forestBase = {
+        type: "symbol" as const,
+        source: "ofm",
+        "source-layer": "landcover",
+        filter: ["==", ["get", "class"], "wood"] as maplibregl.FilterSpecification,
         minzoom: 10,
-        layout: {
-          "icon-image": "tree",
-          "icon-size": 0.85,
-          "symbol-placement": "line",
-          "symbol-spacing": 55,
-          "icon-allow-overlap": false,
-          "icon-padding": 2,
-        },
-      });
+      };
+      const upright = {
+        "symbol-placement": "line" as const,
+        "icon-rotation-alignment": "viewport" as const,  // always point up ↑
+        "icon-allow-overlap": false,
+        "icon-padding": 4,
+      };
+
+      // Pine (3-tier) — every 130px
+      map.addLayer({ ...forestBase, id: "forest-pine", layout: {
+        ...upright, "icon-image": "tree-pine", "icon-size": 0.9, "symbol-spacing": 130,
+      }});
+
+      // Oak (round canopy) — every 110px, naturally offsets from pine
+      map.addLayer({ ...forestBase, id: "forest-oak", layout: {
+        ...upright, "icon-image": "tree-oak", "icon-size": 0.85, "symbol-spacing": 110,
+      }});
+
+      // Tall sequoia — every 150px
+      map.addLayer({ ...forestBase, id: "forest-tall", layout: {
+        ...upright, "icon-image": "tree-tall", "icon-size": 0.9, "symbol-spacing": 150,
+      }});
+
+      // Bush cluster — every 90px (fills gaps between bigger trees)
+      map.addLayer({ ...forestBase, id: "forest-bush", layout: {
+        ...upright, "icon-image": "tree-bush", "icon-size": 0.85, "symbol-spacing": 90,
+      }});
     });
 
     return () => map.remove();
