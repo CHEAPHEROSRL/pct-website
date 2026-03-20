@@ -6,6 +6,7 @@ import ShareButton from "@/components/ShareButton";
 import HomeTrailProgress from "@/components/HomeTrailProgress";
 import ScrollReveal from "@/components/ScrollReveal";
 import HeroParallax from "@/components/HeroParallax";
+import WaitlistPopup from "@/components/WaitlistPopup";
 import {
   Heart,
   Calendar,
@@ -21,6 +22,7 @@ import {
 export default function Home() {
   return (
     <div className="flex flex-col w-full bg-[var(--bg-warm)]">
+      <WaitlistPopup />
       <Header transparent />
       {/* Hero Section — negative margin pulls it behind sticky header + banner */}
       <section className="relative w-full h-[560px] md:h-[680px] lg:h-[800px] overflow-hidden -mt-[112px] md:-mt-[120px] lg:-mt-[132px]">
