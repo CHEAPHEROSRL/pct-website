@@ -3,14 +3,24 @@
 import { useState, useEffect } from "react";
 import { Mail } from "lucide-react";
 
+// Pages that should NOT show the waitlist popup (admin, API routes, etc.)
+const EXCLUDED_PATHS = ["/admin", "/site-login"];
+
 export default function WaitlistPopup() {
   const [visible, setVisible] = useState(false);
+  const [excluded, setExcluded] = useState(false);
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
+    // Skip popup on admin and other excluded pages
+    if (EXCLUDED_PATHS.some((p) => window.location.pathname.startsWith(p))) {
+      setExcluded(true);
+      return;
+    }
+
     if (localStorage.getItem("waitlist-signed-up")) {
       setSubmitted(true);
     }
@@ -60,8 +70,8 @@ export default function WaitlistPopup() {
     }
   }
 
-  // Not yet visible (waiting 2s)
-  if (!visible) return null;
+  // Skip on excluded pages or not yet visible
+  if (excluded || !visible) return null;
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center px-4 bg-black/40">

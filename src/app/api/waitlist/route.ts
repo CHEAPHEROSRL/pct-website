@@ -1,5 +1,5 @@
 import { Redis } from "@upstash/redis";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 function getRedis() {
   const url = process.env.KV_REST_API_URL;
@@ -8,7 +8,13 @@ function getRedis() {
   return new Redis({ url, token });
 }
 
-export async function POST(req: Request) {
+function checkAuth(request: NextRequest): boolean {
+  const authHeader = request.headers.get("authorization");
+  const token = authHeader?.replace("Bearer ", "");
+  return !!token && token === process.env.ADMIN_AUTH_TOKEN;
+}
+
+export async function POST(req: NextRequest) {
   try {
     const { email } = await req.json();
     if (!email || typeof email !== "string") {
@@ -42,12 +48,42 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  if (!checkAuth(request)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const redis = getRedis();
   if (!redis) {
     return NextResponse.json({ error: "Storage unavailable" }, { status: 503 });
   }
 
+  // Single email metadata lookup
+  const emailParam = request.nextUrl.searchParams.get("email");
+  if (emailParam) {
+    const meta = await redis.hgetall(`waitlist:meta:${emailParam}`);
+    if (!meta) {
+      return NextResponse.json({ email: emailParam, signedUpAt: "" });
+    }
+    return NextResponse.json(meta);
+  }
+
+  // Full list
   const emails = await redis.smembers("waitlist:emails");
-  return NextResponse.json({ count: emails.length, emails });
+
+  // Fetch all metadata in parallel
+  const detailed = await Promise.all(
+    emails.map(async (email: string) => {
+      const meta = await redis.hgetall(`waitlist:meta:${email}`);
+      return {
+        email,
+        signedUpAt: (meta as Record<string, string>)?.signedUpAt || "",
+      };
+    })
+  );
+
+  // Sort newest first
+  detailed.sort((a, b) => (b.signedUpAt || "").localeCompare(a.signedUpAt || ""));
+
+  return NextResponse.json({ count: detailed.length, emails: detailed });
 }

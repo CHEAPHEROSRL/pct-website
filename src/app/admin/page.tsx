@@ -21,11 +21,12 @@ import {
   Copy,
   Loader2,
   Instagram,
+  Mail,
 } from "lucide-react";
 import type { JournalPost, ChallengePublic } from "@/lib/types";
 
-type View = "login" | "list" | "editor" | "challenges" | "honor";
-type AdminTab = "journal" | "challenges" | "honor";
+type View = "login" | "list" | "editor" | "challenges" | "honor" | "waitlist";
+type AdminTab = "journal" | "challenges" | "honor" | "waitlist";
 
 export default function AdminPage() {
   const [token, setToken] = useState("");
@@ -62,6 +63,10 @@ export default function AdminPage() {
   } | null>(null);
   const [showVideoGenerator, setShowVideoGenerator] = useState(false);
   const [instagramCaption, setInstagramCaption] = useState<string | null>(null);
+
+  // Waitlist state
+  const [waitlistEmails, setWaitlistEmails] = useState<{ email: string; signedUpAt: string }[]>([]);
+  const [waitlistLoading, setWaitlistLoading] = useState(false);
 
   // Honor tracking state
   const [honorStats, setHonorStats] = useState<{
@@ -152,6 +157,23 @@ export default function AdminPage() {
       setStatus("Failed to load honor stats");
     } finally {
       setHonorLoading(false);
+    }
+  }, [token]);
+
+  const fetchWaitlist = useCallback(async () => {
+    setWaitlistLoading(true);
+    try {
+      const res = await fetch("/api/waitlist", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setWaitlistEmails(data.emails || []);
+      }
+    } catch {
+      setStatus("Failed to load waitlist");
+    } finally {
+      setWaitlistLoading(false);
     }
   }, [token]);
 
@@ -494,6 +516,17 @@ export default function AdminPage() {
           >
             <CheckCircle className="w-[16px] h-[16px]" />
             HONOR TRACKING
+          </button>
+          <button
+            onClick={() => { setActiveTab("waitlist"); setView("waitlist"); setStatus(""); fetchWaitlist(); }}
+            className={`flex items-center gap-[8px] px-[24px] py-[14px] font-label font-bold text-[12px] tracking-[2px] border-b-2 transition-colors cursor-pointer ${
+              activeTab === "waitlist"
+                ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
+                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+            }`}
+          >
+            <Mail className="w-[16px] h-[16px]" />
+            WAITLIST
           </button>
         </div>
 
@@ -1109,6 +1142,17 @@ export default function AdminPage() {
             <CheckCircle className="w-[16px] h-[16px]" />
             HONOR TRACKING
           </button>
+          <button
+            onClick={() => { setActiveTab("waitlist"); setView("waitlist"); setStatus(""); fetchWaitlist(); }}
+            className={`flex items-center gap-[8px] px-[24px] py-[14px] font-label font-bold text-[12px] tracking-[2px] border-b-2 transition-colors cursor-pointer ${
+              activeTab === "waitlist"
+                ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
+                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+            }`}
+          >
+            <Mail className="w-[16px] h-[16px]" />
+            WAITLIST
+          </button>
         </div>
 
         {/* Content */}
@@ -1416,6 +1460,17 @@ export default function AdminPage() {
             <CheckCircle className="w-[16px] h-[16px]" />
             HONOR TRACKING
           </button>
+          <button
+            onClick={() => { setActiveTab("waitlist"); setView("waitlist"); setStatus(""); fetchWaitlist(); }}
+            className={`flex items-center gap-[8px] px-[24px] py-[14px] font-label font-bold text-[12px] tracking-[2px] border-b-2 transition-colors cursor-pointer ${
+              activeTab === "waitlist"
+                ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
+                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+            }`}
+          >
+            <Mail className="w-[16px] h-[16px]" />
+            WAITLIST
+          </button>
         </div>
 
         <div className="flex flex-col gap-[24px] p-[40px]">
@@ -1482,6 +1537,164 @@ export default function AdminPage() {
             </div>
           ) : (
             <span className="font-heading text-[14px] text-[var(--text-muted)]">No honor data available yet.</span>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // --- WAITLIST VIEW ---
+  if (view === "waitlist" && authenticated) {
+    return (
+      <div className="flex flex-col w-full min-h-screen bg-[var(--bg-warm)]">
+        {/* Header bar */}
+        <div className="flex items-center justify-between px-[40px] py-[16px] bg-[var(--bg-dark)]">
+          <div className="flex items-center gap-[12px]">
+            <Shield className="w-[20px] h-[20px] text-[var(--forest-green)]" />
+            <span className="font-label font-bold text-[13px] tracking-[3px] text-white">
+              PCT ADMIN
+            </span>
+          </div>
+          <button
+            onClick={() => { setAuthenticated(false); setView("login"); localStorage.removeItem("pct-admin-token"); }}
+            className="flex items-center gap-[6px] cursor-pointer"
+          >
+            <LogOut className="w-[14px] h-[14px] text-[var(--text-secondary)]" />
+            <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-secondary)]">
+              LOG OUT
+            </span>
+          </button>
+        </div>
+
+        {/* Tabs */}
+        <div className="flex gap-0 px-[40px] bg-[var(--bg-white)] border-b border-[var(--border-subtle)]">
+          <button
+            onClick={() => { setActiveTab("journal"); setView("list"); setStatus(""); }}
+            className={`flex items-center gap-[8px] px-[24px] py-[14px] font-label font-bold text-[12px] tracking-[2px] border-b-2 transition-colors cursor-pointer ${
+              activeTab === "journal"
+                ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
+                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+            }`}
+          >
+            <BookOpen className="w-[16px] h-[16px]" />
+            JOURNAL
+          </button>
+          <button
+            onClick={() => { setActiveTab("challenges"); setView("challenges"); setStatus(""); fetchChallenges(); }}
+            className={`flex items-center gap-[8px] px-[24px] py-[14px] font-label font-bold text-[12px] tracking-[2px] border-b-2 transition-colors cursor-pointer ${
+              activeTab === "challenges"
+                ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
+                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+            }`}
+          >
+            <Zap className="w-[16px] h-[16px]" />
+            CHALLENGES
+          </button>
+          <button
+            onClick={() => { setActiveTab("honor"); setView("honor"); setStatus(""); fetchHonorStats(); }}
+            className={`flex items-center gap-[8px] px-[24px] py-[14px] font-label font-bold text-[12px] tracking-[2px] border-b-2 transition-colors cursor-pointer ${
+              activeTab === "honor"
+                ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
+                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+            }`}
+          >
+            <CheckCircle className="w-[16px] h-[16px]" />
+            HONOR TRACKING
+          </button>
+          <button
+            onClick={() => { setActiveTab("waitlist"); setView("waitlist"); setStatus(""); fetchWaitlist(); }}
+            className={`flex items-center gap-[8px] px-[24px] py-[14px] font-label font-bold text-[12px] tracking-[2px] border-b-2 transition-colors cursor-pointer ${
+              activeTab === "waitlist"
+                ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
+                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+            }`}
+          >
+            <Mail className="w-[16px] h-[16px]" />
+            WAITLIST
+          </button>
+        </div>
+
+        <div className="flex flex-col gap-[24px] p-[40px]">
+          <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-[8px]">
+              <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">
+                WAITLIST
+              </span>
+              <h1 className="font-heading font-semibold text-[28px] text-[var(--text-primary)]">
+                Email Signups
+              </h1>
+            </div>
+            <button
+              onClick={fetchWaitlist}
+              className="flex items-center gap-[8px] px-[20px] py-[10px] border border-[var(--border-subtle)] hover:bg-[var(--bg-white)] transition-colors cursor-pointer"
+            >
+              <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-secondary)]">
+                REFRESH
+              </span>
+            </button>
+          </div>
+
+          {/* Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-[16px]">
+            <div className="flex flex-col gap-[8px] bg-[var(--bg-white)] border border-[var(--border-subtle)] p-[24px]">
+              <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">TOTAL SIGNUPS</span>
+              <span className="font-heading font-semibold text-[36px] text-[var(--burnt-orange)]">
+                {waitlistLoading ? "..." : waitlistEmails.length}
+              </span>
+            </div>
+            <div className="flex flex-col gap-[8px] bg-[var(--bg-white)] border border-[var(--border-subtle)] p-[24px]">
+              <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">LATEST SIGNUP</span>
+              <span className="font-heading font-semibold text-[16px] text-[var(--text-primary)]">
+                {waitlistLoading ? "..." : waitlistEmails.length > 0
+                  ? new Date(waitlistEmails[0].signedUpAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" })
+                  : "None yet"}
+              </span>
+            </div>
+            <div className="flex flex-col gap-[8px] bg-[var(--bg-white)] border border-[var(--border-subtle)] p-[24px]">
+              <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">STATUS</span>
+              <span className="font-heading font-semibold text-[16px] text-[var(--forest-green)]">
+                Collecting emails
+              </span>
+            </div>
+          </div>
+
+          {/* Email list */}
+          {waitlistLoading ? (
+            <span className="font-heading text-[14px] text-[var(--text-muted)]">Loading waitlist...</span>
+          ) : waitlistEmails.length === 0 ? (
+            <div className="flex flex-col items-center gap-[16px] py-[48px] bg-[var(--bg-white)] border border-[var(--border-subtle)]">
+              <Mail className="w-[32px] h-[32px] text-[var(--text-muted)]" />
+              <span className="font-heading text-[16px] text-[var(--text-muted)]">No signups yet</span>
+            </div>
+          ) : (
+            <div className="flex flex-col bg-[var(--bg-white)] border border-[var(--border-subtle)]">
+              {/* Table header */}
+              <div className="flex items-center gap-[16px] px-[24px] py-[12px] border-b border-[var(--border-subtle)] bg-[var(--bg-card)]">
+                <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)] w-[40px]">#</span>
+                <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)] flex-1">EMAIL</span>
+                <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)] w-[200px]">SIGNED UP</span>
+              </div>
+              {/* Rows */}
+              {waitlistEmails.map((entry, i) => (
+                <div
+                  key={entry.email}
+                  className={`flex items-center gap-[16px] px-[24px] py-[14px] ${
+                    i < waitlistEmails.length - 1 ? "border-b border-[var(--border-subtle)]" : ""
+                  }`}
+                >
+                  <span className="font-label font-semibold text-[12px] text-[var(--text-muted)] w-[40px]">{i + 1}</span>
+                  <span className="font-heading text-[15px] text-[var(--text-primary)] flex-1">{entry.email}</span>
+                  <span className="font-heading text-[13px] text-[var(--text-secondary)] w-[200px]">
+                    {entry.signedUpAt
+                      ? new Date(entry.signedUpAt).toLocaleDateString("en-US", {
+                          month: "short", day: "numeric", year: "numeric",
+                          hour: "2-digit", minute: "2-digit",
+                        })
+                      : "—"}
+                  </span>
+                </div>
+              ))}
+            </div>
           )}
         </div>
       </div>
