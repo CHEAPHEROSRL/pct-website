@@ -11,38 +11,26 @@ export default function WaitlistPopup() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    // If already signed up, don't show popup but keep blur off
     if (localStorage.getItem("waitlist-signed-up")) {
       setSubmitted(true);
-      return;
     }
 
     const timer = setTimeout(() => setVisible(true), 2000);
     return () => clearTimeout(timer);
   }, []);
 
-  // Apply blur to the page content behind the popup
+  // Always blur the page content — site is not published yet
   useEffect(() => {
-    const body = document.body;
-    if (visible && !submitted) {
-      body.style.overflow = "hidden";
-      // Blur the main page content
-      const main = document.getElementById("page-content");
-      if (main) {
-        main.style.filter = "blur(6px)";
-        main.style.pointerEvents = "none";
-        main.style.userSelect = "none";
-      }
-    } else {
-      body.style.overflow = "";
-      const main = document.getElementById("page-content");
-      if (main) {
-        main.style.filter = "";
-        main.style.pointerEvents = "";
-        main.style.userSelect = "";
-      }
+    if (!visible) return;
+
+    document.body.style.overflow = "hidden";
+    const main = document.getElementById("page-content");
+    if (main) {
+      main.style.filter = "blur(6px)";
+      main.style.pointerEvents = "none";
+      main.style.userSelect = "none";
     }
-  }, [visible, submitted]);
+  }, [visible]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -71,9 +59,6 @@ export default function WaitlistPopup() {
       setSubmitting(false);
     }
   }
-
-  // Already signed up — no popup, no blur
-  if (submitted) return null;
 
   // Not yet visible (waiting 2s)
   if (!visible) return null;
