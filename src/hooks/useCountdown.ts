@@ -14,12 +14,19 @@ export interface CountdownValues {
 }
 
 export default function useCountdown(): CountdownValues {
-  const [now, setNow] = useState(Date.now());
+  // Start with null to avoid hydration mismatch (server time ≠ client time)
+  const [now, setNow] = useState<number | null>(null);
 
   useEffect(() => {
+    setNow(Date.now());
     const interval = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(interval);
   }, []);
+
+  // Before mount, return zeros to match server render
+  if (now === null) {
+    return { days: 0, hours: 0, minutes: 0, seconds: 0, isExpired: false };
+  }
 
   const diff = TRAIL_START - now;
 

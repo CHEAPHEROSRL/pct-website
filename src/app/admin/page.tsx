@@ -29,6 +29,8 @@ type View = "login" | "list" | "editor" | "challenges" | "honor" | "waitlist";
 type AdminTab = "journal" | "challenges" | "honor" | "waitlist";
 
 export default function AdminPage() {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [token, setToken] = useState("");
   const [authenticated, setAuthenticated] = useState(false);
   const [view, setView] = useState<View>("login");
@@ -79,10 +81,26 @@ export default function AdminPage() {
   const [honorLoading, setHonorLoading] = useState(false);
   const [captionCopied, setCaptionCopied] = useState(false);
 
-  // Load token from localStorage
+  // Auto-login from saved token
   useEffect(() => {
     const saved = localStorage.getItem("pct-admin-token");
-    if (saved) setToken(saved);
+    if (!saved) return;
+    setToken(saved);
+    // Verify the saved token is still valid
+    fetch("/api/journal?all=true", {
+      headers: { Authorization: `Bearer ${saved}` },
+    }).then(async (res) => {
+      if (res.ok) {
+        const data: JournalPost[] = await res.json();
+        setPosts(data);
+        setAuthenticated(true);
+        setView("list");
+      } else {
+        localStorage.removeItem("pct-admin-token");
+      }
+    }).catch(() => {
+      localStorage.removeItem("pct-admin-token");
+    });
   }, []);
 
   const authHeaders = useCallback(
@@ -285,27 +303,41 @@ export default function AdminPage() {
     }
   }
 
-  // Login
+  // Login with username/password
   async function handleLogin() {
-    if (!token.trim()) return;
+    if (!username.trim() || !password.trim()) return;
     setLoading(true);
     setStatus("");
-    localStorage.setItem("pct-admin-token", token);
 
     try {
+      // Authenticate with username/password
+      const authRes = await fetch("/api/admin/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (!authRes.ok) {
+        const err = await authRes.json();
+        setStatus(err.error || "Invalid credentials");
+        setLoading(false);
+        return;
+      }
+
+      const { token: adminToken } = await authRes.json();
+      setToken(adminToken);
+      localStorage.setItem("pct-admin-token", adminToken);
+
+      // Fetch journal posts with the token
       const res = await fetch("/api/journal?all=true", {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${adminToken}` },
       });
       if (res.ok) {
         const data: JournalPost[] = await res.json();
         setPosts(data);
         setAuthenticated(true);
         setView("list");
-        // Also fetch challenges
         fetchChallenges();
-      } else if (res.status === 401) {
-        setStatus("Invalid token");
-        localStorage.removeItem("pct-admin-token");
       } else {
         setStatus(`Error ${res.status}`);
       }
@@ -416,27 +448,44 @@ export default function AdminPage() {
               <Lock className="w-[36px] h-[36px] text-[var(--text-muted)]" />
             </div>
             <span className="font-label font-semibold text-[13px] tracking-[1px] text-[var(--text-muted)]">
-              Enter admin token to continue
+              Sign in to continue
             </span>
           </div>
 
-          <div className="flex flex-col gap-[8px] w-full max-w-[360px]">
-            <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
-              ADMIN TOKEN
-            </span>
-            <input
-              type="password"
-              value={token}
-              onChange={(e) => setToken(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleLogin()}
-              placeholder="Enter your admin token"
-              className="w-full h-[48px] px-[16px] bg-[#2A2D28] font-heading text-[15px] text-white placeholder:text-[#666666] outline-none"
-            />
+          <div className="flex flex-col gap-[16px] w-full max-w-[360px]">
+            <div className="flex flex-col gap-[8px]">
+              <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                USERNAME
+              </span>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+                placeholder="Enter your username"
+                autoComplete="username"
+                className="w-full h-[48px] px-[16px] bg-[#2A2D28] font-heading text-[15px] text-white placeholder:text-[#666666] outline-none"
+              />
+            </div>
+            <div className="flex flex-col gap-[8px]">
+              <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                PASSWORD
+              </span>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+                placeholder="Enter your password"
+                autoComplete="current-password"
+                className="w-full h-[48px] px-[16px] bg-[#2A2D28] font-heading text-[15px] text-white placeholder:text-[#666666] outline-none"
+              />
+            </div>
           </div>
 
           <button
             onClick={handleLogin}
-            disabled={loading || !token.trim()}
+            disabled={loading || !username.trim() || !password.trim()}
             className="flex items-center justify-center gap-[12px] w-full max-w-[360px] h-[56px] bg-[var(--burnt-orange)] hover:opacity-90 transition-opacity disabled:opacity-50 cursor-pointer"
           >
             <LogIn className="w-[20px] h-[20px] text-white" />
