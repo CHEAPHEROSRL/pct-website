@@ -151,7 +151,7 @@ export default function AdminPage() {
     setHonorLoading(true);
     try {
       const [countRes, pledgersRes] = await Promise.all([
-        fetch("/api/pledges?stats=true"),
+        fetch("/api/pledges/stats"),
         fetch("/api/honor/stats", { headers: { Authorization: `Bearer ${token}` } }),
       ]);
 
@@ -508,8 +508,8 @@ export default function AdminPage() {
     );
   }
 
-  // --- LIST VIEW ---
-  if (view === "list") {
+  // --- Shared admin shell (header + tabs) ---
+  function adminShell(content: React.ReactNode) {
     return (
       <div className="flex flex-col w-full min-h-screen bg-[var(--bg-warm)]">
         {/* Top bar */}
@@ -517,7 +517,7 @@ export default function AdminPage() {
           <div className="flex items-center gap-[12px]">
             <Shield className="w-[24px] h-[24px] text-[var(--forest-green)]" />
             <span className="font-label font-bold text-[14px] tracking-[3px] text-[var(--text-primary)]">
-              PCT ADMIN
+              YESCHAPTER ADMIN
             </span>
           </div>
           <button
@@ -580,6 +580,14 @@ export default function AdminPage() {
         </div>
 
         {/* Content */}
+        {content}
+      </div>
+    );
+  }
+
+  // --- LIST VIEW ---
+  if (view === "list") {
+    return adminShell(
         <div className="flex flex-col gap-[24px] p-[40px]">
           {/* Header row */}
           <div className="flex items-center justify-between">
@@ -866,7 +874,6 @@ export default function AdminPage() {
             )}
           </div>
         </div>
-      </div>
     );
   }
 
@@ -1135,76 +1142,7 @@ export default function AdminPage() {
 
   // --- CHALLENGES VIEW ---
   if (view === "challenges" && authenticated) {
-    return (
-      <div className="flex flex-col w-full min-h-screen bg-[var(--bg-warm)]">
-        {/* Top bar */}
-        <div className="flex items-center justify-between h-[64px] px-[40px] bg-[var(--bg-white)] border-b border-[var(--border-subtle)]">
-          <div className="flex items-center gap-[12px]">
-            <Shield className="w-[24px] h-[24px] text-[var(--forest-green)]" />
-            <span className="font-label font-bold text-[14px] tracking-[3px] text-[var(--text-primary)]">
-              PCT ADMIN
-            </span>
-          </div>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-[8px] px-[20px] py-[8px] border border-[var(--border-subtle)] hover:border-[var(--text-secondary)] transition-colors cursor-pointer"
-          >
-            <LogOut className="w-[14px] h-[14px] text-[var(--text-secondary)]" />
-            <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-secondary)]">
-              LOG OUT
-            </span>
-          </button>
-        </div>
-
-        {/* Tabs */}
-        <div className="flex gap-0 px-[40px] bg-[var(--bg-white)] border-b border-[var(--border-subtle)]">
-          <button
-            onClick={() => { setActiveTab("journal"); setView("list"); setStatus(""); }}
-            className={`flex items-center gap-[8px] px-[24px] py-[14px] font-label font-bold text-[12px] tracking-[2px] border-b-2 transition-colors cursor-pointer ${
-              activeTab === "journal"
-                ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
-                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
-            }`}
-          >
-            <BookOpen className="w-[16px] h-[16px]" />
-            JOURNAL
-          </button>
-          <button
-            onClick={() => { setActiveTab("challenges"); setView("challenges"); setStatus(""); fetchChallenges(); }}
-            className={`flex items-center gap-[8px] px-[24px] py-[14px] font-label font-bold text-[12px] tracking-[2px] border-b-2 transition-colors cursor-pointer ${
-              activeTab === "challenges"
-                ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
-                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
-            }`}
-          >
-            <Zap className="w-[16px] h-[16px]" />
-            CHALLENGES
-          </button>
-          <button
-            onClick={() => { setActiveTab("honor"); setView("honor"); setStatus(""); fetchHonorStats(); }}
-            className={`flex items-center gap-[8px] px-[24px] py-[14px] font-label font-bold text-[12px] tracking-[2px] border-b-2 transition-colors cursor-pointer ${
-              activeTab === "honor"
-                ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
-                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
-            }`}
-          >
-            <CheckCircle className="w-[16px] h-[16px]" />
-            HONOR TRACKING
-          </button>
-          <button
-            onClick={() => { setActiveTab("waitlist"); setView("waitlist"); setStatus(""); fetchWaitlist(); }}
-            className={`flex items-center gap-[8px] px-[24px] py-[14px] font-label font-bold text-[12px] tracking-[2px] border-b-2 transition-colors cursor-pointer ${
-              activeTab === "waitlist"
-                ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
-                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
-            }`}
-          >
-            <Mail className="w-[16px] h-[16px]" />
-            WAITLIST
-          </button>
-        </div>
-
-        {/* Content */}
+    return adminShell(
         <div className="flex flex-col gap-[24px] p-[40px]">
           <div className="flex flex-col gap-[8px]">
             <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">
@@ -1450,78 +1388,11 @@ export default function AdminPage() {
             </div>
           </div>
         </div>
-      </div>
     );
   }
 
   if (view === "honor" && authenticated) {
-    return (
-      <div className="flex flex-col w-full min-h-screen bg-[var(--bg-warm)]">
-        <div className="flex items-center justify-between px-[40px] py-[20px] bg-[var(--bg-dark)]">
-          <div className="flex items-center gap-[12px]">
-            <Shield className="w-[20px] h-[20px] text-[var(--burnt-orange)]" />
-            <span className="font-label font-bold text-[14px] tracking-[3px] text-white">
-              ADMIN
-            </span>
-          </div>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-[8px] px-[20px] py-[8px] border border-[#FFFFFF33] hover:border-white transition-colors cursor-pointer"
-          >
-            <LogOut className="w-[14px] h-[14px] text-white" />
-            <span className="font-label font-bold text-[11px] tracking-[2px] text-white">
-              LOG OUT
-            </span>
-          </button>
-        </div>
-
-        <div className="flex gap-0 px-[40px] bg-[var(--bg-white)] border-b border-[var(--border-subtle)]">
-          <button
-            onClick={() => { setActiveTab("journal"); setView("list"); setStatus(""); }}
-            className={`flex items-center gap-[8px] px-[24px] py-[14px] font-label font-bold text-[12px] tracking-[2px] border-b-2 transition-colors cursor-pointer ${
-              activeTab === "journal"
-                ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
-                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
-            }`}
-          >
-            <BookOpen className="w-[16px] h-[16px]" />
-            JOURNAL
-          </button>
-          <button
-            onClick={() => { setActiveTab("challenges"); setView("challenges"); setStatus(""); fetchChallenges(); }}
-            className={`flex items-center gap-[8px] px-[24px] py-[14px] font-label font-bold text-[12px] tracking-[2px] border-b-2 transition-colors cursor-pointer ${
-              activeTab === "challenges"
-                ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
-                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
-            }`}
-          >
-            <Zap className="w-[16px] h-[16px]" />
-            CHALLENGES
-          </button>
-          <button
-            onClick={() => { setActiveTab("honor"); setView("honor"); setStatus(""); fetchHonorStats(); }}
-            className={`flex items-center gap-[8px] px-[24px] py-[14px] font-label font-bold text-[12px] tracking-[2px] border-b-2 transition-colors cursor-pointer ${
-              activeTab === "honor"
-                ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
-                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
-            }`}
-          >
-            <CheckCircle className="w-[16px] h-[16px]" />
-            HONOR TRACKING
-          </button>
-          <button
-            onClick={() => { setActiveTab("waitlist"); setView("waitlist"); setStatus(""); fetchWaitlist(); }}
-            className={`flex items-center gap-[8px] px-[24px] py-[14px] font-label font-bold text-[12px] tracking-[2px] border-b-2 transition-colors cursor-pointer ${
-              activeTab === "waitlist"
-                ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
-                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
-            }`}
-          >
-            <Mail className="w-[16px] h-[16px]" />
-            WAITLIST
-          </button>
-        </div>
-
+    return adminShell(
         <div className="flex flex-col gap-[24px] p-[40px]">
           <div className="flex flex-col gap-[8px]">
             <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">
@@ -1588,81 +1459,12 @@ export default function AdminPage() {
             <span className="font-heading text-[14px] text-[var(--text-muted)]">No honor data available yet.</span>
           )}
         </div>
-      </div>
     );
   }
 
   // --- WAITLIST VIEW ---
   if (view === "waitlist" && authenticated) {
-    return (
-      <div className="flex flex-col w-full min-h-screen bg-[var(--bg-warm)]">
-        {/* Header bar */}
-        <div className="flex items-center justify-between px-[40px] py-[16px] bg-[var(--bg-dark)]">
-          <div className="flex items-center gap-[12px]">
-            <Shield className="w-[20px] h-[20px] text-[var(--forest-green)]" />
-            <span className="font-label font-bold text-[13px] tracking-[3px] text-white">
-              PCT ADMIN
-            </span>
-          </div>
-          <button
-            onClick={() => { setAuthenticated(false); setView("login"); localStorage.removeItem("pct-admin-token"); }}
-            className="flex items-center gap-[6px] cursor-pointer"
-          >
-            <LogOut className="w-[14px] h-[14px] text-[var(--text-secondary)]" />
-            <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-secondary)]">
-              LOG OUT
-            </span>
-          </button>
-        </div>
-
-        {/* Tabs */}
-        <div className="flex gap-0 px-[40px] bg-[var(--bg-white)] border-b border-[var(--border-subtle)]">
-          <button
-            onClick={() => { setActiveTab("journal"); setView("list"); setStatus(""); }}
-            className={`flex items-center gap-[8px] px-[24px] py-[14px] font-label font-bold text-[12px] tracking-[2px] border-b-2 transition-colors cursor-pointer ${
-              activeTab === "journal"
-                ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
-                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
-            }`}
-          >
-            <BookOpen className="w-[16px] h-[16px]" />
-            JOURNAL
-          </button>
-          <button
-            onClick={() => { setActiveTab("challenges"); setView("challenges"); setStatus(""); fetchChallenges(); }}
-            className={`flex items-center gap-[8px] px-[24px] py-[14px] font-label font-bold text-[12px] tracking-[2px] border-b-2 transition-colors cursor-pointer ${
-              activeTab === "challenges"
-                ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
-                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
-            }`}
-          >
-            <Zap className="w-[16px] h-[16px]" />
-            CHALLENGES
-          </button>
-          <button
-            onClick={() => { setActiveTab("honor"); setView("honor"); setStatus(""); fetchHonorStats(); }}
-            className={`flex items-center gap-[8px] px-[24px] py-[14px] font-label font-bold text-[12px] tracking-[2px] border-b-2 transition-colors cursor-pointer ${
-              activeTab === "honor"
-                ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
-                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
-            }`}
-          >
-            <CheckCircle className="w-[16px] h-[16px]" />
-            HONOR TRACKING
-          </button>
-          <button
-            onClick={() => { setActiveTab("waitlist"); setView("waitlist"); setStatus(""); fetchWaitlist(); }}
-            className={`flex items-center gap-[8px] px-[24px] py-[14px] font-label font-bold text-[12px] tracking-[2px] border-b-2 transition-colors cursor-pointer ${
-              activeTab === "waitlist"
-                ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
-                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
-            }`}
-          >
-            <Mail className="w-[16px] h-[16px]" />
-            WAITLIST
-          </button>
-        </div>
-
+    return adminShell(
         <div className="flex flex-col gap-[24px] p-[40px]">
           <div className="flex items-center justify-between">
             <div className="flex flex-col gap-[8px]">
@@ -1746,7 +1548,6 @@ export default function AdminPage() {
             </div>
           )}
         </div>
-      </div>
     );
   }
 
