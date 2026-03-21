@@ -80,13 +80,16 @@ export default function AdminPage() {
   } | null>(null);
   const [honorLoading, setHonorLoading] = useState(false);
   const [captionCopied, setCaptionCopied] = useState(false);
+  const [initializing, setInitializing] = useState(true);
 
-  // Auto-login from saved token
+  // Auto-login from saved token — don't render login form until checked
   useEffect(() => {
     const saved = localStorage.getItem("pct-admin-token");
-    if (!saved) return;
+    if (!saved) {
+      setInitializing(false);
+      return;
+    }
     setToken(saved);
-    // Verify the saved token is still valid
     fetch("/api/journal?all=true", {
       headers: { Authorization: `Bearer ${saved}` },
     }).then(async (res) => {
@@ -100,6 +103,8 @@ export default function AdminPage() {
       }
     }).catch(() => {
       localStorage.removeItem("pct-admin-token");
+    }).finally(() => {
+      setInitializing(false);
     });
   }, []);
 
@@ -429,6 +434,20 @@ export default function AdminPage() {
     } finally {
       setLoading(false);
     }
+  }
+
+  // --- INITIALIZING (checking saved token) ---
+  if (initializing) {
+    return (
+      <div className="flex flex-col w-full min-h-screen bg-[var(--bg-dark)] items-center justify-center">
+        <div className="flex items-center gap-[12px]">
+          <Shield className="w-[24px] h-[24px] text-[var(--forest-green)]" />
+          <span className="font-label font-bold text-[14px] tracking-[3px] text-white">
+            YESCHAPTER ADMIN
+          </span>
+        </div>
+      </div>
+    );
   }
 
   // --- LOGIN VIEW ---
