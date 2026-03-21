@@ -213,27 +213,37 @@ export interface AuthSession {
 
 export type ChallengeStatus = "active" | "succeeded" | "failed" | "cancelled";
 
+export type ChallengeType = "distance" | "elevation" | "location" | "custom";
+
 export interface ChallengeRecord {
   id: string;
   title: string;
   description: string;
-  targetMiles: number;
-  startMile: number;
-  currentMiles: number;
+  target: number;
+  start: number;
+  current: number;
+  unit: string;
+  challengeType: ChallengeType;
   deadline: number;
   status: ChallengeStatus;
   commitmentCount: number;
   createdAt: number;
   resolvedAt: number | null;
+  // Backward compat: old records may have these
+  targetMiles?: number;
+  startMile?: number;
+  currentMiles?: number;
 }
 
 export interface ChallengePublic {
   id: string;
   title: string;
   description: string;
-  targetMiles: number;
-  startMile: number;
-  currentMiles: number;
+  target: number;
+  start: number;
+  current: number;
+  unit: string;
+  challengeType: ChallengeType;
   deadline: number;
   status: ChallengeStatus;
   commitmentCount: number;

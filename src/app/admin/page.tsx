@@ -46,8 +46,10 @@ export default function AdminPage() {
   const [challengeForm, setChallengeForm] = useState({
     title: "",
     description: "",
-    targetMiles: 30,
-    startMile: 0,
+    target: 30,
+    start: 0,
+    unit: "mi",
+    challengeType: "distance" as "distance" | "elevation" | "location" | "custom",
     durationHours: 24,
   });
 
@@ -269,7 +271,7 @@ export default function AdminPage() {
       const data = await res.json();
       if (res.ok) {
         setStatus("Challenge created!");
-        setChallengeForm({ title: "", description: "", targetMiles: 30, startMile: 0, durationHours: 24 });
+        setChallengeForm({ title: "", description: "", target: 30, start: 0, unit: "mi", challengeType: "distance", durationHours: 24 });
         await fetchChallenges();
       } else {
         setStatus(data.error || "Failed to create challenge");
@@ -1177,13 +1179,13 @@ export default function AdminPage() {
             <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--forest-green)]">HOW CHALLENGES WORK</span>
             <div className="flex flex-col gap-[10px] font-heading text-[14px] leading-[1.7] text-[var(--text-secondary)]">
               <p>
-                <strong className="text-[var(--text-primary)]">1. Paul creates a challenge</strong> — Set a title, target miles, starting mile marker, and a time limit (e.g. &ldquo;Desert Push: 30 miles in 24 hours&rdquo;). The challenge goes live immediately.
+                <strong className="text-[var(--text-primary)]">1. Paul creates a challenge</strong> — Set a title, target, and a time limit. Challenges can be anything: miles, elevation gain, peaks to climb, locations to visit, or custom goals (e.g. &ldquo;Desert Push: 30 mi in 24 hours&rdquo; or &ldquo;Summit Mt. Whitney&rdquo;). The challenge goes live immediately.
               </p>
               <p>
                 <strong className="text-[var(--text-primary)]">2. Visitors see it on the site</strong> — A live challenge banner replaces the countdown on every page. It shows the challenge name, progress bar, and time remaining. Visitors can &ldquo;boost&rdquo; the challenge by committing extra pledge amounts (e.g. +$0.05/mi) as motivation.
               </p>
               <p>
-                <strong className="text-[var(--text-primary)]">3. Paul hikes the miles</strong> — Progress updates automatically based on Paul&apos;s GPS location tracker. The progress bar fills in real-time as he covers the distance.
+                <strong className="text-[var(--text-primary)]">3. Paul completes the challenge</strong> — For distance challenges, progress updates automatically via GPS. For peaks, locations, or custom challenges, Paul marks progress manually.
               </p>
               <p>
                 <strong className="text-[var(--text-primary)]">4. Paul resolves the challenge</strong> — When done, mark it as <strong className="text-[var(--forest-green)]">Succeeded</strong>, <strong className="text-red-600">Failed</strong>, or <strong className="text-[var(--text-muted)]">Cancelled</strong>. If succeeded, all boosts are locked in and added to those pledgers&apos; commitments. If failed or cancelled, boosts are released.
@@ -1231,17 +1233,17 @@ export default function AdminPage() {
                   <div className="flex flex-col gap-[8px]">
                     <div className="flex justify-between">
                       <span className="font-heading text-[13px] text-[var(--text-secondary)]">
-                        Target: {activeChallenge.targetMiles} miles from mile {activeChallenge.startMile}
+                        Target: {activeChallenge.target} {activeChallenge.unit}{activeChallenge.start > 0 ? ` from ${activeChallenge.start} ${activeChallenge.unit}` : ""}
                       </span>
                       <span className="font-heading font-semibold text-[13px] text-[var(--text-primary)]">
-                        {Math.max(0, activeChallenge.currentMiles - activeChallenge.startMile).toFixed(1)} / {activeChallenge.targetMiles} mi
+                        {Math.max(0, activeChallenge.current - activeChallenge.start).toFixed(1)} / {activeChallenge.target} {activeChallenge.unit}
                       </span>
                     </div>
                     <div className="relative w-full h-[8px] bg-[var(--warm-stone)]">
                       <div
                         className="absolute top-0 left-0 h-[8px] bg-[var(--burnt-orange)] transition-all duration-500"
                         style={{
-                          width: `${Math.min(100, ((activeChallenge.currentMiles - activeChallenge.startMile) / activeChallenge.targetMiles) * 100)}%`,
+                          width: `${Math.min(100, ((activeChallenge.current - activeChallenge.start) / activeChallenge.target) * 100)}%`,
                         }}
                       />
                     </div>
@@ -1326,28 +1328,70 @@ export default function AdminPage() {
                   <div className="flex gap-[16px]">
                     <div className="flex flex-col gap-[6px] flex-1">
                       <label className="font-heading font-semibold text-[14px] text-[var(--text-primary)]">
-                        Target Miles
+                        Challenge Type
+                      </label>
+                      <select
+                        value={challengeForm.challengeType}
+                        onChange={(e) => {
+                          const ct = e.target.value as "distance" | "elevation" | "location" | "custom";
+                          const defaults: Record<string, { unit: string; target: number; start: number }> = {
+                            distance: { unit: "mi", target: 30, start: 0 },
+                            elevation: { unit: "ft", target: 5000, start: 0 },
+                            location: { unit: "", target: 1, start: 0 },
+                            custom: { unit: "", target: 1, start: 0 },
+                          };
+                          const d = defaults[ct];
+                          setChallengeForm({ ...challengeForm, challengeType: ct, unit: d.unit, target: d.target, start: d.start });
+                        }}
+                        className="w-full h-[48px] px-[16px] border border-[var(--border-subtle)] font-heading text-[15px] text-[var(--text-primary)] outline-none bg-[var(--bg-card)]"
+                      >
+                        <option value="distance">Distance (mi)</option>
+                        <option value="elevation">Elevation (ft)</option>
+                        <option value="location">Location</option>
+                        <option value="custom">Custom</option>
+                      </select>
+                    </div>
+                    <div className="flex flex-col gap-[6px] flex-1">
+                      <label className="font-heading font-semibold text-[14px] text-[var(--text-primary)]">
+                        Unit Label
+                      </label>
+                      <input
+                        type="text"
+                        value={challengeForm.unit}
+                        onChange={(e) => setChallengeForm({ ...challengeForm, unit: e.target.value })}
+                        placeholder="e.g. mi, ft, peaks"
+                        className="w-full h-[48px] px-[16px] border border-[var(--border-subtle)] font-heading text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none bg-[var(--bg-card)]"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex gap-[16px]">
+                    <div className="flex flex-col gap-[6px] flex-1">
+                      <label className="font-heading font-semibold text-[14px] text-[var(--text-primary)]">
+                        Target
                       </label>
                       <input
                         type="number"
-                        value={challengeForm.targetMiles}
-                        onChange={(e) => setChallengeForm({ ...challengeForm, targetMiles: Number(e.target.value) })}
+                        value={challengeForm.target}
+                        onChange={(e) => setChallengeForm({ ...challengeForm, target: Number(e.target.value) })}
                         min={1}
                         className="w-full h-[48px] px-[16px] border border-[var(--border-subtle)] font-heading text-[15px] text-[var(--text-primary)] outline-none bg-[var(--bg-card)]"
                       />
                     </div>
-                    <div className="flex flex-col gap-[6px] flex-1">
-                      <label className="font-heading font-semibold text-[14px] text-[var(--text-primary)]">
-                        Start Mile
-                      </label>
-                      <input
-                        type="number"
-                        value={challengeForm.startMile}
-                        onChange={(e) => setChallengeForm({ ...challengeForm, startMile: Number(e.target.value) })}
-                        min={0}
-                        className="w-full h-[48px] px-[16px] border border-[var(--border-subtle)] font-heading text-[15px] text-[var(--text-primary)] outline-none bg-[var(--bg-card)]"
-                      />
-                    </div>
+                    {challengeForm.challengeType !== "location" && (
+                      <div className="flex flex-col gap-[6px] flex-1">
+                        <label className="font-heading font-semibold text-[14px] text-[var(--text-primary)]">
+                          Start
+                        </label>
+                        <input
+                          type="number"
+                          value={challengeForm.start}
+                          onChange={(e) => setChallengeForm({ ...challengeForm, start: Number(e.target.value) })}
+                          min={0}
+                          className="w-full h-[48px] px-[16px] border border-[var(--border-subtle)] font-heading text-[15px] text-[var(--text-primary)] outline-none bg-[var(--bg-card)]"
+                        />
+                      </div>
+                    )}
                     <div className="flex flex-col gap-[6px] flex-1">
                       <label className="font-heading font-semibold text-[14px] text-[var(--text-primary)]">
                         Duration (hours)

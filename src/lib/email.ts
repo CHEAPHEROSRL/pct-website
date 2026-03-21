@@ -801,9 +801,11 @@ export async function sendChallengeStarted(
   email: string,
   name: string,
   challengeTitle: string,
-  targetMiles: number,
+  target: number,
+  unit: string,
   durationHours: number
 ): Promise<SendResult> {
+  const targetLabel = unit ? `<strong>${target} ${unit}</strong>` : `<strong>${target}</strong>`;
   return send(
     email,
     `🔥 New Challenge: ${challengeTitle}`,
@@ -821,7 +823,7 @@ export async function sendChallengeStarted(
         <h2 style="margin: 0 0 16px; font-size: 24px;">${challengeTitle}</h2>
         <p style="font-size: 16px; line-height: 1.6; color: #5C5C5C;">
           Hey ${name}, Paul just started a new trail challenge!
-          He's aiming to cover <strong>${targetMiles} miles</strong> in
+          He's aiming for ${targetLabel} in
           <strong>${durationHours} hours</strong>.
         </p>
         <div style="background: #F4F1EC; padding: 20px; margin: 24px 0;">

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
-import type { ChallengeRecord, ChallengePublic, PledgeRecord } from "@/lib/types";
+import type { ChallengeRecord, ChallengePublic, PledgeRecord, ChallengeType } from "@/lib/types";
 import { sendChallengeStarted, sendChallengeResult } from "@/lib/email";
 import crypto from "crypto";
 
@@ -18,19 +18,34 @@ function isAdmin(req: NextRequest): boolean {
   return token === process.env.ADMIN_TOKEN;
 }
 
+/** Normalize old records that used targetMiles/startMile/currentMiles */
+function normalize(r: ChallengeRecord): ChallengeRecord {
+  if (r.targetMiles !== undefined && r.target === undefined) {
+    r.target = r.targetMiles;
+    r.start = r.startMile ?? 0;
+    r.current = r.currentMiles ?? r.start;
+    r.unit = r.unit || "mi";
+    r.challengeType = r.challengeType || "distance";
+  }
+  return r;
+}
+
 function toPublic(r: ChallengeRecord): ChallengePublic {
+  const n = normalize(r);
   return {
-    id: r.id,
-    title: r.title,
-    description: r.description,
-    targetMiles: r.targetMiles,
-    startMile: r.startMile,
-    currentMiles: r.currentMiles,
-    deadline: r.deadline,
-    status: r.status,
-    commitmentCount: r.commitmentCount,
-    createdAt: r.createdAt,
-    resolvedAt: r.resolvedAt,
+    id: n.id,
+    title: n.title,
+    description: n.description,
+    target: n.target,
+    start: n.start,
+    current: n.current,
+    unit: n.unit,
+    challengeType: n.challengeType,
+    deadline: n.deadline,
+    status: n.status,
+    commitmentCount: n.commitmentCount,
+    createdAt: n.createdAt,
+    resolvedAt: n.resolvedAt,
   };
 }
 
@@ -42,7 +57,7 @@ async function notifyAllPledgers(redis: Redis, challenge: ChallengeRecord) {
     );
     const durationHours = Math.round((challenge.deadline - challenge.createdAt) / (1000 * 60 * 60));
     for (const r of records) {
-      sendChallengeStarted(r.email, r.name, challenge.title, challenge.targetMiles, durationHours).catch(() => {});
+      sendChallengeStarted(r.email, r.name, challenge.title, challenge.target, challenge.unit, durationHours).catch(() => {});
     }
   } catch (err) {
     console.error("Failed to notify pledgers:", err);
@@ -131,16 +146,32 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { title, description, targetMiles, startMile, durationHours } = body;
+    const {
+      title,
+      description,
+      target,
+      start,
+      unit,
+      challengeType,
+      durationHours,
+      // Backward compat: accept old field names too
+      targetMiles,
+      startMile,
+    } = body;
+
+    const resolvedChallengeType: ChallengeType = challengeType || "distance";
+    const resolvedUnit: string = unit || (resolvedChallengeType === "distance" ? "mi" : resolvedChallengeType === "elevation" ? "ft" : "");
+    const resolvedTarget: number = target ?? targetMiles;
+    const resolvedStart: number = start ?? startMile ?? (resolvedChallengeType === "location" || resolvedChallengeType === "custom" ? 0 : 0);
 
     if (!title || typeof title !== "string") {
       return NextResponse.json({ error: "Title required" }, { status: 400 });
     }
-    if (typeof targetMiles !== "number" || targetMiles <= 0) {
-      return NextResponse.json({ error: "Target miles must be positive" }, { status: 400 });
+    if (typeof resolvedTarget !== "number" || resolvedTarget <= 0) {
+      return NextResponse.json({ error: "Target must be positive" }, { status: 400 });
     }
-    if (typeof startMile !== "number" || startMile < 0) {
-      return NextResponse.json({ error: "Start mile must be >= 0" }, { status: 400 });
+    if (typeof resolvedStart !== "number" || resolvedStart < 0) {
+      return NextResponse.json({ error: "Start must be >= 0" }, { status: 400 });
     }
     if (typeof durationHours !== "number" || durationHours <= 0 || durationHours > 168) {
       return NextResponse.json({ error: "Duration must be 1-168 hours" }, { status: 400 });
@@ -153,9 +184,11 @@ export async function POST(req: NextRequest) {
       id,
       title: title.trim().slice(0, 200),
       description: (description || "").trim().slice(0, 500),
-      targetMiles,
-      startMile,
-      currentMiles: startMile,
+      target: resolvedTarget,
+      start: resolvedStart,
+      current: resolvedStart,
+      unit: resolvedUnit,
+      challengeType: resolvedChallengeType,
       deadline: now + durationHours * 60 * 60 * 1000,
       status: "active",
       commitmentCount: 0,
@@ -192,15 +225,17 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ error: "No active challenge" }, { status: 404 });
     }
 
-    const record: ChallengeRecord =
+    let record: ChallengeRecord =
       typeof activeRaw === "string" ? JSON.parse(activeRaw) : activeRaw;
+    record = normalize(record);
 
     const body = await req.json();
-    const { action, currentMiles } = body;
+    const { action, current, currentMiles } = body;
 
-    // Update current miles if provided
-    if (typeof currentMiles === "number" && currentMiles >= 0) {
-      record.currentMiles = currentMiles;
+    // Update current progress if provided (accept both new and old field name)
+    const resolvedCurrent = current ?? currentMiles;
+    if (typeof resolvedCurrent === "number" && resolvedCurrent >= 0) {
+      record.current = resolvedCurrent;
     }
 
     if (action === "succeed" || action === "fail" || action === "cancel") {
@@ -278,7 +313,7 @@ export async function PUT(req: NextRequest) {
       });
     }
 
-    // Just updating currentMiles (no resolution)
+    // Just updating current progress (no resolution)
     await redis.set("challenge:active", JSON.stringify(record));
     return NextResponse.json({ success: true, challenge: toPublic(record) });
   } catch (err) {

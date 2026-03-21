@@ -380,7 +380,7 @@ export default function PledgersPage() {
                     {ch.title}
                   </span>
                   <span className="font-heading text-[13px] text-[var(--text-secondary)]">
-                    {ch.targetMiles} miles · {ch.commitmentCount} boosts applied
+                    {ch.target} {ch.unit} · {ch.commitmentCount} boosts applied
                     {ch.resolvedAt && ` · ${formatDate(ch.resolvedAt)}`}
                   </span>
                 </div>

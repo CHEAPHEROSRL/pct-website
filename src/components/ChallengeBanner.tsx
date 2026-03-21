@@ -55,14 +55,13 @@ export default function ChallengeBanner({ belowFixedHeader }: { belowFixedHeader
 
   if (!challenge) return null;
 
-  const progress = Math.max(
-    0,
-    challenge.currentMiles - challenge.startMile
-  );
-  const progressPercent = Math.min(
-    100,
-    (progress / challenge.targetMiles) * 100
-  );
+  const progress = Math.max(0, challenge.current - challenge.start);
+  const progressPercent = Math.min(100, (progress / challenge.target) * 100);
+
+  // For location/custom challenges with target=1, show simpler display
+  const isSimpleChallenge =
+    (challenge.challengeType === "location" || challenge.challengeType === "custom") &&
+    challenge.target === 1;
 
   const handleBoostSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -118,7 +117,10 @@ export default function ChallengeBanner({ belowFixedHeader }: { belowFixedHeader
           <div className="hidden md:flex items-center gap-[8px]">
             <TrendingUp className="w-[14px] h-[14px] text-[var(--forest-green)]" />
             <span className="font-label font-medium text-[12px] text-gray-300">
-              {progress.toFixed(1)} / {challenge.targetMiles} mi
+              {isSimpleChallenge
+                ? (challenge.current >= challenge.target ? "Complete" : "In progress")
+                : `${progress.toFixed(1)} / ${challenge.target} ${challenge.unit}`
+              }
             </span>
           </div>
           <div className="hidden md:flex items-center gap-[8px]">
@@ -142,22 +144,24 @@ export default function ChallengeBanner({ belowFixedHeader }: { belowFixedHeader
       {expanded && (
         <div className="flex flex-col gap-[16px] px-6 md:px-12 lg:px-[120px] pb-[20px]">
           {/* Progress bar */}
-          <div className="flex flex-col gap-[6px]">
-            <div className="relative w-full h-[6px] bg-[#333]">
-              <div
-                className="absolute top-0 left-0 h-[6px] bg-[var(--burnt-orange)] transition-all duration-1000"
-                style={{ width: `${progressPercent}%` }}
-              />
+          {!isSimpleChallenge && (
+            <div className="flex flex-col gap-[6px]">
+              <div className="relative w-full h-[6px] bg-[#333]">
+                <div
+                  className="absolute top-0 left-0 h-[6px] bg-[var(--burnt-orange)] transition-all duration-1000"
+                  style={{ width: `${progressPercent}%` }}
+                />
+              </div>
+              <div className="flex justify-between">
+                <span className="font-label text-[10px] text-gray-500">
+                  {challenge.start} {challenge.unit}
+                </span>
+                <span className="font-label text-[10px] text-gray-500">
+                  {challenge.start + challenge.target} {challenge.unit}
+                </span>
+              </div>
             </div>
-            <div className="flex justify-between">
-              <span className="font-label text-[10px] text-gray-500">
-                Mile {challenge.startMile}
-              </span>
-              <span className="font-label text-[10px] text-gray-500">
-                Mile {challenge.startMile + challenge.targetMiles}
-              </span>
-            </div>
-          </div>
+          )}
 
           {challenge.description && (
             <p className="font-heading text-[13px] text-gray-300 leading-[1.5] max-w-[600px]">
