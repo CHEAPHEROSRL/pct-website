@@ -88,7 +88,8 @@ export async function POST(request: NextRequest) {
   }
 
   // Calculate day number
-  const hikeStart = process.env.HIKE_START_DATE;
+  const { getSetting } = await import("@/lib/settings");
+  const hikeStart = await getSetting("hikeStartDate", "HIKE_START_DATE");
   const dayNumber =
     dayNumOverride ??
     (hikeStart

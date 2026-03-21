@@ -22,12 +22,13 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json().catch(() => ({}));
+  const { getSetting } = await import("@/lib/settings");
   const channelId =
-    body.channelId || process.env.YOUTUBE_CHANNEL_ID;
+    body.channelId || await getSetting("youtubeChannelId", "YOUTUBE_CHANNEL_ID");
 
   if (!channelId) {
     return NextResponse.json(
-      { error: "No channel ID provided. Set YOUTUBE_CHANNEL_ID env var or pass channelId in body." },
+      { error: "No channel ID provided. Set it in Admin → Settings or pass channelId in body." },
       { status: 400 }
     );
   }

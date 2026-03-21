@@ -1767,6 +1767,157 @@ export default function AdminPage() {
                 </div>
               </div>
 
+              {/* AI Provider */}
+              <div className="flex flex-col gap-[20px] p-[28px] bg-[var(--bg-white)] border border-[var(--border-subtle)]">
+                <div className="flex items-center gap-[10px]">
+                  <Zap className="w-[18px] h-[18px] text-[var(--burnt-orange)]" />
+                  <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-primary)]">
+                    AI CONTENT GENERATION
+                  </span>
+                </div>
+                <p className="font-heading text-[14px] leading-[1.7] text-[var(--text-secondary)]">
+                  The video-to-blog pipeline uses AI to generate journal posts and Instagram captions from YouTube transcripts. Choose your provider and enter the API key.
+                </p>
+
+                <div className="flex flex-col gap-[6px]">
+                  <label className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                    AI PROVIDER
+                  </label>
+                  <select
+                    value={settings.aiProvider || "openai"}
+                    onChange={(e) => setSettings({ ...settings, aiProvider: e.target.value })}
+                    className="w-full h-[48px] px-[16px] border border-[var(--border-subtle)] font-heading text-[15px] text-[var(--text-primary)] outline-none bg-[var(--bg-card)]"
+                  >
+                    <option value="openai">OpenAI (GPT-4o)</option>
+                    <option value="anthropic">Anthropic (Claude Sonnet)</option>
+                  </select>
+                </div>
+
+                {(settings.aiProvider || "openai") === "openai" ? (
+                  <>
+                    <div className="flex flex-col gap-[6px]">
+                      <label className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                        OPENAI API KEY
+                      </label>
+                      <input
+                        type="password"
+                        value={settings.openaiApiKey || ""}
+                        onChange={(e) => setSettings({ ...settings, openaiApiKey: e.target.value })}
+                        placeholder="sk-..."
+                        className="w-full h-[48px] px-[16px] border border-[var(--border-subtle)] font-heading text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none bg-[var(--bg-card)]"
+                      />
+                      <span className="font-heading text-[12px] text-[var(--text-muted)]">
+                        Get your key at platform.openai.com → API keys
+                      </span>
+                    </div>
+                    <div className="flex flex-col gap-[6px]">
+                      <label className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                        MODEL
+                      </label>
+                      <select
+                        value={settings.openaiModel || "gpt-4o"}
+                        onChange={(e) => setSettings({ ...settings, openaiModel: e.target.value })}
+                        className="w-full h-[48px] px-[16px] border border-[var(--border-subtle)] font-heading text-[15px] text-[var(--text-primary)] outline-none bg-[var(--bg-card)]"
+                      >
+                        <option value="gpt-4o">GPT-4o (recommended)</option>
+                        <option value="gpt-4o-mini">GPT-4o Mini (cheaper)</option>
+                        <option value="gpt-4.1">GPT-4.1</option>
+                        <option value="gpt-4.1-mini">GPT-4.1 Mini</option>
+                      </select>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex flex-col gap-[6px]">
+                      <label className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                        ANTHROPIC API KEY
+                      </label>
+                      <input
+                        type="password"
+                        value={settings.anthropicApiKey || ""}
+                        onChange={(e) => setSettings({ ...settings, anthropicApiKey: e.target.value })}
+                        placeholder="sk-ant-..."
+                        className="w-full h-[48px] px-[16px] border border-[var(--border-subtle)] font-heading text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none bg-[var(--bg-card)]"
+                      />
+                      <span className="font-heading text-[12px] text-[var(--text-muted)]">
+                        Get your key at console.anthropic.com → API keys
+                      </span>
+                    </div>
+                    <div className="flex flex-col gap-[6px]">
+                      <label className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                        MODEL
+                      </label>
+                      <select
+                        value={settings.anthropicModel || "claude-sonnet-4-5-20250514"}
+                        onChange={(e) => setSettings({ ...settings, anthropicModel: e.target.value })}
+                        className="w-full h-[48px] px-[16px] border border-[var(--border-subtle)] font-heading text-[15px] text-[var(--text-primary)] outline-none bg-[var(--bg-card)]"
+                      >
+                        <option value="claude-sonnet-4-5-20250514">Claude Sonnet 4.5 (recommended)</option>
+                        <option value="claude-haiku-4-5-20251001">Claude Haiku 4.5 (cheaper)</option>
+                      </select>
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* YouTube */}
+              <div className="flex flex-col gap-[20px] p-[28px] bg-[var(--bg-white)] border border-[var(--border-subtle)]">
+                <div className="flex items-center gap-[10px]">
+                  <Video className="w-[18px] h-[18px] text-[var(--burnt-orange)]" />
+                  <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-primary)]">
+                    YOUTUBE CHANNEL
+                  </span>
+                </div>
+                <p className="font-heading text-[14px] leading-[1.7] text-[var(--text-secondary)]">
+                  When Paul uploads a YouTube video, the system automatically extracts the transcript, generates a blog post + Instagram caption using AI, and saves it as a draft for review. No YouTube API key needed — it uses the public RSS feed and PubSubHubbub push notifications.
+                </p>
+
+                <div className="flex flex-col gap-[6px]">
+                  <label className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                    YOUTUBE CHANNEL ID
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.youtubeChannelId || ""}
+                    onChange={(e) => setSettings({ ...settings, youtubeChannelId: e.target.value })}
+                    placeholder="UCxxxxxxxxxxxxxxxx"
+                    className="w-full h-[48px] px-[16px] border border-[var(--border-subtle)] font-heading text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none bg-[var(--bg-card)]"
+                  />
+                  <span className="font-heading text-[12px] text-[var(--text-muted)]">
+                    Find this at youtube.com → Your channel → Settings → Advanced settings, or use a tool like commentpicker.com/youtube-channel-id.php
+                  </span>
+                </div>
+
+                <div className="flex flex-col gap-[6px]">
+                  <label className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                    HIKE START DATE
+                  </label>
+                  <input
+                    type="date"
+                    value={settings.hikeStartDate || ""}
+                    onChange={(e) => setSettings({ ...settings, hikeStartDate: e.target.value })}
+                    className="w-full h-[48px] px-[16px] border border-[var(--border-subtle)] font-heading text-[15px] text-[var(--text-primary)] outline-none bg-[var(--bg-card)]"
+                  />
+                  <span className="font-heading text-[12px] text-[var(--text-muted)]">
+                    Used to calculate &ldquo;Day X&rdquo; numbers for blog posts (e.g. Day 1, Day 15)
+                  </span>
+                </div>
+
+                {/* How it works */}
+                <div className="flex flex-col gap-[8px] p-[16px] bg-[var(--bg-warm)] border border-[var(--border-subtle)]">
+                  <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">AUTOMATION FLOW</span>
+                  <ol className="flex flex-col gap-[4px] font-heading text-[13px] leading-[1.6] text-[var(--text-secondary)] list-decimal pl-[20px]">
+                    <li>Paul uploads a video to YouTube</li>
+                    <li>YouTube pushes a notification to the site via webhook</li>
+                    <li>The system extracts the video transcript automatically</li>
+                    <li>AI generates a blog post (600-1000 words, Paul&apos;s voice) + Instagram caption</li>
+                    <li>Post is saved as a <strong>draft</strong> in the Journal tab</li>
+                    <li>Admin reviews, edits if needed, and publishes</li>
+                    <li>Instagram caption is ready to copy-paste from the admin panel</li>
+                  </ol>
+                </div>
+              </div>
+
               {/* Save button */}
               <div className="flex items-center gap-[16px]">
                 <button

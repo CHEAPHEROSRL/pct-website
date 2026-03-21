@@ -103,8 +103,9 @@ function parseRss(xml: string): YoutubeVideo[] {
 
 /** Fetch latest videos from YouTube RSS and save to Redis */
 export async function syncYoutubeVideos(): Promise<YoutubeVideo[]> {
-  const channelId = process.env.YOUTUBE_CHANNEL_ID;
-  if (!channelId) throw new Error("YOUTUBE_CHANNEL_ID not set");
+  const { getSetting } = await import("./settings");
+  const channelId = await getSetting("youtubeChannelId", "YOUTUBE_CHANNEL_ID");
+  if (!channelId) throw new Error("YouTube Channel ID not configured. Set it in Admin → Settings.");
 
   const res = await fetch(RSS_URL(channelId), {
     headers: { "User-Agent": "YesChapter/1.0" },

@@ -1,4 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
+import OpenAI from "openai";
+import { Redis } from "@upstash/redis";
 import type { VideoTranscript } from "./youtube";
 
 export interface GeneratedPost {
@@ -14,6 +16,8 @@ export interface GeneratedPostPair {
   post2: GeneratedPost;
 }
 
+type AIProvider = "anthropic" | "openai";
+
 const SYSTEM_PROMPT = `You are a ghostwriter for Paul Barry, a cancer awareness advocate who is thru-hiking the Pacific Crest Trail (PCT) in 2026 — walking 2,650 miles from Mexico to Canada in honor of both his parents who he lost to cancer. He's raising funds for cancer research, patient support, and prevention.
 
 Paul's voice is:
@@ -27,11 +31,116 @@ Paul's voice is:
 
 The blog is written in first person as Paul. Use Markdown formatting. Include section headers (##) to break up longer posts. Do NOT include a top-level # heading — the title is rendered separately.`;
 
-function getAnthropicClient(): Anthropic | null {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) return null;
-  return new Anthropic({ apiKey });
+// ---------------------------------------------------------------------------
+// Provider detection — checks Redis settings first, then env vars
+// ---------------------------------------------------------------------------
+
+const SETTINGS_KEY = "admin:settings";
+
+interface AIConfig {
+  provider: AIProvider;
+  apiKey: string;
+  model: string;
 }
+
+async function getAIConfig(): Promise<AIConfig | null> {
+  // Try Redis settings first
+  try {
+    const url = process.env.KV_REST_API_URL;
+    const token = process.env.KV_REST_API_TOKEN;
+    if (url && token) {
+      const redis = new Redis({ url, token });
+      const raw = await redis.get<string>(SETTINGS_KEY);
+      if (raw) {
+        const settings = typeof raw === "string" ? JSON.parse(raw) : raw;
+
+        // Check which provider is configured in settings
+        if (settings.aiProvider === "openai" && settings.openaiApiKey) {
+          return {
+            provider: "openai",
+            apiKey: settings.openaiApiKey,
+            model: settings.openaiModel || "gpt-4o",
+          };
+        }
+        if (settings.aiProvider === "anthropic" && settings.anthropicApiKey) {
+          return {
+            provider: "anthropic",
+            apiKey: settings.anthropicApiKey,
+            model: settings.anthropicModel || "claude-sonnet-4-5-20250514",
+          };
+        }
+        // If provider is set but key is in env vars
+        if (settings.aiProvider === "openai" && process.env.OPENAI_API_KEY) {
+          return {
+            provider: "openai",
+            apiKey: process.env.OPENAI_API_KEY,
+            model: settings.openaiModel || "gpt-4o",
+          };
+        }
+      }
+    }
+  } catch {
+    // Fall through to env vars
+  }
+
+  // Fall back to environment variables
+  if (process.env.ANTHROPIC_API_KEY) {
+    return {
+      provider: "anthropic",
+      apiKey: process.env.ANTHROPIC_API_KEY,
+      model: "claude-sonnet-4-5-20250514",
+    };
+  }
+
+  if (process.env.OPENAI_API_KEY) {
+    return {
+      provider: "openai",
+      apiKey: process.env.OPENAI_API_KEY,
+      model: "gpt-4o",
+    };
+  }
+
+  return null;
+}
+
+// ---------------------------------------------------------------------------
+// Unified completion function
+// ---------------------------------------------------------------------------
+
+async function generateCompletion(
+  userPrompt: string,
+  maxTokens: number
+): Promise<string | null> {
+  const config = await getAIConfig();
+  if (!config) return null;
+
+  if (config.provider === "anthropic") {
+    const client = new Anthropic({ apiKey: config.apiKey });
+    const response = await client.messages.create({
+      model: config.model,
+      max_tokens: maxTokens,
+      system: SYSTEM_PROMPT,
+      messages: [{ role: "user", content: userPrompt }],
+    });
+    return response.content[0].type === "text" ? response.content[0].text : null;
+  }
+
+  // OpenAI
+  const client = new OpenAI({ apiKey: config.apiKey });
+  const response = await client.chat.completions.create({
+    model: config.model,
+    max_tokens: maxTokens,
+    messages: [
+      { role: "system", content: SYSTEM_PROMPT },
+      { role: "user", content: userPrompt },
+    ],
+  });
+  return response.choices[0]?.message?.content ?? null;
+}
+
+// ---------------------------------------------------------------------------
+// Blog post generation
+// ---------------------------------------------------------------------------
 
 /**
  * Generate a single blog post from a video transcript.
@@ -40,17 +149,7 @@ export async function generateBlogPost(
   video: VideoTranscript,
   dayNumber: number
 ): Promise<GeneratedPost | null> {
-  const client = getAnthropicClient();
-  if (!client) return null;
-
-  const response = await client.messages.create({
-    model: "claude-sonnet-4-5-20250514",
-    max_tokens: 4000,
-    system: SYSTEM_PROMPT,
-    messages: [
-      {
-        role: "user",
-        content: `Here is a transcript from Paul's YouTube video titled "${video.title}":
+  const prompt = `Here is a transcript from Paul's YouTube video titled "${video.title}":
 
 ---
 ${video.transcript}
@@ -75,15 +174,11 @@ Respond in this exact JSON format:
   "excerpt": "A 1-2 sentence teaser (max 200 chars)",
   "tags": ["VLOG"],
   "instagramCaption": "A short Instagram caption (2-3 sentences) with relevant hashtags. Include #YesChapter #PCT2026 #WalkingForCancer #PacificCrestTrail and 3-5 relevant ones."
-}`,
-      },
-    ],
-  });
+}`;
 
   try {
-    const text =
-      response.content[0].type === "text" ? response.content[0].text : "";
-    // Extract JSON from potential markdown code blocks
+    const text = await generateCompletion(prompt, 4000);
+    if (!text) return null;
     const jsonMatch = text.match(/\{[\s\S]*\}/);
     if (!jsonMatch) return null;
     return JSON.parse(jsonMatch[0]) as GeneratedPost;
@@ -100,17 +195,7 @@ export async function generateBlogPostPair(
   video: VideoTranscript,
   dayNumber: number
 ): Promise<GeneratedPostPair | null> {
-  const client = getAnthropicClient();
-  if (!client) return null;
-
-  const response = await client.messages.create({
-    model: "claude-sonnet-4-5-20250514",
-    max_tokens: 8000,
-    system: SYSTEM_PROMPT,
-    messages: [
-      {
-        role: "user",
-        content: `Here is a transcript from Paul's YouTube video titled "${video.title}". This is a longer/complex video that should be split into TWO separate blog posts:
+  const prompt = `Here is a transcript from Paul's YouTube video titled "${video.title}". This is a longer/complex video that should be split into TWO separate blog posts:
 
 ---
 ${video.transcript}
@@ -145,14 +230,11 @@ Respond in this exact JSON format:
     "tags": ["BLOG"],
     "instagramCaption": "Instagram caption with hashtags including #YesChapter #PCT2026 #WalkingForCancer #PacificCrestTrail"
   }
-}`,
-      },
-    ],
-  });
+}`;
 
   try {
-    const text =
-      response.content[0].type === "text" ? response.content[0].text : "";
+    const text = await generateCompletion(prompt, 8000);
+    if (!text) return null;
     const jsonMatch = text.match(/\{[\s\S]*\}/);
     if (!jsonMatch) return null;
     return JSON.parse(jsonMatch[0]) as GeneratedPostPair;

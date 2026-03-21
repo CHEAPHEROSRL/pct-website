@@ -78,7 +78,8 @@ export async function POST(request: NextRequest) {
   }
 
   // Verify this is from our channel (if configured)
-  const expectedChannel = process.env.YOUTUBE_CHANNEL_ID;
+  const { getSetting } = await import("@/lib/settings");
+  const expectedChannel = await getSetting("youtubeChannelId", "YOUTUBE_CHANNEL_ID");
   if (expectedChannel && videoInfo.channelId !== expectedChannel) {
     return new NextResponse("Not our channel", { status: 200 });
   }
@@ -115,7 +116,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Calculate current day number
-    const hikeStart = process.env.HIKE_START_DATE;
+    const hikeStart = await getSetting("hikeStartDate", "HIKE_START_DATE");
     const dayNumber = hikeStart
       ? Math.ceil(
           (Date.now() - new Date(hikeStart).getTime()) / (1000 * 60 * 60 * 24)
