@@ -1172,6 +1172,28 @@ export default function AdminPage() {
             </h1>
           </div>
 
+          {/* How it works */}
+          <div className="flex flex-col gap-[16px] p-[24px] bg-[var(--forest-green-light)] border border-[var(--forest-green)]">
+            <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--forest-green)]">HOW CHALLENGES WORK</span>
+            <div className="flex flex-col gap-[10px] font-heading text-[14px] leading-[1.7] text-[var(--text-secondary)]">
+              <p>
+                <strong className="text-[var(--text-primary)]">1. Paul creates a challenge</strong> — Set a title, target miles, starting mile marker, and a time limit (e.g. &ldquo;Desert Push: 30 miles in 24 hours&rdquo;). The challenge goes live immediately.
+              </p>
+              <p>
+                <strong className="text-[var(--text-primary)]">2. Visitors see it on the site</strong> — A live challenge banner replaces the countdown on every page. It shows the challenge name, progress bar, and time remaining. Visitors can &ldquo;boost&rdquo; the challenge by committing extra pledge amounts (e.g. +$0.05/mi) as motivation.
+              </p>
+              <p>
+                <strong className="text-[var(--text-primary)]">3. Paul hikes the miles</strong> — Progress updates automatically based on Paul&apos;s GPS location tracker. The progress bar fills in real-time as he covers the distance.
+              </p>
+              <p>
+                <strong className="text-[var(--text-primary)]">4. Paul resolves the challenge</strong> — When done, mark it as <strong className="text-[var(--forest-green)]">Succeeded</strong>, <strong className="text-red-600">Failed</strong>, or <strong className="text-[var(--text-muted)]">Cancelled</strong>. If succeeded, all boosts are locked in and added to those pledgers&apos; commitments. If failed or cancelled, boosts are released.
+              </p>
+              <p className="text-[13px] text-[var(--text-muted)] italic">
+                Only one challenge can be active at a time. Past challenges appear in the history on the right.
+              </p>
+            </div>
+          </div>
+
           {status && (
             <span className="font-label text-[13px] text-[var(--forest-green)]">
               {status}
