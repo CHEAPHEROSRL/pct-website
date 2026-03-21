@@ -141,15 +141,38 @@ function mapApifyItem(item: ApifyInstagramItem): InstagramPost | null {
  * Fetch the latest dataset items from the last completed Apify task run.
  * This is a simple GET — Apify does all the heavy lifting on their end.
  */
-async function fetchFromApify(limit = 12): Promise<InstagramPost[]> {
+const SETTINGS_KEY = "admin:settings";
+
+async function getApifyCredentials(): Promise<{ token: string; taskId: string }> {
+  // Try Redis settings first (configured via admin panel)
+  try {
+    const redis = getRedis();
+    const raw = await redis.get<string>(SETTINGS_KEY);
+    if (raw) {
+      const settings = typeof raw === "string" ? JSON.parse(raw) : raw;
+      if (settings.apifyApiToken && settings.apifyTaskId) {
+        return { token: settings.apifyApiToken, taskId: settings.apifyTaskId };
+      }
+    }
+  } catch {
+    // Fall through to env vars
+  }
+
+  // Fall back to environment variables
   const token = process.env.APIFY_API_TOKEN;
   const taskId = process.env.APIFY_TASK_ID;
 
   if (!token || !taskId) {
     throw new Error(
-      "APIFY_API_TOKEN and APIFY_TASK_ID must be set. See src/lib/instagram.ts for setup instructions."
+      "Apify credentials not configured. Set them in Admin → Settings or as environment variables."
     );
   }
+
+  return { token, taskId };
+}
+
+async function fetchFromApify(limit = 12): Promise<InstagramPost[]> {
+  const { token, taskId } = await getApifyCredentials();
 
   const url = new URL(
     `https://api.apify.com/v2/actor-tasks/${taskId}/runs/last/dataset/items`

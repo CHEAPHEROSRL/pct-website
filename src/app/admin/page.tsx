@@ -22,11 +22,12 @@ import {
   Loader2,
   Instagram,
   Mail,
+  Settings,
 } from "lucide-react";
 import type { JournalPost, ChallengePublic } from "@/lib/types";
 
-type View = "login" | "list" | "editor" | "challenges" | "honor" | "waitlist";
-type AdminTab = "journal" | "challenges" | "honor" | "waitlist";
+type View = "login" | "list" | "editor" | "challenges" | "honor" | "waitlist" | "settings";
+type AdminTab = "journal" | "challenges" | "honor" | "waitlist" | "settings";
 
 export default function AdminPage() {
   const [username, setUsername] = useState("");
@@ -71,6 +72,11 @@ export default function AdminPage() {
   // Waitlist state
   const [waitlistEmails, setWaitlistEmails] = useState<{ email: string; signedUpAt: string }[]>([]);
   const [waitlistLoading, setWaitlistLoading] = useState(false);
+
+  // Settings state
+  const [settings, setSettings] = useState<Record<string, string>>({});
+  const [settingsLoading, setSettingsLoading] = useState(false);
+  const [settingsSaved, setSettingsSaved] = useState(false);
 
   // Honor tracking state
   const [honorStats, setHonorStats] = useState<{
@@ -201,6 +207,45 @@ export default function AdminPage() {
       setWaitlistLoading(false);
     }
   }, [token]);
+
+  const fetchSettings = useCallback(async () => {
+    setSettingsLoading(true);
+    try {
+      const res = await fetch("/api/admin/settings", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setSettings(data);
+      }
+    } catch {
+      setStatus("Failed to load settings");
+    } finally {
+      setSettingsLoading(false);
+    }
+  }, [token]);
+
+  async function handleSaveSettings() {
+    setSettingsLoading(true);
+    setSettingsSaved(false);
+    try {
+      const res = await fetch("/api/admin/settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify(settings),
+      });
+      if (res.ok) {
+        setSettingsSaved(true);
+        setTimeout(() => setSettingsSaved(false), 3000);
+      } else {
+        setStatus("Failed to save settings");
+      }
+    } catch {
+      setStatus("Failed to save settings");
+    } finally {
+      setSettingsLoading(false);
+    }
+  }
 
   async function handleGenerateFromVideo() {
     if (!videoUrl.trim()) return;
@@ -597,6 +642,17 @@ export default function AdminPage() {
           >
             <Mail className="w-[16px] h-[16px]" />
             WAITLIST
+          </button>
+          <button
+            onClick={() => { setActiveTab("settings"); setView("settings"); setStatus(""); fetchSettings(); }}
+            className={`flex items-center gap-[8px] px-[24px] py-[14px] font-label font-bold text-[12px] tracking-[2px] border-b-2 transition-colors cursor-pointer ${
+              activeTab === "settings"
+                ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
+                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+            }`}
+          >
+            <Settings className="w-[16px] h-[16px]" />
+            SETTINGS
           </button>
         </div>
 
@@ -1631,6 +1687,104 @@ export default function AdminPage() {
                 </div>
               ))}
             </div>
+          )}
+        </div>
+    );
+  }
+
+  // --- SETTINGS VIEW ---
+  if (view === "settings" && authenticated) {
+    return adminShell(
+        <div className="flex flex-col gap-[32px] p-[40px] max-w-[720px]">
+          <div className="flex flex-col gap-[8px]">
+            <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">
+              SETTINGS
+            </span>
+            <h1 className="font-heading font-semibold text-[28px] text-[var(--text-primary)]">
+              Site Configuration
+            </h1>
+          </div>
+
+          {settingsLoading && !Object.keys(settings).length ? (
+            <span className="font-heading text-[14px] text-[var(--text-muted)]">Loading settings...</span>
+          ) : (
+            <>
+              {/* Instagram / Apify */}
+              <div className="flex flex-col gap-[20px] p-[28px] bg-[var(--bg-white)] border border-[var(--border-subtle)]">
+                <div className="flex items-center gap-[10px]">
+                  <Instagram className="w-[18px] h-[18px] text-[var(--burnt-orange)]" />
+                  <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-primary)]">
+                    INSTAGRAM GALLERY (APIFY)
+                  </span>
+                </div>
+                <p className="font-heading text-[14px] leading-[1.7] text-[var(--text-secondary)]">
+                  The gallery on the Journal page is powered by Apify&apos;s Instagram scraper. It fetches Paul&apos;s latest posts daily and caches them. Set up your Apify credentials below to activate it.
+                </p>
+
+                <div className="flex flex-col gap-[6px]">
+                  <label className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                    APIFY API TOKEN
+                  </label>
+                  <input
+                    type="password"
+                    value={settings.apifyApiToken || ""}
+                    onChange={(e) => setSettings({ ...settings, apifyApiToken: e.target.value })}
+                    placeholder="apify_api_..."
+                    className="w-full h-[48px] px-[16px] border border-[var(--border-subtle)] font-heading text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none bg-[var(--bg-card)]"
+                  />
+                  <span className="font-heading text-[12px] text-[var(--text-muted)]">
+                    Find this at apify.com → Settings → Integrations
+                  </span>
+                </div>
+
+                <div className="flex flex-col gap-[6px]">
+                  <label className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                    APIFY TASK ID
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.apifyTaskId || ""}
+                    onChange={(e) => setSettings({ ...settings, apifyTaskId: e.target.value })}
+                    placeholder="aBcDeFgH1234"
+                    className="w-full h-[48px] px-[16px] border border-[var(--border-subtle)] font-heading text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none bg-[var(--bg-card)]"
+                  />
+                  <span className="font-heading text-[12px] text-[var(--text-muted)]">
+                    Create a task from the &ldquo;Instagram Scraper&rdquo; actor, then copy the Task ID from the URL
+                  </span>
+                </div>
+
+                {/* Setup guide */}
+                <div className="flex flex-col gap-[8px] p-[16px] bg-[var(--bg-warm)] border border-[var(--border-subtle)]">
+                  <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">SETUP GUIDE</span>
+                  <ol className="flex flex-col gap-[4px] font-heading text-[13px] leading-[1.6] text-[var(--text-secondary)] list-decimal pl-[20px]">
+                    <li>Create a free account at <strong>apify.com</strong></li>
+                    <li>Search for &ldquo;Instagram Scraper&rdquo; actor → Save as Task</li>
+                    <li>Set input: directUrls = <code className="bg-[var(--bg-card)] px-[4px]">https://instagram.com/yeschapter/</code>, resultsLimit = 12</li>
+                    <li>Schedule it daily at 12:00 UTC</li>
+                    <li>Run it once manually to verify</li>
+                    <li>Copy the API Token and Task ID into the fields above</li>
+                  </ol>
+                </div>
+              </div>
+
+              {/* Save button */}
+              <div className="flex items-center gap-[16px]">
+                <button
+                  onClick={handleSaveSettings}
+                  disabled={settingsLoading}
+                  className="flex items-center justify-center gap-[8px] px-[32px] py-[14px] bg-[var(--burnt-orange)] hover:opacity-90 transition-opacity disabled:opacity-50 cursor-pointer"
+                >
+                  <span className="font-label font-bold text-[13px] tracking-[2px] text-[var(--text-primary)]">
+                    {settingsLoading ? "SAVING..." : "SAVE SETTINGS"}
+                  </span>
+                </button>
+                {settingsSaved && (
+                  <span className="font-label font-bold text-[12px] tracking-[1px] text-[var(--forest-green)]">
+                    Settings saved!
+                  </span>
+                )}
+              </div>
+            </>
           )}
         </div>
     );
