@@ -1,4 +1,5 @@
-import { Mountain, Flag, Mail, ArrowRight, CheckCircle, MapPin, Share2, Calendar, Heart, Shield, DollarSign, Users, Globe, Clock, Bell, UserPlus, Award } from "lucide-react";
+import { Mountain, Flag, Mail, ArrowRight, CheckCircle, MapPin, Share2, Calendar, Heart, Shield, DollarSign, Users, Globe, Clock, Bell, UserPlus, Award, Building2, FileText, AlertTriangle, ExternalLink } from "lucide-react";
+import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -871,6 +872,209 @@ export default function StrategyPage() {
         <p className="font-heading italic text-[16px] text-[#FFFFFF88] max-w-[500px]">
           No third-party platforms. No fees. No middlemen. Clean, transparent, and exactly what YesChapter promises.
         </p>
+      </section>
+
+      {/* ═══════════════════════════════════════ */}
+      {/* BUSINESS SPONSORSHIP — HOW IT WORKS */}
+      {/* ═══════════════════════════════════════ */}
+      <section className="flex flex-col gap-[48px] px-6 md:px-12 lg:px-[120px] py-[64px] bg-[var(--bg-white)] w-full">
+        <div className="flex flex-col gap-[8px]">
+          <SectionBadge>BUSINESS SPONSORSHIP</SectionBadge>
+          <h2 className="font-heading font-semibold text-[32px] tracking-[-0.5px] text-[var(--text-primary)]">
+            Trail Section <span className="text-[var(--burnt-orange)]">Sponsorship</span> — How It Works
+          </h2>
+          <p className="font-heading text-[16px] text-[var(--text-secondary)] max-w-[700px] leading-[1.6]">
+            Companies can pledge $5,000+ to sponsor a named section of the Pacific Crest Trail on the website. This is a premium tier that gives businesses visible acknowledgment while supporting cancer research foundations. Here&apos;s how every piece fits together.
+          </p>
+        </div>
+
+        {/* Step-by-step flow */}
+        <div className="flex flex-col gap-[24px]">
+          <span className="font-label font-bold text-[11px] tracking-[3px] text-[var(--text-muted)]">THE SPONSORSHIP FLOW</span>
+
+          {/* Step 1 */}
+          <div className="flex gap-[20px] items-start">
+            <div className="flex items-center justify-center w-[40px] h-[40px] bg-[var(--burnt-orange-light)] border border-[var(--burnt-orange)] shrink-0">
+              <span className="font-label font-bold text-[16px] text-[var(--burnt-orange)]">1</span>
+            </div>
+            <div className="flex flex-col gap-[6px]">
+              <span className="font-heading font-semibold text-[17px] text-[var(--text-primary)]">Visitor slides the pledge calculator past $5,000</span>
+              <p className="font-heading text-[15px] leading-[1.7] text-[var(--text-secondary)]">
+                On the <Link href="/pledge" className="text-[var(--burnt-orange)] underline underline-offset-4 hover:opacity-80">Pledge Page</Link>, anyone can use the per-mile slider. When the total pledge crosses $5,000 (~$1.89/mi × 2,650 miles), the &quot;SET MY PLEDGE&quot; button is replaced with a &quot;GET IN TOUCH&quot; card that asks: &quot;Are you a business? Sponsors at this level can have their logo displayed on a section of the Pacific Crest Trail map.&quot;
+              </p>
+            </div>
+          </div>
+
+          {/* Step 2 */}
+          <div className="flex gap-[20px] items-start">
+            <div className="flex items-center justify-center w-[40px] h-[40px] bg-[var(--burnt-orange-light)] border border-[var(--burnt-orange)] shrink-0">
+              <span className="font-label font-bold text-[16px] text-[var(--burnt-orange)]">2</span>
+            </div>
+            <div className="flex flex-col gap-[6px]">
+              <span className="font-heading font-semibold text-[17px] text-[var(--text-primary)]">They email Paul directly</span>
+              <p className="font-heading text-[15px] leading-[1.7] text-[var(--text-secondary)]">
+                The &quot;GET IN TOUCH&quot; button opens a pre-filled email to <strong>paul@yeschapter.com</strong> with subject &quot;Trail Section Sponsorship Inquiry.&quot; This starts a personal conversation — not an automated flow. Paul can vet the company, discuss which trail section they want, and answer questions about the cause.
+              </p>
+            </div>
+          </div>
+
+          {/* Step 3 */}
+          <div className="flex gap-[20px] items-start">
+            <div className="flex items-center justify-center w-[40px] h-[40px] bg-[var(--burnt-orange-light)] border border-[var(--burnt-orange)] shrink-0">
+              <span className="font-label font-bold text-[16px] text-[var(--burnt-orange)]">3</span>
+            </div>
+            <div className="flex flex-col gap-[6px]">
+              <span className="font-heading font-semibold text-[17px] text-[var(--text-primary)]">Paul sends the Sponsorship Agreement</span>
+              <p className="font-heading text-[15px] leading-[1.7] text-[var(--text-secondary)]">
+                Once aligned, Paul sends the <Link href="/sponsor-agreement" className="text-[var(--burnt-orange)] underline underline-offset-4 hover:opacity-80">Trail Section Sponsorship Agreement</Link> — a formal document covering sponsorship amount, trail section, logo placement terms, tax disclaimers, and legal protections for both parties. <strong>Both parties sign it.</strong>
+              </p>
+            </div>
+          </div>
+
+          {/* Step 4 */}
+          <div className="flex gap-[20px] items-start">
+            <div className="flex items-center justify-center w-[40px] h-[40px] bg-[var(--burnt-orange-light)] border border-[var(--burnt-orange)] shrink-0">
+              <span className="font-label font-bold text-[16px] text-[var(--burnt-orange)]">4</span>
+            </div>
+            <div className="flex flex-col gap-[6px]">
+              <span className="font-heading font-semibold text-[17px] text-[var(--text-primary)]">The company pays the foundations directly</span>
+              <p className="font-heading text-[15px] leading-[1.7] text-[var(--text-secondary)]">
+                <strong>Paul never touches the money.</strong> The sponsor pays their commitment (split 50/50) directly into City of Hope&apos;s and the Leukaemia Foundation&apos;s bank accounts. The foundations issue official donation receipts. Paul provides the payment details but is never a middleman.
+              </p>
+            </div>
+          </div>
+
+          {/* Step 5 */}
+          <div className="flex gap-[20px] items-start">
+            <div className="flex items-center justify-center w-[40px] h-[40px] bg-[var(--burnt-orange-light)] border border-[var(--burnt-orange)] shrink-0">
+              <span className="font-label font-bold text-[16px] text-[var(--burnt-orange)]">5</span>
+            </div>
+            <div className="flex flex-col gap-[6px]">
+              <span className="font-heading font-semibold text-[17px] text-[var(--text-primary)]">Logo goes up on the trail map</span>
+              <p className="font-heading text-[15px] leading-[1.7] text-[var(--text-secondary)]">
+                Once payment is confirmed, Paul adds the sponsor&apos;s logo to their chosen trail section on the <Link href="/trail-map" className="text-[var(--burnt-orange)] underline underline-offset-4 hover:opacity-80">Trail Map</Link>. The logo stays for at least 12 months. Social media acknowledgment follows. Value-neutral language only — no promotional claims (this keeps it IRS-compliant as a &quot;qualified sponsorship&quot;).
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Available Sections */}
+        <div className="flex flex-col gap-[16px]">
+          <span className="font-label font-bold text-[11px] tracking-[3px] text-[var(--text-muted)]">AVAILABLE TRAIL SECTIONS (5 TOTAL)</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[12px]">
+            {[
+              { name: "Southern California", miles: "Mi 0–700", desc: "Campo to Kennedy Meadows — desert, mountains, heat" },
+              { name: "Sierra Nevada", miles: "Mi 700–1,100", desc: "Kennedy Meadows to Tuolumne — high passes, snow" },
+              { name: "Northern California", miles: "Mi 1,100–1,691", desc: "Tuolumne to Ashland — volcanic, remote" },
+              { name: "Oregon", miles: "Mi 1,691–2,147", desc: "Ashland to Cascade Locks — forests, Crater Lake" },
+              { name: "Washington", miles: "Mi 2,147–2,650", desc: "Cascade Locks to Manning Park — final push, glaciers" },
+            ].map((section) => (
+              <div key={section.name} className="flex flex-col gap-[6px] p-[20px] bg-[var(--bg-warm)] border border-[var(--border-subtle)]">
+                <span className="font-heading font-semibold text-[15px] text-[var(--text-primary)]">{section.name}</span>
+                <span className="font-label font-bold text-[10px] tracking-[1px] text-[var(--burnt-orange)]">{section.miles}</span>
+                <span className="font-heading text-[13px] text-[var(--text-muted)] leading-[1.5]">{section.desc}</span>
+              </div>
+            ))}
+          </div>
+          <p className="font-heading text-[14px] text-[var(--text-muted)] italic">
+            Each section can have one primary sponsor. Sections are first-come, first-served.
+          </p>
+        </div>
+
+        {/* Tax & Legal Explainer */}
+        <div className="flex flex-col gap-[16px] bg-[var(--bg-dark)] p-[32px] md:p-[40px]">
+          <div className="flex items-center gap-[10px]">
+            <Shield className="w-[20px] h-[20px] text-[var(--burnt-orange)]" />
+            <span className="font-label font-bold text-[11px] tracking-[3px] text-[var(--text-white)]">TAX & LEGAL — WHY THIS MATTERS</span>
+          </div>
+          <p className="font-heading text-[15px] leading-[1.8] text-[#FFFFFFCC]">
+            Paul, this section is important. When a business sponsors a trail section, there are real tax and legal implications. Here&apos;s what you need to know:
+          </p>
+          <div className="flex flex-col gap-[16px]">
+            {[
+              {
+                title: "You are NOT a charity",
+                body: "YesChapter is not a 501(c)(3). You cannot issue tax receipts. The foundations do that. You are a facilitator — you connect sponsors to the cause, display their logo, and never touch their money.",
+              },
+              {
+                title: "Three ways sponsors can deduct",
+                body: "Their payment to City of Hope (a 501(c)(3)) may be deductible as a charitable contribution. OR they can treat it as a business/advertising expense (often better — no income cap). OR as a qualified sponsorship payment under IRS Section 513(i). Their tax advisor decides — you never promise any specific tax treatment.",
+              },
+              {
+                title: "Keep logo acknowledgment clean",
+                body: "Display: logo, company name, website link, neutral description. Never use promotional language like 'the best,' 'leading,' or 'buy from.' This keeps it as a 'qualified sponsorship' rather than taxable advertising, which protects both the foundations and the sponsors.",
+              },
+              {
+                title: "The agreement protects you both",
+                body: "The Sponsorship Agreement makes clear: you don't handle money, you can't guarantee tax outcomes, the logo stays up regardless of hike completion, and you can decline sponsors whose values conflict with the cause (tobacco, etc.).",
+              },
+              {
+                title: "Contact the foundations",
+                body: "Before your first sponsor, reach out to City of Hope and Leukaemia Foundation to establish a formal peer-to-peer fundraising relationship. This gives legal cover for charitable solicitation and gives sponsors confidence. Most major nonprofits already have programs for this.",
+              },
+              {
+                title: "Consider a one-time legal review",
+                body: "Having a nonprofit attorney review the sponsorship agreement template once ($500–$1,500) provides significant protection — especially around state charitable solicitation requirements. 39 states require registration for charitable solicitation. The foundations' existing registrations may cover you if you operate under their umbrella.",
+              },
+            ].map((item, i) => (
+              <div key={i} className="flex gap-[16px] items-start">
+                <CheckCircle className="w-[18px] h-[18px] text-[var(--forest-green)] shrink-0 mt-[2px]" />
+                <div className="flex flex-col gap-[4px]">
+                  <span className="font-heading font-semibold text-[15px] text-[var(--text-white)]">{item.title}</span>
+                  <p className="font-heading text-[14px] leading-[1.7] text-[#FFFFFFAA]">{item.body}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Link to Agreement */}
+        <div className="flex flex-col gap-[16px] p-[32px] bg-[var(--burnt-orange-light)] border border-[var(--burnt-orange)]">
+          <div className="flex items-center gap-[12px]">
+            <FileText className="w-[24px] h-[24px] text-[var(--burnt-orange)]" />
+            <span className="font-heading font-semibold text-[18px] text-[var(--text-primary)]">Sponsorship Agreement Document</span>
+          </div>
+          <p className="font-heading text-[15px] leading-[1.7] text-[var(--text-secondary)]">
+            A complete, ready-to-use agreement template covering all 12 sections: parties, purpose, sponsorship details, benefits, tax considerations, representations, hike contingencies, no-endorsement clause, right to decline, liability limits, term, and governing law. Fill in the blanks and send to potential sponsors.
+          </p>
+          <Link
+            href="/sponsor-agreement"
+            className="flex items-center gap-[10px] w-fit bg-[var(--burnt-orange)] px-[24px] py-[14px] hover:opacity-90 transition-opacity"
+          >
+            <FileText className="w-[18px] h-[18px] text-[var(--text-primary)]" />
+            <span className="font-label font-bold text-[13px] tracking-[2px] text-[var(--text-primary)]">VIEW AGREEMENT</span>
+            <ExternalLink className="w-[14px] h-[14px] text-[var(--text-primary)]" />
+          </Link>
+          <div className="flex items-start gap-[10px]">
+            <AlertTriangle className="w-[16px] h-[16px] text-[var(--burnt-orange)] shrink-0 mt-[2px]" />
+            <p className="font-heading text-[13px] leading-[1.6] text-[var(--text-muted)]">
+              This is a template based on research, not legal advice. Have an attorney review it before first use. Tax treatment depends on each sponsor&apos;s circumstances.
+            </p>
+          </div>
+        </div>
+
+        {/* Quick Reference Links */}
+        <div className="flex flex-col gap-[12px]">
+          <span className="font-label font-bold text-[11px] tracking-[3px] text-[var(--text-muted)]">RELATED PAGES ON THE WEBSITE</span>
+          <div className="flex flex-wrap gap-[12px]">
+            {[
+              { label: "Pledge Page", href: "/pledge", desc: "Where the $5K cap triggers" },
+              { label: "Trail Map", href: "/trail-map", desc: "Where sponsor logos appear" },
+              { label: "Transparency", href: "/transparency", desc: "How pledges & money work" },
+              { label: "Foundations", href: "/foundations", desc: "City of Hope & Leukaemia Foundation" },
+              { label: "Sponsor Agreement", href: "/sponsor-agreement", desc: "The legal document" },
+            ].map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="flex flex-col gap-[4px] p-[16px] bg-[var(--bg-warm)] border border-[var(--border-subtle)] hover:border-[var(--burnt-orange)] transition-colors min-w-[180px]"
+              >
+                <span className="font-heading font-semibold text-[14px] text-[var(--text-primary)]">{link.label}</span>
+                <span className="font-heading text-[12px] text-[var(--text-muted)]">{link.desc}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
       </section>
 
       <Footer />
