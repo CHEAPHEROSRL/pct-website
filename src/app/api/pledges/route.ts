@@ -65,6 +65,11 @@ export async function POST(req: NextRequest) {
     if (![1, 10, 100].includes(interval)) {
       return NextResponse.json({ error: "Interval must be 1, 10, or 100" }, { status: 400 });
     }
+    // Enforce $5,000 total pledge cap — amounts above this require direct contact
+    const calculatedTotal = (amount * 2650) / interval;
+    if (calculatedTotal > 5000) {
+      return NextResponse.json({ error: "Pledges over $5,000 require direct contact. Please email paul@yeschapter.com" }, { status: 400 });
+    }
 
     const name = sanitizeText(rawName || "Anonymous", 100);
     const message = rawMessage ? sanitizeText(rawMessage, 280) : undefined;

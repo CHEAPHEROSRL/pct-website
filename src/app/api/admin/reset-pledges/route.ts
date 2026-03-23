@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
+import { RATE_LIMITS } from "@/lib/security";
 
 function getRedis() {
   const url = process.env.KV_REST_API_URL;
@@ -12,11 +13,14 @@ function checkAuth(request: NextRequest): boolean {
   const auth = request.headers.get("authorization");
   if (!auth) return false;
   const token = auth.replace("Bearer ", "");
-  return token === process.env.ADMIN_TOKEN;
+  return token === process.env.ADMIN_AUTH_TOKEN;
 }
 
 // POST /api/admin/reset-pledges — Clear all pledge data (admin only)
 export async function POST(request: NextRequest) {
+  const rateLimited = await RATE_LIMITS.general(request);
+  if (rateLimited) return rateLimited;
+
   if (!checkAuth(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

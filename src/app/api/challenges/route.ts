@@ -15,7 +15,7 @@ function isAdmin(req: NextRequest): boolean {
   const auth = req.headers.get("authorization");
   if (!auth) return false;
   const token = auth.replace("Bearer ", "");
-  return token === process.env.ADMIN_TOKEN;
+  return token === process.env.ADMIN_AUTH_TOKEN;
 }
 
 /** Normalize old records that used targetMiles/startMile/currentMiles */

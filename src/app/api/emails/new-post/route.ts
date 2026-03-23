@@ -15,7 +15,7 @@ function checkAuth(request: NextRequest): boolean {
   const auth = request.headers.get("authorization");
   if (!auth) return false;
   const token = auth.replace("Bearer ", "");
-  return token === process.env.ADMIN_TOKEN;
+  return token === process.env.ADMIN_AUTH_TOKEN;
 }
 
 // POST /api/emails/new-post — Send notification to all subscribers about a new journal post

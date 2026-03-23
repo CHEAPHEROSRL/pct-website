@@ -27,7 +27,7 @@ export default function Footer() {
             Every pledge goes directly to the cause. Paul takes nothing.
           </p>
           <div className="flex gap-[16px]">
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><Instagram className="w-[20px] h-[20px] text-[var(--text-muted)] hover:text-white cursor-pointer" /></a>
+            <a href="https://instagram.com/yeschapter" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><Instagram className="w-[20px] h-[20px] text-[var(--text-muted)] hover:text-white cursor-pointer" /></a>
             <a href="https://www.youtube.com/@YesChapter" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><Youtube className="w-[20px] h-[20px] text-[var(--text-muted)] hover:text-white cursor-pointer" /></a>
             <a href="https://www.patreon.com/YesChapter" target="_blank" rel="noopener noreferrer" aria-label="Patreon"><PatreonIcon className="w-[20px] h-[20px] text-[var(--text-muted)] hover:text-white cursor-pointer" /></a>
           </div>
@@ -70,7 +70,7 @@ export default function Footer() {
             <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-muted)]">
               CONNECT
             </span>
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Instagram</a>
+            <a href="https://instagram.com/yeschapter" target="_blank" rel="noopener noreferrer" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Instagram</a>
             <a href="https://www.youtube.com/@YesChapter" target="_blank" rel="noopener noreferrer" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">YouTube</a>
             <a href="https://www.patreon.com/YesChapter" target="_blank" rel="noopener noreferrer" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Patreon</a>
             <a href="mailto:info@yeschapter.com" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Contact Paul</a>

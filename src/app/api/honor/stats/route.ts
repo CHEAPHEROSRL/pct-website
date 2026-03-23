@@ -16,8 +16,11 @@ export async function GET(request: NextRequest) {
 
   const authHeader = request.headers.get("authorization");
   const cronSecret = process.env.CRON_SECRET;
+  const adminToken = process.env.ADMIN_AUTH_TOKEN;
 
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+  // Accept either cron secret or admin token
+  const token = authHeader?.replace("Bearer ", "");
+  if (!token || (token !== cronSecret && token !== adminToken)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

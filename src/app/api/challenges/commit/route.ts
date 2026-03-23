@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
     if (!email || typeof email !== "string") {
       return NextResponse.json({ error: "Email required" }, { status: 400 });
     }
-    if (typeof boostAmount !== "number" || boostAmount <= 0 || boostAmount > 100) {
+    if (typeof boostAmount !== "number" || boostAmount < 0.01 || boostAmount > 100) {
       return NextResponse.json({ error: "Boost amount must be $0.01–$100" }, { status: 400 });
     }
 

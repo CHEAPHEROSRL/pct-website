@@ -20,11 +20,11 @@ const MAX_COMMENTS = 200;
 const MAX_BODY_LENGTH = 300;
 const COMMENTS_KEY = "comments:list";
 
-function getRedis(): Redis {
-  return new Redis({
-    url: process.env.KV_REST_API_URL!,
-    token: process.env.KV_REST_API_TOKEN!,
-  });
+function getRedis(): Redis | null {
+  const url = process.env.KV_REST_API_URL;
+  const token = process.env.KV_REST_API_TOKEN;
+  if (!url || !token) return null;
+  return new Redis({ url, token });
 }
 
 async function requirePledgerSession(req: NextRequest) {
@@ -38,6 +38,7 @@ async function requirePledgerSession(req: NextRequest) {
 
 export async function GET() {
   const redis = getRedis();
+  if (!redis) return NextResponse.json({ error: "Storage unavailable" }, { status: 503 });
   const raw = await redis.lrange<string>(COMMENTS_KEY, 0, 49); // last 50
   const comments: PledgerComment[] = (raw || []).map((s) =>
     typeof s === "string" ? JSON.parse(s) : s
@@ -71,6 +72,7 @@ export async function POST(req: NextRequest) {
 
   // Check if this pledger already commented recently (one comment per 10 minutes)
   const redis = getRedis();
+  if (!redis) return NextResponse.json({ error: "Storage unavailable" }, { status: 503 });
   const lastCommentKey = `comments:last:${session.pledgeId}`;
   const lastAt = await redis.get<number>(lastCommentKey);
   if (lastAt && Date.now() - lastAt < 10 * 60 * 1000) {
@@ -107,6 +109,7 @@ export async function DELETE(req: NextRequest) {
   if (!commentId) return NextResponse.json({ error: "Missing id" }, { status: 400 });
 
   const redis = getRedis();
+  if (!redis) return NextResponse.json({ error: "Storage unavailable" }, { status: 503 });
   const raw = await redis.lrange<string>(COMMENTS_KEY, 0, -1);
   const comments: PledgerComment[] = (raw || []).map((s) =>
     typeof s === "string" ? JSON.parse(s) : s
