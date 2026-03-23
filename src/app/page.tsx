@@ -43,7 +43,7 @@ export default function Home() {
         <div className="relative flex flex-col justify-end gap-[16px] md:gap-[24px] h-full px-6 md:px-12 lg:px-[120px] pb-[40px] md:pb-[60px] lg:pb-[80px]">
           <div className="animate-fade-up flex items-center bg-[var(--burnt-orange)] px-[16px] py-[6px] w-fit">
             <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-white)]">
-              247 PLEDGERS &nbsp;&middot;&nbsp; $12,450 PLEDGED &nbsp;&middot;&nbsp; PCT 2026
+              PCT 2026
             </span>
           </div>
           <h1 className="animate-fade-up stagger-2 font-heading font-semibold text-[28px] md:text-[40px] lg:text-[56px] leading-[1.1] tracking-[-1px] text-[var(--text-white)] w-full lg:w-[800px]">
@@ -129,12 +129,12 @@ export default function Home() {
 
       {/* The Cause */}
       <section className="flex flex-col lg:flex-row w-full bg-[var(--bg-dark)]">
-        <ScrollReveal animation="slide-right" className="relative w-full lg:w-[580px] h-[300px] md:h-[400px] lg:h-[700px] shrink-0 overflow-hidden">
+        <ScrollReveal animation="slide-right" className="relative w-full lg:w-[580px] h-[420px] md:h-[500px] lg:h-[700px] shrink-0 overflow-hidden">
           <Image
             src="/images/family/FB_IMG_1729964832568.jpg"
             alt="The Cause"
             fill
-            className="object-cover"
+            className="object-cover object-[center_20%]"
           />
         </ScrollReveal>
         <ScrollReveal animation="slide-left" className="flex flex-col justify-center gap-[24px] lg:gap-[32px] flex-1 p-6 md:p-12 lg:p-[80px]">
