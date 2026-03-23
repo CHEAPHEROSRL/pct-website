@@ -1160,3 +1160,51 @@ export async function sendMagicLink(
     `
   );
 }
+
+// ---------------------------------------------------------------------------
+// New Journal Post Notification
+// ---------------------------------------------------------------------------
+
+export async function sendNewPost(
+  email: string,
+  name: string,
+  postTitle: string,
+  postExcerpt: string,
+  postSlug: string,
+  dayNumber: number,
+  unsubscribeToken?: string
+): Promise<SendResult> {
+  const postUrl = `${SITE}/journal/${postSlug}`;
+  return send(
+    email,
+    `New from the trail: ${postTitle}`,
+    `
+    <div style="font-family: Georgia, serif; max-width: 560px; margin: 0 auto; color: #1C1C1C;">
+      <div style="background: #1C1F1A; padding: 20px 32px; text-align: center;">
+        <p style="margin: 0; font-size: 14px; letter-spacing: 3px; font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; color: #FFFFFF;">YESCHAPTER</p>
+        <p style="margin: 4px 0 0; font-size: 9px; letter-spacing: 2px; font-family: sans-serif; color: #FFFFFF66;">WALKING FOR CANCER</p>
+      </div>
+      <div style="background: #FABE64; padding: 16px 32px; text-align: center;">
+        <p style="margin: 0; font-size: 10px; letter-spacing: 2px; font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; color: #1C1C1C;">
+          NEW JOURNAL ENTRY · DAY ${dayNumber}
+        </p>
+      </div>
+      <div style="padding: 32px;">
+        <h2 style="margin: 0 0 16px; font-size: 24px; line-height: 1.3;">${postTitle}</h2>
+        <p style="font-size: 16px; line-height: 1.7; color: #5C5C5C;">
+          ${postExcerpt}
+        </p>
+        <div style="text-align: center; margin: 32px 0;">
+          <a href="${postUrl}" style="display: inline-block; background: #3D7A5A; color: #FFFFFF; padding: 14px 36px; text-decoration: none; font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 2px;">
+            READ FULL POST →
+          </a>
+        </div>
+        <p style="font-size: 13px; color: #8C8A87; line-height: 1.6; text-align: center;">
+          You're receiving this because you signed up at yeschapter.com.
+        </p>
+      </div>
+      ${emailFooter(unsubscribeToken)}
+    </div>
+    `
+  );
+}

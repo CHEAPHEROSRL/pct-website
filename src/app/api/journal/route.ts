@@ -122,6 +122,25 @@ export async function POST(request: NextRequest) {
 
   await redis.lpush("journal:posts", JSON.stringify(post));
 
+  // Trigger new-post email if published immediately
+  if (post.published) {
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://yeschapter.com";
+    fetch(`${siteUrl}/api/emails/new-post`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: request.headers.get("authorization") || "",
+      },
+      body: JSON.stringify({
+        postId: post.id,
+        postTitle: post.title,
+        postExcerpt: post.excerpt,
+        postSlug: post.slug,
+        dayNumber: post.dayNumber,
+      }),
+    }).catch((err) => console.error("Failed to trigger new-post email:", err));
+  }
+
   return NextResponse.json(post, { status: 201 });
 }
 
@@ -181,6 +200,25 @@ export async function PUT(request: NextRequest) {
       "journal:posts",
       ...posts.map((p) => JSON.stringify(p))
     );
+  }
+
+  // Trigger new-post email notification when publishing for the first time
+  if (updated.published && !existing.published) {
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://yeschapter.com";
+    fetch(`${siteUrl}/api/emails/new-post`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: request.headers.get("authorization") || "",
+      },
+      body: JSON.stringify({
+        postId: updated.id,
+        postTitle: updated.title,
+        postExcerpt: updated.excerpt,
+        postSlug: updated.slug,
+        dayNumber: updated.dayNumber,
+      }),
+    }).catch((err) => console.error("Failed to trigger new-post email:", err));
   }
 
   return NextResponse.json(updated);
