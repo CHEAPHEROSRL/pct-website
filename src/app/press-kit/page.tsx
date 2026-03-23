@@ -58,25 +58,25 @@ const actionPhotos = [
   {
     src: "/images/hiking/20260201_123623.jpg",
     thumb: "/images/hiking/20260201_123623.jpg",
-    caption: "Trail Ready — Feb 2026",
-    filename: "paul-barry-trail-ready-2026.jpg",
+    caption: "Strawberry Peak, CA — Training Hike",
+    filename: "paul-barry-strawberry-peak.jpg",
   },
   {
     src: "/images/hiking/20230824_122513.jpg",
     thumb: "/images/hiking/20230824_122513.jpg",
-    caption: "High Sierra — Aug 2023",
-    filename: "paul-barry-sierra-nevada-2023.jpg",
+    caption: "Parker Lake, CA — Training Hike",
+    filename: "paul-barry-parker-lake.jpg",
   },
   {
     src: "/images/hiking/20230821_165432.jpg",
     thumb: "/images/hiking/20230821_165432.jpg",
-    caption: "Pacific Northwest Forest",
-    filename: "paul-barry-pnw-forest.jpg",
+    caption: "Sequoia National Park, CA — Training Hike",
+    filename: "paul-barry-sequoia-national-park.jpg",
   },
   {
     src: "/images/hiking/20240128_110150.jpg",
     thumb: "/images/hiking/20240128_110150.jpg",
-    caption: "Desert Section Training",
+    caption: "Desert Training Hike",
     filename: "paul-barry-desert-trail.jpg",
   },
   {
@@ -275,7 +275,7 @@ export default function PressKitPage() {
             <span className="font-label font-bold text-[11px] tracking-[3px] text-[var(--burnt-orange)]">MEDIA ASSETS — TRAIL & STORY</span>
             <h2 className="font-heading font-semibold text-[28px] md:text-[36px] tracking-[-0.5px] text-[var(--text-primary)]">Action & Story Photos</h2>
             <p className="font-heading text-[14px] leading-[1.6] text-[var(--text-muted)]">
-              Click to download. Credit: <span className="text-[var(--text-secondary)]">Paul Barry / yeschapter.com</span>
+              Photos from Paul&apos;s training hikes in California. Click to download. Credit: <span className="text-[var(--text-secondary)]">Paul Barry / yeschapter.com</span>
             </p>
           </div>
         </ScrollReveal>
