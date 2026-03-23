@@ -1935,6 +1935,39 @@ export default function AdminPage() {
                   </span>
                 )}
               </div>
+
+              {/* Data Management */}
+              <div className="flex flex-col gap-[20px] p-[28px] bg-[var(--bg-white)] border border-[var(--border-subtle)] mt-[24px]">
+                <div className="flex items-center gap-[10px]">
+                  <Trash2 className="w-[18px] h-[18px] text-red-500" />
+                  <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-primary)]">
+                    DATA MANAGEMENT
+                  </span>
+                </div>
+                <p className="font-heading text-[14px] leading-[1.7] text-[var(--text-secondary)]">
+                  Reset live data back to zero. Use this to clear test data before launch. These actions cannot be undone.
+                </p>
+                <div className="flex flex-wrap gap-[12px]">
+                  <button
+                    onClick={async () => {
+                      if (!confirm("Are you sure you want to clear ALL pledge data? This cannot be undone.")) return;
+                      try {
+                        const res = await fetch("/api/admin/reset-pledges", {
+                          method: "POST",
+                          headers: { Authorization: `Bearer ${token}` },
+                        });
+                        const data = await res.json();
+                        if (res.ok) alert("Pledge data cleared!");
+                        else alert("Error: " + (data.error || "Unknown error"));
+                      } catch { alert("Failed to reset pledges"); }
+                    }}
+                    className="flex items-center gap-[8px] px-[20px] py-[10px] border border-red-300 hover:bg-red-50 transition-colors cursor-pointer"
+                  >
+                    <Trash2 className="w-[14px] h-[14px] text-red-500" />
+                    <span className="font-label font-bold text-[11px] tracking-[2px] text-red-600">RESET PLEDGES</span>
+                  </button>
+                </div>
+              </div>
             </>
           )}
         </div>
