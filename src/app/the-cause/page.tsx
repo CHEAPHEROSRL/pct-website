@@ -156,12 +156,12 @@ export default function TheCausePage() {
         </ScrollReveal>
         <ScrollReveal animation="fade-up">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[24px] lg:gap-[32px] w-full">
-          <TipCard icon={<Footprints className="w-[32px] h-[32px] text-[var(--forest-green)]" />} title="Stay Active" desc="Regular physical activity reduces risk for several cancers including colon, breast, and lung cancer. Even 30 minutes of daily walking makes a difference." />
-          <TipCard icon={<Apple className="w-[32px] h-[32px] text-[var(--forest-green)]" />} title="Eat Well" desc="A diet rich in fruits, vegetables, and whole grains while limiting processed meats and alcohol can significantly lower cancer risk. Nourish your body." />
-          <TipCard icon={<Sun className="w-[32px] h-[32px] text-[var(--forest-green)]" />} title="Sun Safety" desc="Protect your skin from UV radiation. Use sunscreen, wear protective clothing, and avoid tanning beds. Skin cancer is the most common but also one of the most preventable." />
-          <TipCard icon={<ScanSearch className="w-[32px] h-[32px] text-[var(--forest-green)]" />} title="Get Screened" desc="Regular screening can catch cancer early when it's most treatable. Talk to your doctor about recommended screenings for your age and risk factors." />
-          <TipCard icon={<CigaretteOff className="w-[32px] h-[32px] text-[var(--forest-green)]" />} title="Quit Smoking" desc="Tobacco use remains the single largest preventable cause of cancer. Quitting at any age reduces your risk. It's never too late to start." />
-          <TipCard icon={<HeartPulse className="w-[32px] h-[32px] text-[var(--forest-green)]" />} title="Know Your Body" desc="Pay attention to changes in your body. Unexplained weight loss, persistent pain, or unusual lumps should be discussed with a healthcare provider promptly." />
+          <TipCard icon={<Footprints className="w-[32px] h-[32px] text-[var(--forest-green)]" />} title="Stay Active" topic="stay-active" desc="Regular physical activity reduces risk for several cancers including colon, breast, and lung cancer. Even 30 minutes of daily walking makes a difference." />
+          <TipCard icon={<Apple className="w-[32px] h-[32px] text-[var(--forest-green)]" />} title="Eat Well" topic="eat-well" desc="A diet rich in fruits, vegetables, and whole grains while limiting processed meats and alcohol can significantly lower cancer risk. Nourish your body." />
+          <TipCard icon={<Sun className="w-[32px] h-[32px] text-[var(--forest-green)]" />} title="Sun Safety" topic="sun-safety" desc="Protect your skin from UV radiation. Use sunscreen, wear protective clothing, and avoid tanning beds. Skin cancer is the most common but also one of the most preventable." />
+          <TipCard icon={<ScanSearch className="w-[32px] h-[32px] text-[var(--forest-green)]" />} title="Get Screened" topic="get-screened" desc="Regular screening can catch cancer early when it's most treatable. Talk to your doctor about recommended screenings for your age and risk factors." />
+          <TipCard icon={<CigaretteOff className="w-[32px] h-[32px] text-[var(--forest-green)]" />} title="Quit Smoking" topic="quit-smoking" desc="Tobacco use remains the single largest preventable cause of cancer. Quitting at any age reduces your risk. It's never too late to start." />
+          <TipCard icon={<HeartPulse className="w-[32px] h-[32px] text-[var(--forest-green)]" />} title="Know Your Body" topic="know-your-body" desc="Pay attention to changes in your body. Unexplained weight loss, persistent pain, or unusual lumps should be discussed with a healthcare provider promptly." />
         </div>
         </ScrollReveal>
       </section>
@@ -240,12 +240,18 @@ export default function TheCausePage() {
   );
 }
 
-function TipCard({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: string }) {
+function TipCard({ icon, title, desc, topic }: { icon: React.ReactNode; title: string; desc: string; topic: string }) {
   return (
-    <div className="flex flex-col gap-[20px] bg-[var(--bg-card)] border border-[var(--border-subtle)] p-[24px] md:p-[32px]">
+    <Link
+      href={`/journal?topic=${topic}`}
+      className="flex flex-col gap-[20px] bg-[var(--bg-card)] border border-[var(--border-subtle)] p-[24px] md:p-[32px] hover:border-[var(--burnt-orange)] hover:shadow-md transition-all group"
+    >
       {icon}
-      <span className="font-heading font-semibold text-[22px] text-[var(--text-primary)]">{title}</span>
+      <span className="font-heading font-semibold text-[22px] text-[var(--text-primary)] group-hover:text-[var(--burnt-orange)] transition-colors">{title}</span>
       <p className="font-heading text-[15px] leading-[1.7] text-[var(--text-secondary)]">{desc}</p>
-    </div>
+      <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--burnt-orange)] opacity-0 group-hover:opacity-100 transition-opacity">
+        READ MORE →
+      </span>
+    </Link>
   );
 }

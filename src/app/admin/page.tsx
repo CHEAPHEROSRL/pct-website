@@ -1194,6 +1194,41 @@ export default function AdminPage() {
               </div>
             </div>
 
+            {/* Prevention Topics */}
+            <div className="flex flex-col gap-[8px]">
+              <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-muted)]">
+                PREVENTION TOPICS (OPTIONAL)
+              </span>
+              <span className="font-label text-[11px] text-[var(--text-muted)]">
+                Tag posts with prevention topics — these link from The Cause page cards
+              </span>
+              <div className="flex flex-wrap gap-[8px]">
+                {[
+                  { tag: "stay-active", label: "Stay Active" },
+                  { tag: "eat-well", label: "Eat Well" },
+                  { tag: "sun-safety", label: "Sun Safety" },
+                  { tag: "get-screened", label: "Get Screened" },
+                  { tag: "quit-smoking", label: "Quit Smoking" },
+                  { tag: "know-your-body", label: "Know Your Body" },
+                ].map(({ tag, label }) => {
+                  const active = (editingPost.tags || []).includes(tag);
+                  return (
+                    <button
+                      key={tag}
+                      onClick={() => toggleTag(tag)}
+                      className={`px-[14px] py-[6px] font-label font-bold text-[10px] tracking-[1px] cursor-pointer transition-colors ${
+                        active
+                          ? "bg-[var(--burnt-orange-light)] text-[var(--burnt-orange)]"
+                          : "border border-[var(--border-subtle)] text-[var(--text-muted)] hover:border-[var(--burnt-orange)]"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
             {/* Delete button (existing posts only) */}
             {!isNew && (
               <button

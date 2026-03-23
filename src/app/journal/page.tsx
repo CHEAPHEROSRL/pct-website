@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Search, ArrowRight, ChevronRight, ChevronLeft, Instagram, ExternalLink, Play, Images } from "lucide-react";
@@ -16,6 +17,15 @@ import type { YoutubeVideo } from "@/lib/youtube-feed";
 const filterOptions = ["ALL", "BLOG", "VLOG", "GIF", "INTERVIEWS", "PHOTOS"] as const;
 type Filter = (typeof filterOptions)[number];
 
+const TOPIC_META: Record<string, { label: string; description: string }> = {
+  "stay-active": { label: "Stay Active", description: "Posts about physical activity, exercise, and how movement reduces cancer risk." },
+  "eat-well": { label: "Eat Well", description: "Posts about nutrition, healthy eating, and diet choices that lower cancer risk." },
+  "sun-safety": { label: "Sun Safety", description: "Posts about UV protection, sunscreen, and skin cancer prevention." },
+  "get-screened": { label: "Get Screened", description: "Posts about cancer screening, early detection, and when to talk to your doctor." },
+  "quit-smoking": { label: "Quit Smoking", description: "Posts about tobacco, quitting smoking, and reducing your cancer risk." },
+  "know-your-body": { label: "Know Your Body", description: "Posts about body awareness, warning signs, and when to seek medical attention." },
+};
+
 interface JournalEntry {
   slug: string;
   img: string;
@@ -24,6 +34,7 @@ interface JournalEntry {
   title: string;
   excerpt: string;
   tag: "BLOG" | "VLOG" | "GIF" | "INTERVIEWS" | "PHOTOS";
+  topics?: string[];
   videoUrl?: string;
   gifUrl?: string;
 }
@@ -44,7 +55,8 @@ function mapPostToEntry(post: JournalPostPublic): JournalEntry {
       .toUpperCase(),
     title: post.title,
     excerpt: post.excerpt,
-    tag: (post.tags[0] as "BLOG" | "VLOG" | "GIF" | "INTERVIEWS" | "PHOTOS") || "BLOG",
+    tag: (post.tags.find((t) => ["BLOG", "VLOG", "GIF", "INTERVIEWS", "PHOTOS"].includes(t)) as "BLOG" | "VLOG" | "GIF" | "INTERVIEWS" | "PHOTOS") || "BLOG",
+    topics: post.tags.filter((t) => t in TOPIC_META),
     videoUrl: post.youtubeUrl || undefined,
   };
 }
@@ -67,6 +79,18 @@ const INSTAGRAM_HANDLE = process.env.NEXT_PUBLIC_INSTAGRAM_HANDLE || "@yeschapte
 const INSTAGRAM_URL = `https://www.instagram.com/${INSTAGRAM_HANDLE.replace("@", "")}`;
 
 export default function JournalPage() {
+  return (
+    <Suspense>
+      <JournalPageInner />
+    </Suspense>
+  );
+}
+
+function JournalPageInner() {
+  const searchParams = useSearchParams();
+  const topicParam = searchParams.get("topic");
+  const activeTopic = topicParam && TOPIC_META[topicParam] ? topicParam : null;
+
   const [activeFilter, setActiveFilter] = useState<Filter>("ALL");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -94,6 +118,9 @@ export default function JournalPage() {
 
   const filtered = useMemo(() => {
     let entries = allEntries;
+    if (activeTopic) {
+      entries = entries.filter((e) => e.topics?.includes(activeTopic));
+    }
     if (activeFilter !== "ALL") {
       entries = entries.filter((e) => e.tag === activeFilter);
     }
@@ -107,7 +134,7 @@ export default function JournalPage() {
       );
     }
     return entries;
-  }, [activeFilter, search, allEntries]);
+  }, [activeFilter, search, allEntries, activeTopic]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
   const currentPage = Math.min(page, totalPages);
@@ -143,6 +170,26 @@ export default function JournalPage() {
           </p>
         </div>
       </section>
+
+      {/* Topic Banner */}
+      {activeTopic && TOPIC_META[activeTopic] && (
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 px-6 md:px-12 lg:px-[120px] py-[16px] bg-[var(--forest-green-light)] border-b border-[var(--forest-green)] w-full">
+          <div className="flex flex-col gap-[4px]">
+            <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--forest-green)]">
+              TOPIC: {TOPIC_META[activeTopic].label.toUpperCase()}
+            </span>
+            <span className="font-heading text-[14px] text-[var(--text-secondary)]">
+              {TOPIC_META[activeTopic].description}
+            </span>
+          </div>
+          <Link
+            href="/journal"
+            className="flex items-center gap-[6px] px-[16px] py-[8px] border border-[var(--forest-green)] hover:bg-[var(--forest-green)] hover:text-white transition-colors shrink-0"
+          >
+            <span className="font-label font-bold text-[11px] tracking-[1px]">CLEAR FILTER</span>
+          </Link>
+        </div>
+      )}
 
       {/* Filter Bar */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 md:gap-0 px-6 md:px-12 lg:px-[120px] py-[16px] bg-[var(--bg-white)] border-t border-b border-[var(--border-subtle)] w-full">
@@ -209,20 +256,39 @@ export default function JournalPage() {
       {/* Blog Grid */}
       <section className="flex flex-col gap-[24px] px-6 md:px-12 lg:px-[120px] pt-[32px] md:pt-[48px] pb-[48px] md:pb-[80px] bg-[var(--bg-warm)] w-full">
         <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--text-muted)]">
-          {activeFilter === "ALL" ? "ALL ENTRIES" : activeFilter}
+          {activeTopic && TOPIC_META[activeTopic] ? TOPIC_META[activeTopic].label.toUpperCase() : activeFilter === "ALL" ? "ALL ENTRIES" : activeFilter}
           {search.trim() ? ` \u2014 "${search}"` : ""}
           {` (${filtered.length})`}
         </span>
 
         {paged.length === 0 ? (
-          <div className="flex flex-col items-center gap-[12px] py-[48px]">
-            <span className="font-heading text-[18px] text-[var(--text-muted)]">No entries found</span>
-            <button
-              onClick={() => { setActiveFilter("ALL"); setSearch(""); setPage(1); }}
-              className="font-label font-bold text-[12px] tracking-[2px] text-[var(--burnt-orange)] cursor-pointer"
-            >
-              CLEAR FILTERS
-            </button>
+          <div className="flex flex-col items-center gap-[16px] py-[48px] text-center">
+            {activeTopic && TOPIC_META[activeTopic] ? (
+              <>
+                <span className="font-heading font-semibold text-[20px] text-[var(--text-primary)]">
+                  No posts on &ldquo;{TOPIC_META[activeTopic].label}&rdquo; yet
+                </span>
+                <p className="font-heading text-[15px] leading-[1.6] text-[var(--text-secondary)] max-w-[480px]">
+                  Paul hasn&apos;t published any journal entries on this topic yet. As the hike progresses, trail stories related to {TOPIC_META[activeTopic].label.toLowerCase()} will appear here.
+                </p>
+                <Link
+                  href="/the-cause"
+                  className="font-label font-bold text-[12px] tracking-[2px] text-[var(--burnt-orange)] hover:underline"
+                >
+                  ← BACK TO THE CAUSE
+                </Link>
+              </>
+            ) : (
+              <>
+                <span className="font-heading text-[18px] text-[var(--text-muted)]">No entries found</span>
+                <button
+                  onClick={() => { setActiveFilter("ALL"); setSearch(""); setPage(1); }}
+                  className="font-label font-bold text-[12px] tracking-[2px] text-[var(--burnt-orange)] cursor-pointer"
+                >
+                  CLEAR FILTERS
+                </button>
+              </>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[24px] w-full">
