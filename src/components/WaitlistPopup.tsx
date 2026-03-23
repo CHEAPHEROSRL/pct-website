@@ -92,13 +92,13 @@ export default function WaitlistPopup() {
           <div className="flex flex-col gap-5">
             <div className="flex flex-col gap-3">
               <span className="font-label font-bold text-[11px] tracking-[3px] text-[var(--burnt-orange)]">
-                COMING SOON
+                PREPARE FOR A JOURNEY
               </span>
               <h3 className="font-heading font-semibold text-[22px] md:text-[26px] leading-[1.2] text-[var(--text-primary)]">
-                The site isn&apos;t quite ready yet
+                This is more than a launch.{"\n"}It&apos;s a new chapter.
               </h3>
               <p className="font-heading text-[15px] leading-[1.7] text-[var(--text-secondary)]">
-                I&apos;m still putting the finishing touches on everything. Drop your email below and I&apos;ll send you a heads-up the moment it&apos;s live — no spam, just one email.
+                Be the first to know.
               </p>
             </div>
 
@@ -108,7 +108,7 @@ export default function WaitlistPopup() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="your@email.com"
+                placeholder="Enter your email"
                 className="w-full border border-[var(--border-subtle)] bg-[var(--bg-card)] px-4 py-3 font-heading text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--burnt-orange)] transition-colors"
               />
               {error && (
@@ -120,7 +120,7 @@ export default function WaitlistPopup() {
                 className="w-full bg-[var(--burnt-orange)] px-6 py-3 hover:opacity-90 transition-opacity cursor-pointer disabled:opacity-50"
               >
                 <span className="font-label font-bold text-[13px] tracking-[2px] text-[var(--text-primary)]">
-                  {submitting ? "SIGNING UP..." : "NOTIFY ME"}
+                  {submitting ? "JOINING..." : "I'M IN!"}
                 </span>
               </button>
             </form>
