@@ -13,7 +13,6 @@ import {
   Smartphone,
   Shield,
   Sun,
-  ChevronDown,
   ArrowRight,
 } from "lucide-react";
 
@@ -170,41 +169,41 @@ export default function Home() {
           <div className="flex flex-col items-center gap-[16px] w-full">
             <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">PLEDGER WALL</span>
             <h2 className="font-heading font-semibold text-[28px] md:text-[34px] lg:text-[40px] tracking-[-0.5px] text-[var(--text-primary)] text-center">
-              People Who Make This Possible
+              Help Make This Possible
             </h2>
             <p className="font-heading text-[18px] leading-[1.6] text-[var(--text-secondary)] text-center">
-              Every pledge brings us closer to the goal. Thank you to everyone walking with Paul.
+              These spots are waiting for people like you. Pledge per mile and see your name here.
             </p>
           </div>
         </ScrollReveal>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[16px] w-full">
           <ScrollReveal animation="fade-up" className="flex flex-col gap-[12px]">
-            <DonorCard name="Sarah Mitchell" amount="$0.25/mi" color="#3D7A5A" />
-            <DonorCard name="James O'Connor" amount="$1.00/mi" color="#C45C26" />
-            <DonorCard name="Linda Chen" amount="$0.10/mi" color="#8B7355" />
+            <PlaceholderCard label="This could be you" />
+            <PlaceholderCard label="Your name here" />
+            <PlaceholderCard label="This could be you" />
           </ScrollReveal>
           <ScrollReveal animation="fade-up" delay={100} className="flex flex-col gap-[12px]">
-            <DonorCard name="Robert Williams" amount="$2.00/mi" color="#6B8E7B" />
-            <DonorCard name="Maria Rodriguez" amount="$0.05/mi" color="#7B6B8E" />
-            <DonorCard name="Tom & Lisa Park" amount="$0.50/mi" color="#3D7A5A" />
+            <PlaceholderCard label="Your name here" />
+            <PlaceholderCard label="This could be you" />
+            <PlaceholderCard label="Your name here" />
           </ScrollReveal>
           <ScrollReveal animation="fade-up" delay={200} className="flex flex-col gap-[12px]">
-            <DonorCard name="David Thompson" amount="$0.10/mi" color="#A68B5B" />
-            <DonorCard name="Anonymous" amount="$5.00/mi" color="#5B8EA6" />
-            <DonorCard name="Emily Watson" amount="$0.01/mi" color="#C45C26" />
+            <PlaceholderCard label="This could be you" />
+            <PlaceholderCard label="Your name here" />
+            <PlaceholderCard label="This could be you" />
           </ScrollReveal>
           <ScrollReveal animation="fade-up" delay={300} className="flex flex-col gap-[12px]">
-            <DonorCard name="Rachel Kim" amount="$0.25/mi" color="#6B7B5B" />
-            <DonorCard name="Michael Foster" amount="$1.00/mi" color="#8E6B7B" />
-            <DonorCard name="Dr. Amanda Brooks" amount="$0.50/mi" color="#5B6B8E" />
+            <PlaceholderCard label="Your name here" />
+            <PlaceholderCard label="This could be you" />
+            <PlaceholderCard label="Your name here" />
           </ScrollReveal>
         </div>
         <Link
-          href="/pledgers"
+          href="/pledge"
           className="flex items-center justify-center gap-[8px] border border-[var(--border-subtle)] px-[32px] py-[14px]"
         >
-          <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-secondary)]">VIEW ALL PLEDGERS</span>
-          <ChevronDown className="w-[14px] h-[14px] text-[var(--text-secondary)]" />
+          <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-secondary)]">PLEDGE NOW</span>
+          <Heart className="w-[14px] h-[14px] text-[var(--text-secondary)]" />
         </Link>
       </section>
 
@@ -377,13 +376,13 @@ export default function Home() {
   );
 }
 
-function DonorCard({ name, amount, color }: { name: string; amount: string; color: string }) {
+function PlaceholderCard({ label }: { label: string }) {
   return (
-    <div className="flex items-center gap-[12px] bg-[var(--bg-card)] border border-[var(--border-subtle)] p-[16px]">
-      <div className="w-[36px] h-[36px] rounded-full shrink-0" style={{ backgroundColor: color }} />
+    <div className="flex items-center gap-[12px] bg-[var(--bg-card)] border border-dashed border-[var(--border-subtle)] p-[16px]">
+      <div className="w-[36px] h-[36px] rounded-full shrink-0 bg-[var(--bg-warm)] border border-dashed border-[var(--border-subtle)]" />
       <div className="flex flex-col gap-[2px]">
-        <span className="font-heading font-semibold text-[14px] text-[var(--text-primary)]">{name}</span>
-        <span className="font-label font-semibold text-[11px] tracking-[1px] text-[var(--forest-green)]">{amount}</span>
+        <span className="font-heading font-medium italic text-[14px] text-[var(--text-muted)]">{label}</span>
+        <span className="font-label font-semibold text-[11px] tracking-[1px] text-[var(--text-muted)]">$/mi</span>
       </div>
     </div>
   );
