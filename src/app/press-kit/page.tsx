@@ -182,8 +182,7 @@ export default function PressKitPage() {
             The Man Behind the Walk
           </h2>
           <p className="font-heading text-[16px] leading-[1.8] text-[var(--text-secondary)]">
-            Paul Barry lost both of his parents to cancer within two years of each other. His father
-            passed in California; his mother in Sydney. In their honor — and for every family walking
+            In the past few years, Paul lost both of his parents to cancer. In their honor — and for every family walking
             the same painful road — Paul is thru-hiking the Pacific Crest Trail in 2026.
           </p>
           <p className="font-heading text-[16px] leading-[1.8] text-[var(--text-secondary)]">
