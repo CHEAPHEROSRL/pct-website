@@ -61,13 +61,13 @@ export default function TheCausePage() {
             <h2 className="font-heading font-semibold text-[28px] md:text-[34px] lg:text-[42px] tracking-[-0.5px] text-[var(--text-primary)]">From Grief to Purpose</h2>
             <div className="w-[60px] h-[3px] bg-[var(--burnt-orange)]" />
             <p className="font-heading text-[17px] leading-[1.8] text-[var(--text-secondary)]">
-              In 2023, I lost my mother to pancreatic cancer. Just fourteen months later, my father was diagnosed with lung cancer. He passed away in early 2025. In the span of two years, cancer took both of my parents from me.
+              Several years ago, we lost our mum to leukemia. Late last year, our dad passed after a long, hard-fought battle with cancer. He had faced multiple cancers over the years, overcoming each one with incredible strength — until, eventually, his body couldn&apos;t keep fighting.
             </p>
             <p className="font-heading text-[17px] leading-[1.8] text-[var(--text-secondary)]">
-              The grief was overwhelming. But somewhere in that darkness, I found a spark of purpose. I realized that while I couldn&apos;t change what happened to my parents, I could help others — by raising awareness about cancer prevention and the lifestyle choices that can reduce risk.
+              In just a few years, cancer took both of my parents. I can&apos;t change that. But I can do something because of it.
             </p>
             <p className="font-heading text-[17px] leading-[1.8] text-[var(--text-secondary)]">
-              So in March 2026, I&apos;m lacing up my boots and walking the entire Pacific Crest Trail — 2,650 miles from the Mexican border to Canada — to honor my parents and raise awareness and pledges for cancer research and prevention programs.
+              So I&apos;m walking 2,650 miles along the Pacific Crest Trail — from Mexico to Canada — to honor them and help raise awareness and support for cancer prevention and research.
             </p>
           </div>
         </ScrollReveal>
@@ -80,7 +80,7 @@ export default function TheCausePage() {
         </ScrollReveal>
         <ScrollReveal animation="fade-in" delay={200}>
           <p className="font-heading italic text-[20px] md:text-[24px] lg:text-[28px] leading-[1.7] text-[#FFFFFFCC] text-center w-full lg:w-[800px]">
-            Every mile I walk is a mile closer to a world where fewer families have to say goodbye too soon. This trail is my protest against cancer — one step at a time.
+            Every mile I walk is a mile closer to a world where fewer families have to say goodbye too soon. Every little helps increase the amount of time we get to spend with our loved ones.
           </p>
         </ScrollReveal>
         <ScrollReveal animation="fade-in" delay={400}>
