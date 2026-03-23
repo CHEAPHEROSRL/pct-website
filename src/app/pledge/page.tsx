@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
-import { Heart, Mail, ArrowRight, HeartHandshake } from "lucide-react";
+import { Heart, Mail, ArrowRight, HeartHandshake, Building2 } from "lucide-react";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -38,6 +38,7 @@ export default function PledgePage() {
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [honeypot, setHoneypot] = useState("");
   const [avatar, setAvatar] = useState<string>("💚");
+  const [mailingList, setMailingList] = useState(false);
 
   // Silent IP geolocation on mount
   const geoRef = useRef<{ city?: string; country?: string; lat?: number; lng?: number }>({});
@@ -87,6 +88,7 @@ export default function PledgePage() {
           anonymous: !name,
           message: message || undefined,
           avatar,
+          emailPreference: mailingList ? "all" : "finish",
           turnstileToken: turnstileToken || "",
           website: honeypot, // honeypot field
           ...geoRef.current,
@@ -341,6 +343,19 @@ export default function PledgePage() {
             </span>
           </div>
 
+          {/* Mailing List Opt-in */}
+          <label className="flex items-start gap-[12px] cursor-pointer">
+            <input
+              type="checkbox"
+              checked={mailingList}
+              onChange={(e) => setMailingList(e.target.checked)}
+              className="mt-[3px] w-[18px] h-[18px] accent-[var(--forest-green)] cursor-pointer shrink-0"
+            />
+            <span className="font-heading text-[14px] leading-[1.6] text-[var(--text-secondary)]">
+              Keep me updated on Paul&apos;s journey — trail updates, milestones, and progress along the way. No spam, unsubscribe anytime.
+            </span>
+          </label>
+
           {/* Submit */}
           {submitError && (
             <div className="flex items-center gap-[8px] bg-red-50 border border-red-200 p-[12px]">
@@ -378,6 +393,30 @@ export default function PledgePage() {
                 We&apos;ve emailed <strong>{email}</strong> a magic sign-in link.
                 Click it to open your personal pledge dashboard — no password needed.
                 Your pledge: {formatCurrency(amount)}/mile ({formatCurrency(totalPledge)} total).
+              </p>
+            </div>
+          ) : totalPledge > 5000 ? (
+            <div className="flex flex-col gap-[16px] bg-[var(--burnt-orange-light)] border border-[var(--burnt-orange)] p-[24px]">
+              <div className="flex items-center gap-[10px]">
+                <Building2 className="w-[24px] h-[24px] text-[var(--burnt-orange)]" />
+                <span className="font-heading font-semibold text-[18px] text-[var(--text-primary)]">
+                  That&apos;s an incredible commitment!
+                </span>
+              </div>
+              <p className="font-heading text-[14px] leading-[1.7] text-[var(--text-secondary)]">
+                For pledges over $5,000, we&apos;d love to connect with you personally. Are you a business? Sponsors at this level can have their logo displayed on a section of the Pacific Crest Trail map.
+              </p>
+              <a
+                href="mailto:paul@yeschapter.com?subject=Trail%20Section%20Sponsorship%20Inquiry&body=Hi%20Paul%2C%0A%0AI%27m%20interested%20in%20sponsoring%20a%20section%20of%20the%20PCT.%0A%0AMy%20pledge%20amount%3A%20%24____%0ACompany%2FName%3A%20%0A%0AThanks!"
+                className="flex items-center justify-center gap-[10px] h-[56px] w-full bg-[var(--burnt-orange)] hover:opacity-90 transition-opacity cursor-pointer"
+              >
+                <Building2 className="w-[20px] h-[20px] text-[var(--text-primary)]" />
+                <span className="font-label font-bold text-[15px] tracking-[2px] text-[var(--text-primary)]">
+                  GET IN TOUCH
+                </span>
+              </a>
+              <p className="font-heading text-[12px] text-[var(--text-muted)] text-center">
+                Or lower the amount below $5,000 to pledge directly.
               </p>
             </div>
           ) : (

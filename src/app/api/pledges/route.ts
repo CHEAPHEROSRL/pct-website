@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { email: rawEmail, name: rawName, amount, interval, anonymous, message: rawMessage, city, country, lat, lng, avatar, referredBy, turnstileToken, website } = body;
+    const { email: rawEmail, name: rawName, amount, interval, anonymous, message: rawMessage, city, country, lat, lng, avatar, referredBy, turnstileToken, website, emailPreference: rawEmailPref } = body;
 
     // Honeypot check — "website" is a hidden field that should be empty
     if (isHoneypotFilled(website)) {
@@ -99,7 +99,7 @@ export async function POST(req: NextRequest) {
       anonymous: !!anonymous || !rawName,
       boosts: [],
       unsubscribeToken,
-      emailPreference: "all",
+      emailPreference: (rawEmailPref === "all" || rawEmailPref === "milestones" || rawEmailPref === "finish") ? rawEmailPref : "finish",
       message: message || undefined,
       city: typeof city === "string" ? sanitizeText(city, 100) : undefined,
       country: typeof country === "string" ? sanitizeText(country, 100) : undefined,
