@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
-import { getVideoTranscript } from "@/lib/youtube";
+import { getVideoTranscript, extractVideoId } from "@/lib/youtube";
 import {
   generateBlogPost,
   generateBlogPostPair,
@@ -58,21 +58,31 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  if (!process.env.ANTHROPIC_API_KEY) {
-    return NextResponse.json(
-      { error: "ANTHROPIC_API_KEY not configured" },
-      { status: 503 }
-    );
-  }
-
   const body = await request.json();
-  const { videoUrl, dayNumber: dayNumOverride, split, publish } = body;
+  const { videoUrl, dayNumber: dayNumOverride, split, publish, force } = body;
 
   if (!videoUrl) {
     return NextResponse.json(
       { error: "Missing videoUrl" },
       { status: 400 }
     );
+  }
+
+  // Dedup check — skip if force=true
+  if (!force) {
+    const videoId = extractVideoId(videoUrl);
+    if (videoId) {
+      const processed = await redis.get(`yt:processed:${videoId}`);
+      if (processed === "done" || processed === "done-split") {
+        return NextResponse.json(
+          {
+            error: "This video has already been processed. Use force=true to regenerate.",
+            alreadyProcessed: true,
+          },
+          { status: 409 }
+        );
+      }
+    }
   }
 
   // Extract transcript
@@ -152,12 +162,10 @@ export async function POST(request: NextRequest) {
     await redis.set(
       `instagram:caption:${post1.id}`,
       pair.post1.instagramCaption,
-      { ex: 2592000 }
     );
     await redis.set(
       `instagram:caption:${post2.id}`,
       pair.post2.instagramCaption,
-      { ex: 2592000 }
     );
 
     createdPosts.push(post1, post2);
@@ -193,7 +201,6 @@ export async function POST(request: NextRequest) {
     await redis.set(
       `instagram:caption:${post.id}`,
       generated.instagramCaption,
-      { ex: 2592000 }
     );
 
     createdPosts.push(post);

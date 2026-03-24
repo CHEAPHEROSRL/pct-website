@@ -23,6 +23,14 @@
     {
       "path": "/api/emails/welcome",
       "schedule": "0 8 * * *"
+    },
+    {
+      "path": "/api/automation/youtube-renew",
+      "schedule": "0 9 * * *"
+    },
+    {
+      "path": "/api/automation/youtube-retry",
+      "schedule": "30 */2 * * *"
     }
   ]
 }

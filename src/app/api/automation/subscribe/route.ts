@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { Redis } from "@upstash/redis";
 import { subscribeToChannel } from "@/lib/youtube";
 
 function checkAuth(request: NextRequest): boolean {
@@ -42,6 +43,18 @@ export async function POST(request: NextRequest) {
   const success = await subscribeToChannel(channelId, callbackUrl);
 
   if (success) {
+    // Store subscription expiry in Redis for auto-renewal cron
+    try {
+      const url = process.env.KV_REST_API_URL;
+      const token = process.env.KV_REST_API_TOKEN;
+      if (url && token) {
+        const redis = new Redis({ url, token });
+        await redis.set("youtube:subscription:expiry", Date.now() + 10 * 86400000);
+      }
+    } catch {
+      // Non-critical — renewal cron will re-subscribe if expiry is missing
+    }
+
     return NextResponse.json({
       success: true,
       channelId,

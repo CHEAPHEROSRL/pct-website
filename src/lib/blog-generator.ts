@@ -115,27 +115,39 @@ async function generateCompletion(
   if (!config) return null;
 
   if (config.provider === "anthropic") {
-    const client = new Anthropic({ apiKey: config.apiKey });
-    const response = await client.messages.create({
-      model: config.model,
-      max_tokens: maxTokens,
-      system: SYSTEM_PROMPT,
-      messages: [{ role: "user", content: userPrompt }],
-    });
-    return response.content[0].type === "text" ? response.content[0].text : null;
+    try {
+      const client = new Anthropic({ apiKey: config.apiKey });
+      const response = await client.messages.create({
+        model: config.model,
+        max_tokens: maxTokens,
+        system: SYSTEM_PROMPT,
+        messages: [{ role: "user", content: userPrompt }],
+      });
+      return response.content[0].type === "text" ? response.content[0].text : null;
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : String(error);
+      console.error("AI generation failed:", config.provider, msg);
+      return null;
+    }
   }
 
   // OpenAI
-  const client = new OpenAI({ apiKey: config.apiKey });
-  const response = await client.chat.completions.create({
-    model: config.model,
-    max_tokens: maxTokens,
-    messages: [
-      { role: "system", content: SYSTEM_PROMPT },
-      { role: "user", content: userPrompt },
-    ],
-  });
-  return response.choices[0]?.message?.content ?? null;
+  try {
+    const client = new OpenAI({ apiKey: config.apiKey });
+    const response = await client.chat.completions.create({
+      model: config.model,
+      max_tokens: maxTokens,
+      messages: [
+        { role: "system", content: SYSTEM_PROMPT },
+        { role: "user", content: userPrompt },
+      ],
+    });
+    return response.choices[0]?.message?.content ?? null;
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error("AI generation failed:", config.provider, msg);
+    return null;
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -178,11 +190,19 @@ Respond in this exact JSON format:
 
   try {
     const text = await generateCompletion(prompt, 4000);
-    if (!text) return null;
+    if (!text) {
+      console.error("generateBlogPost: AI completion returned null for video:", video.title);
+      return null;
+    }
     const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) return null;
+    if (!jsonMatch) {
+      console.error("generateBlogPost: No JSON found in AI response for video:", video.title);
+      return null;
+    }
     return JSON.parse(jsonMatch[0]) as GeneratedPost;
-  } catch {
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error("generateBlogPost: JSON parse failed for video:", video.title, msg);
     return null;
   }
 }
@@ -234,11 +254,19 @@ Respond in this exact JSON format:
 
   try {
     const text = await generateCompletion(prompt, 8000);
-    if (!text) return null;
+    if (!text) {
+      console.error("generateBlogPostPair: AI completion returned null for video:", video.title);
+      return null;
+    }
     const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) return null;
+    if (!jsonMatch) {
+      console.error("generateBlogPostPair: No JSON found in AI response for video:", video.title);
+      return null;
+    }
     return JSON.parse(jsonMatch[0]) as GeneratedPostPair;
-  } catch {
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error("generateBlogPostPair: JSON parse failed for video:", video.title, msg);
     return null;
   }
 }

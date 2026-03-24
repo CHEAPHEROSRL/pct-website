@@ -86,7 +86,7 @@ export async function getVideoTranscript(
     videoId,
     title,
     transcript,
-    thumbnailUrl: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+    thumbnailUrl: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
     videoUrl: `https://www.youtube.com/watch?v=${videoId}`,
   };
 }

@@ -101,6 +101,18 @@ export async function POST(request: NextRequest) {
       // Store that we tried but no transcript was available
       await redis.set(processedKey, "no-transcript", { ex: 86400 });
 
+      // Add to pending transcripts list for retry cron
+      await redis.lpush(
+        "yt:pending-transcripts",
+        JSON.stringify({
+          videoId: videoInfo.videoId,
+          title: videoInfo.title,
+          channelId: videoInfo.channelId,
+          retryCount: 0,
+          addedAt: Date.now(),
+        })
+      );
+
       // Save a log entry so admin knows
       await redis.lpush(
         "automation:log",
@@ -109,10 +121,11 @@ export async function POST(request: NextRequest) {
           videoId: videoInfo.videoId,
           title: videoInfo.title,
           timestamp: Date.now(),
+          message: "Queued for transcript retry",
         })
       );
 
-      return new NextResponse("No transcript available", { status: 200 });
+      return new NextResponse("No transcript available — queued for retry", { status: 200 });
     }
 
     // Calculate current day number
@@ -124,7 +137,7 @@ export async function POST(request: NextRequest) {
       : 1;
 
     const videoUrl = `https://www.youtube.com/watch?v=${videoInfo.videoId}`;
-    const thumbnailUrl = `https://img.youtube.com/vi/${videoInfo.videoId}/maxresdefault.jpg`;
+    const thumbnailUrl = `https://img.youtube.com/vi/${videoInfo.videoId}/hqdefault.jpg`;
 
     const videoTranscript = {
       videoId: videoInfo.videoId,
@@ -189,12 +202,10 @@ export async function POST(request: NextRequest) {
       await redis.set(
         `instagram:caption:${post1.id}`,
         pair.post1.instagramCaption,
-        { ex: 2592000 } // 30 days
       );
       await redis.set(
         `instagram:caption:${post2.id}`,
-        pair.post2.instagramCaption,
-        { ex: 2592000 }
+        pair.post2.instagramCaption
       );
 
       // Log success
@@ -239,8 +250,7 @@ export async function POST(request: NextRequest) {
       // Store Instagram caption
       await redis.set(
         `instagram:caption:${post.id}`,
-        generated.instagramCaption,
-        { ex: 2592000 }
+        generated.instagramCaption
       );
 
       // Log success

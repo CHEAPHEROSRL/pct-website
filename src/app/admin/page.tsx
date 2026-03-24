@@ -59,10 +59,12 @@ export default function AdminPage() {
   const [videoDayNumber, setVideoDayNumber] = useState<number | undefined>();
   const [videoSplit, setVideoSplit] = useState(false);
   const [videoGenerating, setVideoGenerating] = useState(false);
+  const [videoForce, setVideoForce] = useState(false);
   const [videoResult, setVideoResult] = useState<{
     success: boolean;
     videoTitle?: string;
     postsCreated?: number;
+    alreadyProcessed?: boolean;
     posts?: { id: string; title: string; slug: string; tags: string[]; published: boolean }[];
     error?: string;
   } | null>(null);
@@ -261,6 +263,7 @@ export default function AdminPage() {
           dayNumber: videoDayNumber || undefined,
           split: videoSplit,
           publish: false,
+          force: videoForce,
         }),
       });
       const data = await res.json();
@@ -269,9 +272,10 @@ export default function AdminPage() {
         setVideoUrl("");
         setVideoDayNumber(undefined);
         setVideoSplit(false);
+        setVideoForce(false);
         await fetchPosts();
       } else {
-        setVideoResult({ success: false, error: data.error || "Generation failed" });
+        setVideoResult({ success: false, error: data.error || "Generation failed", alreadyProcessed: data.alreadyProcessed });
       }
     } catch {
       setVideoResult({ success: false, error: "Network error. Try again." });
@@ -844,11 +848,25 @@ export default function AdminPage() {
                         )}
                       </>
                     ) : (
-                      <div className="flex items-center gap-[8px]">
-                        <XCircle className="w-[16px] h-[16px] text-red-500" />
-                        <span className="font-heading text-[13px] text-red-600">
-                          {videoResult.error}
-                        </span>
+                      <div className="flex flex-col gap-[8px]">
+                        <div className="flex items-center gap-[8px]">
+                          <XCircle className="w-[16px] h-[16px] text-red-500" />
+                          <span className="font-heading text-[13px] text-red-600">
+                            {videoResult.error}
+                          </span>
+                        </div>
+                        {videoResult.alreadyProcessed && (
+                          <button
+                            onClick={() => {
+                              setVideoForce(true);
+                              setVideoResult(null);
+                              setTimeout(() => handleGenerateFromVideo(), 100);
+                            }}
+                            className="self-start font-label font-bold text-[11px] tracking-[1px] px-[12px] py-[6px] bg-[var(--burnt-orange)] text-white cursor-pointer hover:opacity-90"
+                          >
+                            GENERATE ANYWAY
+                          </button>
+                        )}
                       </div>
                     )}
                   </div>
