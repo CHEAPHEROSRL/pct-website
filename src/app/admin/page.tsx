@@ -23,6 +23,8 @@ import {
   Instagram,
   Mail,
   Settings,
+  MapPin,
+  Navigation,
 } from "lucide-react";
 import type { JournalPost, ChallengePublic } from "@/lib/types";
 
@@ -1762,6 +1764,189 @@ export default function AdminPage() {
             <span className="font-heading text-[14px] text-[var(--text-muted)]">Loading settings...</span>
           ) : (
             <>
+              {/* Trail Location Tracker */}
+              <div className="flex flex-col gap-[20px] p-[28px] bg-[var(--bg-white)] border-2 border-[var(--forest-green)]">
+                <div className="flex items-center gap-[10px]">
+                  <Navigation className="w-[18px] h-[18px] text-[var(--forest-green)]" />
+                  <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-primary)]">
+                    TRAIL LOCATION TRACKER
+                  </span>
+                </div>
+
+                {/* How it works explanation */}
+                <div className="flex flex-col gap-[10px] p-[16px] bg-[var(--forest-green-light)] border border-[var(--forest-green)]/20">
+                  <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--forest-green)]">HOW THIS WORKS</span>
+                  <p className="font-heading text-[13px] leading-[1.7] text-[var(--text-secondary)]">
+                    This controls where Paul&apos;s marker appears on the trail map and homepage. Instead of requiring real GPS tracking (which drains Paul&apos;s phone battery and needs cell signal), you simply tell the system where Paul is and how fast he&apos;s moving.
+                  </p>
+                  <ol className="flex flex-col gap-[4px] font-heading text-[13px] leading-[1.6] text-[var(--text-secondary)] list-decimal pl-[20px]">
+                    <li><strong>Set the mile marker</strong> — where Paul is right now on the trail (ask him or estimate)</li>
+                    <li><strong>Set the daily pace</strong> — how many miles per day he&apos;s averaging</li>
+                    <li><strong>Click &ldquo;Update Position&rdquo;</strong> — the map immediately shows his location</li>
+                    <li><strong>The map moves automatically</strong> — the system advances the marker along the real PCT route at the pace you set, so visitors see smooth &ldquo;live&rdquo; progress</li>
+                    <li><strong>Correct every few days</strong> — when Paul checks in, update the mile to fix any drift</li>
+                  </ol>
+                </div>
+
+                <div className="flex flex-col gap-[6px]">
+                  <label className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                    TRACKING MODE
+                  </label>
+                  <select
+                    value={settings.trackingMode || "simulated"}
+                    onChange={(e) => setSettings({ ...settings, trackingMode: e.target.value })}
+                    className="w-full h-[48px] px-[16px] border border-[var(--border-subtle)] font-heading text-[15px] text-[var(--text-primary)] outline-none bg-[var(--bg-card)]"
+                  >
+                    <option value="simulated">Simulated (recommended — set mile + pace manually)</option>
+                    <option value="gps">Live GPS (requires phone app running constantly)</option>
+                  </select>
+                  <span className="font-heading text-[12px] text-[var(--text-muted)]">
+                    Simulated is recommended — it looks identical to visitors but uses zero phone battery. Live GPS is only needed if Paul has reliable cell signal and battery.
+                  </span>
+                </div>
+
+                {(settings.trackingMode || "simulated") === "simulated" && (
+                  <>
+                    <div className="grid grid-cols-2 gap-[16px]">
+                      <div className="flex flex-col gap-[6px]">
+                        <label className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                          CURRENT MILE
+                        </label>
+                        <input
+                          type="number"
+                          min="0"
+                          max="2650"
+                          step="0.1"
+                          value={settings.currentMile || ""}
+                          onChange={(e) => setSettings({ ...settings, currentMile: e.target.value })}
+                          placeholder="0"
+                          className="w-full h-[48px] px-[16px] border border-[var(--border-subtle)] font-heading text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none bg-[var(--bg-card)]"
+                        />
+                        <span className="font-heading text-[12px] text-[var(--text-muted)]">
+                          Where Paul is right now. Mile 0 = Campo (Mexico border), Mile 2,650 = Manning Park (Canada). Ask Paul for his approximate mile or check his last message.
+                        </span>
+                      </div>
+                      <div className="flex flex-col gap-[6px]">
+                        <label className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                          DAILY PACE (mi/day)
+                        </label>
+                        <input
+                          type="number"
+                          min="0"
+                          max="40"
+                          step="0.5"
+                          value={settings.dailyPace || ""}
+                          onChange={(e) => setSettings({ ...settings, dailyPace: e.target.value })}
+                          placeholder="18"
+                          className="w-full h-[48px] px-[16px] border border-[var(--border-subtle)] font-heading text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none bg-[var(--bg-card)]"
+                        />
+                        <span className="font-heading text-[12px] text-[var(--text-muted)]">
+                          How many miles Paul walks per day on average. Typical: 15–20 mi/day. Set to 0 when he takes a rest day (zero day) — the marker will stop moving until you update it again.
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Quick tips */}
+                    <div className="flex flex-col gap-[6px] p-[12px] bg-[var(--burnt-orange-light)] border border-[var(--burnt-orange)]/20">
+                      <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--burnt-orange)]">TIPS</span>
+                      <ul className="flex flex-col gap-[2px] font-heading text-[12px] leading-[1.6] text-[var(--text-secondary)]">
+                        <li>&bull; <strong>Rest day?</strong> Set pace to 0 — the marker pauses until you update again</li>
+                        <li>&bull; <strong>Paul checked in?</strong> Update the mile to his actual position — the system resets from there</li>
+                        <li>&bull; <strong>Not sure where he is?</strong> Estimate — you can always correct later, visitors won&apos;t notice small adjustments</li>
+                        <li>&bull; <strong>Town stop?</strong> Set pace to 0, then update pace back to normal when he leaves town</li>
+                      </ul>
+                    </div>
+
+                    <button
+                      onClick={async () => {
+                        const mile = parseFloat(settings.currentMile) || 0;
+                        const pace = parseFloat(settings.dailyPace) || 0;
+                        const updated = { ...settings, currentMile: String(mile), dailyPace: String(pace), mileSetAt: String(Date.now()) };
+                        setSettings(updated);
+                        setSettingsLoading(true);
+                        try {
+                          const res = await fetch("/api/admin/settings", {
+                            method: "PUT",
+                            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                            body: JSON.stringify(updated),
+                          });
+                          if (res.ok) {
+                            setStatus(`Position updated: Mile ${mile}, pace ${pace} mi/day`);
+                            setTimeout(() => setStatus(""), 4000);
+                          } else {
+                            setStatus("Failed to update position");
+                          }
+                        } catch { setStatus("Failed to update position"); }
+                        finally { setSettingsLoading(false); }
+                      }}
+                      disabled={settingsLoading}
+                      className="flex items-center justify-center gap-[8px] px-[28px] py-[12px] bg-[var(--forest-green)] hover:opacity-90 transition-opacity disabled:opacity-50 cursor-pointer w-fit"
+                    >
+                      <MapPin className="w-[14px] h-[14px] text-white" />
+                      <span className="font-label font-bold text-[12px] tracking-[2px] text-white">
+                        UPDATE POSITION
+                      </span>
+                    </button>
+
+                    {/* Live Preview */}
+                    {(() => {
+                      const mile = parseFloat(settings.currentMile) || 0;
+                      const pace = parseFloat(settings.dailyPace) || 0;
+                      const mileSetAt = parseInt(settings.mileSetAt) || 0;
+                      const elapsed = mileSetAt ? (Date.now() - mileSetAt) / (1000 * 60 * 60 * 24) : 0;
+                      const estimated = Math.min(2650, mile + elapsed * pace);
+                      const progress = ((estimated / 2650) * 100).toFixed(1);
+                      return (
+                        <div className="flex flex-col gap-[10px] p-[16px] bg-[var(--bg-warm)] border border-[var(--border-subtle)]">
+                          <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                            WHAT VISITORS SEE RIGHT NOW
+                          </span>
+                          <div className="grid grid-cols-3 gap-[12px]">
+                            <div className="flex flex-col gap-[2px]">
+                              <span className="font-label font-bold text-[9px] tracking-[2px] text-[var(--text-muted)]">YOU SET</span>
+                              <span className="font-heading font-semibold text-[18px] text-[var(--text-primary)]">Mile {mile}</span>
+                            </div>
+                            <div className="flex flex-col gap-[2px]">
+                              <span className="font-label font-bold text-[9px] tracking-[2px] text-[var(--text-muted)]">MAP SHOWS</span>
+                              <span className="font-heading font-semibold text-[18px] text-[var(--forest-green)]">Mile {estimated.toFixed(1)}</span>
+                            </div>
+                            <div className="flex flex-col gap-[2px]">
+                              <span className="font-label font-bold text-[9px] tracking-[2px] text-[var(--text-muted)]">PROGRESS</span>
+                              <span className="font-heading font-semibold text-[18px] text-[var(--burnt-orange)]">{progress}%</span>
+                            </div>
+                          </div>
+                          {mileSetAt > 0 && (
+                            <span className="font-heading text-[12px] text-[var(--text-muted)]">
+                              Position last updated {elapsed < 1 ? `${Math.round(elapsed * 24)} hours` : `${elapsed.toFixed(1)} days`} ago.
+                              {pace > 0 && <> The marker has drifted {(elapsed * pace).toFixed(1)} miles since then at {pace} mi/day.</>}
+                              {pace === 0 && <> Pace is 0 — marker is stationary (rest day).</>}
+                            </span>
+                          )}
+                          {!mileSetAt && (
+                            <span className="font-heading text-[12px] text-[var(--burnt-orange)]">
+                              Position not set yet. Enter a mile and pace above, then click &ldquo;Update Position&rdquo;.
+                            </span>
+                          )}
+                          {/* Progress bar */}
+                          <div className="w-full h-[8px] bg-[var(--border-subtle)] overflow-hidden">
+                            <div className="h-full bg-[var(--forest-green)] transition-all" style={{ width: `${progress}%` }} />
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </>
+                )}
+
+                {(settings.trackingMode || "simulated") === "gps" && (
+                  <div className="flex flex-col gap-[8px] p-[16px] bg-[var(--bg-warm)] border border-[var(--border-subtle)]">
+                    <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">GPS TRACKING ACTIVE</span>
+                    <p className="font-heading text-[13px] leading-[1.6] text-[var(--text-secondary)]">
+                      The map is reading live GPS data from Paul&apos;s phone. This requires the GPSLogger or OwnTracks app running in the background, which uses battery and needs cell signal. Switch to &ldquo;Simulated&rdquo; if this isn&apos;t working reliably.
+                    </p>
+                  </div>
+                )}
+              </div>
+
               {/* Instagram / Apify */}
               <div className="flex flex-col gap-[20px] p-[28px] bg-[var(--bg-white)] border border-[var(--border-subtle)]">
                 <div className="flex items-center gap-[10px]">

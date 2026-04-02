@@ -13,6 +13,14 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      { source: "/map-styles", destination: "/", permanent: false },
+      { source: "/tracker", destination: "/", permanent: false },
+      { source: "/strategy", destination: "/", permanent: false },
+      { source: "/sponsor-agreement", destination: "/", permanent: false },
+    ];
+  },
 };
 
 export default nextConfig;

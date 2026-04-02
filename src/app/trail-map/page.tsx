@@ -34,26 +34,7 @@ const trailSections = [
   { name: "Washington", info: "Mi 2,147 - 2,650 · Cascade Locks to Manning Park", center: [47.3, -121.0, 7] as [number, number, number] },
 ];
 
-const fallbackPledgerLocations: PledgerLocation[] = [
-  { name: "Sarah M.", city: "Los Angeles", country: "United States", lat: 34.05, lng: -118.24 },
-  { name: "Anonymous", city: "New York", country: "United States", lat: 40.71, lng: -74.01 },
-  { name: "Tom & Lisa", city: "Chicago", country: "United States", lat: 41.88, lng: -87.63 },
-  { name: "James K.", city: "London", country: "United Kingdom", lat: 51.51, lng: -0.13 },
-  { name: "Anonymous", city: "Sydney", country: "Australia", lat: -33.87, lng: 151.21 },
-  { name: "Maria G.", city: "Berlin", country: "Germany", lat: 52.52, lng: 13.41 },
-  { name: "Yuki T.", city: "Tokyo", country: "Japan", lat: 35.68, lng: 139.69 },
-  { name: "Anonymous", city: "Toronto", country: "Canada", lat: 43.65, lng: -79.38 },
-  { name: "Priya R.", city: "Mumbai", country: "India", lat: 19.08, lng: 72.88 },
-  { name: "Carlos D.", city: "São Paulo", country: "Brazil", lat: -23.55, lng: -46.63 },
-  { name: "Anonymous", city: "Portland", country: "United States", lat: 45.52, lng: -122.68 },
-  { name: "Sophie L.", city: "Paris", country: "France", lat: 48.86, lng: 2.35 },
-  { name: "Anonymous", city: "Melbourne", country: "Australia", lat: -37.81, lng: 144.96 },
-  { name: "Erik N.", city: "Stockholm", country: "Sweden", lat: 59.33, lng: 18.07 },
-  { name: "Anonymous", city: "Denver", country: "United States", lat: 39.74, lng: -104.99 },
-  { name: "Chen W.", city: "Singapore", country: "Singapore", lat: 1.35, lng: 103.82 },
-  { name: "Olivia B.", city: "Auckland", country: "New Zealand", lat: -36.85, lng: 174.76 },
-  { name: "Anonymous", city: "San Francisco", country: "United States", lat: 37.77, lng: -122.42 },
-];
+const fallbackPledgerLocations: PledgerLocation[] = [];
 
 const TrailMapView = dynamic(() => import("@/components/TrailMapView"), {
   ssr: false,

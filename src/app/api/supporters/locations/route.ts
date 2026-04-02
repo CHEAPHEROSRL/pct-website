@@ -10,16 +10,7 @@ function getRedis() {
   return new Redis({ url, token });
 }
 
-const fallbackLocations: SupportGiftLocation[] = [
-  { giftTitle: "A Trail Meal", name: "Sarah M.", amount: 15, lat: 33.35, lng: -116.70, trailMile: 100, date: "Mar 30, 2026" },
-  { giftTitle: "Trail Boots", name: "Robert W.", amount: 150, lat: 33.47, lng: -116.72, trailMile: 120, date: "Apr 2, 2026" },
-  { giftTitle: "A Night at Camp", name: "Anonymous", amount: 25, lat: 33.82, lng: -116.83, trailMile: 180, date: "Apr 8, 2026" },
-  { giftTitle: "A Resupply Box", name: "James K.", amount: 75, lat: 34.18, lng: -117.30, trailMile: 280, date: "Apr 15, 2026" },
-  { giftTitle: "Hiking Socks", name: "Lisa P.", amount: 20, lat: 34.68, lng: -118.25, trailMile: 450, date: "Apr 25, 2026" },
-  { giftTitle: "A Rest Day in Town", name: "Tom H.", amount: 100, lat: 34.82, lng: -118.52, trailMile: 520, date: "May 1, 2026" },
-  { giftTitle: "A Trail Meal", name: "Dr. Amanda B.", amount: 15, lat: 36.02, lng: -118.08, trailMile: 700, date: "May 15, 2026" },
-  { giftTitle: "A Resupply Box", name: "Emily C.", amount: 75, lat: 36.74, lng: -118.40, trailMile: 840, date: "May 22, 2026" },
-];
+const fallbackLocations: SupportGiftLocation[] = [];
 
 const cacheHeaders = {
   "Cache-Control": "s-maxage=60, stale-while-revalidate=120",
@@ -74,9 +65,9 @@ export async function GET() {
       };
     });
 
-    // If no geolocated gifts yet, return fallback for demo
+    // If no geolocated gifts yet, return empty array
     if (locations.length === 0) {
-      return NextResponse.json({ locations: fallbackLocations }, { headers: cacheHeaders });
+      return NextResponse.json({ locations: [] }, { headers: cacheHeaders });
     }
 
     return NextResponse.json({ locations }, { headers: cacheHeaders });

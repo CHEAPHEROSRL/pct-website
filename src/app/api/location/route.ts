@@ -1,7 +1,7 @@
 import { Redis } from "@upstash/redis";
 import { NextRequest, NextResponse } from "next/server";
 import type { GpsPoint, LocationData } from "@/lib/types";
-import { snapToTrail, computeTodayStats, metersToFeet } from "@/lib/trail";
+import { snapToTrail, computeTodayStats, metersToFeet, interpolateFromMile } from "@/lib/trail";
 
 function getRedis() {
   const url = process.env.KV_REST_API_URL;
@@ -96,6 +96,14 @@ export async function DELETE(request: NextRequest) {
   return NextResponse.json({ ok: true, message: "Location reset to default (Campo, CA)" });
 }
 
+const CACHE_HEADERS = { "Cache-Control": "s-maxage=10, stale-while-revalidate=20" };
+
+function getDayNumber(hikeStartDate?: string): number {
+  const hikeStart = new Date(hikeStartDate || process.env.HIKE_START_DATE || "2026-03-28");
+  const now = new Date();
+  return Math.max(1, Math.ceil((now.getTime() - hikeStart.getTime()) / (1000 * 60 * 60 * 24)));
+}
+
 export async function GET() {
   const redis = getRedis();
 
@@ -114,32 +122,72 @@ export async function GET() {
   };
 
   if (!redis) {
-    return NextResponse.json(defaults, {
-      headers: { "Cache-Control": "s-maxage=10, stale-while-revalidate=20" },
-    });
+    return NextResponse.json(defaults, { headers: CACHE_HEADERS });
   }
 
-  // Read current position
+  // Check for simulated tracking mode in admin settings
+  const settingsRaw = await redis.get<string>("admin:settings");
+  const adminSettings = settingsRaw
+    ? typeof settingsRaw === "string" ? JSON.parse(settingsRaw) : settingsRaw
+    : {};
+
+  const trackingMode = adminSettings.trackingMode || "simulated";
+
+  // ── SIMULATED TRACKING ──────────────────────────────────────────────
+  if (trackingMode === "simulated") {
+    const currentMile = parseFloat(adminSettings.currentMile) || 0;
+    const dailyPace = parseFloat(adminSettings.dailyPace) || 0;
+    const mileSetAt = parseInt(adminSettings.mileSetAt) || Date.now();
+    const hikeStartDate = adminSettings.hikeStartDate;
+
+    // Calculate estimated mile based on elapsed time since last update
+    const elapsedMs = Date.now() - mileSetAt;
+    const elapsedDays = elapsedMs / (1000 * 60 * 60 * 24);
+    const estimatedMile = Math.min(2650, currentMile + elapsedDays * dailyPace);
+
+    // Interpolate position along the PCT
+    const { lat, lng, elevationFt, nearestName } = interpolateFromMile(estimatedMile);
+
+    const dayNumber = getDayNumber(hikeStartDate);
+
+    // Compute simulated daily distance from pace
+    const todayDistance = Math.min(dailyPace, estimatedMile - Math.floor(estimatedMile / dailyPace) * dailyPace) || 0;
+
+    const current: GpsPoint = {
+      lat,
+      lng,
+      altitude: elevationFt / 3.28084, // convert back to meters for consistency
+      timestamp: Date.now(),
+      accuracy: null,
+    };
+
+    const data: LocationData = {
+      current,
+      stats: {
+        totalMiles: Math.round(estimatedMile * 10) / 10,
+        currentElevation: Math.round(elevationFt),
+        dayNumber,
+        todayDistance: Math.round(todayDistance * 10) / 10,
+        todayElevationGain: 0,
+        lastUpdated: Date.now(),
+        nearestLocationName: nearestName,
+      },
+    };
+
+    return NextResponse.json(data, { headers: CACHE_HEADERS });
+  }
+
+  // ── LIVE GPS TRACKING ───────────────────────────────────────────────
   const currentRaw = await redis.get<string>("location:current");
   if (!currentRaw) {
-    return NextResponse.json(defaults, {
-      headers: { "Cache-Control": "s-maxage=10, stale-while-revalidate=20" },
-    });
+    return NextResponse.json(defaults, { headers: CACHE_HEADERS });
   }
 
   const current: GpsPoint =
     typeof currentRaw === "string" ? JSON.parse(currentRaw) : currentRaw;
 
-  // Compute trail stats
   const { miles, nearestName, elevationFt } = snapToTrail(current.lat, current.lng);
-
-  // Day number
-  const hikeStart = new Date(process.env.HIKE_START_DATE || "2026-03-28");
-  const now = new Date();
-  const dayNumber = Math.max(
-    1,
-    Math.ceil((now.getTime() - hikeStart.getTime()) / (1000 * 60 * 60 * 24))
-  );
+  const dayNumber = getDayNumber(adminSettings.hikeStartDate);
 
   // Today's history for daily stats
   const today = new Date().toISOString().slice(0, 10);
@@ -149,7 +197,6 @@ export async function GET() {
   );
   const { distance, elevationGain } = computeTodayStats(history);
 
-  // Current elevation: prefer GPS altitude, fallback to interpolated
   const currentElevation =
     current.altitude !== null ? metersToFeet(current.altitude) : elevationFt;
 
@@ -166,7 +213,5 @@ export async function GET() {
     },
   };
 
-  return NextResponse.json(data, {
-    headers: { "Cache-Control": "s-maxage=10, stale-while-revalidate=20" },
-  });
+  return NextResponse.json(data, { headers: CACHE_HEADERS });
 }

@@ -11,30 +11,16 @@ function getRedis() {
   return new Redis({ url, token });
 }
 
-const fallbackSupporters: SupporterPublic[] = [
-  { name: "Robert Williams", amount: "$1,000", amountNum: 1000, date: "Feb 15, 2026", message: "Bought Paul new boots and a resupply box. Walk strong!", color: "#3D7A5A" },
-  { name: "Anonymous", amount: "$150", amountNum: 150, date: "Feb 12, 2026", message: "Trail Boots", color: "#5B8EA6" },
-  { name: "Dr. Amanda Brooks", amount: "$75", amountNum: 75, date: "Feb 10, 2026", message: "Resupply Box — keep walking, Paul!", color: "#C45C26" },
-  { name: "James O\u2019Connor", amount: "$25", amountNum: 25, date: "Feb 8, 2026", message: "Camp Night", color: "#7B6B8E" },
-  { name: "Sarah Mitchell", amount: "$15", amountNum: 15, date: "Feb 5, 2026", message: "Trail Meal — you\u2019re an inspiration.", color: "#A68B5B" },
-  { name: "Tom & Lisa Park", amount: "$100", amountNum: 100, date: "Feb 1, 2026", message: "Rest Day — cheering for you from Oregon!", color: "#6B8E7B" },
-];
+const fallbackSupporters: SupporterPublic[] = [];
 
 const fallbackStats: SupportStats = {
-  totalGifts: 2450,
-  supporterCount: 34,
-  averageGift: 72,
-  largestGift: 1000,
+  totalGifts: 0,
+  supporterCount: 0,
+  averageGift: 0,
+  largestGift: 0,
 };
 
-const fallbackGiftCounts: Record<string, number> = {
-  "A Trail Meal": 12,
-  "Hiking Socks": 3,
-  "A Night at Camp": 8,
-  "A Resupply Box": 4,
-  "A Rest Day in Town": 2,
-  "Trail Boots": 1,
-};
+const fallbackGiftCounts: Record<string, number> = {};
 
 const cacheHeaders = {
   "Cache-Control": "s-maxage=30, stale-while-revalidate=60",

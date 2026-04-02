@@ -208,6 +208,43 @@ export function computeTodayStats(history: GpsPoint[]): {
 }
 
 /**
+ * Given a mile marker (0–2650), interpolate the lat/lng/elevation along the PCT route.
+ * Used by simulated tracking to convert a mile number into a map position.
+ */
+export function interpolateFromMile(miles: number): {
+  lat: number;
+  lng: number;
+  elevationFt: number;
+  nearestName: string;
+} {
+  const clamped = Math.max(0, Math.min(2650, miles));
+
+  // Find the two waypoints that bracket this mile
+  for (let i = 0; i < pctWaypoints.length - 1; i++) {
+    const a = pctWaypoints[i];
+    const b = pctWaypoints[i + 1];
+
+    if (clamped >= a.miles && clamped <= b.miles) {
+      const t = b.miles === a.miles ? 0 : (clamped - a.miles) / (b.miles - a.miles);
+      const lat = a.lat + t * (b.lat - a.lat);
+      const lng = a.lng + t * (b.lng - a.lng);
+      const elevationFt = a.elevationFt + t * (b.elevationFt - a.elevationFt);
+      const nearestName = getNearestLocationName(lat, lng);
+      return { lat, lng, elevationFt, nearestName };
+    }
+  }
+
+  // Past the end — return Manning Park
+  const last = pctWaypoints[pctWaypoints.length - 1];
+  return {
+    lat: last.lat,
+    lng: last.lng,
+    elevationFt: last.elevationFt,
+    nearestName: last.name || "Manning Park",
+  };
+}
+
+/**
  * Determine which trail section index (0-4) a given mile marker falls into.
  * Sections: SoCal (0-700), Sierra (700-1100), NorCal (1100-1691), Oregon (1691-2147), Washington (2147-2650)
  */
