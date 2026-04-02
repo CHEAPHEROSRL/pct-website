@@ -6,6 +6,14 @@ import { Mail } from "lucide-react";
 // Pages that should NOT show the waitlist popup (admin, API routes, etc.)
 const EXCLUDED_PATHS = ["/admin", "/site-login"];
 
+function hasAdminCookie(): boolean {
+  return document.cookie.split(";").some((c) => c.trim().startsWith("pct-admin-session="));
+}
+
+function hasSiteAuthCookie(): boolean {
+  return document.cookie.split(";").some((c) => c.trim().startsWith("site-auth="));
+}
+
 export default function WaitlistPopup() {
   const [visible, setVisible] = useState(false);
   const [excluded, setExcluded] = useState(false);
@@ -17,6 +25,12 @@ export default function WaitlistPopup() {
   useEffect(() => {
     // Skip popup on admin and other excluded pages
     if (EXCLUDED_PATHS.some((p) => window.location.pathname.startsWith(p))) {
+      setExcluded(true);
+      return;
+    }
+
+    // Skip popup for logged-in admins and site-auth users
+    if (hasAdminCookie() || hasSiteAuthCookie()) {
       setExcluded(true);
       return;
     }
