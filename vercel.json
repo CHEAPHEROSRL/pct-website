@@ -30,7 +30,7 @@
     },
     {
       "path": "/api/automation/youtube-retry",
-      "schedule": "30 */2 * * *"
+      "schedule": "30 16 * * *"
     }
   ]
 }
