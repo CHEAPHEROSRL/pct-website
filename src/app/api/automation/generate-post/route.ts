@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         error:
-          "Could not extract transcript. The video may not have captions, or the URL is invalid.",
+          "Could not extract transcript. If the video was just uploaded, wait 10-30 minutes for YouTube to auto-generate captions and try again. If captions are disabled in YouTube Studio, enable them under Subtitles → Settings.",
       },
       { status: 422 }
     );
