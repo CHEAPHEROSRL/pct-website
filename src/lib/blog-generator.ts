@@ -2,6 +2,13 @@ import Anthropic from "@anthropic-ai/sdk";
 import OpenAI from "openai";
 import { Redis } from "@upstash/redis";
 import type { VideoTranscript } from "./youtube";
+import { addInternalLinks } from "./internal-links";
+import {
+  buildAssetPool,
+  formatAssetPoolForPrompt,
+  resolveAssetPlaceholders,
+  type BlogAsset,
+} from "./blog-assets";
 
 export interface GeneratedPost {
   title: string;
@@ -20,7 +27,7 @@ type AIProvider = "anthropic" | "openai";
 
 const SYSTEM_PROMPT = `You are a ghostwriter for Paul Barry, a cancer awareness advocate who is thru-hiking the Pacific Crest Trail (PCT) in 2026 — walking 2,650 miles from Mexico to Canada in honor of both his parents who he lost to cancer. He's raising funds for cancer research, patient support, and prevention.
 
-Paul's voice is:
+PAUL'S VOICE
 - Warm, reflective, and genuine
 - Conversational but thoughtful — he speaks plainly without being simplistic
 - He shares vulnerable moments honestly
@@ -29,7 +36,19 @@ Paul's voice is:
 - He occasionally uses dry humor
 - He never sounds preachy about the cause — the walk speaks for itself
 
-The blog is written in first person as Paul. Use Markdown formatting. Include section headers (##) to break up longer posts. Do NOT include a top-level # heading — the title is rendered separately.`;
+FORMATTING — write rich, magazine-style markdown
+The blog is written in first person as Paul. Use Markdown formatting that makes posts visually engaging and easy to read. Specifically:
+
+- Break the post into 3–5 short sections using \`##\` headers — each section should feel like a small chapter with its own beat
+- Use \`>\` blockquotes 1–2 times per post to highlight a powerful line, a quote-worthy reflection, or a moment that deserves to breathe on its own. Keep blockquotes short (1–2 sentences max)
+- Use \`**bold**\` sparingly to emphasize key phrases or emotional pivots — never bold whole sentences
+- Use bulleted or numbered lists when listing concrete items (gear, miles, observations, lessons learned). Don't force lists where prose flows better
+- Vary paragraph length — mix short punchy paragraphs (1–2 sentences) with longer reflective ones (4–6 sentences)
+- Use \`---\` horizontal rules sparingly to mark a major shift in time, place, or mood
+- Do NOT include a top-level \`#\` heading — the post title is rendered separately
+- Do NOT use code blocks or tables — this is editorial writing
+
+The result should feel like a well-edited magazine essay, not a wall of plain paragraphs.`;
 
 // ---------------------------------------------------------------------------
 // Provider detection — checks Redis settings first, then env vars
@@ -162,12 +181,60 @@ async function generateCompletion(
 // ---------------------------------------------------------------------------
 
 /**
+ * Asset embedding instructions block — appended to every generation prompt
+ * so the AI knows it can pick from a pool of pre-approved images.
+ */
+function buildAssetInstructions(assets: BlogAsset[]): string {
+  if (assets.length === 0) return "";
+
+  return `
+INLINE IMAGES — embed 1–3 images from the asset pool below where they fit naturally
+You may embed up to 3 images from this curated pool inside the blog body.
+Use the EXACT id from the pool. Do not invent ids and do not link external images.
+
+Asset pool:
+${formatAssetPoolForPrompt(assets)}
+
+To embed an image, use this exact markdown syntax:
+\`\`\`
+![alt text describing the photo](pool:<id>)
+\`\`\`
+
+For example: \`![sunset over the valley](pool:local-3)\` or \`![Paul's first IG post](pool:ig-1)\`
+
+Rules:
+- Pick images that genuinely illustrate the story — never force them
+- Place each image on its own line, between paragraphs (not inline with text)
+- Always include descriptive alt text
+- Never use the same image twice in one post
+- It's perfectly fine to skip images entirely if none of them fit. Quality over quantity.
+- Prefer Instagram or YouTube assets when the post references those platforms;
+  use local hiking photos for general scenery
+`;
+}
+
+/**
+ * Run the AI-generated body through deterministic post-processors:
+ *   1. Replace pool:id placeholders with real image markdown
+ *   2. Add 2–3 internal links to relevant pages
+ */
+function postProcessBody(body: string, assets: BlogAsset[]): string {
+  let out = body;
+  out = resolveAssetPlaceholders(out, assets);
+  out = addInternalLinks(out);
+  return out;
+}
+
+/**
  * Generate a single blog post from a video transcript.
  */
 export async function generateBlogPost(
   video: VideoTranscript,
   dayNumber: number
 ): Promise<GeneratedPost | null> {
+  const assets = await buildAssetPool();
+  const assetInstructions = buildAssetInstructions(assets);
+
   const prompt = `Here is a transcript from Paul's YouTube video titled "${video.title}":
 
 ---
@@ -180,7 +247,9 @@ Generate a blog post from this video transcript. The post should:
 3. Feel like a written journal entry, not a video summary
 4. Include the emotional core and any meaningful moments
 5. End with a natural reflection (not a forced call-to-action)
-
+6. Use the rich formatting described in the system prompt — multiple sections,
+   at least one blockquote, varied paragraph length, occasional bold emphasis
+${assetInstructions}
 Also determine the appropriate tags. Choose from:
 - VLOG (if the video is primarily trail footage / day-in-the-life)
 - BLOG (if the content is more reflective / story-driven)
@@ -206,7 +275,9 @@ Respond in this exact JSON format:
       console.error("generateBlogPost: No JSON found in AI response for video:", video.title);
       return null;
     }
-    return JSON.parse(jsonMatch[0]) as GeneratedPost;
+    const parsed = JSON.parse(jsonMatch[0]) as GeneratedPost;
+    parsed.body = postProcessBody(parsed.body, assets);
+    return parsed;
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : String(error);
     console.error("generateBlogPost: JSON parse failed for video:", video.title, msg);
@@ -222,6 +293,9 @@ export async function generateBlogPostPair(
   video: VideoTranscript,
   dayNumber: number
 ): Promise<GeneratedPostPair | null> {
+  const assets = await buildAssetPool();
+  const assetInstructions = buildAssetInstructions(assets);
+
   const prompt = `Here is a transcript from Paul's YouTube video titled "${video.title}". This is a longer/complex video that should be split into TWO separate blog posts:
 
 ---
@@ -238,7 +312,9 @@ Each post should:
 2. Be 500-800 words each
 3. Feel like journal entries, not video summaries
 4. Have distinct angles — a reader of both should not feel like they overlap
-
+5. Use the rich formatting described in the system prompt — multiple sections,
+   at least one blockquote, varied paragraph length, occasional bold emphasis
+${assetInstructions}
 Determine tags for each post independently. Choose from: VLOG, BLOG, INTERVIEWS.
 
 Respond in this exact JSON format:
@@ -270,7 +346,10 @@ Respond in this exact JSON format:
       console.error("generateBlogPostPair: No JSON found in AI response for video:", video.title);
       return null;
     }
-    return JSON.parse(jsonMatch[0]) as GeneratedPostPair;
+    const parsed = JSON.parse(jsonMatch[0]) as GeneratedPostPair;
+    parsed.post1.body = postProcessBody(parsed.post1.body, assets);
+    parsed.post2.body = postProcessBody(parsed.post2.body, assets);
+    return parsed;
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : String(error);
     console.error("generateBlogPostPair: JSON parse failed for video:", video.title, msg);

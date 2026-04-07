@@ -130,59 +130,117 @@ export default function JournalPostPage() {
 
       {/* Article Body */}
       <section className="flex justify-center px-6 md:px-12 lg:px-[120px] py-[48px] md:py-[64px] lg:py-[80px] bg-[var(--bg-white)] w-full">
-        <div className="w-full max-w-[720px]">
+        <div className="w-full max-w-[720px] article-body">
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             components={{
               h1: ({ children }) => (
-                <h1 className="font-heading font-semibold text-[32px] tracking-[-0.5px] text-[var(--text-primary)] mb-6">
+                <h1 className="font-heading font-semibold text-[32px] tracking-[-0.5px] text-[var(--text-primary)] mb-6 mt-12 first:mt-0">
                   {children}
                 </h1>
               ),
               h2: ({ children }) => (
-                <h2 className="font-heading font-semibold text-[28px] tracking-[-0.5px] text-[var(--text-primary)] mt-10 mb-4">
+                <h2 className="font-heading font-semibold text-[26px] md:text-[30px] tracking-[-0.5px] text-[var(--text-primary)] mt-12 mb-4 first:mt-0 leading-[1.25]">
                   {children}
                 </h2>
               ),
               h3: ({ children }) => (
-                <h3 className="font-heading font-semibold text-[22px] text-[var(--text-primary)] mt-8 mb-3">
+                <h3 className="font-heading font-semibold text-[20px] md:text-[22px] text-[var(--text-primary)] mt-10 mb-3 leading-[1.3]">
                   {children}
                 </h3>
               ),
               p: ({ children }) => (
-                <p className="font-heading text-[17px] md:text-[18px] leading-[1.8] text-[var(--text-secondary)] mb-6">
+                <p className="font-heading text-[17px] md:text-[18px] leading-[1.8] text-[var(--text-secondary)] mb-6 md:text-justify hyphens-auto">
                   {children}
                 </p>
               ),
-              blockquote: ({ children }) => (
-                <blockquote className="border-l-4 border-[var(--burnt-orange)] pl-6 my-8 italic">
+              strong: ({ children }) => (
+                <strong className="font-semibold text-[var(--text-primary)]">
                   {children}
+                </strong>
+              ),
+              em: ({ children }) => (
+                <em className="italic text-[var(--text-primary)]">{children}</em>
+              ),
+              blockquote: ({ children }) => (
+                <blockquote className="relative my-10 px-6 md:px-8 py-6 bg-[var(--burnt-orange-light)] border-l-4 border-[var(--burnt-orange)]">
+                  <div className="font-heading italic text-[20px] md:text-[22px] leading-[1.5] text-[var(--text-primary)] [&>p]:!mb-0 [&>p]:!text-[var(--text-primary)] [&>p]:!text-[20px] md:[&>p]:!text-[22px] [&>p]:!leading-[1.5] [&>p]:!italic [&>p]:!text-left">
+                    {children}
+                  </div>
                 </blockquote>
               ),
-              a: ({ href, children }) => (
-                <a
-                  href={href}
-                  className="text-[var(--burnt-orange)] underline"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {children}
-                </a>
-              ),
+              a: ({ href, children }) => {
+                // Internal links — render with brand color, no new tab
+                const isInternal = href?.startsWith("/") || href?.startsWith("#");
+                return (
+                  <a
+                    href={href}
+                    className="text-[var(--burnt-orange)] underline decoration-[var(--burnt-orange)]/40 underline-offset-[3px] hover:decoration-[var(--burnt-orange)] transition-colors"
+                    {...(isInternal
+                      ? {}
+                      : { target: "_blank", rel: "noopener noreferrer" })}
+                  >
+                    {children}
+                  </a>
+                );
+              },
               ul: ({ children }) => (
-                <ul className="list-disc pl-6 mb-6 space-y-2">{children}</ul>
+                <ul className="list-disc pl-6 my-6 space-y-2 marker:text-[var(--burnt-orange)]">{children}</ul>
               ),
               ol: ({ children }) => (
-                <ol className="list-decimal pl-6 mb-6 space-y-2">{children}</ol>
+                <ol className="list-decimal pl-6 my-6 space-y-2 marker:text-[var(--burnt-orange)] marker:font-semibold">{children}</ol>
               ),
               li: ({ children }) => (
-                <li className="font-heading text-[17px] leading-[1.8] text-[var(--text-secondary)]">
+                <li className="font-heading text-[17px] leading-[1.8] text-[var(--text-secondary)] pl-2">
                   {children}
                 </li>
               ),
               hr: () => (
-                <hr className="my-10 border-[var(--border-subtle)]" />
+                <hr className="my-12 border-0 h-px bg-[var(--border-subtle)]" />
               ),
+              img: ({ src, alt, title }) => {
+                // Title may encode caption + linkUrl as "caption||linkUrl"
+                const titleStr = title || "";
+                const [caption, linkUrl] = titleStr.includes("||")
+                  ? titleStr.split("||")
+                  : [titleStr, undefined];
+                const captionText = caption || alt || "";
+
+                const figure = (
+                  <figure className="my-10">
+                    <div className="relative w-full overflow-hidden bg-[var(--warm-stone)]">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={src as string}
+                        alt={alt || captionText}
+                        loading="lazy"
+                        className="w-full h-auto block transition-transform duration-500 group-hover:scale-[1.02]"
+                      />
+                    </div>
+                    {captionText && (
+                      <figcaption className="mt-3 font-heading text-[14px] md:text-[15px] italic text-[var(--text-muted)] text-center leading-[1.5]">
+                        {captionText}
+                      </figcaption>
+                    )}
+                  </figure>
+                );
+
+                if (linkUrl) {
+                  return (
+                    <a
+                      href={linkUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block group cursor-pointer"
+                      aria-label={captionText || "Open source"}
+                    >
+                      {figure}
+                    </a>
+                  );
+                }
+
+                return figure;
+              },
             }}
           >
             {post.body}
