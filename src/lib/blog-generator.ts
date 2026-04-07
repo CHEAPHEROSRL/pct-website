@@ -54,28 +54,35 @@ async function getAIConfig(): Promise<AIConfig | null> {
       if (raw) {
         const settings = typeof raw === "string" ? JSON.parse(raw) : raw;
 
-        // Check which provider is configured in settings
-        if (settings.aiProvider === "openai" && settings.openaiApiKey) {
-          return {
-            provider: "openai",
-            apiKey: settings.openaiApiKey,
-            model: settings.openaiModel || "gpt-4o",
-          };
+        // Determine provider: explicit setting OR infer from which key is present
+        const provider: AIProvider | null =
+          settings.aiProvider === "openai" || settings.aiProvider === "anthropic"
+            ? settings.aiProvider
+            : settings.openaiApiKey
+              ? "openai"
+              : settings.anthropicApiKey
+                ? "anthropic"
+                : null;
+
+        if (provider === "openai") {
+          const apiKey = settings.openaiApiKey || process.env.OPENAI_API_KEY;
+          if (apiKey) {
+            return {
+              provider: "openai",
+              apiKey,
+              model: settings.openaiModel || "gpt-4o",
+            };
+          }
         }
-        if (settings.aiProvider === "anthropic" && settings.anthropicApiKey) {
-          return {
-            provider: "anthropic",
-            apiKey: settings.anthropicApiKey,
-            model: settings.anthropicModel || "claude-sonnet-4-5-20250514",
-          };
-        }
-        // If provider is set but key is in env vars
-        if (settings.aiProvider === "openai" && process.env.OPENAI_API_KEY) {
-          return {
-            provider: "openai",
-            apiKey: process.env.OPENAI_API_KEY,
-            model: settings.openaiModel || "gpt-4o",
-          };
+        if (provider === "anthropic") {
+          const apiKey = settings.anthropicApiKey || process.env.ANTHROPIC_API_KEY;
+          if (apiKey) {
+            return {
+              provider: "anthropic",
+              apiKey,
+              model: settings.anthropicModel || "claude-sonnet-4-5-20250514",
+            };
+          }
         }
       }
     }
