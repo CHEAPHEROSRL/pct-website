@@ -30,37 +30,47 @@ interface LinkMapEntry {
 
 const LINK_MAP: LinkMapEntry[] = [
   {
+    url: "/foundations",
+    phrases: [
+      "Ka Foundation and City of Hope",
+      "Ka Foundation",
+      "City of Hope",
+      "the two foundations",
+      "two foundations",
+      "both foundations",
+      "partner foundations",
+      "the foundations",
+    ],
+    priority: 10,
+  },
+  {
     url: "/pledge",
     phrases: [
       "pledge per mile",
       "per-mile pledge",
+      "make a pledge",
+      "your pledge",
+      "a pledge",
       "pledging",
       "pledge",
+      "commitment",
+      "commit",
+      "promise to donate",
     ],
-    priority: 10,
+    priority: 9,
   },
   {
     url: "/the-cause",
     phrases: [
       "cancer prevention",
       "cancer research",
-      "cancer foundations",
-      "the cause",
       "fight against cancer",
       "fighting cancer",
-      "honor my parents",
-      "my parents",
-    ],
-    priority: 9,
-  },
-  {
-    url: "/foundations",
-    phrases: [
-      "Ka Foundation",
-      "City of Hope",
-      "partner foundations",
-      "two foundations",
-      "the foundations",
+      "cancer awareness",
+      "lost to cancer",
+      "this cause",
+      "the cause",
+      "the why",
     ],
     priority: 9,
   },
@@ -68,11 +78,13 @@ const LINK_MAP: LinkMapEntry[] = [
     url: "/trail-map",
     phrases: [
       "trail map",
+      "the route",
+      "where I am",
       "follow my progress",
-      "see where I am",
+      "follow along on the map",
       "track my progress",
       "Pacific Crest Trail map",
-      "the route",
+      "PCT route",
     ],
     priority: 8,
   },
@@ -80,11 +92,14 @@ const LINK_MAP: LinkMapEntry[] = [
     url: "/support",
     phrases: [
       "buy me a meal",
+      "buy Paul a meal",
       "trail meal",
       "support me on the trail",
       "support Paul on the trail",
       "trail support",
       "fuel the journey",
+      "keep me on the trail",
+      "keep Paul on the trail",
     ],
     priority: 7,
   },
@@ -92,10 +107,12 @@ const LINK_MAP: LinkMapEntry[] = [
     url: "/journal",
     phrases: [
       "journal entries",
-      "follow the journey",
-      "read more from the trail",
       "earlier entries",
+      "previous post",
+      "previous entries",
       "the journal",
+      "more from the trail",
+      "more posts",
     ],
     priority: 6,
   },
@@ -103,6 +120,8 @@ const LINK_MAP: LinkMapEntry[] = [
     url: "/transparency",
     phrases: [
       "where the money goes",
+      "how the money flows",
+      "100% of pledges",
       "100% of donations",
       "how it works",
       "transparency",
@@ -114,8 +133,11 @@ const LINK_MAP: LinkMapEntry[] = [
     phrases: [
       "pledgers wall",
       "the pledgers",
+      "fellow pledgers",
+      "everyone who's pledged",
       "people who have pledged",
       "see who's pledged",
+      "join the pledgers",
     ],
     priority: 5,
   },
@@ -187,29 +209,39 @@ export function addInternalLinks(body: string): string {
   let working = protectedText;
   const usedUrls = new Set<string>();
   let linksAdded = 0;
+  const linkedPhrases: Array<{ phrase: string; url: string }> = [];
 
   for (const entry of sortedEntries) {
     if (linksAdded >= MAX_LINKS_PER_POST) break;
     if (usedUrls.has(entry.url)) continue;
 
-    let linkedThisEntry = false;
     for (const phrase of entry.phrases) {
-      // Word-boundary, case-insensitive, only the FIRST occurrence
-      const pattern = new RegExp(`\\b(${escapeRegex(phrase)})\\b`, "i");
+      // Case-insensitive, only the FIRST occurrence. Use lookbehind/lookahead
+      // for "soft" word boundaries that work with phrases containing
+      // punctuation, apostrophes, hyphens etc. — JavaScript's \b is too strict.
+      const pattern = new RegExp(
+        `(^|[\\s.,;:!?"'\`(\\[{—–-])(${escapeRegex(phrase)})(?=$|[\\s.,;:!?"'\`)\\]}—–-])`,
+        "i"
+      );
       const match = working.match(pattern);
       if (!match) continue;
 
-      const matched = match[1];
-      const replacement = `[${matched}](${entry.url})`;
+      const prefix = match[1];
+      const matched = match[2];
+      const replacement = `${prefix}[${matched}](${entry.url})`;
       working = working.replace(pattern, replacement);
       usedUrls.add(entry.url);
       linksAdded++;
-      linkedThisEntry = true;
+      linkedPhrases.push({ phrase: matched, url: entry.url });
       break;
     }
-
-    if (linkedThisEntry) continue;
   }
+
+  // eslint-disable-next-line no-console
+  console.log(
+    `[internal-links] added ${linksAdded}/${MAX_LINKS_PER_POST} links:`,
+    linkedPhrases.map((l) => `"${l.phrase}" → ${l.url}`).join(", ") || "(none matched)"
+  );
 
   return restore(working);
 }

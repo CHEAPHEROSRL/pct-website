@@ -206,11 +206,33 @@ export async function buildAssetPool(): Promise<BlogAsset[]> {
 
 /**
  * Format the asset pool as a numbered list the AI can read in the prompt.
+ *
+ * IMPORTANT: descriptions are intentionally NOT included. The AI should
+ * pick images "blind" using only the source category. This prevents the
+ * model from being misled by inaccurate human-curated descriptions and
+ * also prevents it from writing fabricated alt text claiming specifics
+ * about scenes it can't actually see.
+ *
+ * The site renders inline images WITHOUT captions for the same reason.
  */
 export function formatAssetPoolForPrompt(assets: BlogAsset[]): string {
   if (assets.length === 0) return "(no assets available)";
-  return assets
-    .map((a) => `- \`${a.id}\` (${a.source}) — ${a.description}`)
+
+  // Group by source so the AI can reason about availability per category
+  const byCat: Record<string, string[]> = {};
+  for (const a of assets) {
+    const label =
+      a.source === "instagram"
+        ? "Instagram posts (recent — captions are Paul's own)"
+        : a.source === "youtube"
+          ? "YouTube video thumbnails (link to the full video)"
+          : "Generic hiking photos from Paul's photo library";
+    if (!byCat[label]) byCat[label] = [];
+    byCat[label].push(a.id);
+  }
+
+  return Object.entries(byCat)
+    .map(([label, ids]) => `- ${label}: ${ids.join(", ")}`)
     .join("\n");
 }
 

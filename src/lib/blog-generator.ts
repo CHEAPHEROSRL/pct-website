@@ -200,55 +200,42 @@ function buildAssetInstructions(assets: BlogAsset[]): string {
   if (assets.length === 0) return "";
 
   return `
-INLINE IMAGES — embed 0–3 images from the asset pool below where they fit naturally
-You may embed up to 3 images from this curated pool inside the blog body.
-Use the EXACT id from the pool. Do not invent ids and do not link external images.
+INLINE IMAGES — embed 0–3 images from the asset pool by ID
+You may embed up to 3 images from the asset pool below inside the blog body.
+You are picking BLIND — you do not know what each image actually depicts.
+The IDs are grouped by source so you can reason about category, but never
+about specific contents.
 
-Asset pool:
+Asset pool (grouped by category):
 ${formatAssetPoolForPrompt(assets)}
 
 To embed an image, use this exact markdown syntax:
 \`\`\`
-![alt text](pool:<id>)
+![](pool:<id>)
 \`\`\`
 
-For example: \`![alpine lake](pool:local-1)\` or \`![Paul's recent Instagram post](pool:ig-1)\`
+For example: \`![](pool:local-1)\` or \`![](pool:ig-1)\`
 
-CRITICAL — DO NOT FABRICATE FACTS ABOUT IMAGES
-The descriptions in the asset pool above describe what is LITERALLY VISIBLE in
-each photo. They are not metaphors and not labels we wish were true. You must
-treat them as ground truth.
+CRITICAL — alt text and captions
+- Leave the alt text EMPTY. Use \`![](pool:local-1)\`, not \`![sunset on the trail](pool:local-1)\`
+- The site does NOT render captions under inline images. Don't try to add one.
+- You cannot describe an image you can't see. Don't try.
 
-NEVER do these things:
-- Pick an image whose description doesn't match the surrounding paragraph just
-  because the photo "feels right". If the post is about the desert and no
-  desert image exists in the pool, embed nothing — do not pick a green hillside
-  photo and pretend it's the desert.
-- Write alt text that contradicts the description. If the description says
-  "Paul on a green hillside", do not write \`![Paul in the desert]\`.
-- Refer to a specific day, mile marker, location, or event in the alt text
-  unless the description explicitly mentions it. The image was taken at an
-  unknown time from Paul's photo library — it is NOT necessarily from the day
-  or place this blog post is about.
-- Imply temporal context. Write \`![alpine lake]\` not \`![the lake we camped at]\`.
-- Use poetic alt text that adds claims not in the description. The alt text
-  is a literal label, not a caption.
+Selection guidelines (these are SOFT — the only hard rule is "leave alt text empty")
+- Generic hiking photos (\`local-*\`) are safe filler imagery from Paul's photo
+  library. They depict generic trail scenes — Paul, hills, forests, summits,
+  lakes, the trail itself. Use them as visual breaks in long sections.
+- Instagram posts (\`ig-*\`) are Paul's actual recent posts. They're chronological
+  and the captions readers will see come from Paul himself. Prefer these when
+  the blog post is referencing recent moments or "from the trail" content.
+- YouTube thumbnails (\`yt-*\`) link to full videos. Embed one when the post is
+  built around a specific video and you want readers to be able to click through.
+- Place each image on its own line between paragraphs, not inline with text.
+- Never use the same image twice in one post.
+- 1–2 images per post is usually the right amount. Zero is also fine.
 
-WHEN IN DOUBT, EMBED NOTHING. A blog post with zero images and accurate text
-is far better than one with images that contradict reality. It is completely
-acceptable to have no inline images at all if none of the available images
-genuinely match the post's content.
-
-Rules for placement and selection:
-- Pick images whose description LITERALLY matches what's happening in the
-  paragraph above the image. Match nouns, not vibes.
-- Place each image on its own line, between paragraphs (not inline with text)
-- Never use the same image twice in one post
-- Prefer Instagram or YouTube assets when the post explicitly references
-  Instagram or YouTube
-- Use local hiking photos only when the description genuinely fits the moment
-- Captions are written automatically from the pool description — you only
-  control the alt text. Make alt text a faithful, literal label.
+Note: pool:ig-1 is always Paul's most recent Instagram post, pool:ig-2 is the
+second-most-recent, etc. Use pool:ig-1 if the post is "what Paul just did".
 `;
 }
 

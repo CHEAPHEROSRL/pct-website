@@ -199,12 +199,13 @@ export default function JournalPostPage() {
                 <hr className="my-12 border-0 h-px bg-[var(--border-subtle)]" />
               ),
               img: ({ src, alt, title }) => {
-                // Title may encode caption + linkUrl as "caption||linkUrl"
+                // Title may encode linkUrl as "anything||linkUrl" — we ignore
+                // any caption portion (image captions are intentionally
+                // disabled to prevent fabricated descriptions).
                 const titleStr = title || "";
-                const [caption, linkUrl] = titleStr.includes("||")
-                  ? titleStr.split("||")
-                  : [titleStr, undefined];
-                const captionText = caption || alt || "";
+                const linkUrl = titleStr.includes("||")
+                  ? titleStr.split("||")[1]
+                  : undefined;
 
                 const figure = (
                   <figure className="my-10">
@@ -212,16 +213,11 @@ export default function JournalPostPage() {
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={src as string}
-                        alt={alt || captionText}
+                        alt={alt || ""}
                         loading="lazy"
                         className="w-full h-auto block transition-transform duration-500 group-hover:scale-[1.02]"
                       />
                     </div>
-                    {captionText && (
-                      <figcaption className="mt-3 font-heading text-[14px] md:text-[15px] italic text-[var(--text-muted)] text-center leading-[1.5]">
-                        {captionText}
-                      </figcaption>
-                    )}
                   </figure>
                 );
 
@@ -232,7 +228,7 @@ export default function JournalPostPage() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="block group cursor-pointer"
-                      aria-label={captionText || "Open source"}
+                      aria-label={alt || "Open source"}
                     >
                       {figure}
                     </a>
