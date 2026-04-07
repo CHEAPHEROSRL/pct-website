@@ -6,39 +6,112 @@ interface CaptionTrack {
 }
 
 const INNERTUBE_URL = "https://www.youtube.com/youtubei/v1/player?prettyPrint=false";
-const ANDROID_CLIENT_VERSION = "20.10.38";
-const ANDROID_USER_AGENT = `com.google.android.youtube/${ANDROID_CLIENT_VERSION} (Linux; U; Android 14)`;
+
+interface ClientStrategy {
+  name: string;
+  userAgent: string;
+  context: { client: { clientName: string; clientVersion: string; [key: string]: unknown } };
+}
+
+// Multiple client strategies to try — different clients have different success rates
+// from datacenter IPs (Vercel/AWS). Order matters: try the most reliable first.
+const CLIENT_STRATEGIES: ClientStrategy[] = [
+  {
+    name: "IOS",
+    userAgent: "com.google.ios.youtube/19.45.4 (iPhone16,2; U; CPU iOS 18_1_0 like Mac OS X;)",
+    context: {
+      client: {
+        clientName: "IOS",
+        clientVersion: "19.45.4",
+        deviceMake: "Apple",
+        deviceModel: "iPhone16,2",
+        osName: "iPhone",
+        osVersion: "18.1.0.22B83",
+      },
+    },
+  },
+  {
+    name: "ANDROID",
+    userAgent: "com.google.android.youtube/20.10.38 (Linux; U; Android 14)",
+    context: {
+      client: {
+        clientName: "ANDROID",
+        clientVersion: "20.10.38",
+        androidSdkVersion: 34,
+        osName: "Android",
+        osVersion: "14",
+      },
+    },
+  },
+  {
+    name: "TVHTML5_SIMPLY_EMBEDDED_PLAYER",
+    userAgent:
+      "Mozilla/5.0 (PlayStation; PlayStation 4/12.00) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Safari/605.1.15",
+    context: {
+      client: {
+        clientName: "TVHTML5_SIMPLY_EMBEDDED_PLAYER",
+        clientVersion: "2.0",
+      },
+    },
+  },
+  {
+    name: "WEB",
+    userAgent:
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    context: {
+      client: {
+        clientName: "WEB",
+        clientVersion: "2.20241201.00.00",
+      },
+    },
+  },
+];
 
 /**
- * Fetch caption tracks via YouTube's InnerTube API using the Android client.
- * This bypasses IP-signed URL restrictions and reliably returns caption metadata
- * for both manual and auto-generated (ASR) captions.
+ * Fetch caption tracks via YouTube's InnerTube API.
+ * Tries multiple client strategies (iOS, Android, TVHTML5, Web) since YouTube
+ * treats requests from datacenter IPs (Vercel/AWS) differently than residential IPs.
  */
 async function fetchCaptionTracksInnerTube(videoId: string): Promise<CaptionTrack[]> {
-  try {
-    const res = await fetch(INNERTUBE_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "User-Agent": ANDROID_USER_AGENT,
-      },
-      body: JSON.stringify({
-        context: {
-          client: {
-            clientName: "ANDROID",
-            clientVersion: ANDROID_CLIENT_VERSION,
-          },
+  for (const strategy of CLIENT_STRATEGIES) {
+    try {
+      const res = await fetch(INNERTUBE_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "User-Agent": strategy.userAgent,
+          "X-YouTube-Client-Name": strategy.context.client.clientName,
+          "X-YouTube-Client-Version": strategy.context.client.clientVersion,
         },
-        videoId,
-      }),
-    });
-    if (!res.ok) return [];
-    const data = await res.json();
-    const tracks = data?.captions?.playerCaptionsTracklistRenderer?.captionTracks;
-    return Array.isArray(tracks) ? tracks : [];
-  } catch {
-    return [];
+        body: JSON.stringify({
+          context: strategy.context,
+          videoId,
+        }),
+      });
+
+      if (!res.ok) {
+        console.warn(`[transcript] ${strategy.name} HTTP ${res.status}`);
+        continue;
+      }
+
+      const data = await res.json();
+      const playability = data?.playabilityStatus?.status;
+      if (playability && playability !== "OK") {
+        console.warn(`[transcript] ${strategy.name} playability: ${playability} (${data?.playabilityStatus?.reason || "no reason"})`);
+        continue;
+      }
+
+      const tracks = data?.captions?.playerCaptionsTracklistRenderer?.captionTracks;
+      if (Array.isArray(tracks) && tracks.length > 0) {
+        console.log(`[transcript] ${strategy.name} found ${tracks.length} caption track(s)`);
+        return tracks;
+      }
+      console.warn(`[transcript] ${strategy.name} returned no caption tracks`);
+    } catch (err) {
+      console.warn(`[transcript] ${strategy.name} threw:`, err instanceof Error ? err.message : err);
+    }
   }
+  return [];
 }
 
 /**
@@ -62,43 +135,77 @@ function decodeEntities(s: string): string {
  */
 async function fetchCaptionText(baseUrl: string): Promise<string | null> {
   try {
-    const res = await fetch(baseUrl, {
-      headers: { "User-Agent": ANDROID_USER_AGENT },
+    // Force JSON3 format which is more reliable than the default
+    const url = baseUrl.includes("&fmt=") ? baseUrl : `${baseUrl}&fmt=json3`;
+    const res = await fetch(url, {
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept-Language": "en-US,en;q=0.9",
+      },
     });
-    if (!res.ok) return null;
-    const xml = await res.text();
-    if (!xml) return null;
+    if (!res.ok) {
+      console.warn(`[transcript] caption fetch HTTP ${res.status}`);
+      return null;
+    }
+    const body = await res.text();
+    if (!body) {
+      console.warn(`[transcript] caption fetch returned empty body`);
+      return null;
+    }
 
     const parts: string[] = [];
 
-    // Modern format: <p t="..." d="..."><s>word</s>...</p>
-    const pRegex = /<p\s+t="\d+"\s+d="\d+"[^>]*>([\s\S]*?)<\/p>/g;
-    let pMatch;
-    while ((pMatch = pRegex.exec(xml)) !== null) {
-      const inner = pMatch[1];
-      const sRegex = /<s[^>]*>([^<]*)<\/s>/g;
-      let lineParts = "";
-      let sMatch;
-      while ((sMatch = sRegex.exec(inner)) !== null) {
-        lineParts += sMatch[1];
+    // JSON3 format: { events: [{ segs: [{ utf8: "word" }, ...] }, ...] }
+    if (body.trimStart().startsWith("{")) {
+      try {
+        const json = JSON.parse(body);
+        if (Array.isArray(json?.events)) {
+          for (const ev of json.events) {
+            if (!Array.isArray(ev?.segs)) continue;
+            const line = ev.segs.map((s: { utf8?: string }) => s.utf8 || "").join("").trim();
+            if (line) parts.push(decodeEntities(line));
+          }
+        }
+      } catch {
+        // fall through to XML parsing
       }
-      const line = (lineParts || inner.replace(/<[^>]+>/g, "")).trim();
-      if (line) parts.push(decodeEntities(line));
     }
 
-    // Legacy format: <text start="..." dur="...">content</text>
+    // Modern XML format: <p t="..." d="..."><s>word</s>...</p>
+    if (parts.length === 0) {
+      const pRegex = /<p\s+t="\d+"\s+d="\d+"[^>]*>([\s\S]*?)<\/p>/g;
+      let pMatch;
+      while ((pMatch = pRegex.exec(body)) !== null) {
+        const inner = pMatch[1];
+        const sRegex = /<s[^>]*>([^<]*)<\/s>/g;
+        let lineParts = "";
+        let sMatch;
+        while ((sMatch = sRegex.exec(inner)) !== null) {
+          lineParts += sMatch[1];
+        }
+        const line = (lineParts || inner.replace(/<[^>]+>/g, "")).trim();
+        if (line) parts.push(decodeEntities(line));
+      }
+    }
+
+    // Legacy XML format: <text start="..." dur="...">content</text>
     if (parts.length === 0) {
       const textRegex = /<text[^>]*>([\s\S]*?)<\/text>/g;
       let tMatch;
-      while ((tMatch = textRegex.exec(xml)) !== null) {
+      while ((tMatch = textRegex.exec(body)) !== null) {
         const line = tMatch[1].replace(/<[^>]+>/g, "").trim();
         if (line) parts.push(decodeEntities(line));
       }
     }
 
-    if (parts.length === 0) return null;
+    if (parts.length === 0) {
+      console.warn(`[transcript] caption body parsed to 0 lines (length: ${body.length}, first 100: ${body.substring(0, 100)})`);
+      return null;
+    }
     return parts.join(" ").replace(/\s+/g, " ").trim();
-  } catch {
+  } catch (err) {
+    console.warn(`[transcript] fetchCaptionText threw:`, err instanceof Error ? err.message : err);
     return null;
   }
 }
