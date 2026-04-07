@@ -1,3 +1,5 @@
+import { getSetting } from "./settings";
+
 interface CaptionTrack {
   baseUrl: string;
   languageCode: string;
@@ -260,20 +262,113 @@ export async function getVideoTitle(videoId: string): Promise<string> {
 }
 
 /**
+ * Fetch transcript via Apify's pintostudio/youtube-transcript-scraper actor.
+ * Apify uses residential proxies that bypass YouTube's datacenter IP restrictions,
+ * so this works reliably from Vercel where direct InnerTube calls fail.
+ */
+async function fetchTranscriptApify(videoId: string): Promise<string | null> {
+  const token = await getSetting("apifyApiToken", "APIFY_API_TOKEN");
+  if (!token) {
+    console.warn("[transcript] Apify token not configured");
+    return null;
+  }
+
+  try {
+    // Synchronous run-and-get-results endpoint — waits for the actor to finish
+    const url = `https://api.apify.com/v2/acts/pintostudio~youtube-transcript-scraper/run-sync-get-dataset-items?token=${encodeURIComponent(token)}`;
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        videoUrl: `https://www.youtube.com/watch?v=${videoId}`,
+        targetLanguage: "en",
+      }),
+    });
+
+    if (!res.ok) {
+      const body = await res.text().catch(() => "");
+      console.warn(`[transcript] Apify HTTP ${res.status}: ${body.substring(0, 200)}`);
+      return null;
+    }
+
+    const data = await res.json();
+    if (!Array.isArray(data) || data.length === 0) {
+      console.warn(`[transcript] Apify returned empty dataset`);
+      return null;
+    }
+
+    // The actor's output shape varies — try several common shapes
+    for (const item of data) {
+      // Shape 1: { transcript: "full text" }
+      if (typeof item?.transcript === "string" && item.transcript.length > 20) {
+        return item.transcript;
+      }
+      // Shape 2: { transcript: [{ text }, ...] }
+      if (Array.isArray(item?.transcript)) {
+        const text = item.transcript
+          .map((s: { text?: string }) => s?.text || "")
+          .join(" ")
+          .trim();
+        if (text.length > 20) return text;
+      }
+      // Shape 3: { data: [{ text }, ...] }
+      if (Array.isArray(item?.data)) {
+        const text = item.data
+          .map((s: { text?: string }) => s?.text || "")
+          .join(" ")
+          .trim();
+        if (text.length > 20) return text;
+      }
+      // Shape 4: { text: "..." }
+      if (typeof item?.text === "string" && item.text.length > 20) {
+        return item.text;
+      }
+    }
+
+    // Last resort: if dataset is an array of segment objects directly
+    if (data.every((d) => typeof d?.text === "string")) {
+      const text = data.map((d) => d.text).join(" ").trim();
+      if (text.length > 20) return text;
+    }
+
+    console.warn(`[transcript] Apify response shape unrecognized: ${JSON.stringify(data[0]).substring(0, 200)}`);
+    return null;
+  } catch (err) {
+    console.warn("[transcript] Apify fetch threw:", err instanceof Error ? err.message : err);
+    return null;
+  }
+}
+
+/**
  * Extract transcript/captions from a YouTube video.
- * Uses YouTube's InnerTube API with the Android client, which works for both
- * manual and auto-generated captions on virtually any video that has captions.
+ *
+ * Strategy:
+ * 1. Try YouTube's InnerTube API directly (free, fast). Works from residential
+ *    IPs but often blocked from Vercel/AWS datacenter IPs.
+ * 2. Fall back to Apify's youtube-transcript-scraper actor, which uses
+ *    residential proxies and bypasses YouTube's datacenter blocking.
  */
 export async function getTranscript(videoId: string): Promise<string | null> {
+  // Strategy 1: Direct InnerTube (free)
   const tracks = await fetchCaptionTracksInnerTube(videoId);
-  if (tracks.length === 0) return null;
+  if (tracks.length > 0) {
+    const sorted = [...tracks].sort((a, b) => scoreTrack(b) - scoreTrack(a));
+    for (const track of sorted) {
+      const text = await fetchCaptionText(track.baseUrl);
+      if (text && text.length > 20) {
+        console.log("[transcript] success via InnerTube");
+        return text;
+      }
+    }
+    console.warn("[transcript] InnerTube found tracks but couldn't fetch caption text");
+  }
 
-  // Prefer manual English, then auto-generated English, then any English variant, then any track
-  const sorted = [...tracks].sort((a, b) => scoreTrack(b) - scoreTrack(a));
-
-  for (const track of sorted) {
-    const text = await fetchCaptionText(track.baseUrl);
-    if (text && text.length > 20) return text;
+  // Strategy 2: Apify fallback (uses paid credits but reliable from Vercel)
+  console.log("[transcript] falling back to Apify");
+  const apifyText = await fetchTranscriptApify(videoId);
+  if (apifyText) {
+    console.log("[transcript] success via Apify");
+    return apifyText;
   }
 
   return null;
