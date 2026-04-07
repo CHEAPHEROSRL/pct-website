@@ -9,6 +9,7 @@ import {
   resolveAssetPlaceholders,
   type BlogAsset,
 } from "./blog-assets";
+import { getBlogKnowledge } from "./blog-knowledge";
 
 export interface GeneratedPost {
   title: string;
@@ -25,16 +26,24 @@ export interface GeneratedPostPair {
 
 type AIProvider = "anthropic" | "openai";
 
-const SYSTEM_PROMPT = `You are a ghostwriter for Paul Barry, a cancer awareness advocate who is thru-hiking the Pacific Crest Trail (PCT) in 2026 — walking 2,650 miles from Mexico to Canada in honor of both his parents who he lost to cancer. He's raising funds for cancer research, patient support, and prevention.
+async function buildSystemPrompt(): Promise<string> {
+  const knowledge = await getBlogKnowledge();
+  return `You are a ghostwriter for Paul Barry, a cancer awareness advocate who is thru-hiking the Pacific Crest Trail (PCT) in 2026 — walking 2,650 miles from Mexico to Canada in honor of both his parents who he lost to cancer. He's raising funds for cancer research, patient support, and prevention.
 
-PAUL'S VOICE
-- Warm, reflective, and genuine
-- Conversational but thoughtful — he speaks plainly without being simplistic
-- He shares vulnerable moments honestly
-- He connects trail experiences to bigger life themes
-- He uses sensory details (what he sees, hears, feels on the trail)
-- He occasionally uses dry humor
-- He never sounds preachy about the cause — the walk speaks for itself
+═══════════════════════════════════════════════════════════════
+YESCHAPTER KNOWLEDGE BLOCK — TREAT AS GROUND TRUTH
+═══════════════════════════════════════════════════════════════
+The following section contains everything you need to know about the
+project, the funding model, the trail, and Paul's voice. Treat it as
+authoritative. Do not contradict it. Do not invent foundations,
+locations, or facts not stated here. If the post topic falls outside
+this knowledge, say less rather than fabricate.
+
+${knowledge}
+
+═══════════════════════════════════════════════════════════════
+END KNOWLEDGE BLOCK — Output guidance follows
+═══════════════════════════════════════════════════════════════
 
 FORMATTING — write rich, magazine-style markdown
 The blog is written in first person as Paul. Use Markdown formatting that makes posts visually engaging and easy to read. Specifically:
@@ -49,6 +58,7 @@ The blog is written in first person as Paul. Use Markdown formatting that makes 
 - Do NOT use code blocks or tables — this is editorial writing
 
 The result should feel like a well-edited magazine essay, not a wall of plain paragraphs.`;
+}
 
 // ---------------------------------------------------------------------------
 // Provider detection — checks Redis settings first, then env vars
@@ -140,13 +150,15 @@ async function generateCompletion(
   const config = await getAIConfig();
   if (!config) return null;
 
+  const systemPrompt = await buildSystemPrompt();
+
   if (config.provider === "anthropic") {
     try {
       const client = new Anthropic({ apiKey: config.apiKey });
       const response = await client.messages.create({
         model: config.model,
         max_tokens: maxTokens,
-        system: SYSTEM_PROMPT,
+        system: systemPrompt,
         messages: [{ role: "user", content: userPrompt }],
       });
       return response.content[0].type === "text" ? response.content[0].text : null;
@@ -164,7 +176,7 @@ async function generateCompletion(
       model: config.model,
       max_tokens: maxTokens,
       messages: [
-        { role: "system", content: SYSTEM_PROMPT },
+        { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
       ],
     });

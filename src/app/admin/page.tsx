@@ -2509,6 +2509,67 @@ export default function AdminPage() {
                     </div>
                   </>
                 )}
+
+                {/* Knowledge Block */}
+                <div className="flex flex-col gap-[8px] pt-[20px] mt-[8px] border-t border-[var(--border-subtle)]">
+                  <label className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                    BLOG KNOWLEDGE BLOCK
+                  </label>
+                  <p className="font-heading text-[13px] leading-[1.6] text-[var(--text-secondary)]">
+                    Authoritative context the AI sees on every blog generation. Includes the foundations by name, the funding model rules, the trail facts, and Paul&apos;s voice fingerprint. Edit this when you spot something the AI keeps getting wrong, or when project facts change. Saved with the rest of the settings via the SAVE SETTINGS button below.
+                  </p>
+                  <textarea
+                    value={settings.blogKnowledge || ""}
+                    onChange={(e) => setSettings({ ...settings, blogKnowledge: e.target.value })}
+                    placeholder="Click LOAD DEFAULT to populate with the curated default..."
+                    rows={20}
+                    className="w-full px-[14px] py-[12px] border border-[var(--border-subtle)] font-heading text-[12px] leading-[1.6] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none bg-[var(--bg-card)] resize-y font-mono"
+                  />
+                  <div className="flex flex-wrap items-center gap-[10px]">
+                    <button
+                      onClick={async () => {
+                        try {
+                          const res = await fetch("/api/admin/blog-knowledge-default", {
+                            headers: { Authorization: `Bearer ${token}` },
+                          });
+                          if (res.ok) {
+                            const data = await res.json();
+                            setSettings({ ...settings, blogKnowledge: data.knowledge });
+                            setStatus("Default knowledge loaded into the editor. Click SAVE SETTINGS to apply.");
+                            setTimeout(() => setStatus(""), 5000);
+                          } else {
+                            setStatus("Failed to load default knowledge");
+                          }
+                        } catch {
+                          setStatus("Network error loading default knowledge");
+                        }
+                      }}
+                      className="flex items-center gap-[6px] px-[16px] py-[8px] border border-[var(--border-subtle)] hover:border-[var(--burnt-orange)] hover:text-[var(--burnt-orange)] transition-colors cursor-pointer"
+                    >
+                      <span className="font-label font-bold text-[11px] tracking-[1px] text-[var(--text-secondary)] hover:text-[var(--burnt-orange)]">
+                        LOAD DEFAULT
+                      </span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (!confirm("Clear the override? The AI will fall back to the hardcoded default knowledge block. You can re-load the default into the editor anytime with LOAD DEFAULT.")) return;
+                        setSettings({ ...settings, blogKnowledge: "" });
+                        setStatus("Override cleared in editor. Click SAVE SETTINGS to apply.");
+                        setTimeout(() => setStatus(""), 5000);
+                      }}
+                      className="flex items-center gap-[6px] px-[16px] py-[8px] border border-[var(--border-subtle)] hover:border-red-500 hover:text-red-600 transition-colors cursor-pointer"
+                    >
+                      <span className="font-label font-bold text-[11px] tracking-[1px] text-[var(--text-secondary)] hover:text-red-600">
+                        CLEAR OVERRIDE
+                      </span>
+                    </button>
+                    <span className="font-heading text-[11px] text-[var(--text-muted)]">
+                      {settings.blogKnowledge && settings.blogKnowledge.length > 100
+                        ? `${settings.blogKnowledge.length} characters — using your override`
+                        : "Empty — using hardcoded default"}
+                    </span>
+                  </div>
+                </div>
               </div>
 
               {/* YouTube */}
