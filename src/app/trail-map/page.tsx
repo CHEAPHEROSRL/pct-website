@@ -13,7 +13,15 @@ import { useGiftLocations } from "@/hooks/useGiftLocations";
 import { getTrailFundingPercent } from "@/lib/trail-funding";
 import { getTrailSectionIndex } from "@/lib/trail";
 import DistanceTracker from "@/components/DistanceTracker";
-import type { PledgerLocation } from "@/lib/types";
+import type { PledgerLocation, JournalPostPublic } from "@/lib/types";
+
+interface JournalMarkerPost {
+  slug: string;
+  title: string;
+  dayNumber: number;
+  date: string;
+  mileMarker: number;
+}
 
 type MapMode = "trail" | "pledgers" | "supporters";
 
@@ -77,6 +85,33 @@ export default function TrailMapPage() {
 
   // Gift locations for supporters mode
   const { locations: giftLocations } = useGiftLocations();
+
+  // Journal post markers — only PUBLISHED posts with a mileMarker.
+  // Drafts are intentionally NEVER shown on the public map.
+  const [journalMarkerPosts, setJournalMarkerPosts] = useState<JournalMarkerPost[]>([]);
+  useEffect(() => {
+    fetch("/api/journal")
+      .then((r) => r.json())
+      .then((posts: JournalPostPublic[]) => {
+        if (!Array.isArray(posts)) return;
+        const markers = posts
+          .filter(
+            (p) =>
+              !p.isDraft &&
+              typeof p.mileMarker === "number" &&
+              p.mileMarker >= 0
+          )
+          .map((p) => ({
+            slug: p.slug,
+            title: p.title,
+            dayNumber: p.dayNumber,
+            date: p.date,
+            mileMarker: p.mileMarker as number,
+          }));
+        setJournalMarkerPosts(markers);
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     fetch("/api/pledges/locations")
@@ -410,6 +445,7 @@ export default function TrailMapPage() {
             pledgerLocations={displayLocations}
             supportGiftLocations={giftLocations}
             pledgeCoveragePercent={pledgeCoveragePercent}
+            journalPosts={journalMarkerPosts}
           />
         </div>
       </div>

@@ -27,6 +27,7 @@ import {
   Navigation,
 } from "lucide-react";
 import type { JournalPost, ChallengePublic } from "@/lib/types";
+import { getMileForDay, getLastTrackedDay } from "@/lib/day-mileage";
 
 type View = "login" | "list" | "editor" | "challenges" | "honor" | "waitlist" | "settings";
 type AdminTab = "journal" | "challenges" | "honor" | "waitlist" | "settings";
@@ -1255,6 +1256,73 @@ export default function AdminPage() {
                   className="w-full h-[48px] px-[16px] border border-[var(--border-subtle)] font-heading text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none bg-[var(--bg-card)]"
                 />
               </div>
+
+              {/* Trail Mile — anchors the post to a position on the trail map */}
+              {(() => {
+                const dayNum = editingPost.dayNumber;
+                const lookupMile =
+                  typeof dayNum === "number" ? getMileForDay(dayNum) : null;
+                const lastTracked = getLastTrackedDay();
+                return (
+                  <div className="flex flex-col gap-[6px]">
+                    <label className="font-heading font-semibold text-[14px] text-[var(--text-primary)]">
+                      Trail Mile
+                    </label>
+                    <div className="flex gap-[8px]">
+                      <input
+                        type="number"
+                        step="0.1"
+                        min="0"
+                        max="2650"
+                        value={editingPost.mileMarker ?? ""}
+                        onChange={(e) =>
+                          setEditingPost({
+                            ...editingPost,
+                            mileMarker: e.target.value
+                              ? Number(e.target.value)
+                              : undefined,
+                          })
+                        }
+                        placeholder="e.g. 49.2"
+                        className="flex-1 h-[48px] px-[16px] border border-[var(--border-subtle)] font-heading text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none bg-[var(--bg-card)]"
+                      />
+                      {lookupMile !== null && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setEditingPost({
+                              ...editingPost,
+                              mileMarker: lookupMile,
+                            })
+                          }
+                          className="px-[12px] h-[48px] border border-[var(--burnt-orange)] hover:bg-[var(--burnt-orange-light)] cursor-pointer transition-colors"
+                          title={`Use the lookup table value for Day ${dayNum}: Mile ${lookupMile}`}
+                        >
+                          <span className="font-label font-bold text-[10px] tracking-[1px] text-[var(--burnt-orange)]">
+                            USE&nbsp;LOOKUP
+                          </span>
+                        </button>
+                      )}
+                    </div>
+                    <span className="font-label text-[11px] text-[var(--text-muted)] leading-[1.5]">
+                      {lookupMile !== null && typeof dayNum === "number" ? (
+                        <>
+                          <strong className="text-[var(--burnt-orange)]">Lookup:</strong> Day {dayNum} → Mile {lookupMile}
+                        </>
+                      ) : typeof dayNum === "number" ? (
+                        <>
+                          Day {dayNum} not in lookup table yet (covers Day 0–{lastTracked}). Type a mile manually.
+                        </>
+                      ) : (
+                        <>Set Day Number first to enable lookup.</>
+                      )}
+                      <br />
+                      Anchors this post on the trail map. Visible only after Paul passes this mile.
+                    </span>
+                  </div>
+                );
+              })()}
+
               <div className="flex flex-col gap-[6px]">
                 <label className="font-heading font-semibold text-[14px] text-[var(--text-primary)]">
                   Date

@@ -88,6 +88,13 @@ export interface JournalPost {
   published: boolean;
   createdAt: number;
   updatedAt: number;
+  /**
+   * Cumulative mile on the PCT this post is anchored to. Used to render
+   * blog post markers on the trail map at the right position. Auto-set
+   * when the post is created (from the day-mileage lookup or current
+   * simulated mile), can be manually overridden in the admin editor.
+   */
+  mileMarker?: number;
 }
 
 export interface JournalPostPublic {
@@ -101,6 +108,7 @@ export interface JournalPostPublic {
   youtubeUrl: string;
   tags: string[];
   isDraft?: boolean;
+  mileMarker?: number;
 }
 
 export interface JournalPostDetail {
@@ -116,6 +124,7 @@ export interface JournalPostDetail {
   youtubeUrl: string;
   tags: string[];
   isDraft?: boolean;
+  mileMarker?: number;
 }
 
 export interface PostNavLink {

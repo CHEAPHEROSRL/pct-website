@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ShareButton from "@/components/ShareButton";
 import HomeTrailProgress from "@/components/HomeTrailProgress";
+import HomeJournalSection from "@/components/HomeJournalSection";
 import ScrollReveal from "@/components/ScrollReveal";
 import HeroParallax from "@/components/HeroParallax";
 import {
@@ -207,112 +208,8 @@ export default function Home() {
         </Link>
       </section>
 
-      {/* Blog / Vlog */}
-      <section className="flex flex-col gap-[32px] md:gap-[48px] px-6 md:px-12 lg:px-[120px] py-[48px] md:py-[64px] lg:py-[80px] bg-[var(--bg-warm)] w-full">
-        <ScrollReveal animation="fade-up">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-0 w-full">
-            <div className="flex flex-col gap-[16px]">
-              <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">TRAIL JOURNAL</span>
-              <h2 className="font-heading font-semibold text-[28px] md:text-[34px] lg:text-[40px] tracking-[-0.5px] text-[var(--text-primary)]">
-                Stories From the Trail
-              </h2>
-              <p className="font-heading text-[18px] leading-[1.6] text-[var(--text-secondary)]">
-                Daily photos, videos, and reflections from Paul&apos;s PCT journey.
-              </p>
-            </div>
-            <Link
-              href="/journal"
-              className="flex items-center gap-[8px] border border-[var(--border-subtle)] px-[24px] py-[12px]"
-            >
-              <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-secondary)]">VIEW ALL POSTS</span>
-              <ArrowRight className="w-[14px] h-[14px] text-[var(--text-secondary)]" />
-            </Link>
-          </div>
-        </ScrollReveal>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[24px] w-full">
-          {/* Blog Post 1 */}
-          <ScrollReveal animation="fade-up">
-            <div className="flex flex-col bg-[var(--bg-white)] border border-[var(--border-subtle)] overflow-hidden">
-              <div className="relative w-full h-[220px]">
-                <Image
-                  src="/images/hiking/20250802_160435.jpg"
-                  alt="The First Step"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="flex flex-col gap-[12px] p-[24px]">
-                <div className="flex items-center gap-[8px]">
-                  <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--burnt-orange)]">DAY 1</span>
-                  <span className="font-label font-medium text-[11px] tracking-[1px] text-[var(--text-muted)]">&middot;&nbsp; MARCH 28, 2026</span>
-                </div>
-                <span className="font-heading font-semibold text-[20px] text-[var(--text-primary)]">The First Step</span>
-                <p className="font-heading text-[14px] leading-[1.6] text-[var(--text-secondary)]">
-                  Standing at the southern monument, looking north toward Canada. 2,650 miles of trail ahead. This is the moment everything changes.
-                </p>
-                <div className="flex gap-[8px]">
-                  <span className="bg-[var(--forest-green-light)] px-[10px] py-[4px] font-label font-semibold text-[10px] tracking-[1px] text-[var(--forest-green)]">BLOG</span>
-                  <span className="bg-[var(--burnt-orange-light)] px-[10px] py-[4px] font-label font-semibold text-[10px] tracking-[1px] text-[var(--burnt-orange)]">VIDEO</span>
-                </div>
-              </div>
-            </div>
-          </ScrollReveal>
-
-          {/* Blog Post 2 */}
-          <ScrollReveal animation="fade-up" delay={120}>
-            <div className="flex flex-col bg-[var(--bg-white)] border border-[var(--border-subtle)] overflow-hidden">
-              <div className="relative w-full h-[220px]">
-                <Image
-                  src="/images/hiking/20220822_134557.jpg"
-                  alt="Through the Desert Wind"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="flex flex-col gap-[12px] p-[24px]">
-                <div className="flex items-center gap-[8px]">
-                  <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--burnt-orange)]">DAY 15</span>
-                  <span className="font-label font-medium text-[11px] tracking-[1px] text-[var(--text-muted)]">&middot;&nbsp; APRIL 11, 2026</span>
-                </div>
-                <span className="font-heading font-semibold text-[20px] text-[var(--text-primary)]">Through the Desert Wind</span>
-                <p className="font-heading text-[14px] leading-[1.6] text-[var(--text-secondary)]">
-                  The heat is relentless, but the sunsets make it all worthwhile. Today I met a fellow hiker who lost her mother to breast cancer.
-                </p>
-                <div className="flex gap-[8px]">
-                  <span className="bg-[var(--forest-green-light)] px-[10px] py-[4px] font-label font-semibold text-[10px] tracking-[1px] text-[var(--forest-green)]">BLOG</span>
-                </div>
-              </div>
-            </div>
-          </ScrollReveal>
-
-          {/* Blog Post 3 */}
-          <ScrollReveal animation="fade-up" delay={240}>
-            <div className="flex flex-col bg-[var(--bg-white)] border border-[var(--border-subtle)] overflow-hidden">
-              <div className="relative w-full h-[220px]">
-                <Image
-                  src="/images/hiking/20230824_122513.jpg"
-                  alt="Sierra Nights"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="flex flex-col gap-[12px] p-[24px]">
-                <div className="flex items-center gap-[8px]">
-                  <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--burnt-orange)]">DAY 30</span>
-                  <span className="font-label font-medium text-[11px] tracking-[1px] text-[var(--text-muted)]">&middot;&nbsp; APRIL 26, 2026</span>
-                </div>
-                <span className="font-heading font-semibold text-[20px] text-[var(--text-primary)]">Sierra Nights</span>
-                <p className="font-heading text-[14px] leading-[1.6] text-[var(--text-secondary)]">
-                  The stars out here remind me of camping with my dad. I can feel him walking with me. Tonight&apos;s vlog is for him.
-                </p>
-                <div className="flex gap-[8px]">
-                  <span className="bg-[var(--burnt-orange-light)] px-[10px] py-[4px] font-label font-semibold text-[10px] tracking-[1px] text-[var(--burnt-orange)]">VLOG</span>
-                </div>
-              </div>
-            </div>
-          </ScrollReveal>
-        </div>
-      </section>
+      {/* Blog / Vlog — entire section is hidden until at least one published post exists */}
+      <HomeJournalSection />
 
       {/* Donate CTA */}
       <section className="relative w-full h-[420px] md:h-[450px] lg:h-[480px] overflow-hidden">

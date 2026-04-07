@@ -4,8 +4,20 @@ import { useEffect, useMemo } from "react";
 import { MapContainer, TileLayer, Polyline, Marker, Popup, CircleMarker, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { pctRouteCoords, pctWaypoints } from "@/lib/trail";
+import { pctRouteCoords, pctWaypoints, interpolateFromMile } from "@/lib/trail";
 import type { PledgerLocation, SupportGiftLocation } from "@/lib/types";
+
+/**
+ * Lightweight journal-post shape for trail map markers.
+ * Only the fields we need to render a marker + popup are included.
+ */
+export interface JournalMarkerPost {
+  slug: string;
+  title: string;
+  dayNumber: number;
+  date: string;
+  mileMarker: number;
+}
 
 /** Group pledgers by country for heatmap-style clusters */
 function buildCountryClusters(pledgers: PledgerLocation[]) {
@@ -108,6 +120,31 @@ const GIFT_EMOJI: Record<string, string> = {
   "Trail Boots": "🥾",
 };
 
+function createJournalMarkerIcon(dayNumber: number) {
+  return new L.DivIcon({
+    className: "",
+    html: `<div style="
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      background: #C45C26;
+      border: 2px solid #FFFFFF;
+      border-radius: 50%;
+      font-family: 'Barlow Semi Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 11px;
+      color: #FFFFFF;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      cursor: pointer;
+    ">${dayNumber}</div>`,
+    iconSize: [28, 28],
+    iconAnchor: [14, 14],
+    popupAnchor: [0, -16],
+  });
+}
+
 function createGiftIcon(giftTitle: string) {
   const emoji = GIFT_EMOJI[giftTitle] || "💚";
   return new L.DivIcon({
@@ -164,6 +201,13 @@ interface TrailMapViewProps {
   supportGiftLocations?: SupportGiftLocation[];
   /** 0–100: how much of the trail to fill with pledge coverage colour */
   pledgeCoveragePercent?: number;
+  /**
+   * Journal posts to display as clickable markers along the trail.
+   * Only posts with mileMarker <= currentTotalMiles are rendered (visitors
+   * never see future-dated posts that Paul hasn't reached yet). Caller is
+   * responsible for filtering out drafts on the public site.
+   */
+  journalPosts?: JournalMarkerPost[];
 }
 
 // Default fallback position (Campo, CA — starting point)
@@ -180,6 +224,7 @@ export default function TrailMapView({
   pledgerLocations = [],
   supportGiftLocations = [],
   pledgeCoveragePercent = 0,
+  journalPosts = [],
 }: TrailMapViewProps) {
   const position: [number, number] = currentPosition
     ? [currentPosition.lat, currentPosition.lng]
@@ -204,6 +249,26 @@ export default function TrailMapView({
     () => buildPledgeCoverageCoords(pledgeCoveragePercent),
     [pledgeCoveragePercent]
   );
+
+  // Filter journal posts: only show ones Paul has actually reached.
+  // Posts with no mileMarker are skipped entirely (legacy / unanchored).
+  // Then resolve each to a lat/lng using the existing trail interpolation.
+  const visibleJournalMarkers = useMemo(() => {
+    if (!journalPosts || journalPosts.length === 0) return [];
+    return journalPosts
+      .filter(
+        (p) =>
+          typeof p.mileMarker === "number" &&
+          p.mileMarker >= 0 &&
+          p.mileMarker <= totalMiles + 0.01 // small tolerance for rounding
+      )
+      .map((p) => {
+        const { lat, lng } = interpolateFromMile(p.mileMarker);
+        return { ...p, lat, lng };
+      })
+      // Sort by mile so popups overlap predictably
+      .sort((a, b) => a.mileMarker - b.mileMarker);
+  }, [journalPosts, totalMiles]);
 
   // For pledger mode, zoom out to world view; supporters mode uses trail view
   const effectiveFlyTo = mode === "pledgers"
@@ -236,6 +301,68 @@ export default function TrailMapView({
               opacity: 0.85,
             }}
           />
+
+          {/* Journal post markers — clickable circles with the day number.
+              Only renders posts Paul has actually reached (mileMarker <=
+              totalMiles), already filtered upstream. */}
+          {visibleJournalMarkers.map((p) => (
+            <Marker
+              key={`journal-${p.slug}`}
+              position={[p.lat, p.lng]}
+              icon={createJournalMarkerIcon(p.dayNumber)}
+            >
+              <Popup>
+                <div
+                  style={{
+                    fontFamily: "'Source Serif 4', serif",
+                    maxWidth: 240,
+                    padding: "4px 0",
+                  }}
+                >
+                  <div
+                    style={{
+                      fontFamily: "'Barlow Semi Condensed', sans-serif",
+                      fontSize: 10,
+                      fontWeight: 700,
+                      letterSpacing: 1.5,
+                      color: "#C45C26",
+                      marginBottom: 6,
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    Day {p.dayNumber} · Mile {p.mileMarker}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: 14,
+                      fontWeight: 600,
+                      color: "#1C1C1C",
+                      lineHeight: 1.35,
+                      marginBottom: 8,
+                    }}
+                  >
+                    {p.title}
+                  </div>
+                  <a
+                    href={`/journal/${p.slug}`}
+                    style={{
+                      fontFamily: "'Barlow Semi Condensed', sans-serif",
+                      fontSize: 11,
+                      fontWeight: 700,
+                      letterSpacing: 1.5,
+                      color: "#C45C26",
+                      textDecoration: "none",
+                      textTransform: "uppercase",
+                      borderBottom: "1px solid #C45C26",
+                      paddingBottom: 1,
+                    }}
+                  >
+                    Read post →
+                  </a>
+                </div>
+              </Popup>
+            </Marker>
+          ))}
 
           {/* Current Position Marker */}
           <Marker position={position} icon={icon}>

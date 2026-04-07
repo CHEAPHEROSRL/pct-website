@@ -52,6 +52,7 @@ export async function GET(
     images: post.images,
     youtubeUrl: post.youtubeUrl,
     tags: post.tags,
+    mileMarker: post.mileMarker,
     isDraft: !post.published,
   };
 

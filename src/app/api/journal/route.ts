@@ -1,6 +1,30 @@
 import { Redis } from "@upstash/redis";
 import { NextRequest, NextResponse } from "next/server";
 import type { JournalPost, JournalPostPublic } from "@/lib/types";
+import { getMileForDay } from "@/lib/day-mileage";
+
+/**
+ * Resolve a default mile marker for a new manually-created post.
+ * Same logic as the auto-generator: try the day-mileage table, fall back
+ * to current simulated mile, fall back to 0.
+ */
+async function resolveMileMarker(redis: Redis, dayNumber: number): Promise<number> {
+  const fromTable = getMileForDay(dayNumber);
+  if (fromTable !== null) return fromTable;
+
+  try {
+    const settingsRaw = await redis.get<string>("admin:settings");
+    if (settingsRaw) {
+      const settings =
+        typeof settingsRaw === "string" ? JSON.parse(settingsRaw) : settingsRaw;
+      const currentMile = parseFloat(settings?.currentMile);
+      if (!isNaN(currentMile)) return currentMile;
+    }
+  } catch {
+    // ignore
+  }
+  return 0;
+}
 
 function getRedis() {
   const url = process.env.KV_REST_API_URL;
@@ -66,6 +90,7 @@ export async function GET(request: NextRequest) {
       coverImage: p.coverImage,
       youtubeUrl: p.youtubeUrl,
       tags: p.tags,
+      mileMarker: p.mileMarker,
       ...(admin && !p.published ? { isDraft: true } : {}),
     }));
 
@@ -107,11 +132,17 @@ export async function POST(request: NextRequest) {
       .slice(0, 200)
       .trim();
 
+  const dayNum = Number(dayNumber);
+  const mileMarker =
+    typeof body.mileMarker === "number"
+      ? body.mileMarker
+      : await resolveMileMarker(redis, dayNum);
+
   const post: JournalPost = {
     id: generateId(),
     title,
     slug: slugify(title),
-    dayNumber: Number(dayNumber),
+    dayNumber: dayNum,
     date,
     body: postBody,
     excerpt,
@@ -122,6 +153,7 @@ export async function POST(request: NextRequest) {
     published: body.published ?? false,
     createdAt: now,
     updatedAt: now,
+    mileMarker,
   };
 
   await redis.lpush("journal:posts", JSON.stringify(post));
@@ -192,6 +224,7 @@ export async function PUT(request: NextRequest) {
     youtubeUrl: body.youtubeUrl ?? existing.youtubeUrl,
     tags: body.tags ?? existing.tags,
     published: body.published ?? existing.published,
+    mileMarker: typeof body.mileMarker === "number" ? body.mileMarker : existing.mileMarker,
     updatedAt: Date.now(),
   };
 

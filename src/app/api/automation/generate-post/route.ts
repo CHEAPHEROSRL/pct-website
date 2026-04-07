@@ -6,7 +6,32 @@ import {
   generateBlogPostPair,
   shouldSplitIntoTwoPosts,
 } from "@/lib/blog-generator";
+import { getMileForDay } from "@/lib/day-mileage";
 import type { JournalPost } from "@/lib/types";
+
+/**
+ * Resolve the trail mile a new post should be anchored at.
+ * 1. Try the day-mileage lookup table
+ * 2. Fall back to the current simulated mile from admin settings
+ * 3. Fall back to 0 if neither is available
+ */
+async function resolveMileMarker(redis: Redis, dayNumber: number): Promise<number> {
+  const fromTable = getMileForDay(dayNumber);
+  if (fromTable !== null) return fromTable;
+
+  try {
+    const settingsRaw = await redis.get<string>("admin:settings");
+    if (settingsRaw) {
+      const settings =
+        typeof settingsRaw === "string" ? JSON.parse(settingsRaw) : settingsRaw;
+      const currentMile = parseFloat(settings?.currentMile);
+      if (!isNaN(currentMile)) return currentMile;
+    }
+  } catch {
+    // ignore
+  }
+  return 0;
+}
 
 function getRedis() {
   const url = process.env.KV_REST_API_URL;
@@ -164,6 +189,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const mileMarker1 = await resolveMileMarker(redis, dayNumber);
+    const mileMarker2 = await resolveMileMarker(redis, dayNumber + 2);
+
     const post1: JournalPost = {
       id: generateId(),
       title: pair.post1.title,
@@ -179,6 +207,7 @@ export async function POST(request: NextRequest) {
       published: publish ?? false,
       createdAt: now,
       updatedAt: now,
+      mileMarker: mileMarker1,
     };
 
     const post2: JournalPost = {
@@ -196,6 +225,7 @@ export async function POST(request: NextRequest) {
       published: false, // Second post always starts as draft
       createdAt: now + 1,
       updatedAt: now + 1,
+      mileMarker: mileMarker2,
     };
 
     await redis.lpush("journal:posts", JSON.stringify(post1));
@@ -268,6 +298,7 @@ export async function POST(request: NextRequest) {
       createdPosts.push(updated);
     } else {
       // Normal create flow
+      const mileMarker = await resolveMileMarker(redis, dayNumber);
       const post: JournalPost = {
         id: generateId(),
         title: generated.title,
@@ -283,6 +314,7 @@ export async function POST(request: NextRequest) {
         published: publish ?? false,
         createdAt: now,
         updatedAt: now,
+        mileMarker,
       };
 
       await redis.lpush("journal:posts", JSON.stringify(post));
