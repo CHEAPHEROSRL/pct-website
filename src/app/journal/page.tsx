@@ -37,6 +37,7 @@ interface JournalEntry {
   topics?: string[];
   videoUrl?: string;
   gifUrl?: string;
+  isDraft?: boolean;
 }
 
 function mapPostToEntry(post: JournalPostPublic): JournalEntry {
@@ -58,6 +59,7 @@ function mapPostToEntry(post: JournalPostPublic): JournalEntry {
     tag: (post.tags.find((t) => ["BLOG", "VLOG", "GIF", "INTERVIEWS", "PHOTOS"].includes(t)) as "BLOG" | "VLOG" | "GIF" | "INTERVIEWS" | "PHOTOS") || "BLOG",
     topics: post.tags.filter((t) => t in TOPIC_META),
     videoUrl: post.youtubeUrl || undefined,
+    isDraft: post.isDraft,
   };
 }
 
@@ -101,7 +103,10 @@ function JournalPageInner() {
   const { videos: youtubeVideos } = useYoutubeVideos();
 
   useEffect(() => {
-    fetch("/api/journal")
+    // Send admin token if present so admins can see drafts in the listing
+    const adminToken = typeof window !== "undefined" ? localStorage.getItem("pct-admin-token") : null;
+    const headers: HeadersInit = adminToken ? { Authorization: `Bearer ${adminToken}` } : {};
+    fetch("/api/journal", { headers })
       .then((res) => res.json())
       .then((posts: JournalPostPublic[]) => {
         if (posts.length > 0) {
@@ -228,8 +233,15 @@ function JournalPageInner() {
             />
           </ScrollReveal>
           <ScrollReveal animation="slide-left" className="flex flex-col justify-center gap-[20px] flex-1">
-            <div className="bg-[var(--burnt-orange)] px-[12px] py-[4px] w-fit">
-              <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-white)]">FEATURED POST</span>
+            <div className="flex items-center gap-[8px]">
+              <div className="bg-[var(--burnt-orange)] px-[12px] py-[4px] w-fit">
+                <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-white)]">FEATURED POST</span>
+              </div>
+              {featuredPost.isDraft && (
+                <div className="bg-black px-[12px] py-[4px] w-fit">
+                  <span className="font-label font-bold text-[10px] tracking-[2px] text-white">DRAFT</span>
+                </div>
+              )}
             </div>
             <div className="flex items-center gap-[8px]">
               <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--burnt-orange)]">{featuredPost.day}</span>
@@ -607,7 +619,7 @@ function YoutubeCard({ video }: { video: YoutubeVideo }) {
 // Blog Card
 // ---------------------------------------------------------------------------
 
-function BlogCard({ slug, img, day, date, title, excerpt, tag, videoUrl, gifUrl }: JournalEntry) {
+function BlogCard({ slug, img, day, date, title, excerpt, tag, videoUrl, gifUrl, isDraft }: JournalEntry) {
   const tagStyle =
     tag === "INTERVIEWS"
       ? "bg-[#EDE9FE] text-[#6D28D9]"
@@ -642,6 +654,11 @@ function BlogCard({ slug, img, day, date, title, excerpt, tag, videoUrl, gifUrl 
         {isGif && (
           <div className="absolute top-[10px] left-[10px] bg-[#0369A1] px-[8px] py-[3px]">
             <span className="font-label font-bold text-[9px] tracking-[1px] text-white">GIF</span>
+          </div>
+        )}
+        {isDraft && (
+          <div className="absolute top-[10px] right-[10px] bg-[var(--burnt-orange)] px-[8px] py-[3px]">
+            <span className="font-label font-bold text-[9px] tracking-[1px] text-white">DRAFT</span>
           </div>
         )}
       </div>

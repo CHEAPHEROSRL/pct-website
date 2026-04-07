@@ -28,7 +28,10 @@ export default function JournalPostPage() {
   useEffect(() => {
     setLoading(true);
     setError(false);
-    fetch(`/api/journal/${slug}`)
+    // Send admin token if present so admins can view drafts
+    const adminToken = typeof window !== "undefined" ? localStorage.getItem("pct-admin-token") : null;
+    const headers: HeadersInit = adminToken ? { Authorization: `Bearer ${adminToken}` } : {};
+    fetch(`/api/journal/${slug}`, { headers })
       .then((res) => {
         if (!res.ok) throw new Error("Not found");
         return res.json();
@@ -101,6 +104,17 @@ export default function JournalPostPage() {
   return (
     <div className="flex flex-col w-full bg-[var(--bg-warm)]">
       <Header activeItem="Journal" />
+
+      {post.isDraft && (
+        <div className="w-full bg-[var(--burnt-orange)] py-[10px] px-6 md:px-12 lg:px-[120px] flex items-center justify-center gap-[12px]">
+          <span className="font-label font-bold text-[10px] tracking-[3px] text-white bg-black/20 px-[10px] py-[4px]">
+            DRAFT
+          </span>
+          <span className="font-heading text-[13px] text-white">
+            This post is unpublished. Only admins can see this. Visitors get a 404.
+          </span>
+        </div>
+      )}
 
       {isVlog ? (
         <VlogHero

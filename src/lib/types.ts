@@ -100,6 +100,7 @@ export interface JournalPostPublic {
   coverImage: string;
   youtubeUrl: string;
   tags: string[];
+  isDraft?: boolean;
 }
 
 export interface JournalPostDetail {
@@ -114,6 +115,7 @@ export interface JournalPostDetail {
   images: string[];
   youtubeUrl: string;
   tags: string[];
+  isDraft?: boolean;
 }
 
 export interface PostNavLink {

@@ -29,9 +29,10 @@ function generateId(): string {
 export async function GET(request: NextRequest) {
   const redis = getRedis();
   const wantsAll = request.nextUrl.searchParams.get("all") === "true";
+  const admin = checkAuth(request);
 
   if (wantsAll) {
-    if (!checkAuth(request)) {
+    if (!admin) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
   }
@@ -51,11 +52,11 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(posts);
   }
 
-  // Public: only published posts, sorted by dayNumber desc
-  const published: JournalPostPublic[] = posts
-    .filter((p) => p.published)
+  // Admins see drafts too (with isDraft flag); public only sees published
+  const visible = posts
+    .filter((p) => admin || p.published)
     .sort((a, b) => b.dayNumber - a.dayNumber)
-    .map((p) => ({
+    .map((p): JournalPostPublic & { isDraft?: boolean } => ({
       id: p.id,
       title: p.title,
       slug: p.slug,
@@ -65,11 +66,14 @@ export async function GET(request: NextRequest) {
       coverImage: p.coverImage,
       youtubeUrl: p.youtubeUrl,
       tags: p.tags,
+      ...(admin && !p.published ? { isDraft: true } : {}),
     }));
 
-  return NextResponse.json(published, {
-    headers: { "Cache-Control": "s-maxage=60, stale-while-revalidate=120" },
-  });
+  const headers: Record<string, string> = admin
+    ? { "Cache-Control": "no-store" }
+    : { "Cache-Control": "s-maxage=60, stale-while-revalidate=120" };
+
+  return NextResponse.json(visible, { headers });
 }
 
 export async function POST(request: NextRequest) {

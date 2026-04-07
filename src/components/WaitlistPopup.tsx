@@ -14,6 +14,14 @@ function hasSiteAuthCookie(): boolean {
   return document.cookie.split(";").some((c) => c.trim().startsWith("site-auth="));
 }
 
+function hasAdminLocalStorageToken(): boolean {
+  try {
+    return !!localStorage.getItem("pct-admin-token");
+  } catch {
+    return false;
+  }
+}
+
 export default function WaitlistPopup() {
   const [visible, setVisible] = useState(false);
   const [excluded, setExcluded] = useState(false);
@@ -29,8 +37,8 @@ export default function WaitlistPopup() {
       return;
     }
 
-    // Skip popup for logged-in admins and site-auth users
-    if (hasAdminCookie() || hasSiteAuthCookie()) {
+    // Skip popup for logged-in admins (cookie or localStorage token) and site-auth users
+    if (hasAdminCookie() || hasSiteAuthCookie() || hasAdminLocalStorageToken()) {
       setExcluded(true);
       return;
     }
