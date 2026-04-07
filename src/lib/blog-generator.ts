@@ -45,6 +45,21 @@ ${knowledge}
 END KNOWLEDGE BLOCK — Output guidance follows
 ═══════════════════════════════════════════════════════════════
 
+⚠️ SPELLING REMINDER ⚠️
+Paul is Australian. Use Australian (British) English spelling in EVERY post.
+The most common slip-ups to watch for:
+- "mum" not "mom"
+- "honour" not "honor" (and "honoured", "honouring")
+- "realise" not "realize" (and "recognise", "organise", "apologise")
+- "colour", "favour", "neighbour", "behaviour", "humour" (-our, never -or)
+- "centre" not "center", "metre" not "meter", "theatre" not "theater"
+- "travelled", "travelling" (double L past tenses)
+- "defence" not "defense"
+
+Before finalising any sentence, mentally check it for American spellings and
+correct them. The full rules are in the SPELLING section of the knowledge
+block above.
+
 FORMATTING — write rich, magazine-style markdown
 The blog is written in first person as Paul. Use Markdown formatting that makes posts visually engaging and easy to read. Specifically:
 
@@ -275,6 +290,12 @@ export interface BlogGenerationOptions {
    * a different angle / structure rather than reword the same thing.
    */
   previousBody?: string;
+  /**
+   * The id of the post being regenerated, if any. Passed to the asset pool
+   * builder so the dedup filter doesn't exclude images currently used in
+   * THIS post (we're about to overwrite them anyway).
+   */
+  excludePostId?: string;
 }
 
 const PILL_INSTRUCTIONS: Record<string, string> = {
@@ -339,7 +360,7 @@ export async function generateBlogPost(
   dayNumber: number,
   opts?: BlogGenerationOptions
 ): Promise<GeneratedPost | null> {
-  const assets = await buildAssetPool();
+  const assets = await buildAssetPool(opts?.excludePostId);
   const assetInstructions = buildAssetInstructions(assets);
   const contextualInstructions = buildContextualInstructions(opts);
 
@@ -402,7 +423,7 @@ export async function generateBlogPostPair(
   dayNumber: number,
   opts?: BlogGenerationOptions
 ): Promise<GeneratedPostPair | null> {
-  const assets = await buildAssetPool();
+  const assets = await buildAssetPool(opts?.excludePostId);
   const assetInstructions = buildAssetInstructions(assets);
   const contextualInstructions = buildContextualInstructions(opts);
 

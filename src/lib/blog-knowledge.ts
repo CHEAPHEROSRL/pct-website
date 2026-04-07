@@ -16,20 +16,121 @@
 
 export const DEFAULT_BLOG_KNOWLEDGE = `## Project: YesChapter — Walking for Cancer
 
-**Who:** Paul Barry, an Australian-American who lost both his parents to cancer.
+**Who:** Paul Barry, an Australian who has lived in California for 16 years and lost both his parents to cancer.
 **What:** A solo thru-hike of the Pacific Crest Trail (PCT) — 2,650 miles from Mexico to Canada.
 **When:** Started March 24, 2026 at the southern terminus in Campo, California. Finishes at Manning Park, British Columbia, typically 4–6 months later.
-**Why:** To honor both his parents and raise awareness + funds for cancer research, prevention, and patient support.
+**Why:** To honour both his parents and raise awareness + funds for cancer research, prevention, and patient support.
 **Brand:** YesChapter — the philosophy of saying "yes" to a new chapter, choosing purpose, discomfort, and meaningful work over comfort and inertia.
 **Website:** yeschapter.com
 **Instagram:** @yeschapter
 
+## SPELLING — Australian English, always
+
+Paul is Australian. **Every blog post must use Australian (British) English spelling and vocabulary.** This is non-negotiable. The model has a strong default toward American English — fight that default in every post.
+
+**Spelling — use the Australian/British form, never the American:**
+
+| ❌ American (do not use) | ✅ Australian (use) |
+|---|---|
+| mom, mommy | mum, mummy |
+| honor, honored, honoring | honour, honoured, honouring |
+| color, colored | colour, coloured |
+| favor, favorite, favorable | favour, favourite, favourable |
+| flavor | flavour |
+| neighbor, neighborhood | neighbour, neighbourhood |
+| labor, labored | labour, laboured |
+| behavior | behaviour |
+| harbor | harbour |
+| rumor | rumour |
+| humor | humour |
+| odor | odour |
+| splendor | splendour |
+| vapor | vapour |
+| center, centered | centre, centred |
+| theater | theatre |
+| meter (length) | metre |
+| liter | litre |
+| fiber | fibre |
+| somber | sombre |
+| organize, organized | organise, organised |
+| realize, realized | realise, realised |
+| recognize | recognise |
+| analyze, analyzed | analyse, analysed |
+| paralyze | paralyse |
+| memorize | memorise |
+| apologize | apologise |
+| emphasize | emphasise |
+| traveled, traveling, traveler | travelled, travelling, traveller |
+| canceled, canceling | cancelled, cancelling |
+| modeled | modelled |
+| labeled | labelled |
+| fueled, fueling | fuelled, fuelling |
+| defense | defence |
+| offense | offence |
+| license (verb in US) | licence (noun) / license (verb) |
+| practice (verb in US) | practise (verb) / practice (noun) |
+| catalog | catalogue |
+| dialog | dialogue |
+| program (general) | programme (note: still "program" for software) |
+| gray | grey |
+| story (building floor) | storey |
+| tire (wheel) | tyre |
+| curb (sidewalk edge) | kerb |
+| plow | plough |
+| draft (cold air) | draught |
+| jewelry | jewellery |
+| aluminum | aluminium |
+| math | maths |
+| sulfur | sulphur |
+| pajamas | pyjamas |
+| airplane | aeroplane |
+| baby carriage | pram |
+| sneakers | runners (or "trainers") |
+| sidewalk | footpath |
+| trash, garbage | rubbish, bin |
+| trunk (of car) | boot |
+| hood (of car) | bonnet |
+| diaper | nappy |
+| line (queue) | queue |
+| eraser | rubber |
+| flashlight | torch |
+| elevator | lift |
+| apartment | flat (sometimes) |
+| candy | lollies, sweets |
+| cookie | biscuit |
+| chips (potato) | crisps (when packaged) |
+| fries | chips |
+| eggplant | aubergine |
+| zucchini | zucchini (Australia keeps this one) |
+
+**Specifically and most importantly:**
+- **"mum"** — never "mom". "My mum", "Mum's nominated charity", "in honour of my mum".
+- **"dad"** — same as American, no change needed. ("dad", "Dad")
+- **"honour"** — never "honor". This appears constantly when writing about why Paul walks.
+- **"realise", "recognise"** — never "realize", "recognize". Common verbs that sneak in.
+- **"colour", "favour", "neighbour"** — drop the "or" → "our".
+- **"travelled", "travelling"** — double-L past tenses. "I've travelled this trail in my mind for years."
+
+**Vocabulary — Paul is Australian, even after 16 years in California:**
+- He says "g'day" sometimes (sparingly, never forced)
+- He says "no worries" naturally
+- He might say "the bush" for wilderness, "having a yarn" for chatting, "knackered" for exhausted
+- But he's not a caricature — don't lay it on thick. His voice is Australian-understated, not Crocodile-Dundee-loud.
+
+**One exception — proper nouns stay as-is:**
+- "City of Hope" stays "City of Hope" (it's a proper noun)
+- "Center for Disease Control", "Department of Defense" etc. keep their American spelling because they're institutions
+- US place names ("Castle Crags", "Sierra Nevada Center") keep their original spelling
+- Everything else: Australian English.
+
+**When in doubt, default to British English.** The Macquarie Dictionary is the Australian reference if you need to imagine consulting one.
+
 ## The Two Cancer Foundations (these are the only ones — never invent others)
 
-1. **The Leukaemia Foundation** — Australia's national blood cancer charity, in honor of Paul's mother who battled blood cancer. It was her nominated charity.
-2. **City of Hope** — California-based cancer research and treatment center, in honor of Paul's father, who faced several forms of cancer later in life. Paul chose this one personally because he has lived in California for 16 years and wanted to support a leading cancer center in the place he's called home.
+1. **The Leukaemia Foundation** — Australia's national blood cancer charity, in honour of Paul's mum who battled blood cancer. It was her nominated charity.
+2. **City of Hope** — California-based cancer research and treatment centre, in honour of Paul's dad, who faced several forms of cancer later in life. Paul chose this one personally because he has lived in California for 16 years and wanted to support a leading cancer centre in the place he's called home.
 
-Pledges are split equally between these two foundations. Paul never names a third foundation, and never names just one — always both, together, in the context of honoring both parents.
+Pledges are split equally between these two foundations. Paul never names a third foundation, and never names just one — always both, together, in the context of honouring both parents.
 
 ## Funding Model — CRITICAL, do not get this wrong
 
@@ -38,7 +139,7 @@ YesChapter has TWO completely separate money streams. Never conflate them.
 ### Stream 1 — Pledges (the cause)
 - Visitors **pledge per mile** (e.g. $0.10/mi × 2,650 = $265) or a flat amount
 - Pledges are **promises**, not payments. **No money changes hands during the hike.**
-- At the end of the hike, pledgers honor their pledges by donating **directly to the foundations** themselves
+- At the end of the hike, pledgers honour their pledges by donating **directly to the foundations** themselves
 - **Paul never collects, holds, routes, or touches foundation money.** He is not a charity, not a 501(c)(3), and never handles donor funds
 - The website is a **pledge tracker**, not a payment processor for foundations
 - Language: "pledge", "commitment", "promise". NEVER "donation to Paul" or "donation to YesChapter"
@@ -57,7 +158,7 @@ When writing about logistics: trail support → Paul personally → keeps him on
 ## Common writing mistakes to avoid
 
 - ❌ "Paul is raising money for cancer research" → too vague, sounds like Paul collects it
-  ✅ "Paul is raising pledges for the Leukaemia Foundation and City of Hope, honored at the end of his hike"
+  ✅ "Paul is raising pledges for the Leukaemia Foundation and City of Hope, honoured at the end of his hike"
 - ❌ "Donate to Paul's cause"
   ✅ "Pledge per mile" or "make a pledge"
 - ❌ Mentioning a generic "cancer charity" or "the charity"
@@ -90,7 +191,7 @@ When writing about logistics: trail support → Paul personally → keeps him on
 - Shares vulnerable moments honestly — grief, doubt, exhaustion, awe
 - Connects trail experiences to bigger life themes (purpose, presence, mortality)
 - Heavy on sensory detail — what he sees, hears, smells, feels physically
-- Occasional dry humor, never forced
+- Occasional dry humour, never forced
 - The walk speaks for itself — never lectures readers about cancer or pleads for pledges
 - When mentioning his parents, it's personal and brief, not exploitative
 - Australian sensibility — understated, self-deprecating, allergic to grandiosity

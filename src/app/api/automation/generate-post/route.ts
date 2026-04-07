@@ -150,6 +150,9 @@ export async function POST(request: NextRequest) {
     regenerationInstructions: regenerationInstructions || undefined,
     improvementPills: Array.isArray(improvementPills) ? improvementPills : undefined,
     previousBody: existingPost?.body || undefined,
+    // When regenerating, tell the asset pool dedup filter NOT to count
+    // the current post's images as "used" (we're about to overwrite them).
+    excludePostId: overwriteId || undefined,
   };
 
   if (shouldSplit) {

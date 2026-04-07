@@ -127,12 +127,75 @@ const LOCAL_IMAGES: Omit<BlogAsset, "id">[] = [
 ];
 
 /**
+ * Minimum number of assets we want available after dedup filtering.
+ * If filtering would leave fewer than this, we fall back to the unfiltered pool.
+ * 6 = enough variety for the AI to pick 1–3 distinct images.
+ */
+const MIN_POOL_SIZE_AFTER_DEDUP = 6;
+
+interface JournalPostShape {
+  id: string;
+  body: string;
+}
+
+/**
+ * Scan all existing journal posts (excluding `excludePostId`) and return the
+ * set of asset IDs from `pool` whose `src` URL appears in any post body.
+ *
+ * This is how we deduplicate inline images across posts: an asset is "used"
+ * if any other post has already embedded it.
+ */
+async function collectUsedAssetIds(
+  pool: BlogAsset[],
+  excludePostId?: string
+): Promise<Set<string>> {
+  const used = new Set<string>();
+  const redis = getRedis();
+  if (!redis || pool.length === 0) return used;
+
+  try {
+    const raw = await redis.lrange<string>("journal:posts", 0, -1);
+    const posts: JournalPostShape[] = (raw || [])
+      .map((s) => (typeof s === "string" ? JSON.parse(s) : s))
+      .filter((p): p is JournalPostShape => !!p && typeof p.body === "string");
+
+    // Concatenate all bodies (excluding the one being regenerated) into a
+    // single haystack to avoid an O(posts × pool) loop.
+    const haystack = posts
+      .filter((p) => p.id !== excludePostId)
+      .map((p) => p.body)
+      .join("\n\n");
+
+    if (!haystack) return used;
+
+    for (const asset of pool) {
+      // The src URL is unique per asset and is what gets baked into the
+      // markdown after resolveAssetPlaceholders runs. If it appears in any
+      // existing post body, the asset is considered used.
+      if (haystack.includes(asset.src)) {
+        used.add(asset.id);
+      }
+    }
+  } catch (err) {
+    console.warn("collectUsedAssetIds failed:", err);
+  }
+
+  return used;
+}
+
+/**
  * Build the asset pool that the AI can choose from when writing a blog post.
  * Reads Instagram and YouTube caches from Redis (no Apify call here — fast).
  *
+ * If `excludePostId` is provided, the asset pool is filtered to exclude
+ * images already used in OTHER existing posts. This prevents the AI from
+ * picking the same images that are already in use elsewhere on the site.
+ * If filtering would leave too few assets, the unfiltered pool is returned
+ * (with a console warning) so generation never fails for lack of images.
+ *
  * Returns up to ~25 assets total: 8 IG, 5 YouTube, 9 local.
  */
-export async function buildAssetPool(): Promise<BlogAsset[]> {
+export async function buildAssetPool(excludePostId?: string): Promise<BlogAsset[]> {
   const assets: BlogAsset[] = [];
   const redis = getRedis();
 
@@ -199,6 +262,28 @@ export async function buildAssetPool(): Promise<BlogAsset[]> {
     }
   } catch (err) {
     console.warn("buildAssetPool: failed to load youtube videos:", err);
+  }
+
+  // Dedup pass: remove assets already used in other posts (when we know the
+  // current post id we're regenerating, so we don't filter out our own usage).
+  // Soft fallback: if filtering leaves too few assets to be useful, return
+  // the unfiltered pool so generation never fails.
+  try {
+    const usedIds = await collectUsedAssetIds(assets, excludePostId);
+    if (usedIds.size > 0) {
+      const filtered = assets.filter((a) => !usedIds.has(a.id));
+      if (filtered.length >= MIN_POOL_SIZE_AFTER_DEDUP) {
+        console.log(
+          `[asset-dedup] filtered ${usedIds.size} used asset(s) from pool: ${filtered.length} remaining`
+        );
+        return filtered;
+      }
+      console.warn(
+        `[asset-dedup] dedup would leave only ${filtered.length} assets (< ${MIN_POOL_SIZE_AFTER_DEDUP}); using full pool of ${assets.length}`
+      );
+    }
+  } catch (err) {
+    console.warn("buildAssetPool: dedup failed, returning full pool:", err);
   }
 
   return assets;
