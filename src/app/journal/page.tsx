@@ -453,9 +453,12 @@ function InstagramCard({ post }: { post: InstagramPost }) {
       rel="noopener noreferrer"
       className="group relative block aspect-square overflow-hidden bg-[var(--warm-stone)]"
     >
+      {/* Proxy Instagram CDN images through our own origin to bypass their
+          Cross-Origin-Resource-Policy: same-origin header which blocks
+          hotlinking. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={post.mediaUrl}
+        src={`/api/instagram/image?url=${encodeURIComponent(post.mediaUrl)}`}
         alt={shortCaption || "Instagram post"}
         loading="lazy"
         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"

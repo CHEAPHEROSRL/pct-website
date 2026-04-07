@@ -87,6 +87,10 @@ export default function AdminPage() {
   const [testEmailSending, setTestEmailSending] = useState(false);
   const [testEmailResult, setTestEmailResult] = useState<{ success: boolean; message: string } | null>(null);
 
+  // Instagram sync state
+  const [instaSyncing, setInstaSyncing] = useState(false);
+  const [instaSyncResult, setInstaSyncResult] = useState<{ success: boolean; message: string } | null>(null);
+
   // Honor tracking state
   const [honorStats, setHonorStats] = useState<{
     honoredCount: number;
@@ -2118,6 +2122,75 @@ export default function AdminPage() {
                     <li>Run it once manually to verify</li>
                     <li>Copy the API Token and Task ID into the fields above</li>
                   </ol>
+                </div>
+
+                {/* Manual Sync */}
+                <div className="flex flex-col gap-[10px] p-[16px] border border-[var(--border-subtle)]">
+                  <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                    SYNC NOW
+                  </span>
+                  <p className="font-heading text-[13px] leading-[1.6] text-[var(--text-secondary)]">
+                    Fetches the latest scrape results from Apify and updates the cache on the site. Use this when Paul has posted something new and you don&apos;t want to wait for the daily cron (14:00 UTC). The Apify task itself runs on its own schedule — if the task hasn&apos;t re-scraped since Paul&apos;s new post, you may need to trigger a fresh run in the Apify console first.
+                  </p>
+                  <button
+                    onClick={async () => {
+                      setInstaSyncing(true);
+                      setInstaSyncResult(null);
+                      try {
+                        const res = await fetch("/api/admin/instagram-sync", {
+                          method: "POST",
+                          headers: { Authorization: `Bearer ${token}` },
+                        });
+                        const data = await res.json();
+                        if (res.ok) {
+                          setInstaSyncResult({
+                            success: true,
+                            message:
+                              data.synced > 0
+                                ? `Synced ${data.synced} posts from Apify. Journal page will refresh within ~5 minutes (CDN cache).`
+                                : `Sync ran but Apify returned no new posts. Existing cache: ${data.totalCached} posts.`,
+                          });
+                        } else {
+                          setInstaSyncResult({
+                            success: false,
+                            message: data.error || `HTTP ${res.status}`,
+                          });
+                        }
+                      } catch (err) {
+                        setInstaSyncResult({
+                          success: false,
+                          message: err instanceof Error ? err.message : "Request failed",
+                        });
+                      } finally {
+                        setInstaSyncing(false);
+                      }
+                    }}
+                    disabled={instaSyncing}
+                    className="flex items-center justify-center gap-[8px] px-[24px] h-[44px] bg-[var(--burnt-orange)] hover:opacity-90 transition-opacity disabled:opacity-50 cursor-pointer w-fit"
+                  >
+                    <Instagram className="w-[14px] h-[14px] text-white" />
+                    <span className="font-label font-bold text-[12px] tracking-[2px] text-white">
+                      {instaSyncing ? "SYNCING..." : "SYNC INSTAGRAM NOW"}
+                    </span>
+                  </button>
+                  {instaSyncResult && (
+                    <div
+                      className={`p-[12px] border ${
+                        instaSyncResult.success
+                          ? "bg-[var(--forest-green-light)] border-[var(--forest-green)]/30"
+                          : "bg-red-50 border-red-300"
+                      }`}
+                    >
+                      <span
+                        className={`font-heading text-[13px] ${
+                          instaSyncResult.success ? "text-[var(--forest-green)]" : "text-red-700"
+                        }`}
+                      >
+                        {instaSyncResult.success ? "✓ " : "✗ "}
+                        {instaSyncResult.message}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
 
