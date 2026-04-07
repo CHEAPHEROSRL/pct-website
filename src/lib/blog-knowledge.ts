@@ -137,9 +137,10 @@ Pledges are split equally between these two foundations. Paul never names a thir
 YesChapter has TWO completely separate money streams. Never conflate them.
 
 ### Stream 1 — Pledges (the cause)
-- Visitors **pledge per mile** (e.g. $0.10/mi × 2,650 = $265) or a flat amount
+- Visitors **pledge per mile** (e.g. $0.10/mi × miles walked) or a flat amount
 - Pledges are **promises**, not payments. **No money changes hands during the hike.**
-- At the end of the hike, pledgers honour their pledges by donating **directly to the foundations** themselves
+- **At the end of Paul's hike** — whether he reaches Canada at mile 2,650 or has to stop earlier for any reason — pledgers honour their pledges by donating **directly to the foundations** themselves
+- **Pledges are NOT contingent on Paul completing the full distance.** If Paul has to stop early (injury, weather, family emergency, anything unforeseen), the commitment still stands — pledges are calculated on miles actually walked, and pledgers are still asked to honour them. The commitment supports the cause through Paul's effort, not contingent on a specific outcome.
 - **Paul never collects, holds, routes, or touches foundation money.** He is not a charity, not a 501(c)(3), and never handles donor funds
 - The website is a **pledge tracker**, not a payment processor for foundations
 - Language: "pledge", "commitment", "promise". NEVER "donation to Paul" or "donation to YesChapter"
@@ -158,7 +159,7 @@ When writing about logistics: trail support → Paul personally → keeps him on
 ## Common writing mistakes to avoid
 
 - ❌ "Paul is raising money for cancer research" → too vague, sounds like Paul collects it
-  ✅ "Paul is raising pledges for the Leukaemia Foundation and City of Hope, honoured at the end of his hike"
+  ✅ "Paul is raising pledges for the Leukaemia Foundation and City of Hope, honoured at the end of Paul's hike (regardless of how far he gets)"
 - ❌ "Donate to Paul's cause"
   ✅ "Pledge per mile" or "make a pledge"
 - ❌ Mentioning a generic "cancer charity" or "the charity"
@@ -167,6 +168,13 @@ When writing about logistics: trail support → Paul personally → keeps him on
   ✅ "Pledged so far: $X" — pledges are commitments, not collected funds
 - ❌ Treating the hike as a marketing stunt for the foundations
   ✅ The walk is a personal pilgrimage for Paul. The fundraising is meaningful but secondary to the experience itself
+- ❌ "Pledges are honoured when Paul reaches Canada"
+  ❌ "When Paul finishes the trail, pledgers donate"
+  ❌ "If Paul makes it to Manning Park, your pledge is due"
+  ❌ Anything that frames completion as the trigger for honouring pledges
+  ✅ "Pledges are honoured at the end of Paul's hike, regardless of how far he gets"
+  ✅ "At the end of the hike — whether Paul reaches Canada or has to stop earlier — pledgers honour their pledges"
+  **CRITICAL — Reason this matters:** Paul could be forced to stop early for any reason (injury, weather, family emergency). Pledges are committed regardless of outcome. NEVER imply that completion is the trigger or condition. Pledgers commit to support the cause through Paul's effort, not through a specific number of miles. Pledge totals are simply calculated on miles actually walked.
 
 ## The Trail (factual context)
 

@@ -73,9 +73,9 @@ function JoinContent() {
           </div>
           <div className="flex flex-col gap-[12px] p-[24px] bg-[var(--bg-warm)]">
             <span className="font-label font-bold text-[24px] text-[var(--burnt-orange)]">3</span>
-            <span className="font-heading font-semibold text-[16px] text-[var(--text-primary)]">Honor at the end</span>
+            <span className="font-heading font-semibold text-[16px] text-[var(--text-primary)]">Honour at the end</span>
             <p className="font-heading text-[14px] text-[var(--text-secondary)] leading-[1.6]">
-              When Paul reaches Canada, donate your total directly to the cancer foundations. Paul never touches a cent.
+              At the end of Paul&apos;s hike, donate your total directly to the cancer foundations. Paul never touches a cent.
             </p>
           </div>
         </div>

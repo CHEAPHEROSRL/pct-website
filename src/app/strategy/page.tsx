@@ -75,7 +75,7 @@ export default function StrategyPage() {
           <span className="text-[var(--burnt-orange)]">Pledge Engagement</span>
         </h1>
         <p className="font-heading text-[18px] text-[#FFFFFFBB] max-w-[560px] leading-[1.6]">
-          Seven email templates to keep pledgers connected from day one through honoring their pledges when you reach Canada. Welcome drip, weekly updates, milestones, community celebrations, and honor flow.
+          Seven email templates to keep pledgers connected from day one through honouring their pledges at the end of the hike. Welcome drip, weekly updates, milestones, community celebrations, and honour flow.
         </p>
         <span className="font-label font-semibold text-[11px] tracking-[2px] text-[#FFFFFF44] mt-[24px]">
           YOUR EMAIL STRATEGY &middot; MARCH 2026 &middot; V2
@@ -263,7 +263,7 @@ export default function StrategyPage() {
             Paul Made It &mdash; <span className="text-[var(--burnt-orange)]">Honor</span> Email
           </h2>
           <p className="font-heading text-[16px] text-[var(--text-secondary)] max-w-[600px] leading-[1.6]">
-            The most important email we&apos;ll ever send. Triggered when you reach Manning Park, BC. Converts 6 months of pledges into real donations to the two cancer foundations.
+            The most important email we&apos;ll ever send. Triggered at the end of the hike — whether you reach Manning Park or have to stop earlier. Converts pledges into real donations to the two cancer foundations.
           </p>
         </div>
 
@@ -856,7 +856,7 @@ export default function StrategyPage() {
           {[
             "We don't need Pledge.to or any third party. Our system is simpler and better.",
             "Pledgers promise during the hike. They watch their total grow. They feel invested.",
-            "When you reach Canada, we send everyone a personalized email with their total and direct links to donate to each foundation.",
+            "At the end of the hike (regardless of how far you got), we send everyone a personalised email with their total and direct links to donate to each foundation.",
             "They click, they pay the foundations directly, they get proper tax receipts.",
             "You touch $0 of foundation money. Ever.",
             "The only payments you receive are trail support gifts (meals, boots, hostel) through Stripe — completely separate and already working on the site.",

@@ -907,14 +907,14 @@ Once your pledge is set, that's it for now. Paul hits the trail and you follow a
 
 **You are not charged anything during this phase.** Your pledge is a commitment of intent, not a payment.
 
-### Step 3 — Paul Finishes (or Doesn't)
+### Step 3 — At the End of Paul's Hike
 
-When Paul reaches Manning Park, BC — the northern terminus of the PCT — you'll receive an email with:
+At the end of Paul's hike — whether he reaches Manning Park, BC at mile 2,650, or has to stop earlier for any reason — you'll receive an email with:
 - A personal thank-you video from Paul
 - Your final pledge total (based on actual miles walked)
 - A link to donate your pledge amount directly to the two cancer foundations
 
-**If Paul doesn't finish the full trail**, your pledge total is calculated based on the miles he actually completed. If he walks 1,500 of 2,650 miles, a $0.10/mile pledge would be $150, not $265.
+**Pledges are honoured regardless of how far Paul gets.** Your commitment supports the cause through Paul's effort, not contingent on full completion. Your pledge total is calculated based on the miles he actually walked — so if he covers 1,500 of 2,650 miles, a $0.10/mile pledge would be $150, not $265. You always pay only for miles actually walked.
 
 ---
 
@@ -961,10 +961,10 @@ Boosts stack. If you boost during three challenges, all three amounts are added 
 ## Frequently Asked Questions
 
 **When do I actually pay?**
-Only after Paul reaches Canada (or stops hiking). You'll receive an email with a donation link. Payment is voluntary — you won't be auto-charged.
+Only at the end of Paul's hike — whether he reaches Canada or has to stop earlier. You'll receive an email with a donation link. Payment is voluntary — you won't be auto-charged. Pledges are honoured regardless of how far Paul gets, calculated on miles actually walked.
 
 **Is there a minimum pledge?**
-Yes, the minimum is $0.01 per mile ($26.50 total if Paul finishes). There's no maximum.
+Yes, the minimum is $0.01 per mile ($26.50 maximum at 2,650 mi). There's no maximum cap.
 
 **Can I change my pledge?**
 You can increase your pledge anytime by visiting the [Pledge page](/pledge) again with the same email. Challenge boosts also increase your pledge automatically.

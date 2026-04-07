@@ -147,7 +147,7 @@ function UnsubscribeContent() {
             ))}
 
             <p className="font-heading text-[12px] text-[var(--text-muted)] text-center leading-[1.6] mt-[8px]">
-              Honor reminders (when Paul finishes the trail) are always sent so you can fulfill your pledge — these cannot be turned off.
+              Honour reminders (at the end of Paul&apos;s hike) are always sent so you can fulfil your pledge — these cannot be turned off.
             </p>
           </div>
         )}

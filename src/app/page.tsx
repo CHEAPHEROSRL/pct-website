@@ -342,7 +342,7 @@ export default function Home() {
           </ScrollReveal>
           <ScrollReveal animation="fade-up" delay={200}>
             <p className="font-heading text-[15px] md:text-[18px] leading-[1.6] text-[#FFFFFFAA] text-center w-full lg:w-[600px]">
-              Pledge per mile for <Link href="/foundations" className="underline hover:text-white">two cancer foundations</Link> — one in California, one in Sydney. Pay nothing now — pledge directly to the foundations when Paul reaches Canada. You can also support Paul directly on the trail.
+              Pledge per mile for <Link href="/foundations" className="underline hover:text-white">two cancer foundations</Link> — one in California, one in Sydney. Pay nothing now — pledge directly to the foundations at the end of Paul&apos;s hike. You can also support Paul directly on the trail.
             </p>
           </ScrollReveal>
           <ScrollReveal animation="fade-up" delay={300}>

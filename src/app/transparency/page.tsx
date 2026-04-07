@@ -36,7 +36,7 @@ export default function TransparencyPage() {
           <ul>
             <li>
               <strong>Pledges for Cancer Foundations</strong> — Visitors pledge a per-mile amount (e.g., $0.25/mile).
-              No money is collected. When Paul reaches Canada, pledgers are invited to donate their total directly to
+              No money is collected. At the end of Paul&apos;s hike, pledgers are invited to donate their total directly to
               the partner foundations. Paul never touches, handles, or routes this money.
             </li>
             <li>
@@ -54,13 +54,20 @@ export default function TransparencyPage() {
           <ul>
             <li>You choose a per-mile amount (from $0.01 to $5.00 per mile)</li>
             <li>No payment information is collected — just your email and pledge amount</li>
-            <li>As Paul hikes, your pledge total grows (e.g., $0.25/mi × 2,650 miles = $662.50)</li>
-            <li>When Paul reaches Canada, you receive an email inviting you to honor your pledge</li>
+            <li>As Paul hikes, your pledge total grows based on miles walked</li>
+            <li>At the end of Paul&apos;s hike, you receive an email inviting you to honour your pledge</li>
             <li>You donate your pledge total directly to the partner foundations — not through Paul or YesChapter</li>
           </ul>
           <p>
             Paul does not collect, hold, or transfer pledge money. The pledge system is a commitment tracker — the actual
             donations happen between pledgers and the foundations directly.
+          </p>
+          <p>
+            <strong>&ldquo;End of the hike&rdquo; means whenever Paul&apos;s journey concludes</strong> — whether that&apos;s reaching
+            Canada at mile 2,650, or having to stop earlier for any reason (injury, weather, family emergency, anything
+            unforeseen). Pledges are honoured regardless of how far Paul gets. Your commitment supports the cause through
+            Paul&apos;s effort, not contingent on a specific outcome. You pledge based on miles actually walked, so the total
+            simply reflects the distance Paul covered.
           </p>
         </TransparencySection>
 

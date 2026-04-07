@@ -155,8 +155,8 @@ export default function PledgersPage() {
         </h1>
         <p className="animate-fade-up stagger-4 font-heading text-[16px] leading-[1.6] text-[var(--text-secondary)] max-w-[650px]">
           These pledgers have committed to donate per mile Paul walks — directly to the
-          Leukaemia Foundation and City of Hope. <strong>No money changes hands until Paul
-          finishes the trail</strong>, then pledgers pay the foundations directly. Paul receives nothing.
+          Leukaemia Foundation and City of Hope. <strong>No money changes hands until the
+          end of Paul&apos;s hike</strong>, then pledgers pay the foundations directly. Paul receives nothing.
         </p>
         <div className="animate-fade-up stagger-6 flex flex-col sm:flex-row gap-[16px] sm:gap-[32px] pt-[8px]">
           <div className="flex items-center gap-[10px]">

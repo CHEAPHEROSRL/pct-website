@@ -42,7 +42,7 @@ export default function DonatePage() {
             Pledge Per Mile
           </h2>
           <p className="font-heading text-[16px] leading-[1.7] text-[var(--text-secondary)]">
-            Set a pledge per mile — like $0.25/mi. Pay nothing now. When Paul reaches Canada, you&apos;ll be invited to donate your total directly to two cancer foundations. Paul never touches this money.
+            Set a pledge per mile — like $0.25/mi. Pay nothing now. At the end of Paul&apos;s hike, you&apos;ll be invited to donate your total directly to two cancer foundations. Paul never touches this money.
           </p>
           <ul className="flex flex-col gap-[10px]">
             <li className="flex items-start gap-[10px]">

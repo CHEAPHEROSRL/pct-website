@@ -666,7 +666,7 @@ export async function sendNearFinish(
           </div>
         </div>
         <div style="text-align: center; padding: 24px 32px; background: #F4F1EC;">
-          <p style="font-size: 14px; color: #1C1C1C; margin: 0 0 8px; font-weight: 600;">What happens when Paul finishes?</p>
+          <p style="font-size: 14px; color: #1C1C1C; margin: 0 0 8px; font-weight: 600;">What happens at the end of Paul's hike?</p>
           <p style="font-size: 13px; color: #5C5C5C; margin: 0 0 14px; line-height: 1.6;">
             You&rsquo;ll receive an email with direct links to both foundations. You honor your pledge by donating directly to them — Paul never touches the money.
           </p>

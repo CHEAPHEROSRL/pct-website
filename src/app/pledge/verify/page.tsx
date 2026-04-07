@@ -52,7 +52,7 @@ function VerifyContent() {
             <div className="flex items-start gap-[12px]">
               <span className="font-label font-bold text-[16px] text-[var(--burnt-orange)] shrink-0">3</span>
               <p className="font-heading text-[15px] text-[var(--text-secondary)] leading-[1.6]">
-                When Paul reaches Canada, you&apos;ll be invited to honor your pledge — paying the foundations directly.
+                At the end of Paul&apos;s hike, you&apos;ll be invited to honour your pledge — paying the foundations directly.
               </p>
             </div>
           </div>

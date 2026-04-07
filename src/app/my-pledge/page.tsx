@@ -222,7 +222,7 @@ function IncreasePledgeForm({
           Pledge increased!
         </span>
         <span className="font-heading text-[14px] text-[var(--text-secondary)]">
-          Your new rate is {formatCurrency(newRate)}/mile — {formatCurrency(newTotal)} total if Paul finishes.
+          Your new rate is {formatCurrency(newRate)}/mile — {formatCurrency(newTotal)} maximum (at 2,650 mi).
         </span>
       </div>
     );
@@ -536,7 +536,7 @@ export default function MyPledgePage() {
                     $0
                   </span>
                   <span className="font-label font-medium text-[10px] tracking-[0.5px] text-[var(--text-muted)]">
-                    {formatCurrency(pledge.totalPledge)} if Paul finishes
+                    {formatCurrency(pledge.totalPledge)} maximum (at 2,650 mi)
                   </span>
                 </div>
               </div>

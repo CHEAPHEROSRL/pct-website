@@ -161,7 +161,7 @@ export default function PledgePage() {
           Support Paul&apos;s Journey — One Mile at a Time
         </h1>
         <p className="font-heading text-[16px] leading-[1.6] text-[var(--text-secondary)] max-w-[700px]">
-          Make a commitment today — pay nothing now. When Paul reaches Canada, you&apos;ll receive an email reminder to honour your pledge and donate directly to the foundations. 100% goes to cancer research.
+          Make a commitment today — pay nothing now. At the end of Paul&apos;s hike, you&apos;ll receive an email reminder to honour your pledge and donate directly to the foundations. 100% goes to cancer research.
         </p>
       </section>
 
@@ -437,7 +437,7 @@ export default function PledgePage() {
           )}
 
           <p className="font-heading italic text-[13px] leading-[1.5] text-[var(--text-muted)]">
-            <strong className="not-italic text-[var(--text-secondary)]">PLEDGE ONLY — No money is collected today.</strong> This is a promise of intent. When Paul finishes the trail, you&apos;ll be emailed a reminder to honour your pledge and donate directly to the foundations. Paul never touches this money.{" "}
+            <strong className="not-italic text-[var(--text-secondary)]">PLEDGE ONLY — No money is collected today.</strong> This is a promise of intent. At the end of Paul&apos;s hike, you&apos;ll be emailed a reminder to honour your pledge and donate directly to the foundations. Paul never touches this money.{" "}
             <Link href="/journal/how-pledging-works" className="text-[var(--burnt-orange)] not-italic hover:underline">
               How does this work?
             </Link>
@@ -590,7 +590,7 @@ export default function PledgePage() {
               Honour Your Pledge at the Finish
             </span>
             <p className="font-heading text-[14px] leading-[1.6] text-[var(--text-secondary)]">
-              When Paul reaches Canada, you&apos;ll receive an email reminder to honour your pledge — donating directly to the foundations. Paul never handles this money.
+              At the end of Paul&apos;s hike, you&apos;ll receive an email reminder to honour your pledge — donating directly to the foundations. Paul never handles this money.
             </p>
           </div>
         </div>
