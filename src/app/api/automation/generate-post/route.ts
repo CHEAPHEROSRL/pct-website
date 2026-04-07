@@ -219,16 +219,29 @@ export async function POST(request: NextRequest) {
     }
 
     if (overwriteId && existingPost) {
-      // Regeneration: replace the existing post in-place. Preserve id, slug,
+      // Regeneration: replace the existing post in-place. Preserve id,
       // date, published state, createdAt, day number, and any media the
       // editor may have added since the original generation.
+      //
+      // Slug handling:
+      //   - If the post is still a DRAFT, update the slug to match the new
+      //     title (no public URL exists yet, so this is safe).
+      //   - If the post is PUBLISHED, keep the old slug — changing it would
+      //     break any inbound links, social shares, or search index entries.
+      const titleChanged = existingPost.title !== generated.title;
+      const newSlug =
+        titleChanged && !existingPost.published
+          ? slugify(generated.title)
+          : existingPost.slug;
+
       const updated: JournalPost = {
         ...existingPost,
         title: generated.title,
+        slug: newSlug,
         body: generated.body,
         excerpt: generated.excerpt,
         tags: generated.tags,
-        // Don't change: id, slug, date, dayNumber, published, createdAt,
+        // Don't change: id, date, dayNumber, published, createdAt,
         // coverImage (might have been edited), images, youtubeUrl
         updatedAt: now,
       };
@@ -292,9 +305,10 @@ export async function POST(request: NextRequest) {
       slug: p.slug,
       tags: p.tags,
       published: p.published,
-      // For regeneration, also return the body so the editor can refresh
+      // For regeneration, also return body/excerpt/slug so the editor can refresh
       body: overwriteId ? p.body : undefined,
       excerpt: overwriteId ? p.excerpt : undefined,
+      // slug is always in the base shape but call it out for clarity
     })),
   });
 }

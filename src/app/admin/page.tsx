@@ -328,12 +328,14 @@ export default function AdminPage() {
         setRegenError(data.error || `HTTP ${res.status}`);
         return;
       }
-      // Update the in-memory editor post with the new body/title/excerpt/tags
+      // Update the in-memory editor post with the new content. Slug may
+      // also have changed if the title changed and the post is a draft.
       const newPost = data.posts?.[0];
       if (newPost) {
         setEditingPost({
           ...editingPost,
           title: newPost.title,
+          slug: newPost.slug ?? editingPost.slug,
           body: newPost.body,
           excerpt: newPost.excerpt,
           tags: newPost.tags,
@@ -981,7 +983,7 @@ export default function AdminPage() {
               <span className="w-[130px] font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
                 STATUS
               </span>
-              <span className="w-[100px] font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+              <span className="w-[170px] font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
                 ACTIONS
               </span>
             </div>
@@ -1034,7 +1036,18 @@ export default function AdminPage() {
                       {post.published ? "● PUBLISHED" : "○ DRAFT"}
                     </button>
                   </div>
-                  <div className="flex gap-[8px] w-[100px]">
+                  <div className="flex gap-[8px] w-[170px]">
+                    <a
+                      href={`/journal/${post.slug}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-[12px] py-[6px] border border-[var(--border-subtle)] hover:border-[var(--burnt-orange)] transition-colors cursor-pointer flex items-center"
+                      title={post.published ? "Open the live published post in a new tab" : "Preview this draft on the live site (admin only)"}
+                    >
+                      <span className="font-label font-bold text-[10px] tracking-[1px] text-[var(--text-secondary)] hover:text-[var(--burnt-orange)]">
+                        VIEW
+                      </span>
+                    </a>
                     <button
                       onClick={() => {
                         setEditingPost({ ...post });
@@ -1099,6 +1112,20 @@ export default function AdminPage() {
             </span>
           </div>
           <div className="flex gap-[12px]">
+            {/* View — opens the live page in a new tab (admin can preview drafts) */}
+            {!isNew && editingPost.slug && (
+              <a
+                href={`/journal/${editingPost.slug}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-[8px] px-[20px] py-[12px] border border-[var(--border-subtle)] hover:border-[var(--burnt-orange)] hover:text-[var(--burnt-orange)] transition-colors cursor-pointer"
+                title="Open this post on the live site in a new tab"
+              >
+                <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-secondary)] hover:text-[var(--burnt-orange)]">
+                  VIEW
+                </span>
+              </a>
+            )}
             {/* Regenerate — only available for posts created from a YouTube URL */}
             {!isNew && editingPost.youtubeUrl && (
               <button
