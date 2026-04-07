@@ -188,7 +188,7 @@ function buildAssetInstructions(assets: BlogAsset[]): string {
   if (assets.length === 0) return "";
 
   return `
-INLINE IMAGES — embed 1–3 images from the asset pool below where they fit naturally
+INLINE IMAGES — embed 0–3 images from the asset pool below where they fit naturally
 You may embed up to 3 images from this curated pool inside the blog body.
 Use the EXACT id from the pool. Do not invent ids and do not link external images.
 
@@ -197,19 +197,46 @@ ${formatAssetPoolForPrompt(assets)}
 
 To embed an image, use this exact markdown syntax:
 \`\`\`
-![alt text describing the photo](pool:<id>)
+![alt text](pool:<id>)
 \`\`\`
 
-For example: \`![sunset over the valley](pool:local-3)\` or \`![Paul's first IG post](pool:ig-1)\`
+For example: \`![alpine lake](pool:local-1)\` or \`![Paul's recent Instagram post](pool:ig-1)\`
 
-Rules:
-- Pick images that genuinely illustrate the story — never force them
+CRITICAL — DO NOT FABRICATE FACTS ABOUT IMAGES
+The descriptions in the asset pool above describe what is LITERALLY VISIBLE in
+each photo. They are not metaphors and not labels we wish were true. You must
+treat them as ground truth.
+
+NEVER do these things:
+- Pick an image whose description doesn't match the surrounding paragraph just
+  because the photo "feels right". If the post is about the desert and no
+  desert image exists in the pool, embed nothing — do not pick a green hillside
+  photo and pretend it's the desert.
+- Write alt text that contradicts the description. If the description says
+  "Paul on a green hillside", do not write \`![Paul in the desert]\`.
+- Refer to a specific day, mile marker, location, or event in the alt text
+  unless the description explicitly mentions it. The image was taken at an
+  unknown time from Paul's photo library — it is NOT necessarily from the day
+  or place this blog post is about.
+- Imply temporal context. Write \`![alpine lake]\` not \`![the lake we camped at]\`.
+- Use poetic alt text that adds claims not in the description. The alt text
+  is a literal label, not a caption.
+
+WHEN IN DOUBT, EMBED NOTHING. A blog post with zero images and accurate text
+is far better than one with images that contradict reality. It is completely
+acceptable to have no inline images at all if none of the available images
+genuinely match the post's content.
+
+Rules for placement and selection:
+- Pick images whose description LITERALLY matches what's happening in the
+  paragraph above the image. Match nouns, not vibes.
 - Place each image on its own line, between paragraphs (not inline with text)
-- Always include descriptive alt text
 - Never use the same image twice in one post
-- It's perfectly fine to skip images entirely if none of them fit. Quality over quantity.
-- Prefer Instagram or YouTube assets when the post references those platforms;
-  use local hiking photos for general scenery
+- Prefer Instagram or YouTube assets when the post explicitly references
+  Instagram or YouTube
+- Use local hiking photos only when the description genuinely fits the moment
+- Captions are written automatically from the pool description — you only
+  control the alt text. Make alt text a faithful, literal label.
 `;
 }
 

@@ -48,63 +48,80 @@ function getRedis(): Redis | null {
 }
 
 /**
- * Curated local images. Each one has a description that helps the AI decide
- * if it's relevant. Add new entries here when you upload new hiking photos to
- * /public/images/hiking/.
+ * Curated local images. Each entry's `description` MUST literally describe
+ * what is visible in the image — not what we wish it depicted. The AI uses
+ * the description to choose images that fit the surrounding paragraph.
+ *
+ * The `caption` is what readers will see under the image. Keep captions
+ * generic enough that they're true regardless of which paragraph the image
+ * lands next to. Never claim a specific day, location, or event that the
+ * post might contradict.
+ *
+ * If you add a new entry, OPEN THE IMAGE FIRST and describe what's actually
+ * in it. Filenames lie.
  */
 const LOCAL_IMAGES: Omit<BlogAsset, "id">[] = [
   {
     src: "/images/hiking/20220822_134051.jpg",
-    description: "Wide view of forested trail with mountains in background",
-    caption: "Somewhere on the trail.",
+    description:
+      "Alpine lake surrounded by pine trees with rocky shore, mountains and partly cloudy sky in the background",
+    caption: "Stillness at an alpine lake.",
     source: "local",
   },
   {
     src: "/images/hiking/20220823_123521.jpg",
-    description: "Hiker on a rocky alpine ridge",
-    caption: "Up on the ridge.",
+    description:
+      "Paul standing next to the wooden Pacific Crest Trail southern terminus monument at the Mexican border fence in Campo, blue sky overhead",
+    caption: "The southern terminus at Campo — where the PCT begins.",
     source: "local",
   },
   {
     src: "/images/hiking/20230821_165432.jpg",
-    description: "Sunset over a mountain valley",
-    caption: "Last light over the valley.",
+    description:
+      "Looking straight up into a tall redwood forest canopy from the ground, sunlight filtering through the trees",
+    caption: "Looking up through the trees.",
     source: "local",
   },
   {
     src: "/images/hiking/20230903_090215.jpg",
-    description: "Trail winding through pine forest in the morning",
-    caption: "Morning miles through the pines.",
-    source: "local",
-  },
-  {
-    src: "/images/hiking/20240128_110150.jpg",
-    description: "Snow-covered peaks in the distance",
-    caption: "Snow on the high peaks.",
-    source: "local",
-  },
-  {
-    src: "/images/hiking/20250802_160435.jpg",
-    description: "Lake reflection with surrounding mountains",
-    caption: "Stillness, reflected.",
-    source: "local",
-  },
-  {
-    src: "/images/hiking/20260201_123623.jpg",
-    description: "Desert landscape with scattered shrubs",
-    caption: "The desert section of the PCT.",
-    source: "local",
-  },
-  {
-    src: "/images/hiking/FB_IMG_1771991299919.jpg",
-    description: "Paul standing on the trail with a backpack",
+    description:
+      "Selfie of Paul on a dirt trail wearing a cap and sunglasses, with a hydration vest and trees in the background",
     caption: "On the trail.",
     source: "local",
   },
   {
+    src: "/images/hiking/20240128_110150.jpg",
+    description:
+      "Hiker with trekking poles standing on a rocky overlook with mountains and clouds in the distance",
+    caption: "Pausing to take it in.",
+    source: "local",
+  },
+  {
+    src: "/images/hiking/20250802_160435.jpg",
+    description:
+      "Paul standing on a rocky mountain summit holding a hand-painted sign that reads 'Mt. Baldy'",
+    caption: "Summit of Mt. Baldy.",
+    source: "local",
+  },
+  {
+    src: "/images/hiking/20260201_123623.jpg",
+    description:
+      "Paul sitting in tall green grass on a hillside on a sunny day, wearing a cap and flannel shirt",
+    caption: "A green hillside in the spring sun.",
+    source: "local",
+  },
+  {
+    src: "/images/hiking/FB_IMG_1771991299919.jpg",
+    description:
+      "Paul silhouetted on a hillside trail at golden hour, holding trekking poles, cloudy sky overhead with city lights faintly visible in the distance",
+    caption: "Golden hour on the trail.",
+    source: "local",
+  },
+  {
     src: "/images/hiking/FB_IMG_1771992929191.jpg",
-    description: "Wide trail vista with mountains and clouds",
-    caption: "The view that keeps you walking.",
+    description:
+      "Paul standing on rocky boulders at a mountain summit holding a summit log book, with a wooden trail marker beside him and blue sky behind",
+    caption: "Signing a summit log.",
     source: "local",
   },
 ];
