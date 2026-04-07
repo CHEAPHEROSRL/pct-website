@@ -149,18 +149,24 @@ export default function FoundationsPage() {
 
       {/* Personal Story */}
       <section className="flex flex-col lg:flex-row w-full min-h-[420px]">
-        <div className="flex flex-col gap-[24px] justify-center px-6 md:px-12 lg:px-[80px] py-[64px] bg-[var(--bg-dark)] flex-1">
+        <div className="flex flex-col gap-[24px] justify-center px-6 md:px-12 lg:px-[80px] py-[72px] bg-[var(--bg-dark)] flex-1">
           <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">
             WHY THESE FOUNDATIONS
           </span>
-          <h2 className="font-heading text-[40px] md:text-[52px] leading-[1.1] text-[var(--text-white)]">
-            Two parents.<br />Two foundations.<br />One hike.
+          <h2 className="font-heading text-[36px] md:text-[44px] leading-[1.15] text-[var(--text-white)]">
+            One for my mum.<br />One for my dad.
           </h2>
-          <p className="font-heading text-[17px] leading-[1.75] text-[#FFFFFFAA] max-w-[520px]">
-            Paul lost his father to cancer in California, and his mother to blood cancer in Sydney.
-            This walk is for both of them — and for every family going through what his went through.
-            He chose one foundation for each parent. Every pledge honors both.
-          </p>
+          <div className="flex flex-col gap-[18px] max-w-[600px]">
+            <p className="font-heading text-[17px] leading-[1.75] text-[#FFFFFFCC]">
+              My mum&apos;s nominated charity was the <strong className="text-[var(--text-white)] font-semibold">Leukaemia Foundation</strong> in Australia, in honor of her battle with blood cancer.
+            </p>
+            <p className="font-heading text-[17px] leading-[1.75] text-[#FFFFFFCC]">
+              My dad didn&apos;t have a nominated charity, but after facing several forms of cancer later in life, I chose <strong className="text-[var(--text-white)] font-semibold">City of Hope</strong> in his honor. Having lived in California for 16 years, supporting a leading cancer center here felt like a meaningful way to recognize his journey while also honoring the place I&apos;ve called home for so long.
+            </p>
+            <span className="font-label not-italic font-semibold text-[11px] tracking-[2px] text-[#FFFFFF66] pt-[4px]">
+              — PAUL
+            </span>
+          </div>
         </div>
         <div className="relative flex-1 min-h-[300px] lg:min-h-0 bg-[var(--bg-dark)] overflow-hidden">
           <Image

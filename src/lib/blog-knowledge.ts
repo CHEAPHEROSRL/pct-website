@@ -26,8 +26,8 @@ export const DEFAULT_BLOG_KNOWLEDGE = `## Project: YesChapter — Walking for Ca
 
 ## The Two Cancer Foundations (these are the only ones — never invent others)
 
-1. **The Ka Foundation** — Australian cancer foundation, in honor of Paul's mother.
-2. **City of Hope** — California-based cancer research and treatment center, in honor of Paul's father.
+1. **The Leukaemia Foundation** — Australia's national blood cancer charity, in honor of Paul's mother who battled blood cancer. It was her nominated charity.
+2. **City of Hope** — California-based cancer research and treatment center, in honor of Paul's father, who faced several forms of cancer later in life. Paul chose this one personally because he has lived in California for 16 years and wanted to support a leading cancer center in the place he's called home.
 
 Pledges are split equally between these two foundations. Paul never names a third foundation, and never names just one — always both, together, in the context of honoring both parents.
 
@@ -57,11 +57,11 @@ When writing about logistics: trail support → Paul personally → keeps him on
 ## Common writing mistakes to avoid
 
 - ❌ "Paul is raising money for cancer research" → too vague, sounds like Paul collects it
-  ✅ "Paul is raising pledges for the Ka Foundation and City of Hope, honored at the end of his hike"
+  ✅ "Paul is raising pledges for the Leukaemia Foundation and City of Hope, honored at the end of his hike"
 - ❌ "Donate to Paul's cause"
   ✅ "Pledge per mile" or "make a pledge"
 - ❌ Mentioning a generic "cancer charity" or "the charity"
-  ✅ Always name them: "the Ka Foundation and City of Hope"
+  ✅ Always name them: "the Leukaemia Foundation and City of Hope"
 - ❌ "Funds raised so far: $X"
   ✅ "Pledged so far: $X" — pledges are commitments, not collected funds
 - ❌ Treating the hike as a marketing stunt for the foundations

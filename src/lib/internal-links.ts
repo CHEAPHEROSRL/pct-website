@@ -32,8 +32,8 @@ const LINK_MAP: LinkMapEntry[] = [
   {
     url: "/foundations",
     phrases: [
-      "Ka Foundation and City of Hope",
-      "Ka Foundation",
+      "Leukaemia Foundation and City of Hope",
+      "Leukaemia Foundation",
       "City of Hope",
       "the two foundations",
       "two foundations",
