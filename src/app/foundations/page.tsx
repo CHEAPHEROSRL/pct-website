@@ -56,8 +56,9 @@ const foundations = [
     region: "AUSTRALIA",
     regionColor: "var(--forest-green)",
     name: "Leukaemia Foundation",
-    tagline: "Cure and conquer every blood cancer — zero lives lost to blood cancer by 2035.",
-    honor: "Honoring Paul's mother",
+    tagline:
+      "Supporting Australians living with blood cancer through patient support, research funding, and advocacy — with a vision of zero lives lost to blood cancer by 2035.",
+    honor: "Honouring Paul's mum",
     honorColor: "var(--forest-green)",
     bgClass: "bg-[var(--bg-warm)]",
     about:
@@ -88,8 +89,9 @@ const foundations = [
     region: "CALIFORNIA, USA",
     regionColor: "var(--burnt-orange)",
     name: "City of Hope",
-    tagline: "The Miracle of Science With Soul — pioneering cancer research and compassionate treatment since 1913.",
-    honor: "Honoring Paul's father",
+    tagline:
+      "A leading California cancer centre advancing breakthrough research, compassionate treatment, and clinical trials for patients and families facing cancer.",
+    honor: "Honouring Paul's dad",
     honorColor: "var(--burnt-orange)",
     bgClass: "bg-[var(--bg-white)]",
     about:
@@ -133,7 +135,7 @@ export default function FoundationsPage() {
         </h1>
         <p className="animate-fade-up stagger-4 font-heading text-[16px] md:text-[18px] text-[var(--text-secondary)] text-center max-w-[700px] leading-[1.7]">
           Every pledge is split equally between two cancer foundations — one in California, one in
-          Sydney — honoring both of Paul&apos;s parents.
+          Sydney — honouring both of Paul&apos;s parents.
         </p>
         <div className="animate-fade-up stagger-6 flex flex-col sm:flex-row gap-[12px] sm:gap-[32px] mt-[12px]">
           <div className="flex items-center gap-[10px]">
@@ -158,10 +160,10 @@ export default function FoundationsPage() {
           </h2>
           <div className="flex flex-col gap-[18px] max-w-[600px]">
             <p className="font-heading text-[17px] leading-[1.75] text-[#FFFFFFCC]">
-              My mum&apos;s nominated charity was the <strong className="text-[var(--text-white)] font-semibold">Leukaemia Foundation</strong> in Australia, in honor of her battle with blood cancer.
+              My mum&apos;s nominated charity was the <strong className="text-[var(--text-white)] font-semibold">Leukaemia Foundation</strong> in Australia, in honour of her battle with blood cancer.
             </p>
             <p className="font-heading text-[17px] leading-[1.75] text-[#FFFFFFCC]">
-              My dad didn&apos;t have a nominated charity, but after facing several forms of cancer later in life, I chose <strong className="text-[var(--text-white)] font-semibold">City of Hope</strong> in his honor. Having lived in California for 16 years, supporting a leading cancer center here felt like a meaningful way to recognize his journey while also honoring the place I&apos;ve called home for so long.
+              My dad didn&apos;t have a nominated charity, but after facing several forms of cancer later in life, I chose <strong className="text-[var(--text-white)] font-semibold">City of Hope</strong> in his honour. Having lived in California for 16 years, supporting a leading cancer centre here felt like a meaningful way to recognise his journey while also honouring the place I&apos;ve called home for so long.
             </p>
             <span className="font-label not-italic font-semibold text-[11px] tracking-[2px] text-[#FFFFFF66] pt-[4px]">
               — PAUL
@@ -223,7 +225,7 @@ export default function FoundationsPage() {
             <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--forest-green)]">50 / 50 SPLIT</span>
             <p className="font-heading text-[16px] leading-[1.7] text-[var(--text-secondary)]">
               Paul chose these foundations personally — one for each parent. Every pledge is divided equally,
-              so both are honored with every mile he walks.
+              so both are honoured with every mile he walks.
             </p>
           </div>
         </ScrollReveal>
@@ -242,14 +244,6 @@ export default function FoundationsPage() {
                 <h3 className="font-heading font-semibold text-[26px] tracking-[-0.5px] text-[var(--text-primary)]">{f.name}</h3>
                 <div className="w-[48px] h-[3px] rounded-full" style={{ background: f.regionColor }} />
                 <p className="font-heading text-[15px] leading-[1.8] text-[var(--text-secondary)]">{f.tagline}</p>
-                <ul className="flex flex-col gap-[8px]">
-                  {f.programs.slice(0, 3).map((p) => (
-                    <li key={p} className="flex items-start gap-[10px] font-heading text-[14px] leading-[1.6] text-[var(--text-secondary)]">
-                      <span className="mt-[3px] shrink-0" style={{ color: f.regionColor }}>→</span>
-                      {p.split(" — ")[0]}
-                    </li>
-                  ))}
-                </ul>
                 <a
                   href={f.facts.find((x) => x.url)?.url}
                   target="_blank"
