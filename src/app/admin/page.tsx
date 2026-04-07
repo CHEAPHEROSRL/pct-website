@@ -60,6 +60,7 @@ export default function AdminPage() {
   const [videoUrl, setVideoUrl] = useState("");
   const [videoDayNumber, setVideoDayNumber] = useState<number | undefined>();
   const [videoSplit, setVideoSplit] = useState(false);
+  const [videoExtraThoughts, setVideoExtraThoughts] = useState("");
   const [videoGenerating, setVideoGenerating] = useState(false);
   const [videoForce, setVideoForce] = useState(false);
   const [videoResult, setVideoResult] = useState<{
@@ -90,6 +91,13 @@ export default function AdminPage() {
   // Instagram sync state
   const [instaSyncing, setInstaSyncing] = useState(false);
   const [instaSyncResult, setInstaSyncResult] = useState<{ success: boolean; message: string } | null>(null);
+
+  // Regenerate modal state (used in editor view)
+  const [regenModalOpen, setRegenModalOpen] = useState(false);
+  const [regenInstructions, setRegenInstructions] = useState("");
+  const [regenPills, setRegenPills] = useState<string[]>([]);
+  const [regenLoading, setRegenLoading] = useState(false);
+  const [regenError, setRegenError] = useState("");
 
   // Honor tracking state
   const [honorStats, setHonorStats] = useState<{
@@ -275,6 +283,7 @@ export default function AdminPage() {
           split: videoSplit,
           publish: false,
           force: videoForce,
+          extraThoughts: videoExtraThoughts.trim() || undefined,
         }),
       });
       const data = await res.json();
@@ -284,6 +293,7 @@ export default function AdminPage() {
         setVideoDayNumber(undefined);
         setVideoSplit(false);
         setVideoForce(false);
+        setVideoExtraThoughts("");
         await fetchPosts();
       } else {
         setVideoResult({ success: false, error: data.error || "Generation failed", alreadyProcessed: data.alreadyProcessed });
@@ -293,6 +303,61 @@ export default function AdminPage() {
     } finally {
       setVideoGenerating(false);
     }
+  }
+
+  async function handleRegenerate() {
+    if (!editingPost || !editingPost.id || !editingPost.youtubeUrl) {
+      setRegenError("This post has no source YouTube URL — can't regenerate.");
+      return;
+    }
+    setRegenLoading(true);
+    setRegenError("");
+    try {
+      const res = await fetch("/api/automation/generate-post", {
+        method: "POST",
+        headers: authHeaders(),
+        body: JSON.stringify({
+          videoUrl: editingPost.youtubeUrl,
+          overwriteId: editingPost.id,
+          regenerationInstructions: regenInstructions.trim() || undefined,
+          improvementPills: regenPills.length > 0 ? regenPills : undefined,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setRegenError(data.error || `HTTP ${res.status}`);
+        return;
+      }
+      // Update the in-memory editor post with the new body/title/excerpt/tags
+      const newPost = data.posts?.[0];
+      if (newPost) {
+        setEditingPost({
+          ...editingPost,
+          title: newPost.title,
+          body: newPost.body,
+          excerpt: newPost.excerpt,
+          tags: newPost.tags,
+        });
+        // Refresh the posts list in the background
+        fetchPosts();
+      }
+      // Close the modal and reset
+      setRegenModalOpen(false);
+      setRegenInstructions("");
+      setRegenPills([]);
+      setStatus("Post regenerated successfully");
+      setTimeout(() => setStatus(""), 4000);
+    } catch (err) {
+      setRegenError(err instanceof Error ? err.message : "Network error");
+    } finally {
+      setRegenLoading(false);
+    }
+  }
+
+  function toggleRegenPill(pill: string) {
+    setRegenPills((prev) =>
+      prev.includes(pill) ? prev.filter((p) => p !== pill) : [...prev, pill]
+    );
   }
 
   async function fetchInstagramCaption(postId: string) {
@@ -783,6 +848,20 @@ export default function AdminPage() {
                     </label>
                   </div>
 
+                  {/* Extra thoughts (optional) */}
+                  <div className="flex flex-col gap-[6px]">
+                    <label className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                      PAUL&apos;S EXTRA THOUGHTS (OPTIONAL)
+                    </label>
+                    <textarea
+                      value={videoExtraThoughts}
+                      onChange={(e) => setVideoExtraThoughts(e.target.value)}
+                      placeholder="Anything Paul wants to add that wasn't captured in the video — context, reflections, things he forgot to say on camera. Will be woven into the post naturally."
+                      rows={4}
+                      className="w-full px-[14px] py-[12px] border border-[var(--border-subtle)] font-heading text-[13px] leading-[1.6] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none bg-[var(--bg-card)] resize-y"
+                    />
+                  </div>
+
                   <button
                     onClick={handleGenerateFromVideo}
                     disabled={videoGenerating || !videoUrl.trim()}
@@ -1020,6 +1099,23 @@ export default function AdminPage() {
             </span>
           </div>
           <div className="flex gap-[12px]">
+            {/* Regenerate — only available for posts created from a YouTube URL */}
+            {!isNew && editingPost.youtubeUrl && (
+              <button
+                onClick={() => {
+                  setRegenError("");
+                  setRegenModalOpen(true);
+                }}
+                disabled={loading || regenLoading}
+                className="flex items-center gap-[8px] px-[20px] py-[12px] border border-[var(--burnt-orange)] hover:bg-[var(--burnt-orange-light)] transition-colors disabled:opacity-50 cursor-pointer"
+                title="Regenerate this post from the source YouTube video using AI"
+              >
+                <Zap className="w-[14px] h-[14px] text-[var(--burnt-orange)]" />
+                <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--burnt-orange)]">
+                  REGENERATE
+                </span>
+              </button>
+            )}
             <button
               onClick={() => handleSave(false)}
               disabled={loading}
@@ -1277,6 +1373,134 @@ export default function AdminPage() {
             )}
           </div>
         </div>
+
+        {/* Regenerate Modal */}
+        {regenModalOpen && (
+          <div
+            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 px-4"
+            onClick={(e) => {
+              if (e.target === e.currentTarget && !regenLoading) {
+                setRegenModalOpen(false);
+              }
+            }}
+          >
+            <div className="bg-[var(--bg-white)] border border-[var(--border-subtle)] shadow-2xl w-full max-w-[640px] max-h-[90vh] overflow-y-auto">
+              <div className="flex items-center justify-between px-[24px] py-[16px] border-b border-[var(--border-subtle)]">
+                <div className="flex items-center gap-[10px]">
+                  <Zap className="w-[18px] h-[18px] text-[var(--burnt-orange)]" />
+                  <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-primary)]">
+                    REGENERATE BLOG POST
+                  </span>
+                </div>
+                <button
+                  onClick={() => {
+                    if (!regenLoading) setRegenModalOpen(false);
+                  }}
+                  disabled={regenLoading}
+                  className="text-[var(--text-muted)] hover:text-[var(--text-primary)] cursor-pointer disabled:opacity-50"
+                  aria-label="Close"
+                >
+                  <XCircle className="w-[20px] h-[20px]" />
+                </button>
+              </div>
+
+              <div className="flex flex-col gap-[20px] p-[24px]">
+                <p className="font-heading text-[14px] leading-[1.6] text-[var(--text-secondary)]">
+                  This will rewrite the post from the original YouTube video, taking a different angle than the current version. The current post will be <strong>overwritten in place</strong> — same URL, same day number, same publish status.
+                </p>
+
+                {/* Pills */}
+                <div className="flex flex-col gap-[10px]">
+                  <label className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                    QUICK ADJUSTMENTS (PICK ANY)
+                  </label>
+                  <div className="flex flex-wrap gap-[8px]">
+                    {[
+                      { id: "shorter", label: "Shorter" },
+                      { id: "longer", label: "Longer" },
+                      { id: "more-emotional", label: "More emotional" },
+                      { id: "more-factual", label: "More factual" },
+                      { id: "more-reflective", label: "More reflective" },
+                      { id: "more-sensory", label: "More sensory" },
+                      { id: "more-humor", label: "More humor" },
+                      { id: "different-angle", label: "Different angle" },
+                    ].map(({ id, label }) => {
+                      const active = regenPills.includes(id);
+                      return (
+                        <button
+                          key={id}
+                          onClick={() => toggleRegenPill(id)}
+                          disabled={regenLoading}
+                          className={`px-[14px] py-[7px] font-label font-bold text-[11px] tracking-[1px] transition-colors disabled:opacity-50 cursor-pointer ${
+                            active
+                              ? "bg-[var(--burnt-orange)] text-white"
+                              : "border border-[var(--border-subtle)] text-[var(--text-muted)] hover:border-[var(--burnt-orange)] hover:text-[var(--burnt-orange)]"
+                          }`}
+                        >
+                          {label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Free-text instructions */}
+                <div className="flex flex-col gap-[6px]">
+                  <label className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                    EXTRA INSTRUCTIONS (OPTIONAL)
+                  </label>
+                  <textarea
+                    value={regenInstructions}
+                    onChange={(e) => setRegenInstructions(e.target.value)}
+                    placeholder="e.g. 'Focus on the moment Paul saw the sunset' or 'Don't mention the cancer foundations this time, save it for the next post'"
+                    rows={4}
+                    disabled={regenLoading}
+                    className="w-full px-[14px] py-[12px] border border-[var(--border-subtle)] font-heading text-[14px] leading-[1.6] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none bg-[var(--bg-card)] resize-y disabled:opacity-50"
+                  />
+                  <span className="font-heading text-[12px] text-[var(--text-muted)]">
+                    The model will see your previous version as context and is told to take a different approach.
+                  </span>
+                </div>
+
+                {regenError && (
+                  <div className="p-[12px] bg-red-50 border border-red-300">
+                    <span className="font-heading text-[13px] text-red-700">
+                      ✗ {regenError}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center justify-end gap-[12px] px-[24px] py-[16px] border-t border-[var(--border-subtle)] bg-[var(--bg-warm)]">
+                <button
+                  onClick={() => {
+                    if (!regenLoading) setRegenModalOpen(false);
+                  }}
+                  disabled={regenLoading}
+                  className="px-[20px] py-[10px] border border-[var(--border-subtle)] hover:border-[var(--text-secondary)] transition-colors disabled:opacity-50 cursor-pointer"
+                >
+                  <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-secondary)]">
+                    CANCEL
+                  </span>
+                </button>
+                <button
+                  onClick={handleRegenerate}
+                  disabled={regenLoading}
+                  className="flex items-center gap-[8px] px-[24px] py-[10px] bg-[var(--burnt-orange)] hover:opacity-90 transition-opacity disabled:opacity-50 cursor-pointer"
+                >
+                  {regenLoading ? (
+                    <Loader2 className="w-[14px] h-[14px] text-white animate-spin" />
+                  ) : (
+                    <Zap className="w-[14px] h-[14px] text-white" />
+                  )}
+                  <span className="font-label font-bold text-[12px] tracking-[2px] text-white">
+                    {regenLoading ? "REGENERATING..." : "REGENERATE"}
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }

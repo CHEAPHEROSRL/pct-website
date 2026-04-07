@@ -59,7 +59,17 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { videoUrl, dayNumber: dayNumOverride, split, publish, force } = body;
+  const {
+    videoUrl,
+    dayNumber: dayNumOverride,
+    split,
+    publish,
+    force,
+    extraThoughts,
+    regenerationInstructions,
+    improvementPills,
+    overwriteId,
+  } = body;
 
   if (!videoUrl) {
     return NextResponse.json(
@@ -68,8 +78,26 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Dedup check — skip if force=true
-  if (!force) {
+  // Regeneration mode: if overwriteId is set, look up the existing post
+  // so we can pass its body as previousBody and replace it in-place after.
+  let existingPost: JournalPost | null = null;
+  let allPosts: JournalPost[] = [];
+  if (overwriteId) {
+    const raw = await redis.lrange<string>("journal:posts", 0, -1);
+    allPosts = (raw || []).map((s) =>
+      typeof s === "string" ? JSON.parse(s) : s
+    );
+    existingPost = allPosts.find((p) => p.id === overwriteId) || null;
+    if (!existingPost) {
+      return NextResponse.json(
+        { error: "Post to regenerate not found" },
+        { status: 404 }
+      );
+    }
+  }
+
+  // Dedup check — skip if force=true OR we're regenerating an existing post
+  if (!force && !overwriteId) {
     const videoId = extractVideoId(videoUrl);
     if (videoId) {
       const processed = await redis.get(`yt:processed:${videoId}`);
@@ -97,23 +125,35 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Calculate day number
+  // Calculate day number — when overwriting, prefer the existing post's day
   const { getSetting } = await import("@/lib/settings");
   const hikeStart = await getSetting("hikeStartDate", "HIKE_START_DATE");
   const dayNumber =
     dayNumOverride ??
+    existingPost?.dayNumber ??
     (hikeStart
       ? Math.ceil(
           (Date.now() - new Date(hikeStart).getTime()) / (1000 * 60 * 60 * 24)
         )
       : 1);
 
-  const shouldSplit = split ?? shouldSplitIntoTwoPosts(video.transcript);
+  // When regenerating, never split — always single post
+  const shouldSplit = overwriteId
+    ? false
+    : (split ?? shouldSplitIntoTwoPosts(video.transcript));
   const now = Date.now();
   const createdPosts: JournalPost[] = [];
 
+  // Build options to pass to the generator
+  const generatorOpts = {
+    extraThoughts: extraThoughts || undefined,
+    regenerationInstructions: regenerationInstructions || undefined,
+    improvementPills: Array.isArray(improvementPills) ? improvementPills : undefined,
+    previousBody: existingPost?.body || undefined,
+  };
+
   if (shouldSplit) {
-    const pair = await generateBlogPostPair(video, dayNumber);
+    const pair = await generateBlogPostPair(video, dayNumber, generatorOpts);
     if (!pair) {
       return NextResponse.json(
         { error: "Blog post generation failed. Try again." },
@@ -170,7 +210,7 @@ export async function POST(request: NextRequest) {
 
     createdPosts.push(post1, post2);
   } else {
-    const generated = await generateBlogPost(video, dayNumber);
+    const generated = await generateBlogPost(video, dayNumber, generatorOpts);
     if (!generated) {
       return NextResponse.json(
         { error: "Blog post generation failed. Try again." },
@@ -178,44 +218,83 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const post: JournalPost = {
-      id: generateId(),
-      title: generated.title,
-      slug: slugify(generated.title),
-      dayNumber,
-      date: new Date().toISOString().split("T")[0],
-      body: generated.body,
-      excerpt: generated.excerpt,
-      coverImage: video.thumbnailUrl,
-      images: [],
-      youtubeUrl: video.videoUrl,
-      tags: generated.tags,
-      published: publish ?? false,
-      createdAt: now,
-      updatedAt: now,
-    };
+    if (overwriteId && existingPost) {
+      // Regeneration: replace the existing post in-place. Preserve id, slug,
+      // date, published state, createdAt, day number, and any media the
+      // editor may have added since the original generation.
+      const updated: JournalPost = {
+        ...existingPost,
+        title: generated.title,
+        body: generated.body,
+        excerpt: generated.excerpt,
+        tags: generated.tags,
+        // Don't change: id, slug, date, dayNumber, published, createdAt,
+        // coverImage (might have been edited), images, youtubeUrl
+        updatedAt: now,
+      };
 
-    await redis.lpush("journal:posts", JSON.stringify(post));
+      // Rewrite the journal:posts list with the updated entry
+      const newAll = allPosts.map((p) => (p.id === overwriteId ? updated : p));
+      await redis.del("journal:posts");
+      if (newAll.length > 0) {
+        await redis.rpush(
+          "journal:posts",
+          ...newAll.map((p) => JSON.stringify(p))
+        );
+      }
 
-    // Store Instagram caption
-    await redis.set(
-      `instagram:caption:${post.id}`,
-      generated.instagramCaption,
-    );
+      // Refresh Instagram caption
+      await redis.set(
+        `instagram:caption:${updated.id}`,
+        generated.instagramCaption,
+      );
 
-    createdPosts.push(post);
+      createdPosts.push(updated);
+    } else {
+      // Normal create flow
+      const post: JournalPost = {
+        id: generateId(),
+        title: generated.title,
+        slug: slugify(generated.title),
+        dayNumber,
+        date: new Date().toISOString().split("T")[0],
+        body: generated.body,
+        excerpt: generated.excerpt,
+        coverImage: video.thumbnailUrl,
+        images: [],
+        youtubeUrl: video.videoUrl,
+        tags: generated.tags,
+        published: publish ?? false,
+        createdAt: now,
+        updatedAt: now,
+      };
+
+      await redis.lpush("journal:posts", JSON.stringify(post));
+
+      // Store Instagram caption
+      await redis.set(
+        `instagram:caption:${post.id}`,
+        generated.instagramCaption,
+      );
+
+      createdPosts.push(post);
+    }
   }
 
   return NextResponse.json({
     success: true,
     videoTitle: video.title,
     postsCreated: createdPosts.length,
+    regenerated: !!overwriteId,
     posts: createdPosts.map((p) => ({
       id: p.id,
       title: p.title,
       slug: p.slug,
       tags: p.tags,
       published: p.published,
+      // For regeneration, also return the body so the editor can refresh
+      body: overwriteId ? p.body : undefined,
+      excerpt: overwriteId ? p.excerpt : undefined,
     })),
   });
 }

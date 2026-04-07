@@ -226,21 +226,103 @@ function postProcessBody(body: string, assets: BlogAsset[]): string {
 }
 
 /**
+ * Optional inputs that can be added when generating or regenerating a post.
+ */
+export interface BlogGenerationOptions {
+  /**
+   * Free-form thoughts Paul (or the admin) wants to inject into the post —
+   * extra context the video transcript didn't capture.
+   */
+  extraThoughts?: string;
+  /**
+   * Free-form instructions for how to change the post on regeneration.
+   * Combined with `improvementPills` if both are present.
+   */
+  regenerationInstructions?: string;
+  /**
+   * Multi-select pill selections from the regenerate dialog. Each pill maps
+   * to a specific human-readable instruction included in the prompt.
+   */
+  improvementPills?: string[];
+  /**
+   * The previous body of the post being regenerated. Used so the AI can take
+   * a different angle / structure rather than reword the same thing.
+   */
+  previousBody?: string;
+}
+
+const PILL_INSTRUCTIONS: Record<string, string> = {
+  shorter: "Make the post noticeably shorter and more concise — cut filler, tighten every paragraph.",
+  longer: "Expand the post — add more depth, more sensory detail, more reflection.",
+  "more-emotional": "Lean harder into the emotional core — make the reader feel what Paul felt.",
+  "more-factual": "Lean harder into concrete facts — miles walked, terrain, gear, conditions, time of day.",
+  "different-angle": "Take a completely different angle on the same content — frame it around a different theme or moment.",
+  "more-reflective": "Make it more reflective — slow down and dwell on what the experience meant.",
+  "more-sensory": "Add more sensory detail — what Paul saw, heard, smelled, felt physically.",
+  "more-humor": "Add some of Paul's dry humor — keep it tasteful, never forced.",
+};
+
+function buildContextualInstructions(opts: BlogGenerationOptions | undefined): string {
+  if (!opts) return "";
+
+  const sections: string[] = [];
+
+  if (opts.extraThoughts && opts.extraThoughts.trim()) {
+    sections.push(
+      `PAUL'S ADDITIONAL THOUGHTS — extra context the transcript didn't capture\n` +
+      `Treat these as first-person notes from Paul that should be woven into the post naturally:\n\n` +
+      `"""\n${opts.extraThoughts.trim()}\n"""\n`
+    );
+  }
+
+  const pillInstructions = (opts.improvementPills || [])
+    .map((p) => PILL_INSTRUCTIONS[p])
+    .filter(Boolean);
+
+  if (pillInstructions.length > 0 || (opts.regenerationInstructions && opts.regenerationInstructions.trim())) {
+    const lines: string[] = [
+      `REGENERATION INSTRUCTIONS — this is a regeneration of an existing post`,
+    ];
+    if (pillInstructions.length > 0) {
+      lines.push("Apply ALL of these adjustments:");
+      pillInstructions.forEach((p) => lines.push(`- ${p}`));
+    }
+    if (opts.regenerationInstructions && opts.regenerationInstructions.trim()) {
+      lines.push("");
+      lines.push(`Additional guidance from the editor: ${opts.regenerationInstructions.trim()}`);
+    }
+    sections.push(lines.join("\n"));
+  }
+
+  if (opts.previousBody && opts.previousBody.trim()) {
+    sections.push(
+      `PREVIOUS VERSION — what you wrote before. Take a genuinely different approach.\n` +
+      `Don't just reword this — change the structure, the angle, or the emphasis.\n\n` +
+      `"""\n${opts.previousBody.trim()}\n"""\n`
+    );
+  }
+
+  return sections.length > 0 ? "\n" + sections.join("\n\n") + "\n" : "";
+}
+
+/**
  * Generate a single blog post from a video transcript.
  */
 export async function generateBlogPost(
   video: VideoTranscript,
-  dayNumber: number
+  dayNumber: number,
+  opts?: BlogGenerationOptions
 ): Promise<GeneratedPost | null> {
   const assets = await buildAssetPool();
   const assetInstructions = buildAssetInstructions(assets);
+  const contextualInstructions = buildContextualInstructions(opts);
 
   const prompt = `Here is a transcript from Paul's YouTube video titled "${video.title}":
 
 ---
 ${video.transcript}
 ---
-
+${contextualInstructions}
 Generate a blog post from this video transcript. The post should:
 1. Capture the key story/experience from the video
 2. Be 600-1000 words
@@ -291,17 +373,19 @@ Respond in this exact JSON format:
  */
 export async function generateBlogPostPair(
   video: VideoTranscript,
-  dayNumber: number
+  dayNumber: number,
+  opts?: BlogGenerationOptions
 ): Promise<GeneratedPostPair | null> {
   const assets = await buildAssetPool();
   const assetInstructions = buildAssetInstructions(assets);
+  const contextualInstructions = buildContextualInstructions(opts);
 
   const prompt = `Here is a transcript from Paul's YouTube video titled "${video.title}". This is a longer/complex video that should be split into TWO separate blog posts:
 
 ---
 ${video.transcript}
 ---
-
+${contextualInstructions}
 Generate TWO distinct blog posts from this transcript:
 
 **Post 1** (publish immediately): Focus on the primary story, event, or experience.
