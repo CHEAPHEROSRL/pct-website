@@ -1,13 +1,32 @@
 import { google } from "googleapis";
+import { getSetting } from "./settings";
 
 // ---------------------------------------------------------------------------
 // Gmail API client (Google Workspace OAuth2)
 // ---------------------------------------------------------------------------
+//
+// Reads credentials from (in order):
+//   1. Vercel environment variables (GMAIL_CLIENT_ID, etc.)
+//   2. Admin settings stored in Redis (gmailClientId, etc.)
+//
+// Required to send emails:
+//   - GMAIL_CLIENT_ID         OAuth2 client ID from Google Cloud Console
+//   - GMAIL_CLIENT_SECRET     OAuth2 client secret from Google Cloud Console
+//   - GMAIL_REFRESH_TOKEN     Long-lived refresh token (obtained via OAuth Playground)
+//   - EMAIL_FROM              "YesChapter <paul@yeschapter.com>" — sender display
+//
+// See docs/EMAIL-SETUP.md for the full walkthrough.
 
-function getGmailClient() {
-  const clientId = process.env.GMAIL_CLIENT_ID;
-  const clientSecret = process.env.GMAIL_CLIENT_SECRET;
-  const refreshToken = process.env.GMAIL_REFRESH_TOKEN;
+async function getGmailClient() {
+  const clientId =
+    process.env.GMAIL_CLIENT_ID ||
+    (await getSetting("gmailClientId", "GMAIL_CLIENT_ID"));
+  const clientSecret =
+    process.env.GMAIL_CLIENT_SECRET ||
+    (await getSetting("gmailClientSecret", "GMAIL_CLIENT_SECRET"));
+  const refreshToken =
+    process.env.GMAIL_REFRESH_TOKEN ||
+    (await getSetting("gmailRefreshToken", "GMAIL_REFRESH_TOKEN"));
 
   if (!clientId || !clientSecret || !refreshToken) return null;
 
@@ -16,7 +35,13 @@ function getGmailClient() {
   return google.gmail({ version: "v1", auth: oauth2Client });
 }
 
-const FROM = process.env.EMAIL_FROM || "YesChapter <info@yeschapter.com>";
+async function getFromAddress(): Promise<string> {
+  return (
+    process.env.EMAIL_FROM ||
+    (await getSetting("emailFrom", "EMAIL_FROM")) ||
+    "YesChapter <paul@yeschapter.com>"
+  );
+}
 
 interface SendResult {
   success: boolean;
@@ -24,17 +49,19 @@ interface SendResult {
 }
 
 async function send(to: string, subject: string, html: string): Promise<SendResult> {
-  const gmail = getGmailClient();
+  const gmail = await getGmailClient();
   if (!gmail) {
     console.warn("Gmail not configured — email skipped:", subject);
     return { success: false, error: "Email service not configured" };
   }
 
+  const from = await getFromAddress();
+
   try {
     // Build RFC 2822 message
     const message = [
       `To: ${to}`,
-      `From: ${FROM}`,
+      `From: ${from}`,
       `Subject: ${subject}`,
       "MIME-Version: 1.0",
       "Content-Type: text/html; charset=utf-8",
@@ -52,7 +79,8 @@ async function send(to: string, subject: string, html: string): Promise<SendResu
     return { success: true };
   } catch (err) {
     console.error("Failed to send email:", err);
-    return { success: false, error: "Email delivery failed" };
+    const message = err instanceof Error ? err.message : "Email delivery failed";
+    return { success: false, error: message };
   }
 }
 

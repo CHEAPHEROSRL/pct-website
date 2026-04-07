@@ -82,6 +82,11 @@ export default function AdminPage() {
   const [settingsLoading, setSettingsLoading] = useState(false);
   const [settingsSaved, setSettingsSaved] = useState(false);
 
+  // Email test state
+  const [testEmailTo, setTestEmailTo] = useState("ciocanraul@gmail.com");
+  const [testEmailSending, setTestEmailSending] = useState(false);
+  const [testEmailResult, setTestEmailResult] = useState<{ success: boolean; message: string } | null>(null);
+
   // Honor tracking state
   const [honorStats, setHonorStats] = useState<{
     honoredCount: number;
@@ -1945,6 +1950,117 @@ export default function AdminPage() {
                     </p>
                   </div>
                 )}
+              </div>
+
+              {/* Email Notifications (Gmail OAuth) */}
+              <div className="flex flex-col gap-[20px] p-[28px] bg-[var(--bg-white)] border border-[var(--border-subtle)]">
+                <div className="flex items-center gap-[10px]">
+                  <Mail className="w-[18px] h-[18px] text-[var(--burnt-orange)]" />
+                  <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-primary)]">
+                    EMAIL NOTIFICATIONS (GMAIL)
+                  </span>
+                </div>
+                <p className="font-heading text-[14px] leading-[1.7] text-[var(--text-secondary)]">
+                  Email is sent via the Gmail API using a Google Cloud OAuth2 app. When credentials are configured, the site automatically sends new-post notifications to waitlist subscribers and pledgers, plus weekly updates, milestone emails, and honor reminders.
+                </p>
+
+                <div className="flex flex-col gap-[8px] p-[16px] bg-[var(--bg-warm)] border border-[var(--border-subtle)]">
+                  <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">SETUP GUIDE</span>
+                  <ol className="flex flex-col gap-[6px] font-heading text-[13px] leading-[1.6] text-[var(--text-secondary)] list-decimal pl-[20px]">
+                    <li>Go to <strong>console.cloud.google.com</strong>, create a new project (e.g. &ldquo;YesChapter Email&rdquo;)</li>
+                    <li>Enable the <strong>Gmail API</strong> for the project</li>
+                    <li>Configure the OAuth consent screen (External, fill in app name + your email)</li>
+                    <li>Create OAuth 2.0 Client ID credentials (type: Web application). Add <code className="bg-[var(--bg-card)] px-[4px]">https://developers.google.com/oauthplayground</code> as an Authorized redirect URI</li>
+                    <li>Copy the <strong>Client ID</strong> and <strong>Client Secret</strong></li>
+                    <li>Go to <strong>developers.google.com/oauthplayground</strong>, click the gear icon, check &ldquo;Use your own OAuth credentials&rdquo;, paste the ID + secret</li>
+                    <li>In the left sidebar, find <strong>Gmail API v1</strong> and select scope <code className="bg-[var(--bg-card)] px-[4px]">https://www.googleapis.com/auth/gmail.send</code></li>
+                    <li>Click <strong>Authorize APIs</strong>, sign in as the Google account that should send emails (e.g. <code className="bg-[var(--bg-card)] px-[4px]">paul@yeschapter.com</code> if it&apos;s a Workspace account)</li>
+                    <li>Click <strong>Exchange authorization code for tokens</strong> and copy the <strong>Refresh token</strong></li>
+                    <li>Add these as Vercel environment variables (Production): <code className="bg-[var(--bg-card)] px-[4px]">GMAIL_CLIENT_ID</code>, <code className="bg-[var(--bg-card)] px-[4px]">GMAIL_CLIENT_SECRET</code>, <code className="bg-[var(--bg-card)] px-[4px]">GMAIL_REFRESH_TOKEN</code>, <code className="bg-[var(--bg-card)] px-[4px]">EMAIL_FROM</code> (e.g. <code className="bg-[var(--bg-card)] px-[4px]">YesChapter &lt;paul@yeschapter.com&gt;</code>)</li>
+                    <li>Redeploy the site (or trigger any new commit)</li>
+                    <li>Use the test box below to verify it works</li>
+                  </ol>
+                </div>
+
+                {/* Test send */}
+                <div className="flex flex-col gap-[10px] p-[16px] border border-[var(--border-subtle)]">
+                  <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                    SEND A TEST EMAIL
+                  </span>
+                  <p className="font-heading text-[13px] leading-[1.6] text-[var(--text-secondary)]">
+                    Sends a sample &ldquo;new post&rdquo; notification to <strong>only the address below</strong>. Waitlist subscribers and pledgers are NOT contacted. Use this to verify Gmail is wired up correctly.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-[10px]">
+                    <input
+                      type="email"
+                      value={testEmailTo}
+                      onChange={(e) => setTestEmailTo(e.target.value)}
+                      placeholder="you@example.com"
+                      className="flex-1 h-[44px] px-[16px] border border-[var(--border-subtle)] font-heading text-[14px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none bg-[var(--bg-card)]"
+                    />
+                    <button
+                      onClick={async () => {
+                        if (!testEmailTo) return;
+                        setTestEmailSending(true);
+                        setTestEmailResult(null);
+                        try {
+                          const res = await fetch("/api/emails/test", {
+                            method: "POST",
+                            headers: {
+                              "Content-Type": "application/json",
+                              Authorization: `Bearer ${token}`,
+                            },
+                            body: JSON.stringify({ to: testEmailTo }),
+                          });
+                          const data = await res.json();
+                          if (res.ok) {
+                            setTestEmailResult({
+                              success: true,
+                              message: data.message || `Test email sent to ${testEmailTo}. Check inbox + spam folder.`,
+                            });
+                          } else {
+                            setTestEmailResult({
+                              success: false,
+                              message: data.error || `HTTP ${res.status}`,
+                            });
+                          }
+                        } catch (err) {
+                          setTestEmailResult({
+                            success: false,
+                            message: err instanceof Error ? err.message : "Request failed",
+                          });
+                        } finally {
+                          setTestEmailSending(false);
+                        }
+                      }}
+                      disabled={testEmailSending || !testEmailTo}
+                      className="flex items-center justify-center gap-[8px] px-[24px] h-[44px] bg-[var(--burnt-orange)] hover:opacity-90 transition-opacity disabled:opacity-50 cursor-pointer"
+                    >
+                      <Send className="w-[14px] h-[14px] text-white" />
+                      <span className="font-label font-bold text-[12px] tracking-[2px] text-white">
+                        {testEmailSending ? "SENDING..." : "SEND TEST"}
+                      </span>
+                    </button>
+                  </div>
+                  {testEmailResult && (
+                    <div
+                      className={`p-[12px] border ${
+                        testEmailResult.success
+                          ? "bg-[var(--forest-green-light)] border-[var(--forest-green)]/30"
+                          : "bg-red-50 border-red-300"
+                      }`}
+                    >
+                      <span
+                        className={`font-heading text-[13px] ${
+                          testEmailResult.success ? "text-[var(--forest-green)]" : "text-red-700"
+                        }`}
+                      >
+                        {testEmailResult.success ? "✓ " : "✗ "}
+                        {testEmailResult.message}
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Instagram / Apify */}
