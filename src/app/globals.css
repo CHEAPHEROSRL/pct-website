@@ -31,6 +31,15 @@
   }
 }
 
+/* Hide scrollbars on horizontally-scrollable strips (mobile tab bars etc.) */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* ── Scroll Animation System ── */
 
 /* Respect reduced motion preference */

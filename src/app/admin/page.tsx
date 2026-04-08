@@ -584,7 +584,7 @@ export default function AdminPage() {
   if (view === "login") {
     return (
       <div className="flex flex-col w-full min-h-screen bg-[var(--bg-dark)]">
-        <div className="flex flex-col items-center justify-center flex-1 gap-[32px] px-[60px]">
+        <div className="flex flex-col items-center justify-center flex-1 gap-[24px] md:gap-[32px] px-[20px] md:px-[60px] py-[40px]">
           <div className="flex items-center gap-[12px]">
             <Shield className="w-[24px] h-[24px] text-[var(--forest-green)]" />
             <span className="font-label font-bold text-[14px] tracking-[3px] text-white">
@@ -662,29 +662,29 @@ export default function AdminPage() {
     return (
       <div className="flex flex-col w-full min-h-screen bg-[var(--bg-warm)]">
         {/* Top bar */}
-        <div className="flex items-center justify-between h-[64px] px-[40px] bg-[var(--bg-white)] border-b border-[var(--border-subtle)]">
-          <div className="flex items-center gap-[12px]">
-            <Shield className="w-[24px] h-[24px] text-[var(--forest-green)]" />
-            <span className="font-label font-bold text-[14px] tracking-[3px] text-[var(--text-primary)]">
+        <div className="flex items-center justify-between h-[56px] md:h-[64px] px-[16px] md:px-[40px] bg-[var(--bg-white)] border-b border-[var(--border-subtle)]">
+          <div className="flex items-center gap-[10px] md:gap-[12px] min-w-0">
+            <Shield className="w-[20px] h-[20px] md:w-[24px] md:h-[24px] text-[var(--forest-green)] shrink-0" />
+            <span className="font-label font-bold text-[12px] md:text-[14px] tracking-[2px] md:tracking-[3px] text-[var(--text-primary)] truncate">
               YESCHAPTER ADMIN
             </span>
           </div>
           <button
             onClick={handleLogout}
-            className="flex items-center gap-[8px] px-[20px] py-[8px] border border-[var(--border-subtle)] hover:border-[var(--text-secondary)] transition-colors cursor-pointer"
+            className="flex items-center gap-[8px] px-[12px] md:px-[20px] py-[8px] border border-[var(--border-subtle)] hover:border-[var(--text-secondary)] transition-colors cursor-pointer shrink-0"
           >
             <LogOut className="w-[14px] h-[14px] text-[var(--text-secondary)]" />
-            <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-secondary)]">
+            <span className="hidden sm:inline font-label font-bold text-[11px] tracking-[2px] text-[var(--text-secondary)]">
               LOG OUT
             </span>
           </button>
         </div>
 
-        {/* Tabs */}
-        <div className="flex gap-0 px-[40px] bg-[var(--bg-white)] border-b border-[var(--border-subtle)]">
+        {/* Tabs — horizontally scrollable on mobile */}
+        <div className="flex gap-0 px-[16px] md:px-[40px] bg-[var(--bg-white)] border-b border-[var(--border-subtle)] overflow-x-auto scrollbar-hide">
           <button
             onClick={() => { setActiveTab("journal"); setView("list"); setStatus(""); }}
-            className={`flex items-center gap-[8px] px-[24px] py-[14px] font-label font-bold text-[12px] tracking-[2px] border-b-2 transition-colors cursor-pointer ${
+            className={`flex items-center gap-[6px] md:gap-[8px] px-[14px] md:px-[24px] py-[14px] font-label font-bold text-[11px] md:text-[12px] tracking-[1.5px] md:tracking-[2px] border-b-2 transition-colors cursor-pointer shrink-0 ${
               activeTab === "journal"
                 ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
                 : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
@@ -695,7 +695,7 @@ export default function AdminPage() {
           </button>
           <button
             onClick={() => { setActiveTab("challenges"); setView("challenges"); setStatus(""); fetchChallenges(); }}
-            className={`flex items-center gap-[8px] px-[24px] py-[14px] font-label font-bold text-[12px] tracking-[2px] border-b-2 transition-colors cursor-pointer ${
+            className={`flex items-center gap-[6px] md:gap-[8px] px-[14px] md:px-[24px] py-[14px] font-label font-bold text-[11px] md:text-[12px] tracking-[1.5px] md:tracking-[2px] border-b-2 transition-colors cursor-pointer shrink-0 ${
               activeTab === "challenges"
                 ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
                 : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
@@ -706,18 +706,19 @@ export default function AdminPage() {
           </button>
           <button
             onClick={() => { setActiveTab("honor"); setView("honor"); setStatus(""); fetchHonorStats(); }}
-            className={`flex items-center gap-[8px] px-[24px] py-[14px] font-label font-bold text-[12px] tracking-[2px] border-b-2 transition-colors cursor-pointer ${
+            className={`flex items-center gap-[6px] md:gap-[8px] px-[14px] md:px-[24px] py-[14px] font-label font-bold text-[11px] md:text-[12px] tracking-[1.5px] md:tracking-[2px] border-b-2 transition-colors cursor-pointer shrink-0 ${
               activeTab === "honor"
                 ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
                 : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
             }`}
           >
             <CheckCircle className="w-[16px] h-[16px]" />
-            HONOR TRACKING
+            <span className="hidden sm:inline">HONOR TRACKING</span>
+            <span className="sm:hidden">HONOR</span>
           </button>
           <button
             onClick={() => { setActiveTab("waitlist"); setView("waitlist"); setStatus(""); fetchWaitlist(); }}
-            className={`flex items-center gap-[8px] px-[24px] py-[14px] font-label font-bold text-[12px] tracking-[2px] border-b-2 transition-colors cursor-pointer ${
+            className={`flex items-center gap-[6px] md:gap-[8px] px-[14px] md:px-[24px] py-[14px] font-label font-bold text-[11px] md:text-[12px] tracking-[1.5px] md:tracking-[2px] border-b-2 transition-colors cursor-pointer shrink-0 ${
               activeTab === "waitlist"
                 ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
                 : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
@@ -728,7 +729,7 @@ export default function AdminPage() {
           </button>
           <button
             onClick={() => { setActiveTab("settings"); setView("settings"); setStatus(""); fetchSettings(); }}
-            className={`flex items-center gap-[8px] px-[24px] py-[14px] font-label font-bold text-[12px] tracking-[2px] border-b-2 transition-colors cursor-pointer ${
+            className={`flex items-center gap-[6px] md:gap-[8px] px-[14px] md:px-[24px] py-[14px] font-label font-bold text-[11px] md:text-[12px] tracking-[1.5px] md:tracking-[2px] border-b-2 transition-colors cursor-pointer shrink-0 ${
               activeTab === "settings"
                 ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
                 : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
@@ -748,14 +749,14 @@ export default function AdminPage() {
   // --- LIST VIEW ---
   if (view === "list") {
     return adminShell(
-        <div className="flex flex-col gap-[24px] p-[40px]">
-          {/* Header row */}
-          <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-[20px] md:gap-[24px] p-[16px] md:p-[40px]">
+          {/* Header row — stacks on mobile, side-by-side on tablet+ */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-[16px]">
             <div className="flex flex-col gap-[8px]">
               <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">
                 JOURNAL POSTS
               </span>
-              <h1 className="font-heading font-semibold text-[28px] text-[var(--text-primary)]">
+              <h1 className="font-heading font-semibold text-[24px] md:text-[28px] text-[var(--text-primary)]">
                 Manage Journal Entries
               </h1>
             </div>
@@ -776,7 +777,7 @@ export default function AdminPage() {
                 setView("editor");
                 setStatus("");
               }}
-              className="flex items-center gap-[8px] px-[28px] py-[14px] bg-[var(--burnt-orange)] hover:opacity-90 transition-opacity cursor-pointer"
+              className="flex items-center justify-center gap-[8px] px-[20px] md:px-[28px] py-[12px] md:py-[14px] bg-[var(--burnt-orange)] hover:opacity-90 transition-opacity cursor-pointer self-stretch sm:self-auto"
             >
               <Plus className="w-[16px] h-[16px] text-white" />
               <span className="font-label font-bold text-[13px] tracking-[2px] text-white">
@@ -968,10 +969,10 @@ export default function AdminPage() {
             )}
           </div>
 
-          {/* Posts table */}
+          {/* Posts list */}
           <div className="flex flex-col bg-[var(--bg-white)] border border-[var(--border-subtle)]">
-            {/* Table header */}
-            <div className="flex items-center px-[20px] py-[12px] bg-[var(--warm-stone)] border-b border-[var(--border-subtle)]">
+            {/* Table header — desktop only, hidden on mobile */}
+            <div className="hidden md:flex items-center px-[20px] py-[12px] bg-[var(--warm-stone)] border-b border-[var(--border-subtle)]">
               <span className="flex-1 font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
                 TITLE
               </span>
@@ -996,7 +997,7 @@ export default function AdminPage() {
                 </span>
               </div>
             ) : posts.length === 0 ? (
-              <div className="flex flex-col items-center gap-[12px] py-[48px]">
+              <div className="flex flex-col items-center gap-[12px] py-[48px] px-[20px] text-center">
                 <span className="font-heading text-[16px] text-[var(--text-muted)]">
                   No journal posts yet
                 </span>
@@ -1008,23 +1009,83 @@ export default function AdminPage() {
               posts.map((post) => (
                 <div
                   key={post.id}
-                  className="flex items-center px-[20px] py-[16px] border-b border-[var(--border-subtle)] last:border-b-0"
+                  className="flex flex-col md:flex-row md:items-center gap-[12px] md:gap-0 px-[16px] md:px-[20px] py-[16px] border-b border-[var(--border-subtle)] last:border-b-0"
                 >
+                  {/* Title + slug */}
                   <div className="flex flex-col gap-[2px] flex-1 min-w-0">
-                    <span className="font-heading font-semibold text-[14px] text-[var(--text-primary)] truncate">
+                    <span className="font-heading font-semibold text-[15px] md:text-[14px] text-[var(--text-primary)] md:truncate">
                       {post.title}
                     </span>
                     <span className="font-label text-[11px] text-[var(--text-muted)] truncate">
                       {post.slug}
                     </span>
                   </div>
-                  <span className="w-[80px] font-heading text-[14px] text-[var(--text-secondary)]">
+
+                  {/* Day + Date — inline row on mobile, separate columns on desktop */}
+                  <div className="flex md:hidden items-center gap-[12px] flex-wrap">
+                    <span className="font-label font-bold text-[10px] tracking-[1px] text-[var(--burnt-orange)]">
+                      DAY {post.dayNumber}
+                    </span>
+                    <span className="font-label text-[11px] text-[var(--text-muted)]">
+                      {post.date}
+                    </span>
+                  </div>
+                  <span className="hidden md:block w-[80px] font-heading text-[14px] text-[var(--text-secondary)]">
                     Day {post.dayNumber}
                   </span>
-                  <span className="w-[120px] font-heading text-[13px] text-[var(--text-secondary)]">
+                  <span className="hidden md:block w-[120px] font-heading text-[13px] text-[var(--text-secondary)]">
                     {post.date}
                   </span>
-                  <div className="w-[130px]">
+
+                  {/* Status + actions row on mobile, separate columns on desktop */}
+                  <div className="flex items-center justify-between gap-[8px] md:hidden">
+                    <button
+                      onClick={() => handleTogglePublish(post)}
+                      className={`inline-flex items-center gap-[6px] px-[10px] py-[5px] font-label font-bold text-[10px] tracking-[1px] cursor-pointer hover:opacity-70 transition-opacity ${
+                        post.published
+                          ? "bg-[var(--forest-green-light)] text-[var(--forest-green)]"
+                          : "bg-[var(--burnt-orange-light)] text-[var(--burnt-orange)]"
+                      }`}
+                      title={post.published ? "Click to unpublish" : "Click to publish"}
+                    >
+                      {post.published ? "● PUBLISHED" : "○ DRAFT"}
+                    </button>
+                    <div className="flex gap-[6px]">
+                      <a
+                        href={`/journal/${post.slug}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-[10px] py-[6px] border border-[var(--border-subtle)] hover:border-[var(--burnt-orange)] transition-colors cursor-pointer flex items-center"
+                        title={post.published ? "Open the live published post in a new tab" : "Preview this draft on the live site (admin only)"}
+                      >
+                        <span className="font-label font-bold text-[10px] tracking-[1px] text-[var(--text-secondary)]">
+                          VIEW
+                        </span>
+                      </a>
+                      <button
+                        onClick={() => {
+                          setEditingPost({ ...post });
+                          setView("editor");
+                          setStatus("");
+                        }}
+                        className="px-[10px] py-[6px] border border-[var(--border-subtle)] hover:border-[var(--text-secondary)] transition-colors cursor-pointer"
+                      >
+                        <span className="font-label font-bold text-[10px] tracking-[1px] text-[var(--text-secondary)]">
+                          EDIT
+                        </span>
+                      </button>
+                      <button
+                        onClick={() => handleDelete(post.id)}
+                        className="px-[10px] py-[6px] border border-[var(--border-subtle)] hover:border-red-400 transition-colors cursor-pointer"
+                        aria-label="Delete post"
+                      >
+                        <Trash2 className="w-[12px] h-[12px] text-[#8B2020]" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Desktop status column */}
+                  <div className="hidden md:block w-[130px]">
                     <button
                       onClick={() => handleTogglePublish(post)}
                       className={`inline-flex items-center gap-[6px] px-[10px] py-[4px] font-label font-bold text-[10px] tracking-[1px] cursor-pointer hover:opacity-70 transition-opacity ${
@@ -1037,7 +1098,9 @@ export default function AdminPage() {
                       {post.published ? "● PUBLISHED" : "○ DRAFT"}
                     </button>
                   </div>
-                  <div className="flex gap-[8px] w-[170px]">
+
+                  {/* Desktop actions column */}
+                  <div className="hidden md:flex gap-[8px] w-[170px]">
                     <a
                       href={`/journal/${post.slug}`}
                       target="_blank"
@@ -1091,38 +1154,38 @@ export default function AdminPage() {
 
     return (
       <div className="flex flex-col w-full min-h-screen bg-[var(--bg-warm)]">
-        {/* Top bar */}
-        <div className="flex items-center justify-between h-[64px] px-[40px] bg-[var(--bg-white)] border-b border-[var(--border-subtle)]">
-          <div className="flex items-center gap-[12px]">
+        {/* Top bar — wraps to two rows on mobile, single row on desktop */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-[10px] md:gap-0 px-[16px] md:px-[40px] py-[12px] md:py-0 md:h-[64px] bg-[var(--bg-white)] border-b border-[var(--border-subtle)]">
+          <div className="flex items-center gap-[10px] md:gap-[12px] min-w-0">
             <button
               onClick={() => {
                 setView("list");
                 setEditingPost(null);
                 setStatus("");
               }}
-              className="flex items-center gap-[6px] px-[12px] py-[8px] border border-[var(--border-subtle)] hover:border-[var(--text-secondary)] transition-colors cursor-pointer"
+              className="flex items-center gap-[6px] px-[10px] md:px-[12px] py-[8px] border border-[var(--border-subtle)] hover:border-[var(--text-secondary)] transition-colors cursor-pointer shrink-0"
             >
               <ArrowLeft className="w-[14px] h-[14px] text-[var(--text-secondary)]" />
               <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-secondary)]">
                 BACK
               </span>
             </button>
-            <div className="w-[1px] h-[24px] bg-[var(--border-subtle)]" />
-            <span className="font-heading font-semibold text-[18px] text-[var(--text-primary)]">
+            <div className="hidden md:block w-[1px] h-[24px] bg-[var(--border-subtle)]" />
+            <span className="font-heading font-semibold text-[16px] md:text-[18px] text-[var(--text-primary)] truncate">
               {isNew ? "New Post" : "Edit Post"}
             </span>
           </div>
-          <div className="flex gap-[12px]">
+          <div className="flex flex-wrap gap-[8px] md:gap-[12px]">
             {/* View — opens the live page in a new tab (admin can preview drafts) */}
             {!isNew && editingPost.slug && (
               <a
                 href={`/journal/${editingPost.slug}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-[8px] px-[20px] py-[12px] border border-[var(--border-subtle)] hover:border-[var(--burnt-orange)] hover:text-[var(--burnt-orange)] transition-colors cursor-pointer"
+                className="flex items-center gap-[6px] px-[14px] md:px-[20px] py-[10px] md:py-[12px] border border-[var(--border-subtle)] hover:border-[var(--burnt-orange)] hover:text-[var(--burnt-orange)] transition-colors cursor-pointer"
                 title="Open this post on the live site in a new tab"
               >
-                <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-secondary)] hover:text-[var(--burnt-orange)]">
+                <span className="font-label font-bold text-[11px] md:text-[12px] tracking-[1.5px] md:tracking-[2px] text-[var(--text-secondary)] hover:text-[var(--burnt-orange)]">
                   VIEW
                 </span>
               </a>
@@ -1135,11 +1198,11 @@ export default function AdminPage() {
                   setRegenModalOpen(true);
                 }}
                 disabled={loading || regenLoading}
-                className="flex items-center gap-[8px] px-[20px] py-[12px] border border-[var(--burnt-orange)] hover:bg-[var(--burnt-orange-light)] transition-colors disabled:opacity-50 cursor-pointer"
+                className="flex items-center gap-[6px] px-[14px] md:px-[20px] py-[10px] md:py-[12px] border border-[var(--burnt-orange)] hover:bg-[var(--burnt-orange-light)] transition-colors disabled:opacity-50 cursor-pointer"
                 title="Regenerate this post from the source YouTube video using AI"
               >
                 <Zap className="w-[14px] h-[14px] text-[var(--burnt-orange)]" />
-                <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--burnt-orange)]">
+                <span className="font-label font-bold text-[11px] md:text-[12px] tracking-[1.5px] md:tracking-[2px] text-[var(--burnt-orange)]">
                   REGENERATE
                 </span>
               </button>
@@ -1147,19 +1210,19 @@ export default function AdminPage() {
             <button
               onClick={() => handleSave(false)}
               disabled={loading}
-              className="flex items-center gap-[8px] px-[24px] py-[12px] border border-[var(--border-subtle)] hover:border-[var(--text-secondary)] transition-colors disabled:opacity-50 cursor-pointer"
+              className="flex items-center gap-[6px] px-[14px] md:px-[24px] py-[10px] md:py-[12px] border border-[var(--border-subtle)] hover:border-[var(--text-secondary)] transition-colors disabled:opacity-50 cursor-pointer"
             >
-              <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-secondary)]">
+              <span className="font-label font-bold text-[11px] md:text-[12px] tracking-[1.5px] md:tracking-[2px] text-[var(--text-secondary)]">
                 {loading ? "SAVING..." : "SAVE DRAFT"}
               </span>
             </button>
             <button
               onClick={() => handleSave(true)}
               disabled={loading}
-              className="flex items-center gap-[8px] px-[24px] py-[12px] bg-[var(--forest-green)] hover:opacity-90 transition-opacity disabled:opacity-50 cursor-pointer"
+              className="flex items-center gap-[6px] px-[14px] md:px-[24px] py-[10px] md:py-[12px] bg-[var(--forest-green)] hover:opacity-90 transition-opacity disabled:opacity-50 cursor-pointer"
             >
               <Send className="w-[14px] h-[14px] text-white" />
-              <span className="font-label font-bold text-[12px] tracking-[2px] text-white">
+              <span className="font-label font-bold text-[11px] md:text-[12px] tracking-[1.5px] md:tracking-[2px] text-white">
                 {loading ? "PUBLISHING..." : "PUBLISH"}
               </span>
             </button>
@@ -1167,17 +1230,17 @@ export default function AdminPage() {
         </div>
 
         {status && (
-          <div className="px-[40px] pt-[16px]">
+          <div className="px-[16px] md:px-[40px] pt-[16px]">
             <span className="font-label text-[13px] text-red-500">
               {status}
             </span>
           </div>
         )}
 
-        {/* Form area */}
-        <div className="flex gap-[32px] p-[40px]">
+        {/* Form area — stacks vertically on mobile (sidebar above body), side-by-side on desktop */}
+        <div className="flex flex-col lg:flex-row gap-[16px] md:gap-[24px] lg:gap-[32px] p-[16px] md:p-[40px]">
           {/* Main column */}
-          <div className="flex flex-col gap-[24px] flex-1">
+          <div className="flex flex-col gap-[20px] md:gap-[24px] flex-1 min-w-0 order-2 lg:order-1">
             {/* Title */}
             <div className="flex flex-col gap-[6px]">
               <label className="font-heading font-semibold text-[14px] text-[var(--text-primary)]">
@@ -1230,10 +1293,10 @@ export default function AdminPage() {
             </div>
           </div>
 
-          {/* Side column */}
-          <div className="flex flex-col gap-[24px] w-[320px] shrink-0">
+          {/* Side column — full width on mobile (above body), 320px sidebar on desktop */}
+          <div className="flex flex-col gap-[20px] md:gap-[24px] w-full lg:w-[320px] shrink-0 order-1 lg:order-2">
             {/* Post Details card */}
-            <div className="flex flex-col gap-[16px] p-[24px] bg-[var(--bg-white)] border border-[var(--border-subtle)]">
+            <div className="flex flex-col gap-[16px] p-[20px] md:p-[24px] bg-[var(--bg-white)] border border-[var(--border-subtle)]">
               <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-muted)]">
                 POST DETAILS
               </span>
@@ -1603,7 +1666,7 @@ export default function AdminPage() {
   // --- CHALLENGES VIEW ---
   if (view === "challenges" && authenticated) {
     return adminShell(
-        <div className="flex flex-col gap-[24px] p-[40px]">
+        <div className="flex flex-col gap-[20px] md:gap-[24px] p-[16px] md:p-[40px]">
           <div className="flex flex-col gap-[8px]">
             <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">
               TRAIL CHALLENGES
@@ -1646,7 +1709,7 @@ export default function AdminPage() {
             <div className="flex flex-col gap-[24px] flex-1">
               {activeChallenge ? (
                 /* Active Challenge Card */
-                <div className="flex flex-col gap-[16px] p-[28px] bg-[var(--bg-white)] border-2 border-[var(--burnt-orange)]">
+                <div className="flex flex-col gap-[16px] p-[20px] md:p-[28px] bg-[var(--bg-white)] border-2 border-[var(--burnt-orange)]">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-[10px]">
                       <div className="w-[10px] h-[10px] rounded-full bg-red-500 animate-pulse" />
@@ -1730,7 +1793,7 @@ export default function AdminPage() {
                 </div>
               ) : (
                 /* Create Challenge Form */
-                <div className="flex flex-col gap-[20px] p-[28px] bg-[var(--bg-white)] border border-[var(--border-subtle)]">
+                <div className="flex flex-col gap-[20px] p-[20px] md:p-[28px] bg-[var(--bg-white)] border border-[var(--border-subtle)]">
                   <div className="flex items-center gap-[10px]">
                     <Target className="w-[18px] h-[18px] text-[var(--burnt-orange)]" />
                     <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-muted)]">
@@ -1917,7 +1980,7 @@ export default function AdminPage() {
 
   if (view === "honor" && authenticated) {
     return adminShell(
-        <div className="flex flex-col gap-[24px] p-[40px]">
+        <div className="flex flex-col gap-[20px] md:gap-[24px] p-[16px] md:p-[40px]">
           <div className="flex flex-col gap-[8px]">
             <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">
               PLEDGE HONOR RATE
@@ -1989,7 +2052,7 @@ export default function AdminPage() {
   // --- WAITLIST VIEW ---
   if (view === "waitlist" && authenticated) {
     return adminShell(
-        <div className="flex flex-col gap-[24px] p-[40px]">
+        <div className="flex flex-col gap-[20px] md:gap-[24px] p-[16px] md:p-[40px]">
           <div className="flex items-center justify-between">
             <div className="flex flex-col gap-[8px]">
               <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">
@@ -2078,7 +2141,7 @@ export default function AdminPage() {
   // --- SETTINGS VIEW ---
   if (view === "settings" && authenticated) {
     return adminShell(
-        <div className="flex flex-col gap-[32px] p-[40px] max-w-[720px]">
+        <div className="flex flex-col gap-[24px] md:gap-[32px] p-[16px] md:p-[40px] max-w-[720px]">
           <div className="flex flex-col gap-[8px]">
             <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">
               SETTINGS
@@ -2093,7 +2156,7 @@ export default function AdminPage() {
           ) : (
             <>
               {/* Trail Location Tracker */}
-              <div className="flex flex-col gap-[20px] p-[28px] bg-[var(--bg-white)] border-2 border-[var(--forest-green)]">
+              <div className="flex flex-col gap-[20px] p-[20px] md:p-[28px] bg-[var(--bg-white)] border-2 border-[var(--forest-green)]">
                 <div className="flex items-center gap-[10px]">
                   <Navigation className="w-[18px] h-[18px] text-[var(--forest-green)]" />
                   <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-primary)]">
@@ -2276,7 +2339,7 @@ export default function AdminPage() {
               </div>
 
               {/* Email Notifications (Gmail OAuth) */}
-              <div className="flex flex-col gap-[20px] p-[28px] bg-[var(--bg-white)] border border-[var(--border-subtle)]">
+              <div className="flex flex-col gap-[20px] p-[20px] md:p-[28px] bg-[var(--bg-white)] border border-[var(--border-subtle)]">
                 <div className="flex items-center gap-[10px]">
                   <Mail className="w-[18px] h-[18px] text-[var(--burnt-orange)]" />
                   <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-primary)]">
@@ -2387,7 +2450,7 @@ export default function AdminPage() {
               </div>
 
               {/* Instagram / Apify */}
-              <div className="flex flex-col gap-[20px] p-[28px] bg-[var(--bg-white)] border border-[var(--border-subtle)]">
+              <div className="flex flex-col gap-[20px] p-[20px] md:p-[28px] bg-[var(--bg-white)] border border-[var(--border-subtle)]">
                 <div className="flex items-center gap-[10px]">
                   <Instagram className="w-[18px] h-[18px] text-[var(--burnt-orange)]" />
                   <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-primary)]">
@@ -2514,7 +2577,7 @@ export default function AdminPage() {
               </div>
 
               {/* AI Provider */}
-              <div className="flex flex-col gap-[20px] p-[28px] bg-[var(--bg-white)] border border-[var(--border-subtle)]">
+              <div className="flex flex-col gap-[20px] p-[20px] md:p-[28px] bg-[var(--bg-white)] border border-[var(--border-subtle)]">
                 <div className="flex items-center gap-[10px]">
                   <Zap className="w-[18px] h-[18px] text-[var(--burnt-orange)]" />
                   <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-primary)]">
@@ -2668,7 +2731,7 @@ export default function AdminPage() {
               </div>
 
               {/* YouTube */}
-              <div className="flex flex-col gap-[20px] p-[28px] bg-[var(--bg-white)] border border-[var(--border-subtle)]">
+              <div className="flex flex-col gap-[20px] p-[20px] md:p-[28px] bg-[var(--bg-white)] border border-[var(--border-subtle)]">
                 <div className="flex items-center gap-[10px]">
                   <Video className="w-[18px] h-[18px] text-[var(--burnt-orange)]" />
                   <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-primary)]">
@@ -2744,7 +2807,7 @@ export default function AdminPage() {
               </div>
 
               {/* Data Management */}
-              <div className="flex flex-col gap-[20px] p-[28px] bg-[var(--bg-white)] border border-[var(--border-subtle)] mt-[24px]">
+              <div className="flex flex-col gap-[20px] p-[20px] md:p-[28px] bg-[var(--bg-white)] border border-[var(--border-subtle)] mt-[24px]">
                 <div className="flex items-center gap-[10px]">
                   <Trash2 className="w-[18px] h-[18px] text-red-500" />
                   <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-primary)]">
