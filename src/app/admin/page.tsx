@@ -29,8 +29,26 @@ import {
 import type { JournalPost, ChallengePublic } from "@/lib/types";
 import { getMileForDay, getLastTrackedDay } from "@/lib/day-mileage";
 
-type View = "login" | "list" | "editor" | "challenges" | "honor" | "waitlist" | "settings";
-type AdminTab = "journal" | "challenges" | "honor" | "waitlist" | "settings";
+type View = "login" | "list" | "editor" | "challenges" | "honor" | "waitlist" | "emails" | "email-detail" | "settings";
+type AdminTab = "journal" | "challenges" | "honor" | "waitlist" | "emails" | "settings";
+
+interface EmailTemplateListItem {
+  id: string;
+  name: string;
+  category: string;
+  categoryLabel: string;
+  trigger: string;
+  recipient: string;
+  cron: string | null;
+  dedupKey: string | null;
+}
+
+interface EmailPreview {
+  to: string;
+  from: string;
+  subject: string;
+  html: string;
+}
 
 export default function AdminPage() {
   const [username, setUsername] = useState("");
@@ -98,6 +116,18 @@ export default function AdminPage() {
   const [regenInstructions, setRegenInstructions] = useState("");
   const [regenPills, setRegenPills] = useState<string[]>([]);
   const [regenLoading, setRegenLoading] = useState(false);
+
+  // Email templates viewer state
+  const [emailTemplates, setEmailTemplates] = useState<EmailTemplateListItem[]>([]);
+  const [emailTemplatesLoading, setEmailTemplatesLoading] = useState(false);
+  const [emailNotes, setEmailNotes] = useState<Record<string, string>>({});
+  const [emailDetail, setEmailDetail] = useState<EmailTemplateListItem | null>(null);
+  const [emailPreview, setEmailPreview] = useState<EmailPreview | null>(null);
+  const [emailPreviewLoading, setEmailPreviewLoading] = useState(false);
+  const [emailPreviewError, setEmailPreviewError] = useState("");
+  const [emailNoteDraft, setEmailNoteDraft] = useState("");
+  const [emailNoteSaving, setEmailNoteSaving] = useState(false);
+  const [emailNoteSaved, setEmailNoteSaved] = useState(false);
   const [regenError, setRegenError] = useState("");
 
   // Honor tracking state
@@ -246,6 +276,94 @@ export default function AdminPage() {
       setSettingsLoading(false);
     }
   }, [token]);
+
+  const fetchEmailTemplates = useCallback(async () => {
+    setEmailTemplatesLoading(true);
+    try {
+      const [listRes, notesRes] = await Promise.all([
+        fetch("/api/admin/email-previews", {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        fetch("/api/admin/email-notes", {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+      ]);
+      if (listRes.ok) {
+        const data = await listRes.json();
+        setEmailTemplates(data.templates || []);
+      }
+      if (notesRes.ok) {
+        const notesData = await notesRes.json();
+        setEmailNotes(notesData.notes || {});
+      }
+    } catch {
+      setStatus("Failed to load email templates");
+    } finally {
+      setEmailTemplatesLoading(false);
+    }
+  }, [token]);
+
+  const openEmailTemplate = useCallback(
+    async (template: EmailTemplateListItem) => {
+      setEmailDetail(template);
+      setView("email-detail");
+      setStatus("");
+      setEmailPreview(null);
+      setEmailPreviewError("");
+      setEmailPreviewLoading(true);
+      setEmailNoteDraft(emailNotes[template.id] || "");
+      setEmailNoteSaved(false);
+      try {
+        const res = await fetch(
+          `/api/admin/email-previews?id=${encodeURIComponent(template.id)}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        if (res.ok) {
+          const data = await res.json();
+          setEmailPreview(data.preview);
+        } else {
+          const data = await res.json().catch(() => ({}));
+          setEmailPreviewError(data.error || `HTTP ${res.status}`);
+        }
+      } catch (err) {
+        setEmailPreviewError(err instanceof Error ? err.message : "Network error");
+      } finally {
+        setEmailPreviewLoading(false);
+      }
+    },
+    [token, emailNotes]
+  );
+
+  const saveEmailNote = useCallback(async () => {
+    if (!emailDetail) return;
+    setEmailNoteSaving(true);
+    setEmailNoteSaved(false);
+    try {
+      const res = await fetch("/api/admin/email-notes", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          templateId: emailDetail.id,
+          note: emailNoteDraft,
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setEmailNotes(data.notes || {});
+        setEmailNoteSaved(true);
+        setTimeout(() => setEmailNoteSaved(false), 3000);
+      } else {
+        setStatus("Failed to save note");
+      }
+    } catch {
+      setStatus("Network error saving note");
+    } finally {
+      setEmailNoteSaving(false);
+    }
+  }, [emailDetail, emailNoteDraft, token]);
 
   async function handleSaveSettings() {
     setSettingsLoading(true);
@@ -726,6 +844,17 @@ export default function AdminPage() {
           >
             <Mail className="w-[16px] h-[16px]" />
             WAITLIST
+          </button>
+          <button
+            onClick={() => { setActiveTab("emails"); setView("emails"); setStatus(""); fetchEmailTemplates(); }}
+            className={`flex items-center gap-[6px] md:gap-[8px] px-[14px] md:px-[24px] py-[14px] font-label font-bold text-[11px] md:text-[12px] tracking-[1.5px] md:tracking-[2px] border-b-2 transition-colors cursor-pointer shrink-0 ${
+              activeTab === "emails" || view === "email-detail"
+                ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
+                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+            }`}
+          >
+            <Send className="w-[16px] h-[16px]" />
+            EMAILS
           </button>
           <button
             onClick={() => { setActiveTab("settings"); setView("settings"); setStatus(""); fetchSettings(); }}
@@ -2135,6 +2264,262 @@ export default function AdminPage() {
             </div>
           )}
         </div>
+    );
+  }
+
+  // --- EMAILS LIST VIEW ---
+  if (view === "emails" && authenticated) {
+    // Group templates by category, preserving order from the metadata file
+    const groupedTemplates = emailTemplates.reduce<
+      Record<string, { label: string; items: EmailTemplateListItem[] }>
+    >((acc, t) => {
+      if (!acc[t.category]) {
+        acc[t.category] = { label: t.categoryLabel, items: [] };
+      }
+      acc[t.category].items.push(t);
+      return acc;
+    }, {});
+
+    return adminShell(
+      <div className="flex flex-col gap-[20px] md:gap-[24px] p-[16px] md:p-[40px] max-w-[900px]">
+        <div className="flex flex-col gap-[8px]">
+          <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">
+            EMAIL TEMPLATES
+          </span>
+          <h1 className="font-heading font-semibold text-[24px] md:text-[28px] text-[var(--text-primary)]">
+            All Emails the Site Can Send
+          </h1>
+          <p className="font-heading text-[14px] leading-[1.6] text-[var(--text-secondary)] max-w-[680px]">
+            Every email the website is set up to send is listed below. Tap any one to see the
+            full subject line, body, when and why it fires, and who receives it. Leave a note
+            on any template to flag wording you want changed — the dev team will pick it up.
+          </p>
+        </div>
+
+        {emailTemplatesLoading && emailTemplates.length === 0 ? (
+          <div className="flex items-center gap-[10px] py-[32px]">
+            <Loader2 className="w-[16px] h-[16px] text-[var(--text-muted)] animate-spin" />
+            <span className="font-heading text-[14px] text-[var(--text-muted)]">
+              Loading templates…
+            </span>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-[28px]">
+            {Object.entries(groupedTemplates).map(([category, { label, items }]) => (
+              <div key={category} className="flex flex-col gap-[12px]">
+                <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-muted)]">
+                  {label.toUpperCase()}
+                </span>
+                <div className="flex flex-col gap-[10px]">
+                  {items.map((t) => {
+                    const hasNote = !!(emailNotes[t.id] && emailNotes[t.id].trim());
+                    return (
+                      <button
+                        key={t.id}
+                        onClick={() => openEmailTemplate(t)}
+                        className="flex flex-col gap-[8px] p-[16px] md:p-[20px] bg-[var(--bg-white)] border border-[var(--border-subtle)] hover:border-[var(--burnt-orange)] transition-colors cursor-pointer text-left"
+                      >
+                        <div className="flex items-start justify-between gap-[12px]">
+                          <span className="font-heading font-semibold text-[15px] md:text-[16px] text-[var(--text-primary)] flex-1">
+                            {t.name}
+                          </span>
+                          {hasNote && (
+                            <span className="shrink-0 inline-flex items-center gap-[4px] px-[8px] py-[2px] bg-[var(--burnt-orange-light)] text-[var(--burnt-orange)]">
+                              <span className="font-label font-bold text-[9px] tracking-[1.5px]">
+                                NOTE
+                              </span>
+                            </span>
+                          )}
+                        </div>
+                        <p className="font-heading text-[13px] leading-[1.6] text-[var(--text-secondary)]">
+                          {t.trigger}
+                        </p>
+                        <div className="flex flex-wrap items-center gap-x-[14px] gap-y-[4px] mt-[2px]">
+                          <span className="font-label text-[11px] text-[var(--text-muted)]">
+                            <strong className="text-[var(--text-secondary)]">To:</strong>{" "}
+                            {t.recipient}
+                          </span>
+                          {t.cron && (
+                            <span className="font-label text-[11px] text-[var(--text-muted)]">
+                              <strong className="text-[var(--text-secondary)]">Cron:</strong>{" "}
+                              {t.cron}
+                            </span>
+                          )}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // --- EMAIL DETAIL VIEW ---
+  if (view === "email-detail" && authenticated && emailDetail) {
+    return adminShell(
+      <div className="flex flex-col gap-[16px] md:gap-[24px] p-[16px] md:p-[40px] max-w-[900px]">
+        {/* Back button */}
+        <button
+          onClick={() => {
+            setView("emails");
+            setEmailDetail(null);
+            setEmailPreview(null);
+            setEmailPreviewError("");
+          }}
+          className="flex items-center gap-[6px] px-[10px] md:px-[12px] py-[8px] border border-[var(--border-subtle)] hover:border-[var(--text-secondary)] transition-colors cursor-pointer self-start"
+        >
+          <ArrowLeft className="w-[14px] h-[14px] text-[var(--text-secondary)]" />
+          <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-secondary)]">
+            BACK TO LIST
+          </span>
+        </button>
+
+        {/* Header */}
+        <div className="flex flex-col gap-[8px]">
+          <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--burnt-orange)]">
+            {emailDetail.categoryLabel.toUpperCase()}
+          </span>
+          <h1 className="font-heading font-semibold text-[22px] md:text-[28px] leading-[1.2] text-[var(--text-primary)]">
+            {emailDetail.name}
+          </h1>
+        </div>
+
+        {/* Metadata block */}
+        <div className="flex flex-col gap-[12px] p-[16px] md:p-[20px] bg-[var(--bg-white)] border border-[var(--border-subtle)]">
+          <div className="flex flex-col gap-[4px]">
+            <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+              WHEN / WHY IT SENDS
+            </span>
+            <p className="font-heading text-[14px] leading-[1.7] text-[var(--text-secondary)]">
+              {emailDetail.trigger}
+            </p>
+          </div>
+          <div className="flex flex-col gap-[4px]">
+            <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+              RECIPIENT
+            </span>
+            <p className="font-heading text-[14px] leading-[1.7] text-[var(--text-secondary)]">
+              {emailDetail.recipient}
+            </p>
+          </div>
+          {emailDetail.cron && (
+            <div className="flex flex-col gap-[4px]">
+              <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                CRON SCHEDULE
+              </span>
+              <p className="font-heading text-[14px] leading-[1.7] text-[var(--text-secondary)]">
+                {emailDetail.cron}
+              </p>
+            </div>
+          )}
+          {emailDetail.dedupKey && (
+            <div className="flex flex-col gap-[4px]">
+              <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                DEDUPLICATION
+              </span>
+              <p className="font-heading text-[14px] leading-[1.7] text-[var(--text-secondary)]">
+                {emailDetail.dedupKey}
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Subject line */}
+        <div className="flex flex-col gap-[8px] p-[16px] md:p-[20px] bg-[var(--bg-white)] border border-[var(--border-subtle)]">
+          <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+            SUBJECT LINE
+          </span>
+          {emailPreviewLoading ? (
+            <span className="font-heading text-[14px] text-[var(--text-muted)]">
+              Loading…
+            </span>
+          ) : emailPreview ? (
+            <span className="font-heading font-semibold text-[16px] md:text-[18px] text-[var(--text-primary)]">
+              {emailPreview.subject}
+            </span>
+          ) : null}
+        </div>
+
+        {/* Body preview */}
+        <div className="flex flex-col gap-[10px]">
+          <div className="flex items-center justify-between flex-wrap gap-[8px]">
+            <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+              EMAIL BODY PREVIEW
+            </span>
+            <span className="font-label text-[11px] text-[var(--text-muted)]">
+              Rendered with sample data — variables like {"{name}"}, {"{rate}"}, etc.
+              are filled in for preview only.
+            </span>
+          </div>
+          <div className="bg-[var(--bg-white)] border border-[var(--border-subtle)] overflow-hidden">
+            {emailPreviewLoading ? (
+              <div className="flex items-center justify-center py-[60px]">
+                <Loader2 className="w-[20px] h-[20px] text-[var(--text-muted)] animate-spin" />
+              </div>
+            ) : emailPreviewError ? (
+              <div className="p-[20px] bg-red-50">
+                <span className="font-heading text-[13px] text-red-700">
+                  ✗ {emailPreviewError}
+                </span>
+              </div>
+            ) : emailPreview ? (
+              <iframe
+                srcDoc={`<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;padding:0;background:#f4f1ec;}</style></head><body>${emailPreview.html}</body></html>`}
+                className="w-full min-h-[600px] md:min-h-[720px] bg-white border-0"
+                title={`Preview: ${emailDetail.name}`}
+              />
+            ) : null}
+          </div>
+        </div>
+
+        {/* Notes */}
+        <div className="flex flex-col gap-[10px] p-[16px] md:p-[20px] bg-[var(--bg-white)] border border-[var(--border-subtle)]">
+          <div className="flex items-center justify-between flex-wrap gap-[8px]">
+            <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+              YOUR NOTES ON THIS EMAIL
+            </span>
+            {emailNoteSaved && (
+              <span className="font-label font-bold text-[11px] tracking-[1px] text-[var(--forest-green)]">
+                ✓ Saved
+              </span>
+            )}
+          </div>
+          <p className="font-heading text-[12px] leading-[1.5] text-[var(--text-muted)]">
+            Use this to flag wording you want changed, phrasing that feels off, or anything
+            else you want the dev team to look at. Notes are visible to admins only.
+          </p>
+          <textarea
+            value={emailNoteDraft}
+            onChange={(e) => {
+              setEmailNoteDraft(e.target.value);
+              setEmailNoteSaved(false);
+            }}
+            placeholder="e.g. 'Change the third paragraph — sounds too corporate.'"
+            rows={5}
+            className="w-full px-[14px] py-[12px] border border-[var(--border-subtle)] font-heading text-[14px] leading-[1.6] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none bg-[var(--bg-card)] resize-y"
+          />
+          <div className="flex items-center gap-[10px]">
+            <button
+              onClick={saveEmailNote}
+              disabled={emailNoteSaving}
+              className="flex items-center gap-[6px] px-[20px] py-[10px] bg-[var(--burnt-orange)] hover:opacity-90 transition-opacity disabled:opacity-50 cursor-pointer"
+            >
+              <span className="font-label font-bold text-[12px] tracking-[2px] text-white">
+                {emailNoteSaving ? "SAVING…" : "SAVE NOTE"}
+              </span>
+            </button>
+            {emailNoteDraft.length > 0 && (
+              <span className="font-label text-[11px] text-[var(--text-muted)]">
+                {emailNoteDraft.length}/5000
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
     );
   }
 

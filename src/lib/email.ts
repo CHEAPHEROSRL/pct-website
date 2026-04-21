@@ -48,7 +48,54 @@ interface SendResult {
   error?: string;
 }
 
+// ---------------------------------------------------------------------------
+// Preview capture — lets the admin "Emails" tab render any template without
+// actually sending mail. Flow:
+//   1. Caller invokes startPreviewCapture()
+//   2. Caller calls any sendXxx(...) function with sample args
+//   3. The send() helper below, seeing that preview mode is active, records
+//      { to, subject, html } instead of hitting Gmail and returns success
+//   4. Caller invokes endPreviewCapture() and reads the captured payload
+//
+// IMPORTANT: this uses a module-level variable, which is safe because the
+// admin preview endpoint processes one template at a time per request and
+// Next.js serverless function instances don't interleave. Do NOT use this
+// mechanism for concurrent/parallel captures without adding an id/lock.
+// ---------------------------------------------------------------------------
+
+export interface CapturedPreview {
+  to: string;
+  from: string;
+  subject: string;
+  html: string;
+}
+
+let _previewCapture: CapturedPreview | null = null;
+let _previewActive = false;
+
+export function startPreviewCapture(): void {
+  _previewActive = true;
+  _previewCapture = null;
+}
+
+export function endPreviewCapture(): CapturedPreview | null {
+  const out = _previewCapture;
+  _previewActive = false;
+  _previewCapture = null;
+  return out;
+}
+
 async function send(to: string, subject: string, html: string): Promise<SendResult> {
+  if (_previewActive) {
+    _previewCapture = {
+      to,
+      from: (await getFromAddress().catch(() => "")) || "YesChapter <paul@yeschapter.com>",
+      subject,
+      html,
+    };
+    return { success: true };
+  }
+
   const gmail = await getGmailClient();
   if (!gmail) {
     console.warn("Gmail not configured — email skipped:", subject);
