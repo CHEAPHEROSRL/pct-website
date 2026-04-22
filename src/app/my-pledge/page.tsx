@@ -596,7 +596,7 @@ export default function MyPledgePage() {
                   <div className="flex items-center gap-[10px]">
                     <div className="w-[10px] h-[10px] rounded-full bg-[var(--forest-green)] shrink-0" />
                     <span className="font-heading text-[13px] text-[var(--text-secondary)]">
-                      Cancer Foundation — California:{" "}
+                      City of Hope (California):{" "}
                       <strong className="text-[var(--forest-green)]">
                         {formatCurrency(perFoundation)} (50%)
                       </strong>
@@ -605,7 +605,7 @@ export default function MyPledgePage() {
                   <div className="flex items-center gap-[10px]">
                     <div className="w-[10px] h-[10px] rounded-full bg-[var(--burnt-orange)] shrink-0" />
                     <span className="font-heading text-[13px] text-[var(--text-secondary)]">
-                      Cancer Foundation — Sydney:{" "}
+                      Leukaemia Foundation (Australia):{" "}
                       <strong className="text-[var(--burnt-orange)]">
                         {formatCurrency(perFoundation)} (50%)
                       </strong>

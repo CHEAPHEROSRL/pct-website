@@ -925,10 +925,10 @@ At the end of Paul's hike — whether he reaches Manning Park, BC at mile 2,650,
 **100% of your pledge goes to two cancer foundations.** Paul receives $0 from pledges and donations.
 
 The two foundations are:
-- **Cancer Foundation — California** (50% of your pledge)
-- **Cancer Foundation — Sydney, Australia** (50% of your pledge)
+- **City of Hope** — Duarte, California, USA (50% of your pledge)
+- **Leukaemia Foundation** — Australia (50% of your pledge)
 
-These foundations fund cancer research, patient support programs, screening events, and prevention education. Paul chose one in each hemisphere to honor both his parents — his mother, who was treated in Sydney, and his father, who was treated in California.
+These foundations fund cancer research, patient support programs, screening events, and prevention education. Paul chose one in each of the two countries he calls home: California, where he has lived for the past 16 years, and Sydney, Australia, where his mother was treated. His father didn't have a nominated charity, so Paul picked a foundation in his own hometown — a small way to keep the cause close.
 
 > **Paul takes nothing.** Not a cent. Pledges and donations go directly to the foundations. If you want to support Paul on the trail (food, gear, rest days), that's a separate stream through the [Support Paul](/support) page.
 

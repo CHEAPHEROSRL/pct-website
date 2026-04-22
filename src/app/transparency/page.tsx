@@ -105,16 +105,16 @@ export default function TransparencyPage() {
 
         <TransparencySection title="6. Pledge Distribution">
           <p>
-            Pledges are split equally (50/50) between two geographic regions to honor both of Paul&apos;s parents —
-            his father in California and his mother in Sydney, Australia:
+            Pledges are split equally (50/50) between two cancer foundations tied to the two countries Paul
+            calls home:
           </p>
           <ul>
-            <li>50% to City of Hope (Duarte, California, USA)</li>
-            <li>50% to the Leukaemia Foundation (Australia)</li>
+            <li>50% to City of Hope (Duarte, California, USA) — California has been Paul&apos;s home for the past 16 years. His father didn&apos;t have a nominated charity, so Paul chose a foundation from the place he lives.</li>
+            <li>50% to the Leukaemia Foundation (Australia) — in honour of Paul&apos;s mother, who was treated in Sydney.</li>
           </ul>
           <p>
-            This split reflects Paul&apos;s personal connection to both regions and ensures support reaches cancer patients
-            and research in the communities closest to his family&apos;s story.
+            The split reflects Paul&apos;s connection to both places — his home today, and the home where his family&apos;s
+            cancer story began.
           </p>
         </TransparencySection>
 

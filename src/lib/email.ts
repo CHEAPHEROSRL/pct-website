@@ -185,8 +185,8 @@ export async function sendPledgeConfirmation(
         <div style="background: #F4F1EC; padding: 20px; margin: 24px 0;">
           <p style="margin: 0; font-size: 14px; color: #5C5C5C;">
             <strong>Where your pledge goes:</strong><br/>
-            50% → Cancer Foundation — California<br/>
-            50% → Cancer Foundation — Sydney
+            50% → City of Hope (California, USA)<br/>
+            50% → Leukaemia Foundation (Australia)
           </p>
         </div>
         <p style="font-size: 14px; color: #5C5C5C; line-height: 1.6;">
