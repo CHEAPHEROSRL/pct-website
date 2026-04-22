@@ -29,8 +29,8 @@ import {
 import type { JournalPost, ChallengePublic } from "@/lib/types";
 import { getMileForDay, getLastTrackedDay } from "@/lib/day-mileage";
 
-type View = "login" | "list" | "editor" | "challenges" | "honor" | "waitlist" | "emails" | "email-detail" | "settings";
-type AdminTab = "journal" | "challenges" | "honor" | "waitlist" | "emails" | "settings";
+type View = "login" | "tracker" | "list" | "editor" | "challenges" | "honor" | "waitlist" | "emails" | "email-detail" | "settings";
+type AdminTab = "tracker" | "journal" | "challenges" | "honor" | "waitlist" | "emails" | "settings";
 
 interface EmailTemplateListItem {
   id: string;
@@ -62,7 +62,7 @@ export default function AdminPage() {
   const [editingPost, setEditingPost] = useState<Partial<JournalPost> | null>(
     null
   );
-  const [activeTab, setActiveTab] = useState<AdminTab>("journal");
+  const [activeTab, setActiveTab] = useState<AdminTab>("tracker");
   const [activeChallenge, setActiveChallenge] = useState<ChallengePublic | null>(null);
   const [challengeHistory, setChallengeHistory] = useState<ChallengePublic[]>([]);
   const [challengeForm, setChallengeForm] = useState({
@@ -195,7 +195,9 @@ export default function AdminPage() {
         const data: JournalPost[] = await res.json();
         setPosts(data);
         setAuthenticated(true);
-        setView("list");
+        setActiveTab("tracker");
+        setView("tracker");
+        fetchSettings();
       } else {
         localStorage.removeItem("pct-admin-token");
       }
@@ -668,7 +670,9 @@ export default function AdminPage() {
         const data: JournalPost[] = await res.json();
         setPosts(data);
         setAuthenticated(true);
-        setView("list");
+        setActiveTab("tracker");
+        setView("tracker");
+        fetchSettings();
         fetchChallenges();
       } else {
         setStatus(`Error ${res.status}`);
@@ -880,6 +884,17 @@ export default function AdminPage() {
         {/* Tabs — horizontally scrollable on mobile */}
         <div className="flex gap-0 px-[16px] md:px-[40px] bg-[var(--bg-white)] border-b border-[var(--border-subtle)] overflow-x-auto scrollbar-hide">
           <button
+            onClick={() => { setActiveTab("tracker"); setView("tracker"); setStatus(""); fetchSettings(); }}
+            className={`flex items-center gap-[6px] md:gap-[8px] px-[14px] md:px-[24px] py-[14px] font-label font-bold text-[11px] md:text-[12px] tracking-[1.5px] md:tracking-[2px] border-b-2 transition-colors cursor-pointer shrink-0 ${
+              activeTab === "tracker"
+                ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
+                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+            }`}
+          >
+            <Navigation className="w-[16px] h-[16px]" />
+            TRACKER
+          </button>
+          <button
             onClick={() => { setActiveTab("journal"); setView("list"); setStatus(""); }}
             className={`flex items-center gap-[6px] md:gap-[8px] px-[14px] md:px-[24px] py-[14px] font-label font-bold text-[11px] md:text-[12px] tracking-[1.5px] md:tracking-[2px] border-b-2 transition-colors cursor-pointer shrink-0 ${
               activeTab === "journal"
@@ -950,6 +965,153 @@ export default function AdminPage() {
 
         {/* Content */}
         {content}
+      </div>
+    );
+  }
+
+  // --- TRACKER VIEW ---
+  // Quick-access position updater. Default landing view after login so Paul
+  // can re-anchor his position in ~3 taps when he hits trail Wi-Fi, without
+  // scrolling through the full Settings tab.
+  if (view === "tracker" && authenticated) {
+    const mile = parseFloat(settings.currentMile) || 0;
+    const pace = parseFloat(settings.dailyPace) || 0;
+    const mileSetAt = parseInt(settings.mileSetAt) || 0;
+    const elapsed = mileSetAt ? (Date.now() - mileSetAt) / (1000 * 60 * 60 * 24) : 0;
+    const estimated = Math.min(2650, mile + elapsed * pace);
+    const progress = ((estimated / 2650) * 100).toFixed(1);
+
+    return adminShell(
+      <div className="flex flex-col gap-[20px] p-[16px] md:p-[40px] max-w-[720px] w-full mx-auto">
+        <div className="flex flex-col gap-[6px]">
+          <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">
+            POSITION TRACKER
+          </span>
+          <h1 className="font-heading font-semibold text-[24px] md:text-[28px] text-[var(--text-primary)]">
+            Where is Paul right now?
+          </h1>
+          <p className="font-heading text-[14px] leading-[1.6] text-[var(--text-secondary)]">
+            Set a mile and a daily pace. The map auto-advances from there. Re-anchor when reality drifts — usually every few days or at town stops.
+          </p>
+        </div>
+
+        {/* Live preview */}
+        <div className="flex flex-col gap-[10px] p-[16px] bg-[var(--bg-warm)] border border-[var(--border-subtle)]">
+          <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+            WHAT VISITORS SEE RIGHT NOW
+          </span>
+          <div className="grid grid-cols-3 gap-[12px]">
+            <div className="flex flex-col gap-[2px]">
+              <span className="font-label font-bold text-[9px] tracking-[2px] text-[var(--text-muted)]">YOU SET</span>
+              <span className="font-heading font-semibold text-[20px] text-[var(--text-primary)]">Mile {mile}</span>
+            </div>
+            <div className="flex flex-col gap-[2px]">
+              <span className="font-label font-bold text-[9px] tracking-[2px] text-[var(--text-muted)]">MAP SHOWS</span>
+              <span className="font-heading font-semibold text-[20px] text-[var(--forest-green)]">Mile {estimated.toFixed(1)}</span>
+            </div>
+            <div className="flex flex-col gap-[2px]">
+              <span className="font-label font-bold text-[9px] tracking-[2px] text-[var(--text-muted)]">PROGRESS</span>
+              <span className="font-heading font-semibold text-[20px] text-[var(--burnt-orange)]">{progress}%</span>
+            </div>
+          </div>
+          <div className="w-full h-[8px] bg-[var(--border-subtle)] overflow-hidden">
+            <div className="h-full bg-[var(--forest-green)] transition-all" style={{ width: `${progress}%` }} />
+          </div>
+          {mileSetAt > 0 && (
+            <span className="font-heading text-[12px] text-[var(--text-muted)]">
+              Last re-anchored {elapsed < 1 ? `${Math.round(elapsed * 24)} hours` : `${elapsed.toFixed(1)} days`} ago.
+              {pace > 0 && <> Marker has advanced {(elapsed * pace).toFixed(1)} miles since then at {pace} mi/day.</>}
+              {pace === 0 && <> Pace is 0 — marker is stationary (rest day).</>}
+            </span>
+          )}
+          {!mileSetAt && (
+            <span className="font-heading text-[12px] text-[var(--burnt-orange)]">
+              Position not set yet. Enter a mile and pace below, then tap Update.
+            </span>
+          )}
+        </div>
+
+        {/* Inputs */}
+        <div className="flex flex-col sm:flex-row gap-[12px]">
+          <div className="flex flex-col gap-[6px] flex-1">
+            <label className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+              CURRENT MILE
+            </label>
+            <input
+              type="number"
+              min="0"
+              max="2650"
+              step="0.1"
+              value={settings.currentMile || ""}
+              onChange={(e) => setSettings({ ...settings, currentMile: e.target.value })}
+              placeholder="0"
+              className="w-full h-[56px] px-[16px] border border-[var(--border-subtle)] font-heading text-[20px] font-semibold text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none bg-[var(--bg-card)]"
+            />
+          </div>
+          <div className="flex flex-col gap-[6px] flex-1">
+            <label className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+              DAILY PACE (mi/day)
+            </label>
+            <input
+              type="number"
+              min="0"
+              max="40"
+              step="0.5"
+              value={settings.dailyPace || ""}
+              onChange={(e) => setSettings({ ...settings, dailyPace: e.target.value })}
+              placeholder="18"
+              className="w-full h-[56px] px-[16px] border border-[var(--border-subtle)] font-heading text-[20px] font-semibold text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none bg-[var(--bg-card)]"
+            />
+          </div>
+        </div>
+
+        <button
+          onClick={async () => {
+            const newMile = parseFloat(settings.currentMile) || 0;
+            const newPace = parseFloat(settings.dailyPace) || 0;
+            const updated = { ...settings, currentMile: String(newMile), dailyPace: String(newPace), mileSetAt: String(Date.now()) };
+            setSettings(updated);
+            setSettingsLoading(true);
+            try {
+              const res = await fetch("/api/admin/settings", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                body: JSON.stringify(updated),
+              });
+              if (res.ok) {
+                setStatus(`Position updated — Mile ${newMile} @ ${newPace} mi/day`);
+                setTimeout(() => setStatus(""), 4000);
+              } else {
+                setStatus("Failed to update position");
+              }
+            } catch { setStatus("Failed to update position"); }
+            finally { setSettingsLoading(false); }
+          }}
+          disabled={settingsLoading}
+          className="flex items-center justify-center gap-[8px] h-[56px] w-full bg-[var(--forest-green)] hover:opacity-90 transition-opacity disabled:opacity-50 cursor-pointer"
+        >
+          <MapPin className="w-[16px] h-[16px] text-white" />
+          <span className="font-label font-bold text-[13px] tracking-[2px] text-white">
+            {settingsLoading ? "UPDATING…" : "UPDATE POSITION"}
+          </span>
+        </button>
+
+        {status && (
+          <div className="p-[12px] bg-[var(--forest-green-light)] border border-[var(--forest-green)]/30">
+            <span className="font-heading text-[13px] text-[var(--forest-green)]">{status}</span>
+          </div>
+        )}
+
+        {/* Tips */}
+        <div className="flex flex-col gap-[6px] p-[14px] bg-[var(--burnt-orange-light)] border border-[var(--burnt-orange)]/20">
+          <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--burnt-orange)]">QUICK TIPS</span>
+          <ul className="flex flex-col gap-[4px] font-heading text-[13px] leading-[1.6] text-[var(--text-secondary)]">
+            <li>&bull; <strong>Rest day?</strong> Set pace to 0 — marker pauses until next update.</li>
+            <li>&bull; <strong>In town?</strong> Set pace to 0, then back to normal when you leave.</li>
+            <li>&bull; <strong>Pace changed?</strong> Update the pace — map re-extrapolates from today.</li>
+            <li>&bull; <strong>Not sure of exact mile?</strong> Estimate. You can always re-anchor.</li>
+          </ul>
+        </div>
       </div>
     );
   }
