@@ -117,6 +117,20 @@ export default function AdminPage() {
   const [regenPills, setRegenPills] = useState<string[]>([]);
   const [regenLoading, setRegenLoading] = useState(false);
 
+  // Gmail OAuth connection state (Settings tab → Email Notifications)
+  interface GmailOAuthStatus {
+    connected: boolean;
+    email?: string;
+    connectedAt?: string | null;
+    reason?: "no-client-id" | "no-client-secret" | "no-refresh-token";
+    clientIdPresent?: boolean;
+    clientSecretPresent?: boolean;
+  }
+  const [gmailOAuthStatus, setGmailOAuthStatus] = useState<GmailOAuthStatus | null>(null);
+  const [gmailOAuthLoading, setGmailOAuthLoading] = useState(false);
+  const [gmailOAuthFlash, setGmailOAuthFlash] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [gmailOAuthDisconnecting, setGmailOAuthDisconnecting] = useState(false);
+
   // Email templates viewer state
   const [emailTemplates, setEmailTemplates] = useState<EmailTemplateListItem[]>([]);
   const [emailTemplatesLoading, setEmailTemplatesLoading] = useState(false);
@@ -141,6 +155,30 @@ export default function AdminPage() {
   const [honorLoading, setHonorLoading] = useState(false);
   const [captionCopied, setCaptionCopied] = useState(false);
   const [initializing, setInitializing] = useState(true);
+
+  // Read Gmail OAuth flash message from URL params (after callback redirect)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const oauthResult = params.get("gmailOauth");
+    if (!oauthResult) return;
+    if (oauthResult === "success") {
+      const email = params.get("gmailOauthEmail") || "unknown";
+      setGmailOAuthFlash({
+        type: "success",
+        message: `Gmail connected successfully. Sending is now authorised as ${email}.`,
+      });
+    } else if (oauthResult === "error") {
+      const reason = params.get("gmailOauthReason") || "Unknown error";
+      setGmailOAuthFlash({ type: "error", message: reason });
+    }
+    // Clear the query string to avoid re-showing the flash on refresh
+    const url = new URL(window.location.href);
+    url.searchParams.delete("gmailOauth");
+    url.searchParams.delete("gmailOauthEmail");
+    url.searchParams.delete("gmailOauthReason");
+    window.history.replaceState({}, "", url.toString());
+  }, []);
 
   // Auto-login from saved token — don't render login form until checked
   useEffect(() => {
@@ -276,6 +314,47 @@ export default function AdminPage() {
       setSettingsLoading(false);
     }
   }, [token]);
+
+  const fetchGmailOAuthStatus = useCallback(async () => {
+    setGmailOAuthLoading(true);
+    try {
+      const res = await fetch("/api/admin/gmail-oauth/status", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setGmailOAuthStatus(data);
+      } else {
+        setGmailOAuthStatus(null);
+      }
+    } catch {
+      setGmailOAuthStatus(null);
+    } finally {
+      setGmailOAuthLoading(false);
+    }
+  }, [token]);
+
+  const disconnectGmail = useCallback(async () => {
+    if (!confirm("Disconnect Gmail? The site will no longer be able to send emails until someone reconnects.")) return;
+    setGmailOAuthDisconnecting(true);
+    try {
+      const res = await fetch("/api/admin/gmail-oauth/disconnect", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        setGmailOAuthFlash({ type: "success", message: "Gmail disconnected. The website can no longer send emails until you reconnect." });
+        await fetchGmailOAuthStatus();
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setGmailOAuthFlash({ type: "error", message: data.error || `HTTP ${res.status}` });
+      }
+    } catch (err) {
+      setGmailOAuthFlash({ type: "error", message: err instanceof Error ? err.message : "Disconnect failed" });
+    } finally {
+      setGmailOAuthDisconnecting(false);
+    }
+  }, [token, fetchGmailOAuthStatus]);
 
   const fetchEmailTemplates = useCallback(async () => {
     setEmailTemplatesLoading(true);
@@ -857,7 +936,7 @@ export default function AdminPage() {
             EMAILS
           </button>
           <button
-            onClick={() => { setActiveTab("settings"); setView("settings"); setStatus(""); fetchSettings(); }}
+            onClick={() => { setActiveTab("settings"); setView("settings"); setStatus(""); fetchSettings(); fetchGmailOAuthStatus(); }}
             className={`flex items-center gap-[6px] md:gap-[8px] px-[14px] md:px-[24px] py-[14px] font-label font-bold text-[11px] md:text-[12px] tracking-[1.5px] md:tracking-[2px] border-b-2 transition-colors cursor-pointer shrink-0 ${
               activeTab === "settings"
                 ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
@@ -2732,26 +2811,128 @@ export default function AdminPage() {
                   </span>
                 </div>
                 <p className="font-heading text-[14px] leading-[1.7] text-[var(--text-secondary)]">
-                  Email is sent via the Gmail API using a Google Cloud OAuth2 app. When credentials are configured, the site automatically sends new-post notifications to waitlist subscribers and pledgers, plus weekly updates, milestone emails, and honor reminders.
+                  The website sends transactional emails (welcome, weekly update, milestone, honour reminder, magic link, new journal post, etc.) via the Gmail API. Connect a Google account below and the website will send emails on its behalf.
                 </p>
 
-                <div className="flex flex-col gap-[8px] p-[16px] bg-[var(--bg-warm)] border border-[var(--border-subtle)]">
-                  <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">SETUP GUIDE</span>
-                  <ol className="flex flex-col gap-[6px] font-heading text-[13px] leading-[1.6] text-[var(--text-secondary)] list-decimal pl-[20px]">
-                    <li>Go to <strong>console.cloud.google.com</strong>, create a new project (e.g. &ldquo;YesChapter Email&rdquo;)</li>
-                    <li>Enable the <strong>Gmail API</strong> for the project</li>
-                    <li>Configure the OAuth consent screen (External, fill in app name + your email)</li>
-                    <li>Create OAuth 2.0 Client ID credentials (type: Web application). Add <code className="bg-[var(--bg-card)] px-[4px]">https://developers.google.com/oauthplayground</code> as an Authorized redirect URI</li>
-                    <li>Copy the <strong>Client ID</strong> and <strong>Client Secret</strong></li>
-                    <li>Go to <strong>developers.google.com/oauthplayground</strong>, click the gear icon, check &ldquo;Use your own OAuth credentials&rdquo;, paste the ID + secret</li>
-                    <li>In the left sidebar, find <strong>Gmail API v1</strong> and select scope <code className="bg-[var(--bg-card)] px-[4px]">https://www.googleapis.com/auth/gmail.send</code></li>
-                    <li>Click <strong>Authorize APIs</strong>, sign in as the Google account that should send emails (e.g. <code className="bg-[var(--bg-card)] px-[4px]">paul@yeschapter.com</code> if it&apos;s a Workspace account)</li>
-                    <li>Click <strong>Exchange authorization code for tokens</strong> and copy the <strong>Refresh token</strong></li>
-                    <li>Add these as Vercel environment variables (Production): <code className="bg-[var(--bg-card)] px-[4px]">GMAIL_CLIENT_ID</code>, <code className="bg-[var(--bg-card)] px-[4px]">GMAIL_CLIENT_SECRET</code>, <code className="bg-[var(--bg-card)] px-[4px]">GMAIL_REFRESH_TOKEN</code>, <code className="bg-[var(--bg-card)] px-[4px]">EMAIL_FROM</code> (e.g. <code className="bg-[var(--bg-card)] px-[4px]">YesChapter &lt;paul@yeschapter.com&gt;</code>)</li>
-                    <li>Redeploy the site (or trigger any new commit)</li>
-                    <li>Use the test box below to verify it works</li>
-                  </ol>
-                </div>
+                {/* Flash message from the OAuth callback redirect */}
+                {gmailOAuthFlash && (
+                  <div
+                    className={`p-[12px] border ${
+                      gmailOAuthFlash.type === "success"
+                        ? "bg-[var(--forest-green-light)] border-[var(--forest-green)]/30"
+                        : "bg-red-50 border-red-300"
+                    }`}
+                  >
+                    <div className="flex items-start gap-[8px]">
+                      <span
+                        className={`font-heading text-[13px] flex-1 leading-[1.5] ${
+                          gmailOAuthFlash.type === "success"
+                            ? "text-[var(--forest-green)]"
+                            : "text-red-700"
+                        }`}
+                      >
+                        {gmailOAuthFlash.type === "success" ? "✓ " : "✗ "}
+                        {gmailOAuthFlash.message}
+                      </span>
+                      <button
+                        onClick={() => setGmailOAuthFlash(null)}
+                        className="text-[var(--text-muted)] hover:text-[var(--text-primary)] shrink-0 cursor-pointer"
+                        aria-label="Dismiss"
+                      >
+                        <XCircle className="w-[16px] h-[16px]" />
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Connection status + action */}
+                {gmailOAuthLoading && !gmailOAuthStatus ? (
+                  <div className="flex items-center gap-[10px] p-[16px] bg-[var(--bg-warm)] border border-[var(--border-subtle)]">
+                    <Loader2 className="w-[16px] h-[16px] text-[var(--text-muted)] animate-spin" />
+                    <span className="font-heading text-[13px] text-[var(--text-muted)]">
+                      Checking connection…
+                    </span>
+                  </div>
+                ) : gmailOAuthStatus?.connected ? (
+                  // ─── CONNECTED ──────────────────────────────────────
+                  <div className="flex flex-col gap-[12px] p-[16px] bg-[var(--forest-green-light)] border border-[var(--forest-green)]/30">
+                    <div className="flex items-center gap-[8px]">
+                      <CheckCircle className="w-[18px] h-[18px] text-[var(--forest-green)]" />
+                      <span className="font-label font-bold text-[12px] tracking-[1.5px] text-[var(--forest-green)]">
+                        CONNECTED
+                      </span>
+                    </div>
+                    <div className="flex flex-col gap-[4px]">
+                      <span className="font-label text-[10px] tracking-[1px] text-[var(--text-muted)]">
+                        SENDING AS
+                      </span>
+                      <span className="font-heading font-semibold text-[15px] text-[var(--text-primary)] break-all">
+                        {gmailOAuthStatus.email || "unknown"}
+                      </span>
+                      {gmailOAuthStatus.connectedAt && (
+                        <span className="font-label text-[11px] text-[var(--text-muted)]">
+                          Connected{" "}
+                          {new Date(gmailOAuthStatus.connectedAt).toLocaleDateString("en-US", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </span>
+                      )}
+                    </div>
+                    <button
+                      onClick={disconnectGmail}
+                      disabled={gmailOAuthDisconnecting}
+                      className="flex items-center gap-[6px] px-[16px] py-[8px] border border-red-300 hover:bg-red-50 transition-colors disabled:opacity-50 cursor-pointer w-fit"
+                    >
+                      <span className="font-label font-bold text-[11px] tracking-[1.5px] text-red-600">
+                        {gmailOAuthDisconnecting ? "DISCONNECTING…" : "DISCONNECT"}
+                      </span>
+                    </button>
+                  </div>
+                ) : gmailOAuthStatus?.reason === "no-client-id" || gmailOAuthStatus?.reason === "no-client-secret" ? (
+                  // ─── NOT CONFIGURED (no Client ID/Secret) ───────────
+                  <div className="flex flex-col gap-[10px] p-[16px] bg-[var(--burnt-orange-light)] border border-[var(--burnt-orange)]/30">
+                    <div className="flex items-center gap-[8px]">
+                      <XCircle className="w-[16px] h-[16px] text-[var(--burnt-orange)]" />
+                      <span className="font-label font-bold text-[12px] tracking-[1.5px] text-[var(--burnt-orange)]">
+                        SETUP REQUIRED
+                      </span>
+                    </div>
+                    <p className="font-heading text-[13px] leading-[1.6] text-[var(--text-secondary)]">
+                      Google Cloud credentials are missing. Before you can connect a Gmail account, set{" "}
+                      <code className="bg-[var(--bg-card)] px-[4px] text-[12px]">GMAIL_CLIENT_ID</code> and{" "}
+                      <code className="bg-[var(--bg-card)] px-[4px] text-[12px]">GMAIL_CLIENT_SECRET</code> as Vercel environment variables (Production), then redeploy. See <code className="bg-[var(--bg-card)] px-[4px] text-[12px]">docs/EMAIL-SETUP.md</code> for the one-time Google Cloud setup.
+                    </p>
+                  </div>
+                ) : (
+                  // ─── NOT CONNECTED but creds present — show Connect button ──
+                  <div className="flex flex-col gap-[12px] p-[16px] bg-[var(--bg-warm)] border border-[var(--border-subtle)]">
+                    <div className="flex items-center gap-[8px]">
+                      <XCircle className="w-[16px] h-[16px] text-[var(--text-muted)]" />
+                      <span className="font-label font-bold text-[12px] tracking-[1.5px] text-[var(--text-muted)]">
+                        NOT CONNECTED
+                      </span>
+                    </div>
+                    <p className="font-heading text-[13px] leading-[1.6] text-[var(--text-secondary)]">
+                      Click the button below. It redirects you to Google&apos;s consent screen where you sign in and grant the <strong>gmail.send</strong> permission. After you tap Allow, you&apos;re sent back here and the website can send as your account. The permission can&apos;t read your inbox, delete emails, or touch anything else — sending only.
+                    </p>
+                    <a
+                      href={`/api/admin/gmail-oauth/start?token=${encodeURIComponent(token)}`}
+                      className="flex items-center justify-center gap-[8px] px-[20px] py-[12px] bg-[var(--burnt-orange)] hover:opacity-90 transition-opacity cursor-pointer w-fit"
+                    >
+                      <Mail className="w-[14px] h-[14px] text-white" />
+                      <span className="font-label font-bold text-[12px] tracking-[2px] text-white">
+                        CONNECT GMAIL ACCOUNT
+                      </span>
+                    </a>
+                    <p className="font-heading text-[11px] leading-[1.5] text-[var(--text-muted)]">
+                      You&apos;ll see a &ldquo;Google hasn&apos;t verified this app&rdquo; warning — that&apos;s expected. Tap <strong>Advanced → Go to YesChapter Email (unsafe)</strong> to continue. It&apos;s not actually unsafe — that warning appears for any app that hasn&apos;t paid for Google&apos;s verification review.
+                    </p>
+                  </div>
+                )}
 
                 {/* Test send */}
                 <div className="flex flex-col gap-[10px] p-[16px] border border-[var(--border-subtle)]">
