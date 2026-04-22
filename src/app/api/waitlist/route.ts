@@ -1,5 +1,6 @@
 import { Redis } from "@upstash/redis";
 import { NextRequest, NextResponse } from "next/server";
+import { randomBytes } from "crypto";
 
 function getRedis() {
   const url = process.env.KV_REST_API_URL;
@@ -16,9 +17,22 @@ function checkAuth(request: NextRequest): boolean {
 
 export async function POST(req: NextRequest) {
   try {
-    const { email } = await req.json();
+    const body = await req.json();
+    const { email, consent } = body;
     if (!email || typeof email !== "string") {
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
+    }
+
+    // Explicit consent required (GDPR-style freely-given consent).
+    // The client-side checkbox must be ticked; we also gate server-side.
+    if (consent !== true) {
+      return NextResponse.json(
+        {
+          error:
+            "Please tick the box confirming you agree to receive email updates.",
+        },
+        { status: 400 }
+      );
     }
 
     const trimmed = email.trim().toLowerCase();
@@ -34,12 +48,28 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Add to a Redis set (deduplicates automatically)
+    // Check whether this email already exists in the waitlist — if so,
+    // we preserve the existing unsubscribe token so old footers still work.
+    const existingMeta = await redis.hgetall(`waitlist:meta:${trimmed}`);
+    const existing = (existingMeta || {}) as Record<string, string>;
+    let unsubscribeToken = existing.unsubscribeToken;
+
+    if (!unsubscribeToken) {
+      // Generate a new one and create a reverse-lookup so /api/unsubscribe
+      // can resolve it back to this email in O(1).
+      unsubscribeToken = randomBytes(24).toString("hex");
+      await redis.set(`waitlist:token:${unsubscribeToken}`, trimmed);
+    }
+
+    // Add to the Redis set (deduplicates automatically)
     await redis.sadd("waitlist:emails", trimmed);
-    // Also store signup timestamp
+    // Store / refresh metadata
     await redis.hset(`waitlist:meta:${trimmed}`, {
       email: trimmed,
-      signedUpAt: new Date().toISOString(),
+      signedUpAt: existing.signedUpAt || new Date().toISOString(),
+      consent: "true",
+      consentAt: existing.consentAt || new Date().toISOString(),
+      unsubscribeToken,
     });
 
     return NextResponse.json({ ok: true });

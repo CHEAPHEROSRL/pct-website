@@ -26,6 +26,7 @@ export default function WaitlistPopup() {
   const [visible, setVisible] = useState(false);
   const [excluded, setExcluded] = useState(false);
   const [email, setEmail] = useState("");
+  const [consent, setConsent] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -67,6 +68,10 @@ export default function WaitlistPopup() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!email || submitting) return;
+    if (!consent) {
+      setError("Please tick the box to confirm you agree to receive email updates.");
+      return;
+    }
     setError("");
     setSubmitting(true);
 
@@ -74,7 +79,7 @@ export default function WaitlistPopup() {
       const res = await fetch("/api/waitlist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, consent: true }),
       });
 
       if (!res.ok) {
@@ -133,13 +138,30 @@ export default function WaitlistPopup() {
                 placeholder="Enter your email"
                 className="w-full border border-[var(--border-subtle)] bg-[var(--bg-card)] px-4 py-3 font-heading text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--burnt-orange)] transition-colors"
               />
+
+              {/* Explicit consent checkbox — GDPR-compliant opt-in */}
+              <label className="flex items-start gap-[10px] cursor-pointer select-none py-[2px]">
+                <input
+                  type="checkbox"
+                  checked={consent}
+                  onChange={(e) => {
+                    setConsent(e.target.checked);
+                    if (e.target.checked && error) setError("");
+                  }}
+                  className="mt-[3px] w-[16px] h-[16px] accent-[var(--burnt-orange)] shrink-0 cursor-pointer"
+                />
+                <span className="font-heading text-[13px] leading-[1.5] text-[var(--text-secondary)]">
+                  I agree to receive email updates from YesChapter. You can unsubscribe at any time.
+                </span>
+              </label>
+
               {error && (
                 <p className="font-heading text-[13px] text-red-600">{error}</p>
               )}
               <button
                 type="submit"
-                disabled={submitting}
-                className="w-full bg-[var(--burnt-orange)] px-6 py-3 hover:opacity-90 transition-opacity cursor-pointer disabled:opacity-50"
+                disabled={submitting || !consent}
+                className="w-full bg-[var(--burnt-orange)] px-6 py-3 hover:opacity-90 transition-opacity cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <span className="font-label font-bold text-[13px] tracking-[2px] text-[var(--text-primary)]">
                   {submitting ? "JOINING..." : "I'M IN!"}

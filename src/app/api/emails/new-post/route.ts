@@ -69,9 +69,25 @@ export async function POST(request: NextRequest) {
     const waitlistEmails = await redis.smembers("waitlist:emails");
     for (const wEmail of waitlistEmails || []) {
       const email = (wEmail as string).toLowerCase().trim();
-      if (!recipients.has(email)) {
-        recipients.set(email, { name: "Friend" });
+      if (recipients.has(email)) continue;
+
+      // Look up the waitlist-specific unsubscribe token so the footer link
+      // lets them unsubscribe (GDPR / CAN-SPAM compliance).
+      let unsubscribeToken: string | undefined;
+      try {
+        const meta = await redis.hgetall(`waitlist:meta:${email}`);
+        const metaTyped = (meta || {}) as Record<string, string>;
+        unsubscribeToken = metaTyped.unsubscribeToken || undefined;
+      } catch {
+        // Non-fatal — old waitlist entries may not have a token yet.
+        // The unsubscribe page itself falls back to the "enter your email"
+        // form when no token is present.
       }
+
+      recipients.set(email, {
+        name: "Friend",
+        unsubscribeToken,
+      });
     }
 
     // Calculate day number if not provided
