@@ -242,7 +242,7 @@ export default function SupportPage() {
             </p>
             <div className="flex items-center w-full h-[48px] bg-[var(--bg-white)] border border-[var(--border-subtle)]">
               <span className="font-heading text-[16px] text-[var(--text-muted)] ml-[14px]">
-                $
+                US$
               </span>
               <input
                 type="number"
@@ -320,7 +320,7 @@ export default function SupportPage() {
                 PERSONALIZE YOUR GIFT
               </span>
               <span className="font-heading font-semibold text-[22px] text-[var(--text-primary)]">
-                {pendingGift.title} — ${pendingGift.price}
+                {pendingGift.title} — US${pendingGift.price}
               </span>
               <p className="font-heading text-[14px] text-[var(--text-secondary)]">
                 Add your name and a message — or stay anonymous. All fields are optional.
@@ -418,7 +418,7 @@ function GiftCard({
         {gift.description}
       </p>
       <span className="font-label font-bold text-[28px] text-[var(--forest-green)]">
-        ${gift.price}
+        US${gift.price}
       </span>
       {needed != null && (
         <div className="flex flex-col gap-[6px]">

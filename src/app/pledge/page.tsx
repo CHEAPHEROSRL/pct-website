@@ -15,7 +15,7 @@ const presets = [
   { label: "1¢/mi", amount: 0.01 },
   { label: "10¢/mi", amount: 0.1 },
   { label: "25¢/mi", amount: 0.25 },
-  { label: "$1/mi", amount: 1 },
+  { label: "US$1/mi", amount: 1 },
 ];
 
 function formatCurrency(value: number): string {
@@ -174,9 +174,14 @@ export default function PledgePage() {
         >
           {/* Amount */}
           <div className="flex flex-col gap-[12px]">
-            <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--text-muted)]">
-              YOUR PLEDGE AMOUNT
-            </span>
+            <div className="flex items-baseline justify-between gap-[8px] flex-wrap">
+              <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--text-muted)]">
+                YOUR PLEDGE AMOUNT
+              </span>
+              <span className="font-label font-medium text-[11px] tracking-[0.5px] text-[var(--text-muted)]">
+                All amounts in US Dollars (USD)
+              </span>
+            </div>
             <div className="flex items-center justify-center w-full h-[56px] border border-[var(--border-subtle)] bg-[var(--bg-white)]">
               <span className="font-heading text-[32px] font-semibold tracking-[-0.5px] text-[var(--text-primary)]">
                 {formatCurrency(amount)}
@@ -404,7 +409,7 @@ export default function PledgePage() {
                 </span>
               </div>
               <p className="font-heading text-[14px] leading-[1.7] text-[var(--text-secondary)]">
-                For pledges over $5,000, we&apos;d love to connect with you personally. Are you a business? Sponsors at this level can have their logo displayed on a section of the Pacific Crest Trail map.
+                For pledges over US$5,000, we&apos;d love to connect with you personally. Are you a business? Sponsors at this level can have their logo displayed on a section of the Pacific Crest Trail map.
               </p>
               <a
                 href="mailto:paul@yeschapter.com?subject=Trail%20Section%20Sponsorship%20Inquiry&body=Hi%20Paul%2C%0A%0AI%27m%20interested%20in%20sponsoring%20a%20section%20of%20the%20PCT.%0A%0AMy%20pledge%20amount%3A%20%24____%0ACompany%2FName%3A%20%0A%0AThanks!"

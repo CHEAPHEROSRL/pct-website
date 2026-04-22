@@ -874,6 +874,8 @@ What's your YesChapter? What would you go back and change the answer to YES?
       images: [], youtubeUrl: "", tags: ["BLOG"],
       body: `This is a complete guide to how the pledge-per-mile system works for Paul's PCT fundraiser. Whether you're considering making a pledge or you've already pledged and want to understand the details, this post covers everything.
 
+> **A quick note on currency:** All amounts on YesChapter are in **US Dollars (USD)**. Pledges, totals, and trail support gifts are all denominated in USD.
+
 ## The Big Idea
 
 Instead of donating a lump sum upfront, you pledge a small amount per mile that Paul walks on the Pacific Crest Trail. The more miles Paul completes, the more your pledge is worth. **You pay nothing now.** Payment only happens after Paul finishes — and only for the miles he actually walked.

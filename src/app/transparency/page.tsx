@@ -23,7 +23,7 @@ export default function TransparencyPage() {
           How YesChapter Works
         </h1>
         <p className="font-heading text-[16px] md:text-[18px] text-[var(--text-secondary)] text-center max-w-[600px]">
-          Full transparency on how pledges, trail support, and foundation partnerships work
+          Full transparency on how pledges, trail support, and foundation partnerships work. All amounts on this site are in US Dollars (USD).
         </p>
       </section>
 
@@ -35,7 +35,7 @@ export default function TransparencyPage() {
           </p>
           <ul>
             <li>
-              <strong>Pledges for Cancer Foundations</strong> — Visitors pledge a per-mile amount (e.g., $0.25/mile).
+              <strong>Pledges for Cancer Foundations</strong> — Visitors pledge a per-mile amount in US Dollars (e.g., US$0.25/mile).
               No money is collected. At the end of Paul&apos;s hike, pledgers are invited to donate their total directly to
               the partner foundations. Paul never touches, handles, or routes this money.
             </li>
@@ -52,7 +52,7 @@ export default function TransparencyPage() {
             A pledge is a promise, not a payment. Here&apos;s how it works:
           </p>
           <ul>
-            <li>You choose a per-mile amount (from $0.01 to $5.00 per mile)</li>
+            <li>You choose a per-mile amount in US Dollars (from US$0.01 to US$5.00 per mile)</li>
             <li>No payment information is collected — just your email and pledge amount</li>
             <li>As Paul hikes, your pledge total grows based on miles walked</li>
             <li>At the end of Paul&apos;s hike, you receive an email inviting you to honour your pledge</li>

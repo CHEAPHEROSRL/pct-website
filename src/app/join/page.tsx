@@ -44,7 +44,7 @@ function JoinContent() {
             </h1>
             <p className="font-heading text-[17px] text-[#FFFFFFCC] max-w-[560px] leading-[1.6]">
               Paul is hiking 2,650 miles from Mexico to Canada on the Pacific Crest Trail.
-              Pledge per mile — at the end, you donate directly to cancer foundations. Paul gets $0.
+              Pledge per mile (in US Dollars) — at the end, you donate directly to cancer foundations. Paul gets US$0.
             </p>
           </>
         )}
@@ -61,7 +61,7 @@ function JoinContent() {
             <span className="font-label font-bold text-[24px] text-[var(--burnt-orange)]">1</span>
             <span className="font-heading font-semibold text-[16px] text-[var(--text-primary)]">Pick your rate</span>
             <p className="font-heading text-[14px] text-[var(--text-secondary)] leading-[1.6]">
-              Choose an amount per mile — even $0.01/mile adds up to $26.50 over 2,650 miles.
+              Choose an amount per mile — even US$0.01/mile adds up to US$26.50 over 2,650 miles.
             </p>
           </div>
           <div className="flex flex-col gap-[12px] p-[24px] bg-[var(--bg-warm)]">

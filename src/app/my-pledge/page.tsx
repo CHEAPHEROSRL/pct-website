@@ -514,9 +514,14 @@ export default function MyPledgePage() {
             <div className="flex flex-col lg:flex-row gap-[24px] w-full">
               {/* Running Total */}
               <div className="flex flex-col gap-[12px] bg-[var(--bg-card)] border border-[var(--border-subtle)] p-[28px] flex-1">
-                <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-muted)]">
-                  YOUR RUNNING TOTAL
-                </span>
+                <div className="flex items-baseline justify-between gap-[8px] flex-wrap">
+                  <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-muted)]">
+                    YOUR RUNNING TOTAL
+                  </span>
+                  <span className="font-label font-medium text-[10px] tracking-[0.5px] text-[var(--text-muted)]">
+                    USD
+                  </span>
+                </div>
                 <span className="font-heading font-semibold text-[48px] tracking-[-1px] text-[var(--text-primary)] leading-[1]">
                   {formatCurrency(runningTotal)}
                 </span>

@@ -42,7 +42,7 @@ export default function DonatePage() {
             Pledge Per Mile
           </h2>
           <p className="font-heading text-[16px] leading-[1.7] text-[var(--text-secondary)]">
-            Set a pledge per mile — like $0.25/mi. Pay nothing now. At the end of Paul&apos;s hike, you&apos;ll be invited to donate your total directly to two cancer foundations. Paul never touches this money.
+            Set a pledge per mile — like US$0.25/mi. Pay nothing now. At the end of Paul&apos;s hike, you&apos;ll be invited to donate your total directly to two cancer foundations. Paul never touches this money. All amounts in US Dollars (USD).
           </p>
           <ul className="flex flex-col gap-[10px]">
             <li className="flex items-start gap-[10px]">
@@ -111,7 +111,7 @@ export default function DonatePage() {
           TWO CAUSES. ONE JOURNEY. THEY NEVER MIX.
         </span>
         <p className="font-heading text-[15px] leading-[1.7] text-[var(--text-secondary)] text-center max-w-[600px]">
-          Pledges go 100% to cancer foundations. Trail support goes directly to Paul. These are completely separate — Paul receives $0 from pledges, and foundation money never passes through Paul&apos;s hands.
+          Pledges go 100% to cancer foundations. Trail support goes directly to Paul. These are completely separate — Paul receives US$0 from pledges, and foundation money never passes through Paul&apos;s hands.
         </p>
         <Link href="/transparency" className="font-heading font-semibold text-[14px] text-[var(--burnt-orange)] hover:underline">
           Read our Transparency page &rarr;

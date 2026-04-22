@@ -264,7 +264,7 @@ export default function Home() {
           >
             Or support Paul directly on the trail →
           </Link>
-          <span className="font-label font-medium text-[13px] tracking-[1px] text-[#FFFFFF88]">$0 pledged toward $50,000 goal</span>
+          <span className="font-label font-medium text-[13px] tracking-[1px] text-[#FFFFFF88]">US$0 pledged toward US$50,000 goal</span>
         </div>
       </section>
 
