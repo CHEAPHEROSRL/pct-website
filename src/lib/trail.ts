@@ -8,71 +8,87 @@ export interface PctWaypoint {
   name?: string;
 }
 
-// PCT waypoints with cumulative mile markers and approximate elevations.
-// Mile values are scaled from Haversine distances to the known 2,650-mile total.
-// Elevations are approximate based on PCT elevation profile data.
+// PCT waypoints — real landmark mile markers + approximate elevations.
+// Mile values come from widely-published PCT mileage data (Halfmile / PCTA
+// style). Elevations are approximate within ~±200 ft for named landmarks.
+// Coordinates are approximate for each landmark; the polyline formed by
+// these waypoints traces the general shape of the trail, not every switchback.
+// Used for: map polyline, simulated-mode current position, elevation lookup.
 export const pctWaypoints: PctWaypoint[] = [
+  // — Southern California —
   { lat: 32.589, lng: -116.467, miles: 0, elevationFt: 2915, name: "Campo" },
-  { lat: 32.72, lng: -116.48, miles: 15, elevationFt: 3400 },
-  { lat: 32.88, lng: -116.52, miles: 35, elevationFt: 4200 },
-  { lat: 33.05, lng: -116.60, miles: 55, elevationFt: 3100, name: "Warner Springs" },
-  { lat: 33.24, lng: -116.68, miles: 80, elevationFt: 4500 },
-  { lat: 33.35, lng: -116.70, miles: 100, elevationFt: 5200 },
-  { lat: 33.47, lng: -116.72, miles: 120, elevationFt: 5400, name: "Idyllwild" },
-  { lat: 33.60, lng: -116.80, miles: 150, elevationFt: 4800 },
-  { lat: 33.82, lng: -116.83, miles: 180, elevationFt: 3400 },
-  { lat: 33.92, lng: -116.85, miles: 210, elevationFt: 3200 },
-  { lat: 34.02, lng: -117.05, miles: 240, elevationFt: 3500 },
-  { lat: 34.18, lng: -117.30, miles: 280, elevationFt: 6800, name: "Big Bear" },
-  { lat: 34.24, lng: -117.45, miles: 310, elevationFt: 5200 },
-  { lat: 34.32, lng: -117.68, miles: 340, elevationFt: 4800 },
-  { lat: 34.37, lng: -117.82, miles: 370, elevationFt: 5600 },
-  { lat: 34.43, lng: -118.06, miles: 400, elevationFt: 4200 },
-  { lat: 34.68, lng: -118.25, miles: 450, elevationFt: 5000, name: "Agua Dulce" },
-  { lat: 34.78, lng: -118.38, miles: 490, elevationFt: 4500 },
-  { lat: 34.82, lng: -118.52, miles: 520, elevationFt: 3800, name: "Tehachapi" },
-  { lat: 36.02, lng: -118.08, miles: 700, elevationFt: 6150, name: "Kennedy Meadows" },
-  { lat: 36.45, lng: -118.18, miles: 770, elevationFt: 10400 },
-  { lat: 36.58, lng: -118.25, miles: 800, elevationFt: 13100, name: "Mt. Whitney" },
-  { lat: 36.74, lng: -118.40, miles: 840, elevationFt: 11500, name: "Forester Pass" },
-  { lat: 37.00, lng: -118.52, miles: 880, elevationFt: 10900 },
-  { lat: 37.24, lng: -118.60, miles: 920, elevationFt: 11000, name: "Muir Pass" },
-  { lat: 37.50, lng: -118.68, miles: 960, elevationFt: 9600 },
-  { lat: 37.74, lng: -118.78, miles: 1000, elevationFt: 9700, name: "Mammoth Lakes" },
-  { lat: 37.87, lng: -119.33, miles: 1040, elevationFt: 8600, name: "Tuolumne Meadows" },
-  { lat: 38.18, lng: -119.60, miles: 1100, elevationFt: 10800, name: "Sonora Pass" },
-  { lat: 38.65, lng: -119.90, miles: 1170, elevationFt: 8700 },
-  { lat: 39.15, lng: -120.12, miles: 1250, elevationFt: 7100, name: "Sierra City" },
-  { lat: 39.50, lng: -120.25, miles: 1310, elevationFt: 6200 },
-  { lat: 39.95, lng: -120.55, miles: 1380, elevationFt: 5100, name: "Belden" },
-  { lat: 40.42, lng: -121.30, miles: 1460, elevationFt: 5500, name: "Burney Falls" },
-  { lat: 40.78, lng: -121.50, miles: 1520, elevationFt: 6000 },
-  { lat: 41.18, lng: -122.05, miles: 1580, elevationFt: 4900, name: "Castle Crags" },
-  { lat: 41.55, lng: -122.28, miles: 1630, elevationFt: 5400 },
-  { lat: 41.85, lng: -122.38, miles: 1670, elevationFt: 4200, name: "Etna" },
-  { lat: 42.18, lng: -122.68, miles: 1720, elevationFt: 1800, name: "Ashland" },
-  { lat: 42.55, lng: -122.15, miles: 1780, elevationFt: 5900 },
-  { lat: 42.87, lng: -122.10, miles: 1830, elevationFt: 6000, name: "Crater Lake" },
-  { lat: 43.10, lng: -122.12, miles: 1870, elevationFt: 5800 },
-  { lat: 43.55, lng: -121.98, miles: 1930, elevationFt: 5200, name: "Shelter Cove" },
-  { lat: 44.05, lng: -121.78, miles: 2000, elevationFt: 5900, name: "Sisters" },
-  { lat: 44.48, lng: -121.78, miles: 2060, elevationFt: 4600, name: "Olallie Lake" },
-  { lat: 44.82, lng: -121.85, miles: 2100, elevationFt: 6000, name: "Timberline Lodge" },
-  { lat: 45.10, lng: -121.82, miles: 2130, elevationFt: 4000 },
-  { lat: 45.67, lng: -121.90, miles: 2147, elevationFt: 150, name: "Cascade Locks" },
-  { lat: 45.85, lng: -121.70, miles: 2190, elevationFt: 4800 },
-  { lat: 46.15, lng: -121.52, miles: 2240, elevationFt: 5200 },
-  { lat: 46.38, lng: -121.48, miles: 2280, elevationFt: 5800, name: "White Pass" },
-  { lat: 46.72, lng: -121.38, miles: 2330, elevationFt: 5500 },
-  { lat: 47.05, lng: -121.18, miles: 2390, elevationFt: 4900, name: "Snoqualmie Pass" },
-  { lat: 47.35, lng: -121.08, miles: 2430, elevationFt: 5200 },
-  { lat: 47.55, lng: -120.92, miles: 2470, elevationFt: 5500, name: "Stevens Pass" },
-  { lat: 47.85, lng: -120.75, miles: 2520, elevationFt: 5000 },
-  { lat: 48.15, lng: -120.68, miles: 2560, elevationFt: 6200 },
-  { lat: 48.42, lng: -120.62, miles: 2590, elevationFt: 6500, name: "Rainy Pass" },
-  { lat: 48.65, lng: -120.72, miles: 2620, elevationFt: 5800, name: "Harts Pass" },
-  { lat: 48.85, lng: -120.78, miles: 2640, elevationFt: 4800 },
-  { lat: 49.00, lng: -121.05, miles: 2650, elevationFt: 3850, name: "Manning Park" },
+  { lat: 32.691, lng: -116.516, miles: 20, elevationFt: 3060, name: "Lake Morena" },
+  { lat: 32.868, lng: -116.421, miles: 42, elevationFt: 5925, name: "Mt. Laguna" },
+  { lat: 32.970, lng: -116.478, miles: 60, elevationFt: 4500 },
+  { lat: 33.078, lng: -116.547, miles: 77, elevationFt: 2285, name: "Scissors Crossing" },
+  { lat: 33.283, lng: -116.634, miles: 109, elevationFt: 3050, name: "Warner Springs" },
+  { lat: 33.520, lng: -116.640, miles: 151, elevationFt: 4500 },
+  { lat: 33.748, lng: -116.681, miles: 179, elevationFt: 8100, name: "Saddle Junction" },
+  { lat: 33.740, lng: -116.721, miles: 180, elevationFt: 5400, name: "Idyllwild" },
+  { lat: 33.890, lng: -116.710, miles: 189, elevationFt: 7700, name: "Fuller Ridge" },
+  { lat: 33.938, lng: -116.710, miles: 210, elevationFt: 1335, name: "San Gorgonio Pass" },
+  { lat: 34.020, lng: -116.660, miles: 234, elevationFt: 4500 },
+  { lat: 34.180, lng: -116.820, miles: 252, elevationFt: 8500, name: "Onyx Summit" },
+  { lat: 34.255, lng: -116.824, miles: 266, elevationFt: 6800, name: "Big Bear Lake" },
+  { lat: 34.337, lng: -117.442, miles: 342, elevationFt: 3000, name: "Cajon Pass" },
+  { lat: 34.360, lng: -117.633, miles: 369, elevationFt: 5935, name: "Wrightwood" },
+  { lat: 34.358, lng: -117.751, miles: 376, elevationFt: 9407, name: "Mt. Baden-Powell" },
+  { lat: 34.498, lng: -118.323, miles: 454, elevationFt: 2517, name: "Agua Dulce" },
+  { lat: 34.810, lng: -118.710, miles: 518, elevationFt: 3100, name: "Hikertown" },
+  { lat: 35.132, lng: -118.448, miles: 566, elevationFt: 4140, name: "Tehachapi" },
+  { lat: 35.662, lng: -118.025, miles: 651, elevationFt: 5245, name: "Walker Pass" },
+  { lat: 36.027, lng: -118.124, miles: 702, elevationFt: 6150, name: "Kennedy Meadows" },
+
+  // — Sierra Nevada —
+  { lat: 36.468, lng: -118.199, miles: 750, elevationFt: 11160, name: "Cottonwood Pass" },
+  { lat: 36.565, lng: -118.237, miles: 767, elevationFt: 10640, name: "Mt. Whitney Jct" },
+  { lat: 36.695, lng: -118.374, miles: 779, elevationFt: 13153, name: "Forester Pass" },
+  { lat: 36.780, lng: -118.409, miles: 792, elevationFt: 11926, name: "Glen Pass" },
+  { lat: 36.930, lng: -118.486, miles: 807, elevationFt: 12130, name: "Pinchot Pass" },
+  { lat: 37.050, lng: -118.540, miles: 818, elevationFt: 12100, name: "Mather Pass" },
+  { lat: 37.110, lng: -118.678, miles: 839, elevationFt: 11955, name: "Muir Pass" },
+  { lat: 37.371, lng: -118.860, miles: 864, elevationFt: 10900, name: "Selden Pass" },
+  { lat: 37.563, lng: -118.970, miles: 884, elevationFt: 10900, name: "Silver Pass" },
+  { lat: 37.630, lng: -119.063, miles: 907, elevationFt: 7600, name: "Reds Meadow" },
+  { lat: 37.800, lng: -119.258, miles: 931, elevationFt: 11056, name: "Donohue Pass" },
+  { lat: 37.877, lng: -119.345, miles: 943, elevationFt: 8600, name: "Tuolumne Meadows" },
+  { lat: 38.328, lng: -119.635, miles: 1018, elevationFt: 9620, name: "Sonora Pass" },
+  { lat: 38.544, lng: -119.810, miles: 1052, elevationFt: 8700, name: "Ebbetts Pass" },
+  { lat: 38.694, lng: -119.989, miles: 1076, elevationFt: 8574, name: "Carson Pass" },
+  { lat: 38.836, lng: -120.035, miles: 1092, elevationFt: 7400, name: "Echo Lake" },
+
+  // — Northern California —
+  { lat: 39.564, lng: -120.634, miles: 1195, elevationFt: 4250, name: "Sierra City" },
+  { lat: 40.004, lng: -121.250, miles: 1287, elevationFt: 2310, name: "Belden" },
+  { lat: 40.450, lng: -121.430, miles: 1332, elevationFt: 6500, name: "Lassen" },
+  { lat: 40.684, lng: -121.466, miles: 1376, elevationFt: 4379, name: "Old Station" },
+  { lat: 41.020, lng: -121.647, miles: 1419, elevationFt: 3000, name: "Burney Falls" },
+  { lat: 41.147, lng: -122.309, miles: 1502, elevationFt: 2150, name: "Castle Crags" },
+  { lat: 41.389, lng: -122.970, miles: 1598, elevationFt: 5950, name: "Etna Summit" },
+  { lat: 41.847, lng: -123.191, miles: 1657, elevationFt: 1371, name: "Seiad Valley" },
+
+  // — Oregon —
+  { lat: 42.010, lng: -122.800, miles: 1691, elevationFt: 4200, name: "CA/OR Border" },
+  { lat: 42.100, lng: -122.617, miles: 1726, elevationFt: 2013, name: "Ashland" },
+  { lat: 42.195, lng: -122.466, miles: 1762, elevationFt: 5094, name: "Hyatt Lake" },
+  { lat: 42.929, lng: -122.165, miles: 1829, elevationFt: 6001, name: "Crater Lake" },
+  { lat: 43.550, lng: -121.979, miles: 1911, elevationFt: 4820, name: "Shelter Cove" },
+  { lat: 43.882, lng: -121.820, miles: 1955, elevationFt: 4900, name: "Elk Lake" },
+  { lat: 44.260, lng: -121.790, miles: 1984, elevationFt: 5325, name: "McKenzie Pass" },
+  { lat: 44.804, lng: -121.790, miles: 2040, elevationFt: 4950, name: "Olallie Lake" },
+  { lat: 45.330, lng: -121.712, miles: 2107, elevationFt: 5960, name: "Timberline Lodge" },
+  { lat: 45.669, lng: -121.897, miles: 2147, elevationFt: 150, name: "Cascade Locks" },
+
+  // — Washington —
+  { lat: 45.935, lng: -121.519, miles: 2229, elevationFt: 1900, name: "Trout Lake" },
+  { lat: 46.637, lng: -121.391, miles: 2295, elevationFt: 4400, name: "White Pass" },
+  { lat: 46.870, lng: -121.517, miles: 2323, elevationFt: 5432, name: "Chinook Pass" },
+  { lat: 47.426, lng: -121.413, miles: 2393, elevationFt: 3030, name: "Snoqualmie Pass" },
+  { lat: 47.748, lng: -121.089, miles: 2461, elevationFt: 4056, name: "Stevens Pass" },
+  { lat: 48.516, lng: -120.734, miles: 2580, elevationFt: 4855, name: "Rainy Pass" },
+  { lat: 48.720, lng: -120.670, miles: 2622, elevationFt: 6180, name: "Harts Pass" },
+  { lat: 49.000, lng: -120.811, miles: 2650, elevationFt: 4240, name: "Monument 78" },
+  { lat: 49.070, lng: -120.780, miles: 2659, elevationFt: 3872, name: "Manning Park" },
 ];
 
 // Simple [lat, lng] array for rendering the polyline on the map
@@ -254,4 +270,36 @@ export function getTrailSectionIndex(miles: number): number {
   if (miles < 1691) return 2;
   if (miles < 2147) return 3;
   return 4;
+}
+
+/**
+ * Max elevation reached along the PCT up to a given mile marker.
+ * Scans every waypoint where miles <= currentMiles and returns the highest
+ * elevation seen. Also includes the interpolated elevation at currentMiles
+ * itself, so the answer stays right even when the hiker is mid-ascent
+ * between two waypoints.
+ *
+ * Used to render "Highest Point Reached" on the tracker — which should be a
+ * running max, not the current elevation or a hardcoded Mt. Whitney value.
+ */
+export function getMaxElevationUpTo(currentMiles: number): number {
+  if (currentMiles <= 0) return pctWaypoints[0].elevationFt;
+  let max = pctWaypoints[0].elevationFt;
+  for (const wp of pctWaypoints) {
+    if (wp.miles > currentMiles) break;
+    if (wp.elevationFt > max) max = wp.elevationFt;
+  }
+  // Also consider the interpolated elevation at the exact current mile
+  // (handles the ascending-segment case).
+  for (let i = 0; i < pctWaypoints.length - 1; i++) {
+    const a = pctWaypoints[i];
+    const b = pctWaypoints[i + 1];
+    if (currentMiles >= a.miles && currentMiles <= b.miles) {
+      const t = b.miles === a.miles ? 0 : (currentMiles - a.miles) / (b.miles - a.miles);
+      const interpolated = a.elevationFt + t * (b.elevationFt - a.elevationFt);
+      if (interpolated > max) max = interpolated;
+      break;
+    }
+  }
+  return max;
 }

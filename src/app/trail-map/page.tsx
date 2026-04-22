@@ -11,7 +11,7 @@ import CountUpStat from "@/components/CountUpStat";
 import { useLocationData } from "@/hooks/useLocationData";
 import { useGiftLocations } from "@/hooks/useGiftLocations";
 import { getTrailFundingPercent } from "@/lib/trail-funding";
-import { getTrailSectionIndex } from "@/lib/trail";
+import { getTrailSectionIndex, getMaxElevationUpTo } from "@/lib/trail";
 import DistanceTracker from "@/components/DistanceTracker";
 import type { PledgerLocation, JournalPostPublic } from "@/lib/types";
 
@@ -485,7 +485,7 @@ export default function TrailMapPage() {
       </div>
 
       {/* By the Numbers — Expedition Stats */}
-      <ExpeditionStats totalMiles={totalMiles} dayNumber={stats?.dayNumber ?? 0} currentElevation={stats?.currentElevation ?? 0} />
+      <ExpeditionStats totalMiles={totalMiles} dayNumber={stats?.dayNumber ?? 0} />
 
       <Footer />
     </div>
@@ -500,10 +500,9 @@ const STEPS_PER_MILE = 2200; // Average for trail hiking with pack
 const CALORIES_PER_MILE = 120; // Conservative hiking calorie burn (beyond BMR)
 const AVG_HIKING_SPEED_MPH = 2.8; // Typical PCT thru-hiker pace
 
-function ExpeditionStats({ totalMiles, dayNumber, currentElevation }: {
+function ExpeditionStats({ totalMiles, dayNumber }: {
   totalMiles: number;
   dayNumber: number;
-  currentElevation: number;
 }) {
   const computed = useMemo(() => {
     const steps = Math.round(totalMiles * STEPS_PER_MILE);
@@ -513,14 +512,14 @@ function ExpeditionStats({ totalMiles, dayNumber, currentElevation }: {
     const avgDailyMiles = dayNumber > 0 ? Math.round((totalMiles / dayNumber) * 10) / 10 : 0;
     const daysRemaining = avgDailyMiles > 0 ? Math.round(milesRemaining / avgDailyMiles) : 0;
     const marathons = Math.round((totalMiles / 26.2) * 10) / 10;
-    const highestPoint = totalMiles >= 800 ? 13100 : currentElevation; // Mt. Whitney at mile 800
+    const highestPoint = Math.round(getMaxElevationUpTo(totalMiles));
     const statesCrossed = totalMiles >= 2147 ? 3 : totalMiles >= 1691 ? 2 : 1;
 
     return {
       steps, caloriesBurned, hoursWalked, milesRemaining,
       avgDailyMiles, daysRemaining, marathons, highestPoint, statesCrossed,
     };
-  }, [totalMiles, dayNumber, currentElevation]);
+  }, [totalMiles, dayNumber]);
 
   // Don't show section if hike hasn't started
   if (dayNumber <= 0 && totalMiles <= 0) return null;
