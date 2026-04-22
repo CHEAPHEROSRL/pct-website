@@ -197,12 +197,80 @@ async function fetchFromApify(limit = 12): Promise<InstagramPost[]> {
   return posts;
 }
 
+/**
+ * Trigger a fresh Apify scrape and wait for it to finish.
+ *
+ * Why we do this in our cron instead of relying on Apify's own schedule:
+ *
+ *   Instagram's CDN signs the image URLs with a ~7-day expiry (the `oe=`
+ *   query param). If Apify scraped 8+ days ago, the URLs in the last
+ *   dataset are already dead — we'd cache expired URLs and all images
+ *   break. To guarantee fresh URLs, OUR cron triggers a new scrape,
+ *   waits for it, then fetches the results.
+ *
+ *   Using Apify's own schedule works too but adds a second moving part
+ *   that can silently fail (e.g. schedule gets disabled in the Apify
+ *   console, task runs but fails, etc). Our cron owning the whole
+ *   pipeline is simpler and more reliable.
+ *
+ * The waitForFinish parameter blocks up to `timeoutSeconds` (max 300 per
+ * Apify docs) waiting for the run. Typical Instagram scrapes complete in
+ * 10-30s, so 90s is a comfortable ceiling.
+ */
+async function triggerApifyScrape(timeoutSeconds = 45): Promise<void> {
+  const { token, taskId } = await getApifyCredentials();
+  const url = new URL(`https://api.apify.com/v2/actor-tasks/${taskId}/runs`);
+  url.searchParams.set("token", token);
+  url.searchParams.set("waitForFinish", String(timeoutSeconds));
+
+  const res = await fetch(url.toString(), {
+    method: "POST",
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`Apify task trigger failed (${res.status}): ${body}`);
+  }
+
+  const data = await res.json();
+  const status = data?.data?.status;
+  if (status !== "SUCCEEDED") {
+    // Not fatal — the scrape might still finish, and we'll read whatever's
+    // in the last SUCCEEDED dataset. But we want to surface this in logs.
+    console.warn(
+      `Apify scrape finished with status=${status} (expected SUCCEEDED). Run id: ${data?.data?.id}`
+    );
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Public sync (called by cron)
 // ---------------------------------------------------------------------------
 
-export async function syncInstagramPosts(): Promise<InstagramSyncResult> {
+export async function syncInstagramPosts(
+  options: { triggerFreshScrape?: boolean } = {}
+): Promise<InstagramSyncResult> {
+  const { triggerFreshScrape = true } = options;
+
   try {
+    // Step 1 (optional, default ON): trigger a fresh Apify scrape so the
+    // URLs we're about to cache are not already expired. Non-fatal if it
+    // fails — we'll still read whatever's in the last SUCCEEDED dataset.
+    if (triggerFreshScrape) {
+      try {
+        // 45s keeps us safely under Vercel's 60s serverless limit,
+        // leaving headroom for the subsequent fetch + Redis write.
+        await triggerApifyScrape(45);
+      } catch (err) {
+        console.warn(
+          "Could not trigger fresh Apify scrape; falling back to last cached dataset:",
+          err instanceof Error ? err.message : err
+        );
+      }
+    }
+
+    // Step 2: fetch the latest (hopefully just-scraped) dataset
     const posts = await fetchFromApify(12);
 
     if (posts.length === 0) {

@@ -15,9 +15,13 @@ function checkAuth(request: NextRequest): boolean {
  * /api/automation/instagram-sync but gated by ADMIN_AUTH_TOKEN instead of
  * CRON_SECRET so it can be called from the admin panel.
  *
- * Fetches the latest dataset from the configured Apify task and writes
- * it to Redis. Returns the number of posts synced.
+ * Triggers a fresh Apify scrape, waits up to 45s, then caches to Redis.
+ * Returns the number of posts synced.
  */
+
+// Allow up to 60s (Vercel Hobby cap) — Apify scrape + fetch + Redis write
+export const maxDuration = 60;
+
 export async function POST(request: NextRequest): Promise<NextResponse> {
   if (!checkAuth(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
