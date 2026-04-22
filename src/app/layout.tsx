@@ -16,14 +16,14 @@ export const metadata: Metadata = {
     title: "YesChapter — Walking for Cancer",
     description:
       "Walking 2,650 miles on the Pacific Crest Trail for cancer awareness, survivor support, and prevention education.",
-    images: [{ url: "/api/og", width: 1200, height: 630, alt: "YesChapter — Walking 2,650 Miles for Cancer" }],
+    images: [{ url: "/og-image.jpg", width: 1080, height: 1080, alt: "Paul at the PCT Southern Terminus monument at sunrise — start of the 2,650-mile walk for cancer" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "YesChapter — Walking for Cancer",
     description:
       "Walking 2,650 miles on the Pacific Crest Trail for cancer awareness, survivor support, and prevention education.",
-    images: ["/api/og"],
+    images: ["/og-image.jpg"],
   },
 };
 
