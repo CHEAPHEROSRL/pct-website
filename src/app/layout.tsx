@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import PrefetchTrailMap from "@/components/PrefetchTrailMap";
-import WaitlistPopup from "@/components/WaitlistPopup";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -42,7 +41,6 @@ export default function RootLayout({
         />
       </head>
       <body className="h-full">
-        <WaitlistPopup />
         <div id="page-content">
           {children}
         </div>
