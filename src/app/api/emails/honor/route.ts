@@ -4,6 +4,8 @@ import { requireCronAuth } from "@/lib/security";
 import { sendHonorReminder } from "@/lib/email";
 import type { PledgeRecord } from "@/lib/types";
 
+export const maxDuration = 60;
+
 function getRedis() {
   const url = process.env.KV_REST_API_URL;
   const token = process.env.KV_REST_API_TOKEN;
@@ -75,6 +77,13 @@ export async function GET(request: NextRequest) {
       typeof item === "string" ? JSON.parse(item) : item
     );
 
+    // Per-record dedup set. If the cron times out mid-loop and Vercel retries
+    // from scratch, already-sent record IDs are in this set so we skip them.
+    // Without this, every retry re-sent the entire batch up to the timeout
+    // point, producing duplicate honor emails.
+    const perRecordKey = `emails:honor:${variant}:sent_ids`;
+    const alreadySentIds = new Set((await redis.smembers(perRecordKey)) || []);
+
     let sent = 0;
     let failed = 0;
     let skipped = 0;
@@ -84,6 +93,12 @@ export async function GET(request: NextRequest) {
 
       // Skip pledgers who already honored
       if (record.honored) {
+        skipped++;
+        continue;
+      }
+
+      // Skip pledgers already emailed in a previous (possibly partial) run
+      if (alreadySentIds.has(record.id)) {
         skipped++;
         continue;
       }
@@ -103,6 +118,9 @@ export async function GET(request: NextRequest) {
 
       if (result.success) {
         sent++;
+        // Mark this pledger as sent BEFORE the next send, so a mid-loop
+        // timeout doesn't cost us this record. SADD is idempotent.
+        await redis.sadd(perRecordKey, record.id);
       } else {
         failed++;
       }
@@ -113,8 +131,12 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Mark this reminder as sent
-    await redis.sadd("emails:honor:sent", variant);
+    // Mark this reminder variant as fully sent (skips future cron runs for
+    // this variant unless the variant-level flag is manually cleared).
+    // Only mark complete if nothing failed — a partial batch should retry.
+    if (failed === 0) {
+      await redis.sadd("emails:honor:sent", variant);
+    }
 
     return NextResponse.json({
       success: true,

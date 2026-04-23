@@ -5,6 +5,8 @@ import { sendWeeklyUpdate } from "@/lib/email";
 import { snapToTrail, metersToFeet } from "@/lib/trail";
 import type { PledgeRecord, GpsPoint, JournalPost } from "@/lib/types";
 
+export const maxDuration = 60;
+
 function getRedis() {
   const url = process.env.KV_REST_API_URL;
   const token = process.env.KV_REST_API_TOKEN;
@@ -75,15 +77,31 @@ async function handleWeeklySend(request: NextRequest) {
       typeof item === "string" ? JSON.parse(item) : item
     );
 
+    // Per-record dedup for THIS week. The weekly cron runs once per week, and
+    // if it times out Vercel retries from scratch. Without this set, every
+    // retry re-sends the full batch up to the timeout, producing duplicate
+    // "Week 6 update" emails. The set is keyed by week number so next week's
+    // run starts fresh.
+    const perRecordKey = `emails:weekly:w${weekNumber}:sent_ids`;
+    const alreadySentIds = new Set((await redis.smembers(perRecordKey)) || []);
+
     // Send to each pledger
     let sent = 0;
     let failed = 0;
+    let skipped = 0;
     const errors: string[] = [];
 
     for (const record of records) {
       if (!record.email) continue;
       // Respect email preferences — weekly is "all" level only
       if (record.emailPreference && record.emailPreference !== "all") continue;
+
+      // Skip pledgers already emailed in this week's run (including previous
+      // partial runs that got killed by the timeout)
+      if (alreadySentIds.has(record.id)) {
+        skipped++;
+        continue;
+      }
 
       const result = await sendWeeklyUpdate(
         record.email,
@@ -102,6 +120,9 @@ async function handleWeeklySend(request: NextRequest) {
 
       if (result.success) {
         sent++;
+        // Mark sent BEFORE the next send so a mid-loop timeout doesn't
+        // re-send this pledger on retry
+        await redis.sadd(perRecordKey, record.id);
       } else {
         failed++;
         if (errors.length < 5) errors.push(result.error || "Unknown");
@@ -113,6 +134,11 @@ async function handleWeeklySend(request: NextRequest) {
       }
     }
 
+    // Expire the per-record set after 30 days to keep Redis tidy. By then
+    // the next ~4 weeks of runs will have happened; nothing should need to
+    // reference this old set.
+    await redis.expire(perRecordKey, 60 * 60 * 24 * 30);
+
     // Store last send timestamp
     await redis.set("emails:weekly:last_sent", Date.now());
     await redis.set("emails:weekly:last_week", weekNumber);
@@ -123,6 +149,7 @@ async function handleWeeklySend(request: NextRequest) {
       milesWalked,
       sent,
       failed,
+      skipped,
       total: records.length,
       errors: errors.length > 0 ? errors : undefined,
     });

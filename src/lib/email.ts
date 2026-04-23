@@ -1,5 +1,7 @@
 import { google } from "googleapis";
 import { getSetting } from "./settings";
+import { Redis } from "@upstash/redis";
+import { safeParse } from "./redis-safe";
 
 // ---------------------------------------------------------------------------
 // Gmail API client (Google Workspace OAuth2)
@@ -127,8 +129,42 @@ async function send(to: string, subject: string, html: string): Promise<SendResu
   } catch (err) {
     console.error("Failed to send email:", err);
     const message = err instanceof Error ? err.message : "Email delivery failed";
+
+    // invalid_grant means the refresh token has been revoked or expired (e.g.
+    // user disconnected the app in Google account settings, OAuth client
+    // secret was rotated, or we hit the testing-mode 7-day expiry). Until
+    // someone reconnects, every send will fail with the same error — and
+    // historically this was invisible because all callers do .catch(() => {}).
+    // Mark the token as invalid so the admin panel can surface a warning
+    // banner, and stop future sends from even trying (they'd waste quota).
+    if (/invalid_grant/i.test(message)) {
+      await markGmailTokenInvalid().catch(() => {
+        // Best-effort; don't throw inside the error path
+      });
+    }
+
     return { success: false, error: message };
   }
+}
+
+/**
+ * Mark the stored Gmail refresh token as invalid. Called when Gmail rejects
+ * our token with invalid_grant. The admin UI reads this flag and shows a
+ * "reconnect required" banner. We don't wipe the refresh token itself (so
+ * admin can see WHICH account was connected when debugging) but set a flag
+ * that tells getGmailClient() and the UI that sends will fail until reconnect.
+ */
+async function markGmailTokenInvalid(): Promise<void> {
+  const url = process.env.KV_REST_API_URL;
+  const token = process.env.KV_REST_API_TOKEN;
+  if (!url || !token) return;
+  const redis = new Redis({ url, token });
+  const raw = await redis.get<string>("admin:settings");
+  const settings = safeParse<Record<string, unknown>>(raw, {});
+  if (settings.gmailTokenValid === false) return; // already flagged
+  settings.gmailTokenValid = false;
+  settings.gmailTokenInvalidAt = new Date().toISOString();
+  await redis.set("admin:settings", JSON.stringify(settings));
 }
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://yeschapter.com";

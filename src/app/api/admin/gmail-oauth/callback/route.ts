@@ -197,7 +197,7 @@ export async function GET(request: NextRequest) {
   // ── Save to Redis admin:settings ──────────────────────────────────
   try {
     const raw = await redis.get<string>("admin:settings");
-    const settings: Record<string, string> = raw
+    const settings: Record<string, string | boolean | null> = raw
       ? typeof raw === "string"
         ? JSON.parse(raw)
         : (raw as Record<string, string>)
@@ -206,6 +206,12 @@ export async function GET(request: NextRequest) {
     settings.gmailRefreshToken = tokenResponse.refresh_token;
     settings.gmailConnectedEmail = connectedEmail;
     settings.gmailConnectedAt = new Date().toISOString();
+    // Reset the token-invalid flag if this reconnect is recovering from a
+    // previous invalid_grant failure. Status endpoint defaults unset to valid,
+    // but being explicit here prevents any stale "invalid" banner from
+    // lingering after a successful reconnect.
+    settings.gmailTokenValid = true;
+    settings.gmailTokenInvalidAt = null;
 
     await redis.set("admin:settings", JSON.stringify(settings));
   } catch (err) {

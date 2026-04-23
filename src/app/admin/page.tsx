@@ -125,6 +125,8 @@ export default function AdminPage() {
     reason?: "no-client-id" | "no-client-secret" | "no-refresh-token";
     clientIdPresent?: boolean;
     clientSecretPresent?: boolean;
+    tokenValid?: boolean;
+    tokenInvalidAt?: string | null;
   }
   const [gmailOAuthStatus, setGmailOAuthStatus] = useState<GmailOAuthStatus | null>(null);
   const [gmailOAuthLoading, setGmailOAuthLoading] = useState(false);
@@ -3017,11 +3019,31 @@ export default function AdminPage() {
                   </div>
                 ) : gmailOAuthStatus?.connected ? (
                   // ─── CONNECTED ──────────────────────────────────────
-                  <div className="flex flex-col gap-[12px] p-[16px] bg-[var(--forest-green-light)] border border-[var(--forest-green)]/30">
+                  <div className={`flex flex-col gap-[12px] p-[16px] ${gmailOAuthStatus.tokenValid === false ? "bg-red-50 border border-red-300" : "bg-[var(--forest-green-light)] border border-[var(--forest-green)]/30"}`}>
+                    {gmailOAuthStatus.tokenValid === false && (
+                      <div className="flex flex-col gap-[6px] p-[10px] bg-white border border-red-200">
+                        <div className="flex items-center gap-[6px]">
+                          <XCircle className="w-[14px] h-[14px] text-red-600" />
+                          <span className="font-label font-bold text-[11px] tracking-[1.5px] text-red-700">
+                            TOKEN REJECTED BY GOOGLE
+                          </span>
+                        </div>
+                        <p className="font-heading text-[12px] leading-[1.5] text-red-800">
+                          Last send failed with <code className="bg-red-100 px-[3px] text-[11px]">invalid_grant</code> —
+                          Google has revoked or expired this refresh token. Automated emails will not send until you reconnect.
+                          {gmailOAuthStatus.tokenInvalidAt && (
+                            <> (detected {new Date(gmailOAuthStatus.tokenInvalidAt).toLocaleString()})</>
+                          )}
+                        </p>
+                        <p className="font-heading text-[11px] leading-[1.4] text-red-700">
+                          Click Disconnect below, then Connect Gmail Account to issue a fresh token.
+                        </p>
+                      </div>
+                    )}
                     <div className="flex items-center gap-[8px]">
-                      <CheckCircle className="w-[18px] h-[18px] text-[var(--forest-green)]" />
-                      <span className="font-label font-bold text-[12px] tracking-[1.5px] text-[var(--forest-green)]">
-                        CONNECTED
+                      <CheckCircle className={`w-[18px] h-[18px] ${gmailOAuthStatus.tokenValid === false ? "text-[var(--text-muted)]" : "text-[var(--forest-green)]"}`} />
+                      <span className={`font-label font-bold text-[12px] tracking-[1.5px] ${gmailOAuthStatus.tokenValid === false ? "text-[var(--text-muted)]" : "text-[var(--forest-green)]"}`}>
+                        {gmailOAuthStatus.tokenValid === false ? "CONNECTED (TOKEN INVALID)" : "CONNECTED"}
                       </span>
                     </div>
                     <div className="flex flex-col gap-[4px]">

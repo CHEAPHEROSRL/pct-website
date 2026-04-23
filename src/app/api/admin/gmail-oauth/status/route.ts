@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
 import { constantTimeEqual } from "@/lib/security";
+import { safeParse } from "@/lib/redis-safe";
 
 /**
  * GET /api/admin/gmail-oauth/status
@@ -38,19 +39,10 @@ export async function GET(request: NextRequest) {
   // Read credentials + connection status. Prefer Redis over env vars because
   // that's where the OAuth callback writes the refresh token.
   const redis = getRedis();
-  let settings: Record<string, string> = {};
+  let settings: Record<string, string | boolean> = {};
   if (redis) {
-    try {
-      const raw = await redis.get<string>("admin:settings");
-      if (raw) {
-        settings =
-          typeof raw === "string"
-            ? JSON.parse(raw)
-            : (raw as Record<string, string>);
-      }
-    } catch {
-      // treat as empty settings
-    }
+    const raw = await redis.get<string>("admin:settings");
+    settings = safeParse<Record<string, string | boolean>>(raw, {});
   }
 
   const clientId = process.env.GMAIL_CLIENT_ID || settings.gmailClientId || "";
@@ -84,11 +76,18 @@ export async function GET(request: NextRequest) {
     });
   }
 
+  // gmailTokenValid is set to false by lib/email.ts when a send fails with
+  // invalid_grant (token revoked / expired). Default is true when unset so
+  // existing deployments behave normally until the first failure lands.
+  const tokenValid = settings.gmailTokenValid !== false;
+
   return NextResponse.json({
     connected: true,
     email: settings.gmailConnectedEmail || "unknown",
     connectedAt: settings.gmailConnectedAt || null,
     clientIdPresent: true,
     clientSecretPresent: true,
+    tokenValid,
+    tokenInvalidAt: tokenValid ? null : settings.gmailTokenInvalidAt || null,
   });
 }

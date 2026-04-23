@@ -5,6 +5,8 @@ import { getSetting } from "@/lib/settings";
 import type { PledgeRecord } from "@/lib/types";
 import { constantTimeEqual } from "@/lib/security";
 
+export const maxDuration = 60;
+
 function getRedis() {
   const url = process.env.KV_REST_API_URL;
   const token = process.env.KV_REST_API_TOKEN;

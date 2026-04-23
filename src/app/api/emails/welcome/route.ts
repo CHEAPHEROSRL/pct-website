@@ -4,6 +4,11 @@ import { requireCronAuth } from "@/lib/security";
 import { sendWelcomeDay1, sendWelcomeDay3 } from "@/lib/email";
 import type { PledgeRecord } from "@/lib/types";
 
+// Max Vercel Hobby tier duration. Without this, the cron is killed at 30s,
+// Vercel retries from scratch, and pledgers already-sent receive the
+// email again on the second run. 60s covers hundreds of emails comfortably.
+export const maxDuration = 60;
+
 function getRedis() {
   const url = process.env.KV_REST_API_URL;
   const token = process.env.KV_REST_API_TOKEN;
