@@ -1,5 +1,4 @@
 {
-  "_comment": "Email cron entries (weekly, milestone, honor, welcome) deliberately removed pre-launch. Re-add them AND set EMAILS_ENABLED=true in Vercel env when ready to enable bulk pledger emails. See src/lib/email.ts bulkEmailsEnabled().",
   "crons": [
     {
       "path": "/api/automation/instagram-sync",
