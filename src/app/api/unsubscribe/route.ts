@@ -175,16 +175,25 @@ export async function PUT(req: NextRequest) {
 
       await redis.set(`pledger:${hash}`, JSON.stringify(record));
 
-      // Update list entry
-      const list = await redis.lrange<string>("pledgers:list", 0, -1);
-      for (let i = 0; i < list.length; i++) {
-        const item: PledgeRecord =
-          typeof list[i] === "string" ? JSON.parse(list[i]) : list[i];
-        if (item.id === hash) {
-          await redis.lset("pledgers:list", i, JSON.stringify(record));
-          break;
-        }
-      }
+      // Update the pledgers:list entry atomically via a Lua script. The
+      // previous pattern (LRANGE -> find index in JS -> LSET) had a race:
+      // if another process LPUSHed a new pledger into the list between the
+      // read and the LSET, the index shifted and we'd clobber someone else's
+      // record with our unsubscribe's data. EVAL runs the scan + write
+      // inside a single Redis operation so no concurrent writes can interleave.
+      const newJson = JSON.stringify(record);
+      const lua = `
+        local list = redis.call('LRANGE', KEYS[1], 0, -1)
+        local needle = '"id":"' .. ARGV[1] .. '"'
+        for i, v in ipairs(list) do
+          if string.find(v, needle, 1, true) then
+            redis.call('LSET', KEYS[1], i - 1, ARGV[2])
+            return i
+          end
+        end
+        return 0
+      `;
+      await redis.eval(lua, ["pledgers:list"], [hash, newJson]);
 
       return NextResponse.json({
         success: true,

@@ -74,13 +74,33 @@ function getRedis(): Redis {
   });
 }
 
-export async function getCachedPosts(): Promise<InstagramPost[]> {
+// Instagram CDN signs image URLs with ~7-day expiry. Anything older than that
+// threshold is likely serving broken image links. We surface an empty list
+// instead so the journal gallery renders as "no posts yet" (a normal empty
+// state the UI handles cleanly) instead of a gallery of broken-image icons.
+const CACHE_MAX_AGE_MS = 5 * 24 * 60 * 60 * 1000; // 5 days — comfortably inside the ~7d expiry window
+
+export async function getCachedPosts(
+  options: { allowStale?: boolean } = {}
+): Promise<InstagramPost[]> {
+  const { allowStale = false } = options;
   const redis = getRedis();
   const raw = await redis.get<string>(POSTS_KEY);
   if (!raw) return [];
   try {
     const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
-    return Array.isArray(parsed) ? parsed : [];
+    if (!Array.isArray(parsed)) return [];
+    if (!allowStale) {
+      const lastSyncRaw = await redis.get<string>(LAST_SYNC_KEY);
+      const lastSync = lastSyncRaw ? parseInt(String(lastSyncRaw), 10) : 0;
+      if (!lastSync || Date.now() - lastSync > CACHE_MAX_AGE_MS) {
+        // Cache is older than the Instagram signed-URL expiry; image URLs
+        // are almost certainly dead. Return nothing so UI falls back to
+        // empty-state instead of rendering broken-image icons.
+        return [];
+      }
+    }
+    return parsed;
   } catch {
     return [];
   }

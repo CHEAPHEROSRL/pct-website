@@ -195,25 +195,40 @@ export async function GET(request: NextRequest) {
   }
 
   // ── Save to Redis admin:settings ──────────────────────────────────
+  //
+  // We only need to modify the gmail-specific fields; other fields on the
+  // admin:settings blob (currentMile, dailyPace, API keys, etc.) must be
+  // preserved. A read-modify-write from JS races with any other admin
+  // save (Settings tab, Tracker tab, email invalid_grant detection) —
+  // whichever write lands last wins, silently clobbering the other. We
+  // run the merge inside a Lua script so Redis does it atomically.
   try {
-    const raw = await redis.get<string>("admin:settings");
-    const settings: Record<string, string | boolean | null> = raw
-      ? typeof raw === "string"
-        ? JSON.parse(raw)
-        : (raw as Record<string, string>)
-      : {};
-
-    settings.gmailRefreshToken = tokenResponse.refresh_token;
-    settings.gmailConnectedEmail = connectedEmail;
-    settings.gmailConnectedAt = new Date().toISOString();
-    // Reset the token-invalid flag if this reconnect is recovering from a
-    // previous invalid_grant failure. Status endpoint defaults unset to valid,
-    // but being explicit here prevents any stale "invalid" banner from
-    // lingering after a successful reconnect.
-    settings.gmailTokenValid = true;
-    settings.gmailTokenInvalidAt = null;
-
-    await redis.set("admin:settings", JSON.stringify(settings));
+    const patch = {
+      gmailRefreshToken: tokenResponse.refresh_token,
+      gmailConnectedEmail: connectedEmail,
+      gmailConnectedAt: new Date().toISOString(),
+      // Reset the token-invalid flag if this reconnect is recovering from a
+      // previous invalid_grant failure. Status endpoint defaults unset to
+      // valid, but being explicit here prevents any stale "invalid" banner
+      // from lingering after a successful reconnect.
+      gmailTokenValid: true,
+      gmailTokenInvalidAt: null,
+    };
+    const lua = `
+      local raw = redis.call('GET', KEYS[1])
+      local settings = {}
+      if raw then
+        local ok, parsed = pcall(cjson.decode, raw)
+        if ok and type(parsed) == 'table' then settings = parsed end
+      end
+      local patch = cjson.decode(ARGV[1])
+      for k, v in pairs(patch) do
+        if v == cjson.null then settings[k] = nil else settings[k] = v end
+      end
+      redis.call('SET', KEYS[1], cjson.encode(settings))
+      return 1
+    `;
+    await redis.eval(lua, ["admin:settings"], [JSON.stringify(patch)]);
   } catch (err) {
     return redirectBack(origin, {
       gmailOauth: "error",
