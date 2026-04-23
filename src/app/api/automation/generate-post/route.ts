@@ -8,6 +8,7 @@ import {
 } from "@/lib/blog-generator";
 import { getMileForDay } from "@/lib/day-mileage";
 import type { JournalPost } from "@/lib/types";
+import { constantTimeEqual } from "@/lib/security";
 
 /**
  * Resolve the trail mile a new post should be anchored at.
@@ -43,7 +44,7 @@ function getRedis() {
 function checkAuth(request: NextRequest): boolean {
   const authHeader = request.headers.get("authorization");
   const token = authHeader?.replace("Bearer ", "");
-  return !!token && token === process.env.ADMIN_AUTH_TOKEN;
+  return constantTimeEqual(token, process.env.ADMIN_AUTH_TOKEN);
 }
 
 function slugify(title: string): string {

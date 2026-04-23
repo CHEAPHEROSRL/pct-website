@@ -60,12 +60,12 @@ async function readCredentialsFromRedis(): Promise<{
 }
 
 export async function GET(request: NextRequest) {
-  // Allow either admin cookie OR admin bearer token (via ?token=X query for
-  // mobile-friendliness — easier than attaching headers via redirect)
-  const queryToken = request.nextUrl.searchParams.get("token");
-  const tokenValid = queryToken && queryToken === process.env.ADMIN_AUTH_TOKEN;
-
-  if (!adminSessionCookieValid(request) && !tokenValid) {
+  // Cookie-only auth. We previously accepted `?token=X` as a query parameter
+  // for mobile-friendliness, but query strings leak into access logs, browser
+  // history, and Referer headers — the admin token would effectively be
+  // public. Paul logs into /admin first (which sets the session cookie), then
+  // clicks "Connect Gmail"; the cookie authenticates this redirect.
+  if (!adminSessionCookieValid(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

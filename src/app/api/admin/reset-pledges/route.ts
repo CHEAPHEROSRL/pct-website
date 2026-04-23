@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
-import { RATE_LIMITS } from "@/lib/security";
+import { RATE_LIMITS, constantTimeEqual } from "@/lib/security";
 
 function getRedis() {
   const url = process.env.KV_REST_API_URL;
@@ -13,7 +13,7 @@ function checkAuth(request: NextRequest): boolean {
   const auth = request.headers.get("authorization");
   if (!auth) return false;
   const token = auth.replace("Bearer ", "");
-  return token === process.env.ADMIN_AUTH_TOKEN;
+  return constantTimeEqual(token, process.env.ADMIN_AUTH_TOKEN);
 }
 
 // POST /api/admin/reset-pledges — Clear all pledge data (admin only)

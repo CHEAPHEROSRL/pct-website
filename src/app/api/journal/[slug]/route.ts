@@ -1,6 +1,7 @@
 import { Redis } from "@upstash/redis";
 import { NextRequest, NextResponse } from "next/server";
 import type { JournalPost } from "@/lib/types";
+import { constantTimeEqual } from "@/lib/security";
 
 function getRedis() {
   const url = process.env.KV_REST_API_URL;
@@ -12,7 +13,7 @@ function getRedis() {
 function isAdmin(request: NextRequest): boolean {
   const authHeader = request.headers.get("authorization");
   const token = authHeader?.replace("Bearer ", "");
-  return !!token && token === process.env.ADMIN_AUTH_TOKEN;
+  return constantTimeEqual(token, process.env.ADMIN_AUTH_TOKEN);
 }
 
 export async function GET(

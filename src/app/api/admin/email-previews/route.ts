@@ -4,12 +4,13 @@ import {
   getTemplateById,
   getTemplateMetadata,
 } from "@/lib/email-templates";
+import { constantTimeEqual } from "@/lib/security";
 
 function checkAuth(request: NextRequest): boolean {
   const auth = request.headers.get("authorization");
   if (!auth) return false;
   const token = auth.replace("Bearer ", "");
-  return token === process.env.ADMIN_AUTH_TOKEN;
+  return constantTimeEqual(token, process.env.ADMIN_AUTH_TOKEN);
 }
 
 /**

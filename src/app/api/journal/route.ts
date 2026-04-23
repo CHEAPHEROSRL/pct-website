@@ -2,6 +2,7 @@ import { Redis } from "@upstash/redis";
 import { NextRequest, NextResponse } from "next/server";
 import type { JournalPost, JournalPostPublic } from "@/lib/types";
 import { getMileForDay } from "@/lib/day-mileage";
+import { constantTimeEqual } from "@/lib/security";
 
 /**
  * Resolve a default mile marker for a new manually-created post.
@@ -36,7 +37,7 @@ function getRedis() {
 function checkAuth(request: NextRequest): boolean {
   const authHeader = request.headers.get("authorization");
   const token = authHeader?.replace("Bearer ", "");
-  return !!token && token === process.env.ADMIN_AUTH_TOKEN;
+  return constantTimeEqual(token, process.env.ADMIN_AUTH_TOKEN);
 }
 
 function slugify(title: string): string {

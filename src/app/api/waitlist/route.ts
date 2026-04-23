@@ -1,6 +1,7 @@
 import { Redis } from "@upstash/redis";
 import { NextRequest, NextResponse } from "next/server";
 import { randomBytes } from "crypto";
+import { constantTimeEqual } from "@/lib/security";
 
 function getRedis() {
   const url = process.env.KV_REST_API_URL;
@@ -12,7 +13,7 @@ function getRedis() {
 function checkAuth(request: NextRequest): boolean {
   const authHeader = request.headers.get("authorization");
   const token = authHeader?.replace("Bearer ", "");
-  return !!token && token === process.env.ADMIN_AUTH_TOKEN;
+  return constantTimeEqual(token, process.env.ADMIN_AUTH_TOKEN);
 }
 
 export async function POST(req: NextRequest) {

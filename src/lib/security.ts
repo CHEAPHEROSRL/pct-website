@@ -3,6 +3,27 @@ import { Redis } from "@upstash/redis";
 import { Ratelimit } from "@upstash/ratelimit";
 import crypto from "crypto";
 
+/**
+ * Constant-time string comparison for secrets.
+ *
+ * Plain `===` leaks timing info: the engine exits the comparison loop early
+ * at the first mismatched byte, so over enough requests an attacker can
+ * extract the secret byte-by-byte from response-time variance.
+ *
+ * We short-circuit on unequal length (the length of our secrets is already
+ * public/fixed, so that's not a leak) and then use Node's crypto.timingSafeEqual
+ * which compares every byte regardless of where mismatches occur.
+ *
+ * Safe when either side is undefined/null — returns false.
+ */
+export function constantTimeEqual(a: string | null | undefined, b: string | null | undefined): boolean {
+  if (!a || !b) return false;
+  const aBuf = Buffer.from(a);
+  const bBuf = Buffer.from(b);
+  if (aBuf.length !== bBuf.length) return false;
+  return crypto.timingSafeEqual(aBuf, bBuf);
+}
+
 // ---------------------------------------------------------------------------
 // Rate Limiting (Upstash Redis-backed)
 // ---------------------------------------------------------------------------
@@ -114,8 +135,14 @@ const TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/sit
 export async function verifyTurnstile(token: string, ip?: string): Promise<boolean> {
   const secret = process.env.TURNSTILE_SECRET_KEY;
   if (!secret) {
-    // In development without Turnstile configured, allow through
-    console.warn("TURNSTILE_SECRET_KEY not set — skipping CAPTCHA verification");
+    // Fail-closed in production. A missing secret in prod means the captcha
+    // is silently bypassed for every submission — that's how spam floods
+    // happen. In dev we still allow through for local iteration.
+    if (process.env.NODE_ENV === "production") {
+      console.error("TURNSTILE_SECRET_KEY is not set in production — refusing to bypass CAPTCHA");
+      return false;
+    }
+    console.warn("TURNSTILE_SECRET_KEY not set — skipping CAPTCHA verification (dev only)");
     return true;
   }
 
@@ -250,7 +277,8 @@ export function requireCronAuth(req: NextRequest): NextResponse | null {
   }
 
   const authHeader = req.headers.get("authorization");
-  if (authHeader !== `Bearer ${cronSecret}`) {
+  const expected = `Bearer ${cronSecret}`;
+  if (!constantTimeEqual(authHeader, expected)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -284,17 +312,14 @@ export function requireAdminAuth(req: NextRequest): NextResponse | null {
 
   // Check bearer token first (API calls)
   const authHeader = req.headers.get("authorization");
-  if (authHeader === `Bearer ${adminToken}`) {
+  if (constantTimeEqual(authHeader, `Bearer ${adminToken}`)) {
     return null; // Authorized
   }
 
   // Check session cookie
   const sessionCookie = req.cookies.get(ADMIN_COOKIE_NAME)?.value;
-  if (sessionCookie) {
-    const expected = generateAdminSession(adminToken);
-    if (sessionCookie === expected) {
-      return null; // Authorized
-    }
+  if (sessionCookie && constantTimeEqual(sessionCookie, generateAdminSession(adminToken))) {
+    return null; // Authorized
   }
 
   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

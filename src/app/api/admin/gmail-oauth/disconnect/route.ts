@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
+import { constantTimeEqual } from "@/lib/security";
 
 /**
  * POST /api/admin/gmail-oauth/disconnect
@@ -19,7 +20,7 @@ function getRedis(): Redis | null {
 function checkAuth(request: NextRequest): boolean {
   const authHeader = request.headers.get("authorization");
   const token = authHeader?.replace("Bearer ", "");
-  return !!token && token === process.env.ADMIN_AUTH_TOKEN;
+  return constantTimeEqual(token, process.env.ADMIN_AUTH_TOKEN);
 }
 
 export async function POST(request: NextRequest) {

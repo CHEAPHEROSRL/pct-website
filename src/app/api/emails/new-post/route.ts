@@ -3,6 +3,7 @@ import { Redis } from "@upstash/redis";
 import { sendNewPost } from "@/lib/email";
 import { getSetting } from "@/lib/settings";
 import type { PledgeRecord } from "@/lib/types";
+import { constantTimeEqual } from "@/lib/security";
 
 function getRedis() {
   const url = process.env.KV_REST_API_URL;
@@ -15,7 +16,7 @@ function checkAuth(request: NextRequest): boolean {
   const auth = request.headers.get("authorization");
   if (!auth) return false;
   const token = auth.replace("Bearer ", "");
-  return token === process.env.ADMIN_AUTH_TOKEN;
+  return constantTimeEqual(token, process.env.ADMIN_AUTH_TOKEN);
 }
 
 // POST /api/emails/new-post — Send notification to all subscribers about a new journal post

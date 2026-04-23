@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
+import { constantTimeEqual } from "@/lib/security";
+import { safeParse } from "@/lib/redis-safe";
 
 const SETTINGS_KEY = "admin:settings";
 
@@ -13,7 +15,7 @@ function getRedis() {
 function checkAuth(request: NextRequest): boolean {
   const authHeader = request.headers.get("authorization");
   const token = authHeader?.replace("Bearer ", "");
-  return !!token && token === process.env.ADMIN_AUTH_TOKEN;
+  return constantTimeEqual(token, process.env.ADMIN_AUTH_TOKEN);
 }
 
 export async function GET(req: NextRequest) {
@@ -29,8 +31,7 @@ export async function GET(req: NextRequest) {
   const raw = await redis.get<string>(SETTINGS_KEY);
   if (!raw) return NextResponse.json({});
 
-  const settings = typeof raw === "string" ? JSON.parse(raw) : raw;
-  return NextResponse.json(settings);
+  return NextResponse.json(safeParse<Record<string, unknown>>(raw, {}));
 }
 
 export async function PUT(req: NextRequest) {
@@ -47,7 +48,7 @@ export async function PUT(req: NextRequest) {
 
   // Merge with existing settings
   const raw = await redis.get<string>(SETTINGS_KEY);
-  const existing = raw ? (typeof raw === "string" ? JSON.parse(raw) : raw) : {};
+  const existing = safeParse<Record<string, unknown>>(raw, {});
   const merged = { ...existing, ...body };
 
   await redis.set(SETTINGS_KEY, JSON.stringify(merged));

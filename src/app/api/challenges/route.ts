@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
 import type { ChallengeRecord, ChallengePublic, PledgeRecord, ChallengeType } from "@/lib/types";
 import { sendChallengeStarted, sendChallengeResult } from "@/lib/email";
+import { constantTimeEqual } from "@/lib/security";
 import crypto from "crypto";
 
 function getRedis() {
@@ -15,7 +16,7 @@ function isAdmin(req: NextRequest): boolean {
   const auth = req.headers.get("authorization");
   if (!auth) return false;
   const token = auth.replace("Bearer ", "");
-  return token === process.env.ADMIN_AUTH_TOKEN;
+  return constantTimeEqual(token, process.env.ADMIN_AUTH_TOKEN);
 }
 
 /** Normalize old records that used targetMiles/startMile/currentMiles */
