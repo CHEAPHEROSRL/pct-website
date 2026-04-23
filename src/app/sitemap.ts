@@ -5,6 +5,12 @@ import type { JournalPost } from "@/lib/types";
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://yeschapter.com";
 
+// Regenerate at most hourly. Without this, Next.js generates the sitemap
+// at build time — when Redis credentials may not be available and no journal
+// posts get listed. Hourly is a fine cadence for a charity site; search
+// engines don't re-crawl more aggressively than that anyway.
+export const revalidate = 3600;
+
 /**
  * Next.js App Router sitemap generator. Served at /sitemap.xml.
  *
