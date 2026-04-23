@@ -382,11 +382,11 @@ export default function MyPledgePage() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(
-          res.status === 404
-            ? "No pledge found for this email. Have you pledged yet?"
-            : data.error || "Something went wrong."
-        );
+        setError(data.error || "Something went wrong.");
+      } else if (!data.pledge) {
+        // API now returns 200 with pledge: null for unknown emails (uniform
+        // response defeats enumeration). Show the friendly not-found message.
+        setError("No pledge found for this email. Have you pledged yet?");
       } else {
         setPledge(data.pledge);
       }

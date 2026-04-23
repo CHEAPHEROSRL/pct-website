@@ -130,6 +130,14 @@ export function sessionCookieOptions(maxAge: number = SESSION_TTL) {
     value: "",
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
+    // `lax` is deliberate here, not a mistake. Pledgers authenticate via
+    // magic links clicked from their email inbox — a cross-site top-level
+    // navigation. `strict` would cause the browser to drop the newly-set
+    // cookie on the verify-endpoint's redirect to /my-pledge, leaving the
+    // user in a "not logged in" state immediately after logging in.
+    // `lax` still blocks cookies on cross-site POST/PUT/DELETE, which is
+    // where the real CSRF risk would be. Admin session uses `strict`
+    // because it has no cross-site-navigation flow.
     sameSite: "lax" as const,
     path: "/",
     maxAge,

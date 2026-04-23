@@ -142,6 +142,12 @@ export async function POST(req: NextRequest) {
 }
 
 // GET — Retrieve a pledger's profile by email
+//
+// Returns 200 with { pledge: PledgeRecord | null } either way. Returning
+// 404 for missing emails was a minor enumeration vector: an attacker could
+// hammer the endpoint with candidate addresses and see which ones existed
+// by status code alone. Rate limiting caps volume but doesn't kill the
+// pattern. Uniform shape removes the signal entirely.
 export async function GET(req: NextRequest) {
   const rateLimited = await RATE_LIMITS.pledgeLookup(req);
   if (rateLimited) return rateLimited;
@@ -162,7 +168,7 @@ export async function GET(req: NextRequest) {
     const raw = await redis.get<string>(key);
 
     if (!raw) {
-      return NextResponse.json({ error: "No pledge found for this email" }, { status: 404 });
+      return NextResponse.json({ pledge: null });
     }
 
     const record: PledgeRecord = typeof raw === "string" ? JSON.parse(raw) : raw;

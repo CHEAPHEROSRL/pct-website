@@ -1,15 +1,52 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Check, Mail, HeartHandshake, Camera, Upload, Youtube, X } from "lucide-react";
+import { Check, Mail, HeartHandshake, Camera, Upload, Youtube, X, Loader2 } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+
+type VerifyState =
+  | { status: "verifying" }
+  | { status: "valid"; giftTitle: string | null; amount: number }
+  | { status: "invalid" };
 
 export default function SupportSuccessPage() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id") || "";
+
+  // Server-side verification: confirm the session_id is real and paid before
+  // rendering the "Thank you for supporting Paul" state. Without this, anyone
+  // crafting /support/success?session_id=cs_fake would see the success page.
+  const [verify, setVerify] = useState<VerifyState>({ status: "verifying" });
+  useEffect(() => {
+    if (!sessionId) {
+      setVerify({ status: "invalid" });
+      return;
+    }
+    let cancelled = false;
+    fetch(`/api/support/verify?session_id=${encodeURIComponent(sessionId)}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (cancelled) return;
+        if (data.valid) {
+          setVerify({
+            status: "valid",
+            giftTitle: data.giftTitle ?? null,
+            amount: data.amount ?? 0,
+          });
+        } else {
+          setVerify({ status: "invalid" });
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setVerify({ status: "invalid" });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [sessionId]);
 
   // Media upload state
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -70,6 +107,62 @@ export default function SupportSuccessPage() {
     }
   };
 
+  // Render a loading state while verifying. Keeps us from flashing the
+  // "thank you" content to users whose session turns out to be fake.
+  if (verify.status === "verifying") {
+    return (
+      <div className="flex flex-col w-full bg-[var(--bg-warm)] min-h-screen">
+        <Header />
+        <section className="flex flex-col items-center justify-center gap-[16px] flex-1 px-6 py-[80px]">
+          <Loader2 className="w-[32px] h-[32px] text-[var(--text-muted)] animate-spin" />
+          <span className="font-label font-medium text-[13px] tracking-[1px] text-[var(--text-muted)]">
+            CONFIRMING YOUR PAYMENT…
+          </span>
+        </section>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Unverified / fake session_id. Don't render the success UI — send the
+  // visitor to a neutral message with links to the actual flows.
+  if (verify.status === "invalid") {
+    return (
+      <div className="flex flex-col w-full bg-[var(--bg-warm)] min-h-screen">
+        <Header />
+        <section className="flex flex-col items-center gap-[20px] px-6 md:px-12 lg:px-[120px] py-[80px] bg-[var(--bg-white)] w-full flex-1">
+          <h1 className="font-heading font-semibold text-[28px] md:text-[36px] text-[var(--text-primary)] text-center">
+            We couldn&apos;t confirm this payment
+          </h1>
+          <p className="font-heading text-[15px] leading-[1.7] text-[var(--text-secondary)] text-center max-w-[520px]">
+            This link may have expired, or the checkout didn&apos;t complete. If you just made a purchase
+            and this message surprises you, please check your email for Stripe&apos;s receipt — your payment
+            there is the source of truth.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-[12px] pt-[8px]">
+            <Link
+              href="/support"
+              className="flex items-center justify-center h-[44px] px-[28px] bg-[var(--forest-green)] hover:opacity-90 transition-opacity"
+            >
+              <span className="font-label font-bold text-[13px] tracking-[2px] text-[var(--text-white)]">
+                BACK TO SUPPORT PAUL
+              </span>
+            </Link>
+            <Link
+              href="/"
+              className="flex items-center justify-center h-[44px] px-[28px] border border-[var(--border-subtle)] hover:border-[var(--text-secondary)] transition-colors"
+            >
+              <span className="font-label font-bold text-[13px] tracking-[2px] text-[var(--text-primary)]">
+                HOME
+              </span>
+            </Link>
+          </div>
+        </section>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col w-full bg-[var(--bg-warm)]">
       <Header />
@@ -87,7 +180,11 @@ export default function SupportSuccessPage() {
           Paul on the Trail!
         </h1>
         <p className="font-heading text-[16px] md:text-[18px] leading-[1.7] text-[var(--text-secondary)] text-center max-w-[560px]">
-          Your gift will help keep Paul going on his 2,650-mile journey. Every meal, rest day, and piece of gear makes a real difference.
+          {verify.giftTitle ? (
+            <>Your <strong>{verify.giftTitle}</strong> gift will help keep Paul going on his 2,650-mile journey. Every meal, rest day, and piece of gear makes a real difference.</>
+          ) : (
+            <>Your gift will help keep Paul going on his 2,650-mile journey. Every meal, rest day, and piece of gear makes a real difference.</>
+          )}
         </p>
         <div className="flex items-center gap-[10px] bg-[var(--bg-warm)] px-[24px] py-[14px] rounded-[4px]">
           <Mail className="w-[16px] h-[16px] text-[var(--text-muted)]" />
