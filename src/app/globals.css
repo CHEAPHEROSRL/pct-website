@@ -40,6 +40,21 @@
   display: none;
 }
 
+/* Keyboard-focus fallback for inputs that strip the default outline.
+ * Many inputs across the site use Tailwind's `outline-none` so the
+ * visual design isn't interrupted by the browser's default focus ring
+ * on mouse click — but that breaks keyboard navigation since there's
+ * no visible indicator of which field is focused. The `:focus-visible`
+ * pseudo-class only fires for keyboard focus (not mouse clicks), so
+ * this reinstates an accessible indicator without affecting mouse UX. */
+input.outline-none:focus-visible,
+textarea.outline-none:focus-visible,
+select.outline-none:focus-visible,
+[class*="outline-none"]:focus-visible {
+  outline: 2px solid var(--burnt-orange);
+  outline-offset: 2px;
+}
+
 /* ── Scroll Animation System ── */
 
 /* Respect reduced motion preference */

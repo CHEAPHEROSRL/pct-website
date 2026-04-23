@@ -31,6 +31,18 @@ function generateId(): string {
 }
 
 /**
+ * Title-only slugs collide. "Day 1: Campo" and "Day-1 Campo" both slugify
+ * to "day-1-campo", and the second video overwrites the first in the
+ * journal. Appending a short chunk of the post id breaks the tie
+ * deterministically while keeping the slug readable.
+ */
+function slugWithId(title: string, id: string): string {
+  const base = slugify(title);
+  const shortId = id.slice(0, 6);
+  return base ? `${base}-${shortId}` : shortId;
+}
+
+/**
  * GET — YouTube PubSubHubbub verification challenge.
  * YouTube sends a GET request to verify we own the callback URL.
  */
@@ -160,10 +172,11 @@ export async function POST(request: NextRequest) {
       }
 
       // Post 1: draft (admin reviews before publishing)
+      const post1Id = generateId();
       const post1: JournalPost = {
-        id: generateId(),
+        id: post1Id,
         title: pair.post1.title,
-        slug: slugify(pair.post1.title),
+        slug: slugWithId(pair.post1.title, post1Id),
         dayNumber,
         date: new Date().toISOString().split("T")[0],
         body: pair.post1.body,
@@ -178,10 +191,11 @@ export async function POST(request: NextRequest) {
       };
 
       // Post 2: draft, scheduled for later
+      const post2Id = generateId();
       const post2: JournalPost = {
-        id: generateId(),
+        id: post2Id,
         title: pair.post2.title,
-        slug: slugify(pair.post2.title),
+        slug: slugWithId(pair.post2.title, post2Id),
         dayNumber: dayNumber + 2,
         date: new Date(Date.now() + 2 * 86400000).toISOString().split("T")[0],
         body: pair.post2.body,
@@ -228,10 +242,11 @@ export async function POST(request: NextRequest) {
         return new NextResponse("Generation failed", { status: 500 });
       }
 
+      const postId = generateId();
       const post: JournalPost = {
-        id: generateId(),
+        id: postId,
         title: generated.title,
-        slug: slugify(generated.title),
+        slug: slugWithId(generated.title, postId),
         dayNumber,
         date: new Date().toISOString().split("T")[0],
         body: generated.body,

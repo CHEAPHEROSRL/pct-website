@@ -2,6 +2,25 @@ import { Redis } from "@upstash/redis";
 import { NextRequest, NextResponse } from "next/server";
 import type { GpsPoint, LocationData } from "@/lib/types";
 import { snapToTrail, computeTodayStats, metersToFeet, interpolateFromMile } from "@/lib/trail";
+import { safeParse } from "@/lib/redis-safe";
+
+/**
+ * Parse a stored numeric setting safely. Admin can enter anything into the
+ * admin panel fields (including "abc" by mistake), and parseFloat("abc") is
+ * NaN. NaN poisons every downstream calculation and breaks the tracker.
+ * This helper returns `fallback` for NaN/unparseable values and clamps the
+ * result to the provided range.
+ */
+function parseBoundedNumber(
+  raw: unknown,
+  fallback: number,
+  min: number,
+  max: number
+): number {
+  const n = typeof raw === "number" ? raw : parseFloat(String(raw ?? ""));
+  if (!Number.isFinite(n)) return fallback;
+  return Math.min(max, Math.max(min, n));
+}
 
 function getRedis() {
   const url = process.env.KV_REST_API_URL;
@@ -127,18 +146,25 @@ export async function GET() {
 
   // Check for simulated tracking mode in admin settings
   const settingsRaw = await redis.get<string>("admin:settings");
-  const adminSettings = settingsRaw
-    ? typeof settingsRaw === "string" ? JSON.parse(settingsRaw) : settingsRaw
-    : {};
+  const adminSettings = safeParse<Record<string, unknown>>(settingsRaw, {});
 
   const trackingMode = adminSettings.trackingMode || "simulated";
 
   // ── SIMULATED TRACKING ──────────────────────────────────────────────
   if (trackingMode === "simulated") {
-    const currentMile = parseFloat(adminSettings.currentMile) || 0;
-    const dailyPace = parseFloat(adminSettings.dailyPace) || 0;
-    const mileSetAt = parseInt(adminSettings.mileSetAt) || Date.now();
-    const hikeStartDate = adminSettings.hikeStartDate;
+    // Bounded parsing: admin can type anything into the form. parseFloat
+    // returns NaN for non-numeric input, which poisons every calc below.
+    // Upper bounds also prevent an errant "1000" in dailyPace from sending
+    // the marker to mile 5000 for the whole 10-second cache window.
+    const currentMile = parseBoundedNumber(adminSettings.currentMile, 0, 0, 2650);
+    const dailyPace = parseBoundedNumber(adminSettings.dailyPace, 0, 0, 50);
+    const mileSetAtRaw = typeof adminSettings.mileSetAt === "number"
+      ? adminSettings.mileSetAt
+      : parseInt(String(adminSettings.mileSetAt ?? ""));
+    const mileSetAt = Number.isFinite(mileSetAtRaw) ? mileSetAtRaw : Date.now();
+    const hikeStartDate = typeof adminSettings.hikeStartDate === "string"
+      ? adminSettings.hikeStartDate
+      : undefined;
 
     // Calculate estimated mile based on elapsed time since last update
     const elapsedMs = Date.now() - mileSetAt;
@@ -187,7 +213,9 @@ export async function GET() {
     typeof currentRaw === "string" ? JSON.parse(currentRaw) : currentRaw;
 
   const { miles, nearestName, elevationFt } = snapToTrail(current.lat, current.lng);
-  const dayNumber = getDayNumber(adminSettings.hikeStartDate);
+  const dayNumber = getDayNumber(
+    typeof adminSettings.hikeStartDate === "string" ? adminSettings.hikeStartDate : undefined
+  );
 
   // Today's history for daily stats
   const today = new Date().toISOString().slice(0, 10);
