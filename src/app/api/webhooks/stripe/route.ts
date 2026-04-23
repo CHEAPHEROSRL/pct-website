@@ -4,6 +4,7 @@ import { getStripe } from "@/lib/stripe";
 import { avatarColor } from "@/lib/donor-utils";
 import { GIFT_ESTIMATES } from "@/lib/gift-estimates";
 import { snapToTrail } from "@/lib/trail";
+import { safeParse } from "@/lib/redis-safe";
 import type { SupportRecord } from "@/lib/types";
 import type Stripe from "stripe";
 
@@ -42,8 +43,27 @@ export async function POST(request: NextRequest) {
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
 
+    // Don't set the idempotency marker for unpaid events. Async payment
+    // methods (e.g. bank transfers) can fire this event before payment lands;
+    // the follow-up "checkout.session.async_payment_succeeded" event (a
+    // different event.id) carries the paid state. Setting a marker here
+    // would block that legitimate follow-up.
     if (session.payment_status !== "paid") {
       return NextResponse.json({ received: true });
+    }
+
+    // Idempotency: key on event.id (Stripe's own recommendation), set NX at
+    // the TOP of processing. If the marker already exists, another delivery
+    // of this event is in flight or has already completed — we return early
+    // without side effects. Marker has a 30-day TTL, long enough to outlast
+    // all Stripe retries. Per product decision, we favour "stuck permanently
+    // on partial failure" (requires manual Redis clear) over "auto-healing
+    // with possible duplicate entries" — duplicate supporters on the wall
+    // are worse than a single stuck event that an admin notices and clears.
+    const idempotencyKey = `stripe:event:${event.id}`;
+    const acquired = await redis.set(idempotencyKey, "1", { nx: true, ex: 60 * 60 * 24 * 30 });
+    if (!acquired) {
+      return NextResponse.json({ received: true, duplicate: true });
     }
 
     const meta = session.metadata || {};
@@ -51,12 +71,6 @@ export async function POST(request: NextRequest) {
 
     // Use separate Redis key namespaces for trail support vs legacy
     const prefix = isTrailSupport ? "supporters" : "donors";
-
-    // Idempotency: skip if already processed
-    const alreadyProcessed = await redis.get<string>(`${prefix}:processed:${session.id}`);
-    if (alreadyProcessed) {
-      return NextResponse.json({ received: true });
-    }
 
     const amountDollars = (session.amount_total || 0) / 100;
     const displayName = meta.anonymous === "true"
@@ -68,19 +82,13 @@ export async function POST(request: NextRequest) {
     let trailLng: number | undefined;
     let trailMile: number | undefined;
     if (isTrailSupport) {
-      try {
-        const locRaw = await redis.get<string>("location:current");
-        if (locRaw) {
-          const loc = typeof locRaw === "string" ? JSON.parse(locRaw) : locRaw;
-          if (loc.lat && loc.lng) {
-            trailLat = loc.lat;
-            trailLng = loc.lng;
-            const snap = snapToTrail(loc.lat, loc.lng);
-            trailMile = Math.round(snap.miles);
-          }
-        }
-      } catch {
-        // Non-critical — gift is still recorded without position
+      const locRaw = await redis.get<string>("location:current");
+      const loc = safeParse<{ lat?: number; lng?: number } | null>(locRaw, null);
+      if (loc && loc.lat && loc.lng) {
+        trailLat = loc.lat;
+        trailLng = loc.lng;
+        const snap = snapToTrail(loc.lat, loc.lng);
+        trailMile = Math.round(snap.miles);
       }
     }
 
@@ -112,8 +120,6 @@ export async function POST(request: NextRequest) {
     if (isTrailSupport && meta.giftTitle && meta.giftTitle in GIFT_ESTIMATES) {
       await redis.incr(`supporters:gift-count:${meta.giftTitle}`);
     }
-
-    await redis.set(`${prefix}:processed:${session.id}`, "1", { ex: 60 * 60 * 24 * 30 });
   }
 
   return NextResponse.json({ received: true });
