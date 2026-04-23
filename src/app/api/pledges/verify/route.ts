@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
 import { consumeEmailVerifyToken, RATE_LIMITS } from "@/lib/security";
+import { safeParse } from "@/lib/redis-safe";
 import { sendPledgeConfirmation, sendCommunityMilestone } from "@/lib/email";
 import type { PledgeRecord } from "@/lib/types";
 
@@ -51,8 +52,11 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const pendingRecord: PledgeRecord =
-      typeof pendingRaw === "string" ? JSON.parse(pendingRaw) : pendingRaw;
+    const pendingRecord = safeParse<PledgeRecord | null>(pendingRaw, null);
+    if (!pendingRecord) {
+      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://yeschapter.com";
+      return NextResponse.redirect(`${siteUrl}/pledge/verify?status=expired`);
+    }
 
     // Check if pledge already exists (e.g., double-click on verify link)
     const liveKey = `pledger:${pendingRecord.id}`;

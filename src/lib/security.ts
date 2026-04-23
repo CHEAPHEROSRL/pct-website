@@ -188,6 +188,13 @@ export async function generateEmailVerifyToken(
 /**
  * Validate and consume an email verification token.
  * Returns the email if valid, null otherwise. Token is deleted after use.
+ *
+ * Uses atomic GETDEL so that two concurrent requests with the same token
+ * (e.g. a user double-clicking the confirmation link on a slow connection)
+ * can't both see the token as valid. Exactly one caller wins; the other
+ * gets null and returns an "already used / expired" response. Previously
+ * this was a separate GET then DEL, which opened a race window where both
+ * requests could promote a pending pledge to live simultaneously.
  */
 export async function consumeEmailVerifyToken(
   redis: Redis,
@@ -195,10 +202,8 @@ export async function consumeEmailVerifyToken(
   purpose: string
 ): Promise<string | null> {
   const key = `verify:${purpose}:${token}`;
-  const email = await redis.get<string>(key);
-  if (!email) return null;
-  await redis.del(key); // One-time use
-  return email;
+  const email = await redis.getdel<string>(key);
+  return email ?? null;
 }
 
 /**
