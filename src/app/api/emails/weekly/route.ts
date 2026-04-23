@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
 import { requireCronAuth } from "@/lib/security";
-import { sendWeeklyUpdate } from "@/lib/email";
+import { sendWeeklyUpdate, bulkEmailsEnabled } from "@/lib/email";
 import { snapToTrail, metersToFeet } from "@/lib/trail";
 import type { PledgeRecord, GpsPoint, JournalPost } from "@/lib/types";
 
@@ -27,6 +27,14 @@ export async function POST(request: NextRequest) {
 async function handleWeeklySend(request: NextRequest) {
   const authError = requireCronAuth(request);
   if (authError) return authError;
+
+  if (!bulkEmailsEnabled()) {
+    return NextResponse.json({
+      success: true,
+      skipped: true,
+      reason: "bulk emails disabled — set EMAILS_ENABLED=true in Vercel env to enable",
+    });
+  }
 
   const redis = getRedis();
   if (!redis) {

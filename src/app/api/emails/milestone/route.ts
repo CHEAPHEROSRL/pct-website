@@ -1,11 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
 import { requireCronAuth } from "@/lib/security";
-import { sendMilestoneReached, sendPreMilestoneNudge, sendNearFinish } from "@/lib/email";
+import { sendMilestoneReached, sendPreMilestoneNudge, sendNearFinish, bulkEmailsEnabled } from "@/lib/email";
 import { snapToTrail } from "@/lib/trail";
 import type { PledgeRecord, GpsPoint } from "@/lib/types";
 
 export const maxDuration = 60;
+
+function bulkEmailsKillSwitchResponse(): NextResponse {
+  return NextResponse.json({
+    success: true,
+    skipped: true,
+    reason: "bulk emails disabled — set EMAILS_ENABLED=true in Vercel env to enable",
+  });
+}
 
 function getRedis() {
   const url = process.env.KV_REST_API_URL;
@@ -61,6 +69,8 @@ export async function GET(request: NextRequest) {
   const authError = requireCronAuth(request);
   if (authError) return authError;
 
+  if (!bulkEmailsEnabled()) return bulkEmailsKillSwitchResponse();
+
   const redis = getRedis();
   if (!redis) {
     return NextResponse.json({ error: "Storage not configured" }, { status: 503 });
@@ -86,6 +96,8 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const authError = requireCronAuth(request);
   if (authError) return authError;
+
+  if (!bulkEmailsEnabled()) return bulkEmailsKillSwitchResponse();
 
   const redis = getRedis();
   if (!redis) {

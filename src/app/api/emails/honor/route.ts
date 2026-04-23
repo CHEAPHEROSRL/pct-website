@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
 import { requireCronAuth } from "@/lib/security";
-import { sendHonorReminder } from "@/lib/email";
+import { sendHonorReminder, bulkEmailsEnabled } from "@/lib/email";
 import type { PledgeRecord } from "@/lib/types";
 
 export const maxDuration = 60;
@@ -20,6 +20,16 @@ function getRedis() {
 export async function GET(request: NextRequest) {
   const authError = requireCronAuth(request);
   if (authError) return authError;
+
+  // Pre-launch kill-switch. Return a 200 (not an error) with a clear reason
+  // so Vercel's cron scheduler doesn't log this as a failure.
+  if (!bulkEmailsEnabled()) {
+    return NextResponse.json({
+      success: true,
+      skipped: true,
+      reason: "bulk emails disabled — set EMAILS_ENABLED=true in Vercel env to enable",
+    });
+  }
 
   const redis = getRedis();
   if (!redis) {

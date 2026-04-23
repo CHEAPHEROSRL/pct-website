@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
-import { sendNewPost } from "@/lib/email";
+import { sendNewPost, bulkEmailsEnabled } from "@/lib/email";
 import { getSetting } from "@/lib/settings";
 import type { PledgeRecord } from "@/lib/types";
 import { constantTimeEqual } from "@/lib/security";
@@ -25,6 +25,15 @@ function checkAuth(request: NextRequest): boolean {
 export async function POST(request: NextRequest) {
   if (!checkAuth(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Admin-triggered blast to all pledgers — gated by the kill-switch so an
+  // accidental button-press pre-launch doesn't email everyone.
+  if (!bulkEmailsEnabled()) {
+    return NextResponse.json({
+      error: "Bulk emails are paused. Set EMAILS_ENABLED=true in Vercel env to enable.",
+      skipped: true,
+    }, { status: 503 });
   }
 
   const redis = getRedis();

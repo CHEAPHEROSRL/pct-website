@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
 import { requireCronAuth } from "@/lib/security";
-import { sendWelcomeDay1, sendWelcomeDay3 } from "@/lib/email";
+import { sendWelcomeDay1, sendWelcomeDay3, bulkEmailsEnabled } from "@/lib/email";
 import type { PledgeRecord } from "@/lib/types";
 
 // Max Vercel Hobby tier duration. Without this, the cron is killed at 30s,
@@ -22,6 +22,14 @@ function getRedis() {
 export async function GET(request: NextRequest) {
   const authError = requireCronAuth(request);
   if (authError) return authError;
+
+  if (!bulkEmailsEnabled()) {
+    return NextResponse.json({
+      success: true,
+      skipped: true,
+      reason: "bulk emails disabled — set EMAILS_ENABLED=true in Vercel env to enable",
+    });
+  }
 
   const redis = getRedis();
   if (!redis) {

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
 import { consumeEmailVerifyToken, RATE_LIMITS } from "@/lib/security";
 import { safeParse } from "@/lib/redis-safe";
-import { sendPledgeConfirmation, sendCommunityMilestone } from "@/lib/email";
+import { sendPledgeConfirmation, sendCommunityMilestone, bulkEmailsEnabled } from "@/lib/email";
 import type { PledgeRecord } from "@/lib/types";
 
 function getRedis() {
@@ -109,6 +109,12 @@ export async function GET(req: NextRequest) {
 
 // Community milestone check (same as in pledges/route.ts)
 async function checkCommunityMilestones(redis: Redis, pledgerCount: number, totalPledged: number) {
+  // This is a bulk fan-out: if a pledger's verification pushes us across a
+  // milestone (e.g. 25 pledgers, $5k), we email every pledger. Gate it at
+  // the top so a well-intentioned pledge doesn't accidentally trigger an
+  // all-hands blast during the pre-launch window.
+  if (!bulkEmailsEnabled()) return;
+
   const sentSet = (await redis.smembers("emails:community:sent")) || [];
 
   for (const threshold of PLEDGER_THRESHOLDS) {

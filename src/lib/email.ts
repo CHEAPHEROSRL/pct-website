@@ -19,6 +19,32 @@ import { safeParse } from "./redis-safe";
 //
 // See docs/EMAIL-SETUP.md for the full walkthrough.
 
+/**
+ * Kill-switch for bulk / scheduled email sends.
+ *
+ * User-initiated single-recipient emails (magic-link login, pledge-verify link,
+ * pledge-confirmation, honor thank-you) ignore this flag — breaking those
+ * would break real users' flows. But any endpoint that iterates the pledger
+ * list and blasts out N emails MUST call bulkEmailsEnabled() first.
+ *
+ * Default: disabled. Only enables when `EMAILS_ENABLED=true` is explicitly
+ * set in the Vercel environment. That's intentional — forgetting to unset a
+ * kill-switch is safer than forgetting to set one, especially pre-launch
+ * when we don't want cron retries or manual triggers firing off emails to
+ * actual pledgers.
+ *
+ * Gated endpoints:
+ *   /api/emails/honor      (cron)
+ *   /api/emails/welcome    (cron)
+ *   /api/emails/weekly     (cron)
+ *   /api/emails/milestone  (cron)
+ *   /api/emails/new-post   (admin-triggered blast)
+ *   /api/pledges/verify    (community-milestone fan-out)
+ */
+export function bulkEmailsEnabled(): boolean {
+  return process.env.EMAILS_ENABLED === "true";
+}
+
 async function getGmailClient() {
   const clientId =
     process.env.GMAIL_CLIENT_ID ||
