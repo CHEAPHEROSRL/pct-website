@@ -93,6 +93,7 @@ export default function SupportPage() {
   const [firstName, setFirstName] = useState("");
   const [giftMessage, setGiftMessage] = useState("");
   const [anonymous, setAnonymous] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   const openCheckoutPanel = (title: string, price: number) => {
     setPendingGift({ title, price });
@@ -108,6 +109,7 @@ export default function SupportPage() {
   const proceedToCheckout = async () => {
     if (!pendingGift) return;
     setCheckingOut(true);
+    setCheckoutError(null);
     setSelectedGift(pendingGift.title);
     try {
       const res = await fetch("/api/support", {
@@ -121,11 +123,18 @@ export default function SupportPage() {
           anonymous,
         }),
       });
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
       if (data.url) {
         window.location.href = data.url;
+        return;
       }
+      // Reached this line = fetch succeeded but no checkout URL returned.
+      // Show the user the actual problem instead of silently aborting.
+      setCheckoutError(data.error || "Couldn't start checkout — please try again.");
+      setSelectedGift(null);
+      setCheckingOut(false);
     } catch {
+      setCheckoutError("Network error — please check your connection and try again.");
       setSelectedGift(null);
       setCheckingOut(false);
     }
@@ -369,6 +378,12 @@ export default function SupportPage() {
                 </span>
               </div>
             </label>
+
+            {checkoutError && (
+              <div className="flex flex-col gap-[4px] p-[12px] bg-red-50 border border-red-200">
+                <span className="font-heading text-[13px] text-red-700">{checkoutError}</span>
+              </div>
+            )}
 
             <button
               onClick={proceedToCheckout}

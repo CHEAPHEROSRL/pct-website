@@ -86,6 +86,12 @@ export default function TrailMapPage() {
   // Gift locations for supporters mode
   const { locations: giftLocations } = useGiftLocations();
 
+  // Any of the three side-fetches below failing flips this flag, which
+  // renders a subtle "some data didn't load" banner. The map itself still
+  // renders from the main /api/location call; this is purely for the extra
+  // overlays (journal markers, pledger pins, totals).
+  const [sideFetchError, setSideFetchError] = useState(false);
+
   // Journal post markers — only PUBLISHED posts with a mileMarker.
   // Drafts are intentionally NEVER shown on the public map.
   const [journalMarkerPosts, setJournalMarkerPosts] = useState<JournalMarkerPost[]>([]);
@@ -110,7 +116,7 @@ export default function TrailMapPage() {
           }));
         setJournalMarkerPosts(markers);
       })
-      .catch(() => {});
+      .catch(() => setSideFetchError(true));
   }, []);
 
   useEffect(() => {
@@ -122,7 +128,7 @@ export default function TrailMapPage() {
           setCountryCount(data.countryCount || 0);
         }
       })
-      .catch(() => {});
+      .catch(() => setSideFetchError(true));
   }, []);
 
   useEffect(() => {
@@ -131,7 +137,7 @@ export default function TrailMapPage() {
       .then((data) => {
         if (data.stats?.totalPledged) setTotalPledged(data.stats.totalPledged);
       })
-      .catch(() => {});
+      .catch(() => setSideFetchError(true));
   }, []);
 
   const displayLocations = pledgerLocations.length > 0 ? pledgerLocations : fallbackPledgerLocations;
@@ -161,6 +167,14 @@ export default function TrailMapPage() {
   return (
     <div className="flex flex-col w-full bg-[var(--bg-warm)]">
       <Header activeItem="Trail Map" />
+
+      {sideFetchError && (
+        <div className="flex items-center justify-center gap-[10px] px-6 md:px-12 py-[10px] bg-amber-50 border-y border-amber-200 w-full">
+          <span className="font-heading text-[13px] text-amber-900">
+            Some map overlays couldn&apos;t load (journal markers, pledger pins, or totals). The main tracker still works — try refreshing in a moment.
+          </span>
+        </div>
+      )}
 
       {/* Map Main */}
       <div className="flex flex-col lg:flex-row w-full lg:h-[800px]">

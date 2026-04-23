@@ -342,13 +342,31 @@ export default function MyPledgePage() {
   const { data: locationData } = useLocationData(30000);
   const totalMiles = locationData?.stats?.totalMiles ?? 0;
 
-  // Auto-load pledge from session email
+  // Auto-load pledge from session email. Abort controller prevents stomping
+  // state if the user manually types a different email while this is still
+  // in flight (race condition flagged in the audit).
   useEffect(() => {
     if (!user?.email || pledge) return;
-    fetch(`/api/pledges?email=${encodeURIComponent(user.email)}`)
-      .then((res) => res.ok ? res.json() : null)
-      .then((data) => { if (data?.pledge) { setPledge(data.pledge); setEmail(user.email); } })
-      .catch(() => {});
+    const controller = new AbortController();
+    fetch(`/api/pledges?email=${encodeURIComponent(user.email)}`, {
+      signal: controller.signal,
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.pledge) {
+          setPledge(data.pledge);
+          setEmail(user.email);
+        }
+      })
+      .catch((err) => {
+        // AbortError is expected (user navigated away); any other error is
+        // network trouble — keep it quiet, the manual lookup form will
+        // surface a proper error if needed.
+        if (err?.name !== "AbortError") {
+          // swallow — session auto-load is a convenience, not a contract
+        }
+      });
+    return () => controller.abort();
   }, [user, pledge]);
 
   const handleLookup = async (e: FormEvent) => {

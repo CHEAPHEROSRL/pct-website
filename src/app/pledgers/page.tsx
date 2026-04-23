@@ -56,9 +56,14 @@ export default function PledgersPage() {
   const [commentError, setCommentError] = useState<string | null>(null);
   const { user } = useSession();
   const [loading, setLoading] = useState(true);
+  // Track partial-load failures so the user can tell "no pledgers yet" apart
+  // from "backend is having a moment." See trail-map/pledgers/support/my-pledge
+  // for the same pattern.
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
+      let anyFailed = false;
       try {
         const [pledgeRes, challengeRes, commentsRes] = await Promise.all([
           fetch("/api/pledges/stats"),
@@ -70,20 +75,27 @@ export default function PledgersPage() {
           const data = await pledgeRes.json();
           setStats(data.stats);
           setTopPledgers(data.topPledgers || []);
+        } else {
+          anyFailed = true;
         }
 
         if (challengeRes.ok) {
           const data = await challengeRes.json();
           setChallenges(data.history || []);
+        } else {
+          anyFailed = true;
         }
 
         if (commentsRes.ok) {
           const data = await commentsRes.json();
           setComments(data.comments || []);
+        } else {
+          anyFailed = true;
         }
       } catch {
-        // Silently fail — show empty state
+        anyFailed = true;
       } finally {
+        setLoadError(anyFailed);
         setLoading(false);
       }
     }
@@ -130,6 +142,14 @@ export default function PledgersPage() {
     <div className="flex flex-col w-full bg-[var(--bg-warm)]">
       <Header />
       <CountdownBanner />
+
+      {loadError && (
+        <div className="flex items-center justify-center gap-[10px] px-6 md:px-12 py-[10px] bg-amber-50 border-y border-amber-200 w-full">
+          <span className="font-heading text-[13px] text-amber-900">
+            Some community data didn&apos;t load — the numbers below may be incomplete. Try refreshing in a moment.
+          </span>
+        </div>
+      )}
 
       {/* Clarity Banner — foundations vs Paul */}
       <section className="flex flex-col sm:flex-row items-center gap-[12px] sm:gap-[32px] px-6 md:px-12 lg:px-[120px] py-[14px] bg-[var(--bg-dark)] w-full">
