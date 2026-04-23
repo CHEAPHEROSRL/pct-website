@@ -50,8 +50,21 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  // Rate limit: 3 comments per hour per IP
-  const limited = await rateLimit(req, "comments", 3, "1 h");
+  // Two-tier rate limit:
+  //
+  //   (a) IP-wide cap at 20/hour — defends against unauthenticated floods
+  //       and scripted abuse, raised from 3/hour so legitimate pledgers
+  //       behind shared IPs (CGNAT, office, campus, hotel) don't get
+  //       falsely blocked when several of them comment in the same hour.
+  //
+  //   (b) Per-pledger 10-minute cooldown (further down, line ~85) — the
+  //       real anti-spam control. Each authenticated pledger gets their
+  //       own budget keyed on pledgeId, so shared IPs can't exhaust a
+  //       neighbour's quota.
+  //
+  // Together these bound a single IP to 20 auth attempts/hour and any one
+  // pledger to 6 comments/hour, without punishing office networks.
+  const limited = await rateLimit(req, "comments", 20, "1 h");
   if (limited) return limited;
 
   const session = await requirePledgerSession(req);

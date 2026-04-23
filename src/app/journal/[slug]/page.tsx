@@ -131,6 +131,15 @@ export default function JournalPostPage() {
       {/* Article Body */}
       <section className="flex justify-center px-6 md:px-12 lg:px-[120px] py-[48px] md:py-[64px] lg:py-[80px] bg-[var(--bg-white)] w-full">
         <div className="w-full max-w-[720px] article-body">
+          {/*
+           * SAFETY NOTE — react-markdown renders raw HTML in the markdown
+           * body as plain text by default. This is what protects us from
+           * XSS via AI-generated or admin-edited journal bodies. If you
+           * ever add `rehype-raw` to rehypePlugins (to enable <custom-tag>
+           * or inline HTML in posts), you MUST also add `rehype-sanitize`
+           * immediately after it, or install a different HTML-aware
+           * sanitizer. Without that, a script tag in the body will execute.
+           */}
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             components={{

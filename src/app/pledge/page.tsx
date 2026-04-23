@@ -191,10 +191,10 @@ export default function PledgePage() {
 
           {/* Slider */}
           <div className="flex flex-col gap-[12px]">
-            <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--text-muted)]">
+            <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--text-muted)]" id="pledge-slider-label">
               ADJUST AMOUNT
             </span>
-            <div className="relative w-full h-[8px] mt-[8px] mb-[4px]">
+            <div className="relative w-full h-[8px] mt-[8px] mb-[4px] group has-[input:focus-visible]:outline has-[input:focus-visible]:outline-2 has-[input:focus-visible]:outline-[var(--burnt-orange)] has-[input:focus-visible]:outline-offset-[10px] has-[input:focus-visible]:rounded-full">
               <div className="absolute inset-0 bg-[var(--warm-stone)] rounded-[4px]" />
               <div
                 className="absolute top-0 left-0 h-full bg-[var(--burnt-orange)] rounded-[4px]"
@@ -207,6 +207,11 @@ export default function PledgePage() {
                 step="0.01"
                 value={amount}
                 onChange={handleSliderChange}
+                aria-labelledby="pledge-slider-label"
+                aria-valuemin={0.01}
+                aria-valuemax={5}
+                aria-valuenow={amount}
+                aria-valuetext={`${formatCurrency(amount)} per mile`}
                 className="absolute inset-0 w-full opacity-0 cursor-pointer"
                 style={{ height: "24px", top: "-8px" }}
               />
