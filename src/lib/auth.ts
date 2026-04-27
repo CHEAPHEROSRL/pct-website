@@ -36,14 +36,17 @@ export async function generateMagicToken(email: string): Promise<string> {
 /**
  * Consume a magic token. Returns the email if valid, null if expired/used.
  * One-time use — deletes the token from Redis.
+ *
+ * Uses atomic GETDEL so two concurrent consumes can't both succeed (e.g.
+ * if a user double-clicks the "Sign In" button before the first request
+ * completes). Previously this was a separate GET + DEL with a race
+ * window between them.
  */
 export async function consumeMagicToken(token: string): Promise<string | null> {
   const redis = getRedis();
   const key = `auth:magic:${token}`;
-  const email = await redis.get<string>(key);
-  if (!email) return null;
-  await redis.del(key);
-  return email;
+  const email = await redis.getdel<string>(key);
+  return email ?? null;
 }
 
 // ---------------------------------------------------------------------------
