@@ -134,12 +134,27 @@ const TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/sit
  */
 export async function verifyTurnstile(token: string, ip?: string): Promise<boolean> {
   const secret = process.env.TURNSTILE_SECRET_KEY;
+  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+
+  // Three configuration states:
+  //
+  //   1. Both keys set → real verification (the desired prod state).
+  //   2. Both keys MISSING → Turnstile is simply not deployed. The client
+  //      widget never rendered, so users have no way to produce a token.
+  //      Fail-closing here would block every pledge / honor / boost submission
+  //      with no recourse. Other defences (rate limits, honeypot, atomic
+  //      verify tokens) still apply. Allow through.
+  //   3. Only one key set → MISCONFIGURED. The client either does or doesn't
+  //      challenge users while the server does the opposite. Fail-closed in
+  //      production — bypassing here would let an attacker skip the visible
+  //      challenge silently. In dev we still allow through for local hacking.
+  if (!secret && !siteKey) {
+    return true;
+  }
+
   if (!secret) {
-    // Fail-closed in production. A missing secret in prod means the captcha
-    // is silently bypassed for every submission — that's how spam floods
-    // happen. In dev we still allow through for local iteration.
     if (process.env.NODE_ENV === "production") {
-      console.error("TURNSTILE_SECRET_KEY is not set in production — refusing to bypass CAPTCHA");
+      console.error("TURNSTILE: NEXT_PUBLIC_TURNSTILE_SITE_KEY is set but TURNSTILE_SECRET_KEY is missing — refusing to bypass CAPTCHA");
       return false;
     }
     console.warn("TURNSTILE_SECRET_KEY not set — skipping CAPTCHA verification (dev only)");
