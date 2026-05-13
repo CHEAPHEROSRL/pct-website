@@ -3104,7 +3104,7 @@ export default function AdminPage() {
                       Click the button below. It redirects you to Google&apos;s consent screen where you sign in and grant the <strong>gmail.send</strong> permission. After you tap Allow, you&apos;re sent back here and the website can send as your account. The permission can&apos;t read your inbox, delete emails, or touch anything else — sending only.
                     </p>
                     <a
-                      href={`/api/admin/gmail-oauth/start?token=${encodeURIComponent(token)}`}
+                      href="/api/admin/gmail-oauth/start"
                       className="flex items-center justify-center gap-[8px] px-[20px] py-[12px] bg-[var(--burnt-orange)] hover:opacity-90 transition-opacity cursor-pointer w-fit"
                     >
                       <Mail className="w-[14px] h-[14px] text-white" />
