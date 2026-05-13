@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { MapContainer, TileLayer, Polyline, Marker, Popup, CircleMarker, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -70,6 +70,38 @@ function buildPledgeCoverageCoords(pledgeCoveragePercent: number): [number, numb
     if (wp.miles >= coverageMiles) break;
   }
   return coords;
+}
+
+/**
+ * Tracks the map's current zoom level into React state. Used by the
+ * claimed-section pin layer so it can shrink pins at low zoom (global view)
+ * and grow them back to full size at trail-view zoom — keeps sponsor logos
+ * from blanketing the trail when the user zooms way out.
+ */
+function ZoomTracker({ onZoom }: { onZoom: (zoom: number) => void }) {
+  const map = useMap();
+  useEffect(() => {
+    onZoom(map.getZoom());
+    const handler = () => onZoom(map.getZoom());
+    map.on("zoomend", handler);
+    return () => {
+      map.off("zoomend", handler);
+    };
+  }, [map, onZoom]);
+  return null;
+}
+
+/**
+ * Map Leaflet zoom level → claimed-pin display scale.
+ *   zoom 2 (continent view): 0.3x   — pins shrink to small dots so they
+ *                                     don't blanket the trail
+ *   zoom 7 (state view) +    : 1.0x  — full size, fully legible
+ * Linear interpolation between; clamped at the ends.
+ */
+function getPinScale(zoom: number): number {
+  if (zoom >= 7) return 1;
+  if (zoom <= 2) return 0.3;
+  return 0.3 + ((zoom - 2) / 5) * 0.7;
 }
 
 function FlyToHandler({ target }: { target?: [number, number, number] }) {
@@ -171,10 +203,17 @@ function createJournalMarkerIcon(dayNumber: number) {
 // Three shapes covering the data the section-picker can produce. All anchor
 // to the section's lat/lng, all show the section name beneath the icon.
 
-function createSingleClaimedIcon(sectionName: string) {
+// `scale` arg shrinks the visible pin at low map zoom levels. We apply it via
+// CSS transform on the outermost div rather than recomputing every inner
+// dimension — keeps the markup readable and the implementation contained.
+// Leaflet's iconSize/iconAnchor stay constant: at low zoom the bounding box
+// is technically larger than the visible pin (click targets get slightly more
+// forgiving), which is fine.
+
+function createSingleClaimedIcon(sectionName: string, scale = 1) {
   return new L.DivIcon({
     className: "",
-    html: `<div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+    html: `<div style="transform:scale(${scale});transform-origin:center;display:flex;flex-direction:column;align-items:center;gap:3px;">
       <div style="display:flex;align-items:center;justify-content:center;width:30px;height:30px;background:#3D7A5A;border:3px solid #FFFFFF;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,0.25);">
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/>
@@ -189,10 +228,10 @@ function createSingleClaimedIcon(sectionName: string) {
   });
 }
 
-function createClusterClaimedIcon(count: number, sectionName: string) {
+function createClusterClaimedIcon(count: number, sectionName: string, scale = 1) {
   return new L.DivIcon({
     className: "",
-    html: `<div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+    html: `<div style="transform:scale(${scale});transform-origin:center;display:flex;flex-direction:column;align-items:center;gap:3px;">
       <div style="display:flex;align-items:center;justify-content:center;width:40px;height:40px;background:#3D7A5A;border:3px solid #FFFFFF;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,0.3);font-family:'Barlow Semi Condensed',sans-serif;font-weight:700;font-size:15px;color:#FFFFFF;">${count}</div>
       <div style="background:#FFFFFF;padding:2px 6px;border:1px solid #D9D7D4;border-radius:3px;white-space:nowrap;font-family:'Barlow Semi Condensed',sans-serif;font-weight:700;font-size:9px;letter-spacing:1px;color:#1C1C1C;">${sectionName.toUpperCase()}</div>
     </div>`,
@@ -202,12 +241,12 @@ function createClusterClaimedIcon(count: number, sectionName: string) {
   });
 }
 
-function createSponsorIcon(logoUrl: string, companyName: string, sectionName: string) {
+function createSponsorIcon(logoUrl: string, companyName: string, sectionName: string, scale = 1) {
   // Inline <img> so the logo loads with the marker; failures render as a
   // text fallback so a missing file never breaks the map.
   return new L.DivIcon({
     className: "",
-    html: `<div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+    html: `<div style="transform:scale(${scale});transform-origin:center;display:flex;flex-direction:column;align-items:center;gap:3px;">
       <div style="display:flex;align-items:center;justify-content:center;width:50px;height:50px;background:#FFFFFF;border:3px solid #C45C26;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.3);overflow:hidden;">
         <img src="${logoUrl}" alt="${companyName}" style="max-width:42px;max-height:42px;object-fit:contain;" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=\\'font-family:Barlow Semi Condensed,sans-serif;font-weight:700;font-size:10px;color:#C45C26;letter-spacing:1px;text-align:center;\\'>'+this.alt.toUpperCase().slice(0,8)+'</span>';" />
       </div>
@@ -345,6 +384,12 @@ export default function TrailMapView({
     );
   }, [claimedSections, totalMiles]);
 
+  // Current Leaflet zoom, fed by <ZoomTracker> below. Initial value matches
+  // what we pass to MapContainer's `zoom` prop so the first render uses the
+  // right scale and we avoid a brief frame at the wrong size.
+  const [currentZoom, setCurrentZoom] = useState<number>(mode === "pledgers" ? 2 : 6);
+  const pinScale = useMemo(() => getPinScale(currentZoom), [currentZoom]);
+
   // Filter journal posts: only show ones Paul has actually reached.
   // Posts with no mileMarker are skipped entirely (legacy / unanchored).
   // Then resolve each to a lat/lng using the existing trail interpolation.
@@ -379,6 +424,7 @@ export default function TrailMapView({
       scrollWheelZoom={true}
     >
       <FlyToHandler target={effectiveFlyTo} />
+      <ZoomTracker onZoom={setCurrentZoom} />
       <TileLayer
         url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -463,10 +509,10 @@ export default function TrailMapView({
               so Paul's pin always layers on top when they coincide. */}
           {visibleClaimedSections.map((entry) => {
             const iconNode = entry.sponsor
-              ? createSponsorIcon(entry.sponsor.logoUrl, entry.sponsor.companyName, entry.name)
+              ? createSponsorIcon(entry.sponsor.logoUrl, entry.sponsor.companyName, entry.name, pinScale)
               : entry.count > 1
-                ? createClusterClaimedIcon(entry.count, entry.name)
-                : createSingleClaimedIcon(entry.name);
+                ? createClusterClaimedIcon(entry.count, entry.name, pinScale)
+                : createSingleClaimedIcon(entry.name, pinScale);
             return (
               <Marker
                 key={`claimed-${entry.id}`}
