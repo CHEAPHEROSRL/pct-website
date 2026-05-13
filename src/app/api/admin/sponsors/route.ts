@@ -160,8 +160,17 @@ export async function POST(request: NextRequest) {
     const sponsors = await upsertSponsor(record);
     return NextResponse.json({ sponsors, record });
   } catch (err) {
+    // Bubble the actual message up to the admin UI. Safe to expose because
+    // this route is admin-auth-guarded; the message is what we'd otherwise
+    // have to dig out of Vercel logs by hand. Common failure modes here:
+    //   • Vercel Blob token missing  → "No token found. Either configure the
+    //     `BLOB_READ_WRITE_TOKEN` environment variable, or pass a `token`
+    //     option to your calls."
+    //   • Wrong blob region/store    → "Vercel Blob: ..." with explanation
+    //   • Redis not configured       → "Redis not configured" (from sponsors.ts)
     console.error("Failed to save sponsor:", err);
-    return NextResponse.json({ error: "Failed to save sponsor" }, { status: 500 });
+    const message = err instanceof Error ? err.message : String(err);
+    return NextResponse.json({ error: `Failed to save sponsor: ${message}` }, { status: 500 });
   }
 }
 
@@ -196,6 +205,7 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ sponsors });
   } catch (err) {
     console.error("Failed to delete sponsor:", err);
-    return NextResponse.json({ error: "Failed to delete sponsor" }, { status: 500 });
+    const message = err instanceof Error ? err.message : String(err);
+    return NextResponse.json({ error: `Failed to delete sponsor: ${message}` }, { status: 500 });
   }
 }
