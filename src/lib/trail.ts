@@ -97,6 +97,98 @@ export const pctRouteCoords: [number, number][] = pctWaypoints.map((w) => [w.lat
 // Named locations along the trail for "nearest location" display
 const namedLocations = pctWaypoints.filter((w) => w.name);
 
+// — Trail Sections (pledger pin claims) —
+
+export type TrailRegion = "socal" | "sierra" | "norcal" | "oregon" | "washington";
+
+export const TRAIL_REGIONS: Record<TrailRegion, { label: string; rangeLabel: string }> = {
+  socal: { label: "Southern California", rangeLabel: "MI 0–700" },
+  sierra: { label: "Sierra Nevada", rangeLabel: "MI 700–1100" },
+  norcal: { label: "Northern California", rangeLabel: "MI 1100–1691" },
+  oregon: { label: "Oregon", rangeLabel: "MI 1691–2147" },
+  washington: { label: "Washington", rangeLabel: "MI 2147–2650" },
+};
+
+export interface TrailSection {
+  id: string;
+  name: string;
+  miles: number;
+  lat: number;
+  lng: number;
+  region: TrailRegion;
+  // Short marketing line shown under the name in the picker. Keep under ~40 chars.
+  subtitle?: string;
+}
+
+// Curated subset of pctWaypoints suitable as pin-claim landmarks. Drawn from
+// the real waypoint coordinates above so a section's lat/lng matches Paul's
+// position when he reaches that mile.
+export const trailSections: TrailSection[] = [
+  { id: "campo", name: "Campo", miles: 0, lat: 32.589, lng: -116.467, region: "socal", subtitle: "Southern terminus" },
+  { id: "lake-morena", name: "Lake Morena", miles: 20, lat: 32.691, lng: -116.516, region: "socal" },
+  { id: "mt-laguna", name: "Mt. Laguna", miles: 42, lat: 32.868, lng: -116.421, region: "socal" },
+  { id: "warner-springs", name: "Warner Springs", miles: 109, lat: 33.283, lng: -116.634, region: "socal" },
+  { id: "idyllwild", name: "Idyllwild", miles: 180, lat: 33.740, lng: -116.721, region: "socal" },
+  { id: "big-bear-lake", name: "Big Bear Lake", miles: 266, lat: 34.255, lng: -116.824, region: "socal" },
+  { id: "cajon-pass", name: "Cajon Pass", miles: 342, lat: 34.337, lng: -117.442, region: "socal" },
+  { id: "wrightwood", name: "Wrightwood", miles: 369, lat: 34.360, lng: -117.633, region: "socal" },
+  { id: "agua-dulce", name: "Agua Dulce", miles: 454, lat: 34.498, lng: -118.323, region: "socal" },
+  { id: "tehachapi", name: "Tehachapi", miles: 566, lat: 35.132, lng: -118.448, region: "socal" },
+  { id: "walker-pass", name: "Walker Pass", miles: 651, lat: 35.662, lng: -118.025, region: "socal" },
+  { id: "kennedy-meadows", name: "Kennedy Meadows", miles: 702, lat: 36.027, lng: -118.124, region: "socal", subtitle: "Gateway to the Sierra" },
+  { id: "forester-pass", name: "Forester Pass", miles: 779, lat: 36.695, lng: -118.374, region: "sierra", subtitle: "Highest point, 13,153 ft" },
+  { id: "muir-pass", name: "Muir Pass", miles: 839, lat: 37.110, lng: -118.678, region: "sierra" },
+  { id: "tuolumne-meadows", name: "Tuolumne Meadows", miles: 943, lat: 37.877, lng: -119.345, region: "sierra", subtitle: "Yosemite National Park" },
+  { id: "sonora-pass", name: "Sonora Pass", miles: 1018, lat: 38.328, lng: -119.635, region: "sierra" },
+  { id: "echo-lake", name: "Echo Lake", miles: 1092, lat: 38.836, lng: -120.035, region: "sierra" },
+  { id: "sierra-city", name: "Sierra City", miles: 1195, lat: 39.564, lng: -120.634, region: "norcal" },
+  { id: "belden", name: "Belden", miles: 1287, lat: 40.004, lng: -121.250, region: "norcal" },
+  { id: "lassen", name: "Lassen", miles: 1332, lat: 40.450, lng: -121.430, region: "norcal", subtitle: "Lassen National Park" },
+  { id: "burney-falls", name: "Burney Falls", miles: 1419, lat: 41.020, lng: -121.647, region: "norcal" },
+  { id: "castle-crags", name: "Castle Crags", miles: 1502, lat: 41.147, lng: -122.309, region: "norcal" },
+  { id: "ashland", name: "Ashland", miles: 1726, lat: 42.100, lng: -122.617, region: "oregon" },
+  { id: "crater-lake", name: "Crater Lake", miles: 1829, lat: 42.929, lng: -122.165, region: "oregon" },
+  { id: "mckenzie-pass", name: "McKenzie Pass", miles: 1984, lat: 44.260, lng: -121.790, region: "oregon" },
+  { id: "timberline-lodge", name: "Timberline Lodge", miles: 2107, lat: 45.330, lng: -121.712, region: "oregon", subtitle: "Mt. Hood" },
+  { id: "cascade-locks", name: "Cascade Locks", miles: 2147, lat: 45.669, lng: -121.897, region: "oregon", subtitle: "Bridge of the Gods" },
+  { id: "white-pass", name: "White Pass", miles: 2295, lat: 46.637, lng: -121.391, region: "washington" },
+  { id: "snoqualmie-pass", name: "Snoqualmie Pass", miles: 2393, lat: 47.426, lng: -121.413, region: "washington" },
+  { id: "stevens-pass", name: "Stevens Pass", miles: 2461, lat: 47.748, lng: -121.089, region: "washington" },
+  { id: "rainy-pass", name: "Rainy Pass", miles: 2580, lat: 48.516, lng: -120.734, region: "washington" },
+  { id: "manning-park", name: "Manning Park", miles: 2659, lat: 49.070, lng: -120.780, region: "washington", subtitle: "Canada · Finish" },
+];
+
+export function getTrailSection(id: string): TrailSection | undefined {
+  return trailSections.find((s) => s.id === id);
+}
+
+// — Section Sponsors (managed via /admin → Sponsors tab) —
+//
+// Stored in Redis (key: "sponsors:all") as a JSON array. Logos are uploaded to
+// Vercel Blob via the admin endpoint. Exactly one of `sectionId` or
+// `customLocation` is set per record — admin UI enforces this. Custom locations
+// exist so a sponsor deal can claim a stretch we didn't pre-name in
+// trailSections (e.g. a specific summit, trail town, or memorial).
+export interface SponsorRecord {
+  id: string;
+  companyName: string;
+  logoUrl: string;
+  websiteUrl?: string;
+  // Set when the sponsor maps to one of the curated named landmarks.
+  sectionId?: string;
+  // Set when the sponsor occupies a freeform location on the trail. `miles`
+  // is required so we can apply the same "only render after Paul has reached
+  // it"-style logic uniformly. Actually for sponsors we render from day one
+  // (sponsors paid for visibility), but miles is still useful for sorting.
+  customLocation?: {
+    name: string;
+    miles: number;
+    lat: number;
+    lng: number;
+  };
+  createdAt: number;
+}
+
 /** Haversine distance between two points in miles */
 export function haversineDistance(
   lat1: number,

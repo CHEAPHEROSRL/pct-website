@@ -25,12 +25,15 @@ import {
   Settings,
   MapPin,
   Navigation,
+  Building2,
+  Upload,
 } from "lucide-react";
 import type { JournalPost, ChallengePublic } from "@/lib/types";
 import { getMileForDay, getLastTrackedDay } from "@/lib/day-mileage";
+import { trailSections, TRAIL_REGIONS, type SponsorRecord } from "@/lib/trail";
 
-type View = "login" | "tracker" | "list" | "editor" | "challenges" | "honor" | "waitlist" | "emails" | "email-detail" | "settings";
-type AdminTab = "tracker" | "journal" | "challenges" | "honor" | "waitlist" | "emails" | "settings";
+type View = "login" | "tracker" | "list" | "editor" | "challenges" | "honor" | "waitlist" | "emails" | "email-detail" | "settings" | "sponsors";
+type AdminTab = "tracker" | "journal" | "challenges" | "honor" | "waitlist" | "emails" | "settings" | "sponsors";
 
 interface EmailTemplateListItem {
   id: string;
@@ -101,6 +104,23 @@ export default function AdminPage() {
   const [settings, setSettings] = useState<Record<string, string>>({});
   const [settingsLoading, setSettingsLoading] = useState(false);
   const [settingsSaved, setSettingsSaved] = useState(false);
+
+  // Sponsors state
+  const [sponsors, setSponsors] = useState<SponsorRecord[]>([]);
+  const [sponsorsLoading, setSponsorsLoading] = useState(false);
+  const [sponsorForm, setSponsorForm] = useState({
+    mode: "section" as "section" | "custom",
+    sectionId: "",
+    customName: "",
+    customMiles: "",
+    customLat: "",
+    customLng: "",
+    companyName: "",
+    websiteUrl: "",
+    logoFile: null as File | null,
+  });
+  const [sponsorSubmitting, setSponsorSubmitting] = useState(false);
+  const [sponsorError, setSponsorError] = useState<string | null>(null);
 
   // Email test state
   const [testEmailTo, setTestEmailTo] = useState("ciocanraul@gmail.com");
@@ -316,6 +336,138 @@ export default function AdminPage() {
       setStatus("Failed to load settings");
     } finally {
       setSettingsLoading(false);
+    }
+  }, [token]);
+
+  const fetchSponsors = useCallback(async () => {
+    setSponsorsLoading(true);
+    try {
+      const res = await fetch("/api/admin/sponsors", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setSponsors(Array.isArray(data?.sponsors) ? data.sponsors : []);
+      }
+    } catch {
+      setStatus("Failed to load sponsors");
+    } finally {
+      setSponsorsLoading(false);
+    }
+  }, [token]);
+
+  const resetSponsorForm = useCallback(() => {
+    setSponsorForm({
+      mode: "section",
+      sectionId: "",
+      customName: "",
+      customMiles: "",
+      customLat: "",
+      customLng: "",
+      companyName: "",
+      websiteUrl: "",
+      logoFile: null,
+    });
+    setSponsorError(null);
+  }, []);
+
+  const handleSponsorSubmit = useCallback(async () => {
+    setSponsorError(null);
+
+    // Client-side validation mirrors the server checks so the user sees
+    // problems immediately instead of waiting for a round-trip.
+    if (!sponsorForm.companyName.trim()) {
+      setSponsorError("Company name is required");
+      return;
+    }
+    if (sponsorForm.mode === "section" && !sponsorForm.sectionId) {
+      setSponsorError("Pick a trail section");
+      return;
+    }
+    if (sponsorForm.mode === "custom") {
+      if (!sponsorForm.customName.trim()) {
+        setSponsorError("Custom location name is required");
+        return;
+      }
+      const m = Number(sponsorForm.customMiles);
+      const la = Number(sponsorForm.customLat);
+      const ln = Number(sponsorForm.customLng);
+      if (!Number.isFinite(m) || m < 0 || m > 2700) {
+        setSponsorError("Miles must be a number between 0 and 2700");
+        return;
+      }
+      if (!Number.isFinite(la) || la < -90 || la > 90) {
+        setSponsorError("Lat must be a number between -90 and 90");
+        return;
+      }
+      if (!Number.isFinite(ln) || ln < -180 || ln > 180) {
+        setSponsorError("Lng must be a number between -180 and 180");
+        return;
+      }
+    }
+
+    // Logo is required on create. If editing an existing entry (section already
+    // sponsored), the server will fall back to the existing logoUrl when no
+    // file is provided — so we only enforce the file requirement here when no
+    // existing entry exists.
+    const editingExisting =
+      sponsorForm.mode === "section" &&
+      sponsors.some((s) => s.sectionId === sponsorForm.sectionId);
+    if (!sponsorForm.logoFile && !editingExisting) {
+      setSponsorError("Logo file is required");
+      return;
+    }
+
+    setSponsorSubmitting(true);
+    try {
+      const fd = new FormData();
+      fd.append("mode", sponsorForm.mode);
+      fd.append("companyName", sponsorForm.companyName.trim());
+      if (sponsorForm.websiteUrl.trim()) fd.append("websiteUrl", sponsorForm.websiteUrl.trim());
+      if (sponsorForm.mode === "section") {
+        fd.append("sectionId", sponsorForm.sectionId);
+      } else {
+        fd.append("customName", sponsorForm.customName.trim());
+        fd.append("customMiles", sponsorForm.customMiles);
+        fd.append("customLat", sponsorForm.customLat);
+        fd.append("customLng", sponsorForm.customLng);
+      }
+      if (sponsorForm.logoFile) fd.append("logo", sponsorForm.logoFile);
+
+      const res = await fetch("/api/admin/sponsors", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: fd,
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setSponsorError(data?.error || "Failed to save sponsor");
+        return;
+      }
+      setSponsors(Array.isArray(data?.sponsors) ? data.sponsors : []);
+      resetSponsorForm();
+    } catch {
+      setSponsorError("Network error");
+    } finally {
+      setSponsorSubmitting(false);
+    }
+  }, [sponsorForm, sponsors, token, resetSponsorForm]);
+
+  const handleSponsorDelete = useCallback(async (id: string) => {
+    if (!confirm("Remove this sponsor? Their logo file will also be deleted.")) return;
+    try {
+      const res = await fetch(`/api/admin/sponsors?id=${encodeURIComponent(id)}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setSponsors(Array.isArray(data?.sponsors) ? data.sponsors : []);
+      } else {
+        alert(data?.error || "Failed to delete sponsor");
+      }
+    } catch {
+      alert("Network error");
     }
   }, [token]);
 
@@ -951,6 +1103,17 @@ export default function AdminPage() {
           >
             <Send className="w-[16px] h-[16px]" />
             EMAILS
+          </button>
+          <button
+            onClick={() => { setActiveTab("sponsors"); setView("sponsors"); setStatus(""); fetchSponsors(); }}
+            className={`flex items-center gap-[6px] md:gap-[8px] px-[14px] md:px-[24px] py-[14px] font-label font-bold text-[11px] md:text-[12px] tracking-[1.5px] md:tracking-[2px] border-b-2 transition-colors cursor-pointer shrink-0 ${
+              activeTab === "sponsors"
+                ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
+                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+            }`}
+          >
+            <Building2 className="w-[16px] h-[16px]" />
+            SPONSORS
           </button>
           <button
             onClick={() => { setActiveTab("settings"); setView("settings"); setStatus(""); fetchSettings(); fetchGmailOAuthStatus(); }}
@@ -3591,6 +3754,338 @@ export default function AdminPage() {
             </>
           )}
         </div>
+    );
+  }
+
+  // --- SPONSORS VIEW ---
+  if (view === "sponsors" && authenticated) {
+    const sponsoredSectionIds = new Set(sponsors.filter((s) => s.sectionId).map((s) => s.sectionId!));
+    const editingExisting =
+      sponsorForm.mode === "section" &&
+      sponsors.some((s) => s.sectionId === sponsorForm.sectionId);
+
+    return adminShell(
+      <div className="flex flex-col gap-[24px] md:gap-[32px] p-[16px] md:p-[40px] max-w-[960px]">
+        <div className="flex flex-col gap-[8px]">
+          <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">
+            SPONSORS
+          </span>
+          <h1 className="font-heading font-semibold text-[28px] text-[var(--text-primary)]">
+            Trail Section Sponsors
+          </h1>
+          <p className="font-heading text-[14px] leading-[1.6] text-[var(--text-secondary)] max-w-[640px]">
+            Manage company logos that appear on the trail map. Each sponsor can claim either one of the 32 named PCT landmarks, or a fully custom location (any lat/lng on the route). Logos are visible from day one — pledger pins only appear after Paul passes the landmark.
+          </p>
+        </div>
+
+        {/* Existing sponsors list */}
+        <div className="flex flex-col gap-[12px]">
+          <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-muted)]">
+            ACTIVE SPONSORS ({sponsors.length})
+          </span>
+          {sponsorsLoading ? (
+            <span className="font-heading text-[14px] text-[var(--text-muted)]">Loading sponsors…</span>
+          ) : sponsors.length === 0 ? (
+            <div className="flex items-center justify-center p-[28px] bg-[var(--bg-warm)] border border-[var(--border-subtle)]">
+              <span className="font-heading italic text-[13px] text-[var(--text-muted)]">
+                No sponsors yet. Add one below.
+              </span>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-[8px]">
+              {sponsors.map((s) => {
+                const labelTop = s.sectionId
+                  ? trailSections.find((sec) => sec.id === s.sectionId)?.name || s.sectionId
+                  : s.customLocation?.name || "(custom)";
+                const labelBottom = s.sectionId
+                  ? `MILE ${trailSections.find((sec) => sec.id === s.sectionId)?.miles?.toLocaleString("en-US") || "?"} · NAMED LANDMARK`
+                  : `MILE ${(s.customLocation?.miles ?? 0).toLocaleString("en-US")} · CUSTOM LOCATION`;
+                return (
+                  <div
+                    key={s.id}
+                    className="flex items-center gap-[16px] p-[16px] bg-[var(--bg-white)] border border-[var(--border-subtle)]"
+                  >
+                    {/* Logo thumbnail. Plain img so SVG renders and we don't
+                        need next/image's remote-host config for the Blob CDN. */}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={s.logoUrl}
+                      alt={s.companyName}
+                      className="w-[56px] h-[56px] object-contain border border-[var(--border-subtle)] bg-white shrink-0"
+                    />
+                    <div className="flex flex-col gap-[2px] flex-1 min-w-0">
+                      <span className="font-heading font-semibold text-[15px] text-[var(--text-primary)] truncate">
+                        {s.companyName}
+                      </span>
+                      <span className="font-heading text-[13px] text-[var(--text-secondary)] truncate">
+                        {labelTop}
+                      </span>
+                      <span className="font-label font-bold text-[10px] tracking-[1.5px] text-[var(--text-muted)] truncate">
+                        {labelBottom}
+                      </span>
+                      {s.websiteUrl && (
+                        <a
+                          href={s.websiteUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-heading text-[12px] text-[var(--burnt-orange)] hover:underline truncate"
+                        >
+                          {s.websiteUrl}
+                        </a>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => handleSponsorDelete(s.id)}
+                      className="flex items-center gap-[6px] px-[14px] py-[8px] border border-red-300 hover:bg-red-50 transition-colors cursor-pointer shrink-0"
+                    >
+                      <Trash2 className="w-[14px] h-[14px] text-red-500" />
+                      <span className="font-label font-bold text-[10px] tracking-[1.5px] text-red-600">REMOVE</span>
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Add / replace sponsor form */}
+        <div className="flex flex-col gap-[20px] p-[20px] md:p-[28px] bg-[var(--bg-white)] border-2 border-[var(--burnt-orange)]">
+          <div className="flex items-center gap-[10px]">
+            <Plus className="w-[18px] h-[18px] text-[var(--burnt-orange)]" />
+            <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-primary)]">
+              {editingExisting ? "REPLACE EXISTING SPONSOR" : "ADD NEW SPONSOR"}
+            </span>
+          </div>
+
+          {/* Mode toggle */}
+          <div className="flex flex-col gap-[8px]">
+            <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+              LOCATION TYPE
+            </span>
+            <div className="flex gap-[8px]">
+              <button
+                type="button"
+                onClick={() => setSponsorForm((f) => ({ ...f, mode: "section" }))}
+                className={`flex items-center justify-center gap-[8px] flex-1 h-[44px] cursor-pointer transition-colors ${
+                  sponsorForm.mode === "section"
+                    ? "bg-[var(--burnt-orange-light)] border-2 border-[var(--burnt-orange)]"
+                    : "bg-[var(--bg-warm)] border-2 border-transparent hover:border-[var(--burnt-orange)]"
+                }`}
+              >
+                <MapPin className="w-[16px] h-[16px] text-[var(--burnt-orange)]" />
+                <span className="font-label font-bold text-[11px] tracking-[1.5px] text-[var(--text-primary)]">
+                  NAMED PCT LANDMARK
+                </span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setSponsorForm((f) => ({ ...f, mode: "custom" }))}
+                className={`flex items-center justify-center gap-[8px] flex-1 h-[44px] cursor-pointer transition-colors ${
+                  sponsorForm.mode === "custom"
+                    ? "bg-[var(--burnt-orange-light)] border-2 border-[var(--burnt-orange)]"
+                    : "bg-[var(--bg-warm)] border-2 border-transparent hover:border-[var(--burnt-orange)]"
+                }`}
+              >
+                <Navigation className="w-[16px] h-[16px] text-[var(--burnt-orange)]" />
+                <span className="font-label font-bold text-[11px] tracking-[1.5px] text-[var(--text-primary)]">
+                  CUSTOM LAT/LNG
+                </span>
+              </button>
+            </div>
+          </div>
+
+          {/* Section picker (when mode = section) */}
+          {sponsorForm.mode === "section" && (
+            <div className="flex flex-col gap-[8px]">
+              <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                TRAIL SECTION
+              </span>
+              <select
+                value={sponsorForm.sectionId}
+                onChange={(e) => setSponsorForm((f) => ({ ...f, sectionId: e.target.value }))}
+                className="w-full h-[44px] px-[12px] font-heading text-[14px] text-[var(--text-primary)] bg-[var(--bg-white)] border border-[var(--border-subtle)] focus:outline-none focus:border-[var(--burnt-orange)]"
+              >
+                <option value="">— Pick a section —</option>
+                {(Object.keys(TRAIL_REGIONS) as (keyof typeof TRAIL_REGIONS)[]).map((region) => (
+                  <optgroup key={region} label={TRAIL_REGIONS[region].label}>
+                    {trailSections.filter((s) => s.region === region).map((s) => {
+                      const alreadySponsored = sponsoredSectionIds.has(s.id);
+                      return (
+                        <option key={s.id} value={s.id}>
+                          {s.name} (mi {s.miles.toLocaleString("en-US")})
+                          {alreadySponsored ? " — already sponsored" : ""}
+                        </option>
+                      );
+                    })}
+                  </optgroup>
+                ))}
+              </select>
+              {editingExisting && (
+                <span className="font-heading italic text-[12px] text-[var(--burnt-orange)]">
+                  This section already has a sponsor. Submitting will replace it (and delete the old logo).
+                </span>
+              )}
+            </div>
+          )}
+
+          {/* Custom location fields (when mode = custom) */}
+          {sponsorForm.mode === "custom" && (
+            <div className="flex flex-col gap-[12px]">
+              <div className="flex flex-col gap-[8px]">
+                <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                  LOCATION NAME
+                </span>
+                <input
+                  type="text"
+                  value={sponsorForm.customName}
+                  onChange={(e) => setSponsorForm((f) => ({ ...f, customName: e.target.value }))}
+                  placeholder="e.g. Acme Pass"
+                  maxLength={60}
+                  className="w-full h-[44px] px-[12px] font-heading text-[14px] text-[var(--text-primary)] bg-[var(--bg-white)] border border-[var(--border-subtle)] focus:outline-none focus:border-[var(--burnt-orange)]"
+                />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-[12px]">
+                <div className="flex flex-col gap-[8px]">
+                  <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                    MILE (0–2700)
+                  </span>
+                  <input
+                    type="number"
+                    value={sponsorForm.customMiles}
+                    onChange={(e) => setSponsorForm((f) => ({ ...f, customMiles: e.target.value }))}
+                    placeholder="e.g. 1234"
+                    min={0}
+                    max={2700}
+                    step={0.1}
+                    className="w-full h-[44px] px-[12px] font-heading text-[14px] text-[var(--text-primary)] bg-[var(--bg-white)] border border-[var(--border-subtle)] focus:outline-none focus:border-[var(--burnt-orange)]"
+                  />
+                </div>
+                <div className="flex flex-col gap-[8px]">
+                  <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                    LATITUDE
+                  </span>
+                  <input
+                    type="number"
+                    value={sponsorForm.customLat}
+                    onChange={(e) => setSponsorForm((f) => ({ ...f, customLat: e.target.value }))}
+                    placeholder="e.g. 36.5"
+                    min={-90}
+                    max={90}
+                    step={0.0001}
+                    className="w-full h-[44px] px-[12px] font-heading text-[14px] text-[var(--text-primary)] bg-[var(--bg-white)] border border-[var(--border-subtle)] focus:outline-none focus:border-[var(--burnt-orange)]"
+                  />
+                </div>
+                <div className="flex flex-col gap-[8px]">
+                  <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                    LONGITUDE
+                  </span>
+                  <input
+                    type="number"
+                    value={sponsorForm.customLng}
+                    onChange={(e) => setSponsorForm((f) => ({ ...f, customLng: e.target.value }))}
+                    placeholder="e.g. -118.2"
+                    min={-180}
+                    max={180}
+                    step={0.0001}
+                    className="w-full h-[44px] px-[12px] font-heading text-[14px] text-[var(--text-primary)] bg-[var(--bg-white)] border border-[var(--border-subtle)] focus:outline-none focus:border-[var(--burnt-orange)]"
+                  />
+                </div>
+              </div>
+              <span className="font-heading italic text-[12px] text-[var(--text-muted)]">
+                Hint: drop a pin on Google Maps and copy the lat/lng from the URL. Mile marker can be estimated from the nearest named landmark.
+              </span>
+            </div>
+          )}
+
+          {/* Company name */}
+          <div className="flex flex-col gap-[8px]">
+            <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+              COMPANY NAME
+            </span>
+            <input
+              type="text"
+              value={sponsorForm.companyName}
+              onChange={(e) => setSponsorForm((f) => ({ ...f, companyName: e.target.value }))}
+              placeholder="e.g. Acme Outfitters"
+              maxLength={80}
+              className="w-full h-[44px] px-[12px] font-heading text-[14px] text-[var(--text-primary)] bg-[var(--bg-white)] border border-[var(--border-subtle)] focus:outline-none focus:border-[var(--burnt-orange)]"
+            />
+          </div>
+
+          {/* Website URL (optional) */}
+          <div className="flex flex-col gap-[8px]">
+            <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+              WEBSITE URL (OPTIONAL)
+            </span>
+            <input
+              type="url"
+              value={sponsorForm.websiteUrl}
+              onChange={(e) => setSponsorForm((f) => ({ ...f, websiteUrl: e.target.value }))}
+              placeholder="https://acme.com"
+              className="w-full h-[44px] px-[12px] font-heading text-[14px] text-[var(--text-primary)] bg-[var(--bg-white)] border border-[var(--border-subtle)] focus:outline-none focus:border-[var(--burnt-orange)]"
+            />
+            <span className="font-heading italic text-[12px] text-[var(--text-muted)]">
+              Appears as a &ldquo;Visit sponsor →&rdquo; link in the map tooltip.
+            </span>
+          </div>
+
+          {/* Logo upload */}
+          <div className="flex flex-col gap-[8px]">
+            <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+              LOGO FILE {editingExisting ? "(leave empty to keep existing)" : "(REQUIRED)"}
+            </span>
+            <label className="flex items-center gap-[10px] h-[44px] px-[14px] bg-[var(--bg-warm)] border border-[var(--border-subtle)] hover:border-[var(--burnt-orange)] cursor-pointer transition-colors">
+              <Upload className="w-[16px] h-[16px] text-[var(--burnt-orange)]" />
+              <span className="font-heading text-[13px] text-[var(--text-secondary)] truncate flex-1">
+                {sponsorForm.logoFile ? sponsorForm.logoFile.name : "Choose a JPG, PNG, WebP, or SVG (≤1MB)"}
+              </span>
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/svg+xml"
+                onChange={(e) => setSponsorForm((f) => ({ ...f, logoFile: e.target.files?.[0] || null }))}
+                className="hidden"
+              />
+            </label>
+            <span className="font-heading italic text-[12px] text-[var(--text-muted)]">
+              Square or near-square renders best. Will display as a 50×50 pin on the trail map.
+            </span>
+          </div>
+
+          {sponsorError && (
+            <div className="flex items-center gap-[8px] bg-red-50 border border-red-200 p-[12px]">
+              <XCircle className="w-[16px] h-[16px] text-red-500 shrink-0" />
+              <span className="font-heading text-[13px] text-red-600">{sponsorError}</span>
+            </div>
+          )}
+
+          <div className="flex flex-wrap gap-[12px]">
+            <button
+              type="button"
+              onClick={handleSponsorSubmit}
+              disabled={sponsorSubmitting}
+              className={`flex items-center justify-center gap-[10px] h-[48px] px-[28px] transition-opacity ${
+                sponsorSubmitting
+                  ? "bg-[var(--text-muted)] cursor-not-allowed"
+                  : "bg-[var(--burnt-orange)] cursor-pointer hover:opacity-90"
+              }`}
+            >
+              <Building2 className="w-[18px] h-[18px] text-[var(--text-white)]" />
+              <span className="font-label font-bold text-[13px] tracking-[2px] text-[var(--text-white)]">
+                {sponsorSubmitting ? "SAVING…" : editingExisting ? "REPLACE SPONSOR" : "ADD SPONSOR"}
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={resetSponsorForm}
+              className="flex items-center gap-[8px] h-[48px] px-[20px] border border-[var(--border-subtle)] hover:border-[var(--burnt-orange)] transition-colors cursor-pointer"
+            >
+              <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-secondary)]">
+                CLEAR FORM
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
     );
   }
 

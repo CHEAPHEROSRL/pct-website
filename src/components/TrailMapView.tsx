@@ -8,6 +8,28 @@ import { pctRouteCoords, pctWaypoints, interpolateFromMile } from "@/lib/trail";
 import type { PledgerLocation, SupportGiftLocation } from "@/lib/types";
 
 /**
+ * One claimed-section entry rendered as a pin on the trail. Wire-shape mirrors
+ * the /api/pledges/claimed-sections response. `count: 0` is valid — that's a
+ * sponsor-only entry where no pledger has claimed the section yet. Lat/lng
+ * and name are pre-resolved server-side; the client doesn't need to know
+ * whether the entry came from a named landmark or a custom sponsor location.
+ */
+export interface ClaimedSection {
+  id: string;
+  name: string;
+  miles: number;
+  lat: number;
+  lng: number;
+  count: number;
+  samples: { name: string; avatar?: string }[];
+  sponsor?: {
+    companyName: string;
+    logoUrl: string;
+    websiteUrl?: string;
+  };
+}
+
+/**
  * Lightweight journal-post shape for trail map markers.
  * Only the fields we need to render a marker + popup are included.
  */
@@ -145,6 +167,58 @@ function createJournalMarkerIcon(dayNumber: number) {
   });
 }
 
+// — Claimed-section pin variants —
+// Three shapes covering the data the section-picker can produce. All anchor
+// to the section's lat/lng, all show the section name beneath the icon.
+
+function createSingleClaimedIcon(sectionName: string) {
+  return new L.DivIcon({
+    className: "",
+    html: `<div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+      <div style="display:flex;align-items:center;justify-content:center;width:30px;height:30px;background:#3D7A5A;border:3px solid #FFFFFF;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,0.25);">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/>
+          <circle cx="12" cy="10" r="3"/>
+        </svg>
+      </div>
+      <div style="background:#FFFFFF;padding:2px 6px;border:1px solid #D9D7D4;border-radius:3px;white-space:nowrap;font-family:'Barlow Semi Condensed',sans-serif;font-weight:700;font-size:9px;letter-spacing:1px;color:#1C1C1C;">${sectionName.toUpperCase()}</div>
+    </div>`,
+    iconSize: [120, 50],
+    iconAnchor: [60, 18],
+    popupAnchor: [0, -20],
+  });
+}
+
+function createClusterClaimedIcon(count: number, sectionName: string) {
+  return new L.DivIcon({
+    className: "",
+    html: `<div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+      <div style="display:flex;align-items:center;justify-content:center;width:40px;height:40px;background:#3D7A5A;border:3px solid #FFFFFF;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,0.3);font-family:'Barlow Semi Condensed',sans-serif;font-weight:700;font-size:15px;color:#FFFFFF;">${count}</div>
+      <div style="background:#FFFFFF;padding:2px 6px;border:1px solid #D9D7D4;border-radius:3px;white-space:nowrap;font-family:'Barlow Semi Condensed',sans-serif;font-weight:700;font-size:9px;letter-spacing:1px;color:#1C1C1C;">${sectionName.toUpperCase()}</div>
+    </div>`,
+    iconSize: [120, 60],
+    iconAnchor: [60, 23],
+    popupAnchor: [0, -25],
+  });
+}
+
+function createSponsorIcon(logoUrl: string, companyName: string, sectionName: string) {
+  // Inline <img> so the logo loads with the marker; failures render as a
+  // text fallback so a missing file never breaks the map.
+  return new L.DivIcon({
+    className: "",
+    html: `<div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+      <div style="display:flex;align-items:center;justify-content:center;width:50px;height:50px;background:#FFFFFF;border:3px solid #C45C26;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.3);overflow:hidden;">
+        <img src="${logoUrl}" alt="${companyName}" style="max-width:42px;max-height:42px;object-fit:contain;" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=\\'font-family:Barlow Semi Condensed,sans-serif;font-weight:700;font-size:10px;color:#C45C26;letter-spacing:1px;text-align:center;\\'>'+this.alt.toUpperCase().slice(0,8)+'</span>';" />
+      </div>
+      <div style="background:#C45C26;padding:2px 6px;border-radius:3px;white-space:nowrap;font-family:'Barlow Semi Condensed',sans-serif;font-weight:700;font-size:8px;letter-spacing:1.5px;color:#1C1C1C;">SPONSORED · ${sectionName.toUpperCase()}</div>
+    </div>`,
+    iconSize: [140, 70],
+    iconAnchor: [70, 28],
+    popupAnchor: [0, -30],
+  });
+}
+
 function createGiftIcon(giftTitle: string) {
   const emoji = GIFT_EMOJI[giftTitle] || "💚";
   return new L.DivIcon({
@@ -208,6 +282,14 @@ interface TrailMapViewProps {
    * responsible for filtering out drafts on the public site.
    */
   journalPosts?: JournalMarkerPost[];
+  /**
+   * Pledger pin claims grouped by named PCT section. Only sections whose mile
+   * marker is <= totalMiles are actually rendered — pins for landmarks Paul
+   * hasn't reached yet stay hidden to keep the early-trail map clean.
+   * Sponsor-only entries (count: 0 + sponsor present) DO render regardless,
+   * since a sponsorship is a paid commitment that should display from day one.
+   */
+  claimedSections?: ClaimedSection[];
 }
 
 // Default fallback position (Campo, CA — starting point)
@@ -225,6 +307,7 @@ export default function TrailMapView({
   supportGiftLocations = [],
   pledgeCoveragePercent = 0,
   journalPosts = [],
+  claimedSections = [],
 }: TrailMapViewProps) {
   const position: [number, number] = currentPosition
     ? [currentPosition.lat, currentPosition.lng]
@@ -249,6 +332,18 @@ export default function TrailMapView({
     () => buildPledgeCoverageCoords(pledgeCoveragePercent),
     [pledgeCoveragePercent]
   );
+
+  // Two visibility rules:
+  //  • A pledger-only entry (no sponsor) requires Paul to have passed the
+  //    landmark — otherwise pin promises pile up on the early map.
+  //  • A sponsor entry shows from day one — the deal was signed; the brand
+  //    visibility is part of what was paid for.
+  const visibleClaimedSections = useMemo(() => {
+    if (!claimedSections || claimedSections.length === 0) return [];
+    return claimedSections.filter(
+      (entry) => entry.sponsor || entry.miles <= totalMiles + 0.01
+    );
+  }, [claimedSections, totalMiles]);
 
   // Filter journal posts: only show ones Paul has actually reached.
   // Posts with no mileMarker are skipped entirely (legacy / unanchored).
@@ -363,6 +458,60 @@ export default function TrailMapView({
               </Popup>
             </Marker>
           ))}
+
+          {/* Claimed-section pins. Rendered before the current-position marker
+              so Paul's pin always layers on top when they coincide. */}
+          {visibleClaimedSections.map((entry) => {
+            const iconNode = entry.sponsor
+              ? createSponsorIcon(entry.sponsor.logoUrl, entry.sponsor.companyName, entry.name)
+              : entry.count > 1
+                ? createClusterClaimedIcon(entry.count, entry.name)
+                : createSingleClaimedIcon(entry.name);
+            return (
+              <Marker
+                key={`claimed-${entry.id}`}
+                position={[entry.lat, entry.lng]}
+                icon={iconNode}
+              >
+                <Popup>
+                  <div style={{ fontFamily: "'Source Serif 4', serif", maxWidth: 240, padding: "4px 0" }}>
+                    <div style={{ fontFamily: "'Barlow Semi Condensed', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: 1.5, color: entry.sponsor ? "#C45C26" : "#3D7A5A", marginBottom: 6, textTransform: "uppercase" }}>
+                      {entry.name} · Mile {entry.miles.toLocaleString("en-US")}
+                    </div>
+                    {entry.sponsor ? (
+                      <>
+                        <div style={{ fontSize: 14, fontWeight: 600, color: "#1C1C1C", lineHeight: 1.35, marginBottom: 6 }}>
+                          Sponsored by {entry.sponsor.companyName}
+                        </div>
+                        {entry.count > 0 && (
+                          <div style={{ fontSize: 12, color: "#5C5C5C", marginBottom: 6 }}>
+                            + {entry.count} pledger{entry.count === 1 ? "" : "s"} claimed this stretch
+                          </div>
+                        )}
+                        {entry.sponsor.websiteUrl && (
+                          <a href={entry.sponsor.websiteUrl} target="_blank" rel="noopener noreferrer" style={{ fontFamily: "'Barlow Semi Condensed', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: 1.5, color: "#C45C26", textDecoration: "none", textTransform: "uppercase", borderBottom: "1px solid #C45C26", paddingBottom: 1 }}>
+                            Visit sponsor →
+                          </a>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        <div style={{ fontSize: 14, fontWeight: 600, color: "#1C1C1C", lineHeight: 1.35, marginBottom: 8 }}>
+                          {entry.count} pledger{entry.count === 1 ? "" : "s"} claimed this stretch
+                        </div>
+                        {entry.samples.length > 0 && (
+                          <div style={{ fontSize: 12, color: "#5C5C5C", lineHeight: 1.5 }}>
+                            {entry.samples.map((s) => `${s.avatar || "💚"} ${s.name}`).join(" · ")}
+                            {entry.count > entry.samples.length && ` · +${entry.count - entry.samples.length} more`}
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </Popup>
+              </Marker>
+            );
+          })}
 
           {/* Current Position Marker */}
           <Marker position={position} icon={icon}>

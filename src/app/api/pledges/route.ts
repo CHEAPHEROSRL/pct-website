@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { Redis } from "@upstash/redis";
 import type { PledgeRecord } from "@/lib/types";
+import { trailSections } from "@/lib/trail";
 import { sendPledgeVerification, sendPledgeIncreased, sendCommunityMilestone, sendActionVerification } from "@/lib/email";
 import {
   RATE_LIMITS,
@@ -41,7 +42,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { email: rawEmail, name: rawName, amount, interval, anonymous, message: rawMessage, city, country, lat, lng, avatar, referredBy, turnstileToken, website, emailPreference: rawEmailPref } = body;
+    const { email: rawEmail, name: rawName, amount, interval, anonymous, message: rawMessage, city, country, lat, lng, avatar, referredBy, turnstileToken, website, emailPreference: rawEmailPref, claimedSection: rawClaimedSection } = body;
 
     // Honeypot check — "website" is a hidden field that should be empty
     if (isHoneypotFilled(website)) {
@@ -67,14 +68,27 @@ export async function POST(req: NextRequest) {
     if (![1, 10, 100].includes(interval)) {
       return NextResponse.json({ error: "Interval must be 1, 10, or 100" }, { status: 400 });
     }
-    // Enforce $5,000 total pledge cap — amounts above this require direct contact
+    // Sanity cap — the slider on /pledge maxes at $5/mi = $13,250 total. We
+    // allow up to $15,000 to leave headroom for the boost flow / manual API
+    // calls; anything beyond that almost certainly isn't intentional and
+    // should go through paul@yeschapter.com directly. Previously this cap was
+    // $5K and forced the CTA to *replace* the submit button — the new design
+    // shows the company-sponsorship CTA in parallel above US$2,000 so submit
+    // stays available the whole way up to this hard ceiling.
     const calculatedTotal = (amount * 2650) / interval;
-    if (calculatedTotal > 5000) {
-      return NextResponse.json({ error: "Pledges over $5,000 require direct contact. Please email paul@yeschapter.com" }, { status: 400 });
+    if (calculatedTotal > 15000) {
+      return NextResponse.json({ error: "Pledges above $15,000 require direct contact. Please email paul@yeschapter.com" }, { status: 400 });
     }
 
     const name = sanitizeText(rawName || "Anonymous", 100);
     const message = rawMessage ? sanitizeText(rawMessage, 280) : undefined;
+
+    // Validate claimedSection against the curated list — anything else is dropped.
+    // No error returned for invalid IDs; we treat "no preference" as the default.
+    const claimedSection =
+      typeof rawClaimedSection === "string" && trailSections.some((s) => s.id === rawClaimedSection)
+        ? rawClaimedSection
+        : undefined;
 
     const hash = emailHash(email);
     const liveKey = `pledger:${hash}`;
@@ -114,6 +128,7 @@ export async function POST(req: NextRequest) {
       lng: typeof lng === "number" && lng >= -180 && lng <= 180 ? lng : undefined,
       avatar: typeof avatar === "string" && avatar.length <= 10 ? avatar : undefined,
       referredBy: typeof referredBy === "string" && referredBy.trim() ? sanitizeText(referredBy, 100) : undefined,
+      claimedSection,
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };
@@ -215,6 +230,7 @@ export async function GET(req: NextRequest) {
         interval: record.interval,
         totalPledge: record.totalPledge,
         boosts: record.boosts,
+        claimedSection: record.claimedSection,
         createdAt: record.createdAt,
         updatedAt: record.updatedAt,
       },

@@ -168,6 +168,12 @@ export interface PledgeRecord {
   unsubscribeToken?: string;
   emailPreference?: "all" | "milestones" | "finish";
   referredBy?: string;
+  /**
+   * ID of the trail section the pledger claimed (matches trailSections in
+   * src/lib/trail.ts). Optional — omitted when no preference. Appears as
+   * a pin on the live map once Paul passes that landmark's mile marker.
+   */
+  claimedSection?: string;
   createdAt: number;
   updatedAt: number;
 }

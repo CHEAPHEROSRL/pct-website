@@ -14,6 +14,7 @@ import { getTrailFundingPercent } from "@/lib/trail-funding";
 import { getTrailSectionIndex, getMaxElevationUpTo } from "@/lib/trail";
 import DistanceTracker from "@/components/DistanceTracker";
 import type { PledgerLocation, JournalPostPublic } from "@/lib/types";
+import type { ClaimedSection } from "@/components/TrailMapView";
 
 interface JournalMarkerPost {
   slug: string;
@@ -136,6 +137,17 @@ export default function TrailMapPage() {
       .then((res) => res.json())
       .then((data) => {
         if (data.stats?.totalPledged) setTotalPledged(data.stats.totalPledged);
+      })
+      .catch(() => setSideFetchError(true));
+  }, []);
+
+  // Claimed-section pin data for the trail map (counts + sample names + sponsors).
+  const [claimedSections, setClaimedSections] = useState<ClaimedSection[]>([]);
+  useEffect(() => {
+    fetch("/api/pledges/claimed-sections")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data?.sections)) setClaimedSections(data.sections);
       })
       .catch(() => setSideFetchError(true));
   }, []);
@@ -460,6 +472,7 @@ export default function TrailMapPage() {
             supportGiftLocations={giftLocations}
             pledgeCoveragePercent={pledgeCoveragePercent}
             journalPosts={journalMarkerPosts}
+            claimedSections={claimedSections}
           />
         </div>
       </div>

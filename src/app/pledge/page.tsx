@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { Heart, Mail, ArrowRight, HeartHandshake, Building2 } from "lucide-react";
 import Link from "next/link";
 import Header from "@/components/Header";
@@ -8,8 +8,15 @@ import Footer from "@/components/Footer";
 import DistanceTracker from "@/components/DistanceTracker";
 import CountdownBanner from "@/components/CountdownBanner";
 import Turnstile from "@/components/Turnstile";
+import { trailSections, TRAIL_REGIONS, type TrailRegion } from "@/lib/trail";
 
 const TOTAL_MILES = 2650;
+// Threshold (in US$ total pledge) above which we surface the company-sponsorship
+// path. Designed to ONLY appear in parallel to the regular submit button — the
+// individual at $5K+ should still be able to pledge directly. Previously this
+// CTA replaced the submit button entirely, which locked out non-business
+// pledgers at the high end.
+const SPONSOR_CTA_THRESHOLD = 5000;
 
 const presets = [
   { label: "1¢/mi", amount: 0.01 },
@@ -39,6 +46,8 @@ export default function PledgePage() {
   const [honeypot, setHoneypot] = useState("");
   const [avatar, setAvatar] = useState<string>("💚");
   const [mailingList, setMailingList] = useState(false);
+  const [claimedSection, setClaimedSection] = useState<string | null>(null);
+  const [sectionCounts, setSectionCounts] = useState<Record<string, number>>({});
 
   // Silent IP geolocation on mount
   const geoRef = useRef<{ city?: string; country?: string; lat?: number; lng?: number }>({});
@@ -51,6 +60,25 @@ export default function PledgePage() {
         }
       })
       .catch(() => {});
+  }, []);
+
+  // Fetch pledger count per section so the picker can show "X pledgers" badges.
+  // Silent-fail: an empty {} is fine — the picker just doesn't show counts.
+  useEffect(() => {
+    fetch("/api/pledges/section-counts")
+      .then((res) => res.json())
+      .then((data) => setSectionCounts(data?.counts || {}))
+      .catch(() => {});
+  }, []);
+
+  // Group the curated sections by region for the picker. Stable across renders
+  // because trailSections itself is a module-level constant.
+  const sectionsByRegion = useMemo(() => {
+    const groups: Record<TrailRegion, typeof trailSections> = {
+      socal: [], sierra: [], norcal: [], oregon: [], washington: [],
+    };
+    for (const s of trailSections) groups[s.region].push(s);
+    return groups;
   }, []);
 
   const totalPledge = amount * TOTAL_MILES;
@@ -89,6 +117,7 @@ export default function PledgePage() {
           message: message || undefined,
           avatar,
           emailPreference: mailingList ? "all" : "finish",
+          claimedSection: claimedSection || undefined,
           turnstileToken: turnstileToken || "",
           website: honeypot, // honeypot field
           ...geoRef.current,
@@ -353,6 +382,106 @@ export default function PledgePage() {
             </span>
           </div>
 
+          {/* Section Picker — claim a named stretch of the trail */}
+          <div className="flex flex-col gap-[12px]">
+            <div className="flex items-baseline justify-between gap-[8px] flex-wrap">
+              <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-muted)]">
+                CLAIM A TRAIL SECTION (OPTIONAL)
+              </span>
+              {claimedSection && (
+                <button
+                  type="button"
+                  onClick={() => setClaimedSection(null)}
+                  className="font-label font-semibold text-[11px] tracking-[1px] text-[var(--burnt-orange)] hover:underline"
+                >
+                  CLEAR
+                </button>
+              )}
+            </div>
+            <p className="font-heading text-[13px] leading-[1.6] text-[var(--text-secondary)]">
+              Pick a named stretch of the PCT. When Paul reaches it, your pin shows on the live map. Multiple pledgers can claim the same one — it&apos;s a memento, not exclusive.
+            </p>
+            <div className="border border-[var(--border-subtle)] bg-[var(--bg-warm)] max-h-[420px] overflow-y-auto rounded-[6px]">
+              <div className="sticky top-0 flex items-center justify-between bg-[var(--bg-card)] px-[16px] py-[10px] border-b border-[var(--border-subtle)] z-[1]">
+                <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                  PICK A SECTION
+                </span>
+                <span className="font-label font-medium text-[10px] tracking-[1.5px] text-[var(--text-muted)]">
+                  {trailSections.length} NAMED LANDMARKS
+                </span>
+              </div>
+              {(Object.keys(sectionsByRegion) as TrailRegion[]).map((region) => (
+                <div key={region}>
+                  <div className="px-[16px] py-[6px] bg-[var(--bg-warm)] border-b border-[var(--border-subtle)]">
+                    <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                      {TRAIL_REGIONS[region].label} · {TRAIL_REGIONS[region].rangeLabel}
+                    </span>
+                  </div>
+                  {sectionsByRegion[region].map((s) => {
+                    const selected = claimedSection === s.id;
+                    const count = sectionCounts[s.id] || 0;
+                    const isFinish = s.id === "manning-park";
+                    return (
+                      <button
+                        key={s.id}
+                        type="button"
+                        onClick={() => setClaimedSection(selected ? null : s.id)}
+                        className={`flex items-center justify-between gap-[12px] w-full text-left px-[16px] py-[10px] border-b border-[var(--border-subtle)] transition-colors cursor-pointer ${
+                          selected
+                            ? "bg-[var(--forest-green-light)]"
+                            : isFinish
+                              ? "bg-[var(--burnt-orange-light)] hover:bg-[var(--burnt-orange-light)]"
+                              : "bg-[var(--bg-white)] hover:bg-[var(--bg-warm)]"
+                        }`}
+                      >
+                        <div className="flex flex-col gap-[2px] min-w-0">
+                          <span className={`font-heading text-[15px] ${selected ? "font-bold" : "font-semibold"} text-[var(--text-primary)] truncate`}>
+                            {s.name}
+                          </span>
+                          <span
+                            className={`font-label font-bold text-[10px] tracking-[1.5px] truncate ${
+                              selected
+                                ? "text-[var(--forest-green)]"
+                                : isFinish
+                                  ? "text-[var(--burnt-orange)]"
+                                  : "text-[var(--text-muted)]"
+                            }`}
+                          >
+                            MILE {s.miles.toLocaleString()}
+                            {s.subtitle ? ` · ${s.subtitle.toUpperCase()}` : ""}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-[12px] shrink-0">
+                          {count > 0 ? (
+                            <span className="font-label font-bold text-[11px] tracking-[1.5px] text-[var(--forest-green)]">
+                              {count} pledger{count === 1 ? "" : "s"}
+                            </span>
+                          ) : (
+                            <span className="font-label font-semibold italic text-[11px] tracking-[1.5px] text-[var(--text-muted)]">
+                              Be the first
+                            </span>
+                          )}
+                          <span
+                            className={`flex items-center justify-center w-[18px] h-[18px] rounded-full border-2 ${
+                              selected
+                                ? "bg-[var(--forest-green)] border-[var(--forest-green)]"
+                                : "bg-[var(--bg-white)] border-[var(--border-subtle)]"
+                            }`}
+                          >
+                            {selected && <span className="w-[6px] h-[6px] rounded-full bg-white" />}
+                          </span>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+            <p className="font-heading italic text-[12px] text-[var(--text-muted)]">
+              No preference? Skip — Paul will assign your pin to a random unclaimed section.
+            </p>
+          </div>
+
           {/* Mailing List Opt-in */}
           <label className="flex items-start gap-[12px] cursor-pointer">
             <input
@@ -405,45 +534,54 @@ export default function PledgePage() {
                 Your pledge: {formatCurrency(amount)}/mile ({formatCurrency(totalPledge)} total).
               </p>
             </div>
-          ) : totalPledge > 5000 ? (
-            <div className="flex flex-col gap-[16px] bg-[var(--burnt-orange-light)] border border-[var(--burnt-orange)] p-[24px]">
-              <div className="flex items-center gap-[10px]">
-                <Building2 className="w-[24px] h-[24px] text-[var(--burnt-orange)]" />
-                <span className="font-heading font-semibold text-[18px] text-[var(--text-primary)]">
-                  That&apos;s an incredible commitment!
-                </span>
-              </div>
-              <p className="font-heading text-[14px] leading-[1.7] text-[var(--text-secondary)]">
-                For pledges over US$5,000, we&apos;d love to connect with you personally. Are you a business? Sponsors at this level can have their logo displayed on a section of the Pacific Crest Trail map.
-              </p>
-              <a
-                href="mailto:paul@yeschapter.com?subject=Trail%20Section%20Sponsorship%20Inquiry&body=Hi%20Paul%2C%0A%0AI%27m%20interested%20in%20sponsoring%20a%20section%20of%20the%20PCT.%0A%0AMy%20pledge%20amount%3A%20%24____%0ACompany%2FName%3A%20%0A%0AThanks!"
-                className="flex items-center justify-center gap-[10px] h-[56px] w-full bg-[var(--burnt-orange)] hover:opacity-90 transition-opacity cursor-pointer"
-              >
-                <Building2 className="w-[20px] h-[20px] text-[var(--text-primary)]" />
-                <span className="font-label font-bold text-[15px] tracking-[2px] text-[var(--text-primary)]">
-                  GET IN TOUCH
-                </span>
-              </a>
-              <p className="font-heading text-[12px] text-[var(--text-muted)] text-center">
-                Or lower the amount below $5,000 to pledge directly.
-              </p>
-            </div>
           ) : (
-            <button
-              type="submit"
-              disabled={submitting}
-              className={`flex items-center justify-center gap-[10px] h-[56px] w-full transition-opacity ${
-                submitting
-                  ? "bg-[var(--text-muted)] cursor-not-allowed"
-                  : "bg-[var(--forest-green)] cursor-pointer hover:opacity-90"
-              }`}
-            >
-              <Heart className="w-[20px] h-[20px] text-[var(--text-white)]" />
-              <span className="font-label font-bold text-[15px] tracking-[2px] text-[var(--text-white)]">
-                {submitting ? "REGISTERING..." : "SET MY PLEDGE"}
-              </span>
-            </button>
+            <>
+              <button
+                type="submit"
+                disabled={submitting}
+                className={`flex items-center justify-center gap-[10px] h-[56px] w-full transition-opacity ${
+                  submitting
+                    ? "bg-[var(--text-muted)] cursor-not-allowed"
+                    : "bg-[var(--forest-green)] cursor-pointer hover:opacity-90"
+                }`}
+              >
+                <Heart className="w-[20px] h-[20px] text-[var(--text-white)]" />
+                <span className="font-label font-bold text-[15px] tracking-[2px] text-[var(--text-white)]">
+                  {submitting ? "REGISTERING..." : "SET MY PLEDGE"}
+                </span>
+              </button>
+
+              {/* Company sponsorship CTA — appears at US$5,000+ AS AN ADDITION
+                  to the submit button above, not a replacement. Individuals who
+                  genuinely want to pledge this much personally are not forced
+                  into the email path; the burnt-orange callout simply offers
+                  the sponsorship option in parallel. Below threshold: nothing
+                  shows, so the form stays clean for the common case. */}
+              {totalPledge >= SPONSOR_CTA_THRESHOLD && (
+                <div className="flex flex-col gap-[16px] bg-[var(--burnt-orange-light)] border border-[var(--burnt-orange)] p-[24px]">
+                  <div className="flex items-center gap-[10px]">
+                    <Building2 className="w-[24px] h-[24px] text-[var(--burnt-orange)]" />
+                    <span className="font-heading font-semibold text-[18px] text-[var(--text-primary)]">
+                      That&apos;s a remarkable commitment.
+                    </span>
+                  </div>
+                  <p className="font-heading text-[14px] leading-[1.7] text-[var(--text-secondary)]">
+                    At US$5,000+ you&apos;re funding thousands of trail miles. If this is on behalf of a company, we&apos;d love to feature your logo on a section of the Pacific Crest Trail map — visible to everyone tracking Paul&apos;s progress. If you&apos;re an individual, just use the SET MY PLEDGE button above — both paths work.
+                  </p>
+                  <a
+                    href={`mailto:paul@yeschapter.com?subject=${encodeURIComponent("Trail Section Sponsorship Inquiry")}&body=${encodeURIComponent(
+                      `Hi Paul,\n\nI'm interested in sponsoring a section of the PCT.\n\nMy pledge amount: ${formatCurrency(totalPledge)} (${formatCurrency(amount)}/mi)\nSection: ${claimedSection ? trailSections.find((s) => s.id === claimedSection)?.name || "(unspecified)" : "(no preference yet)"}\nCompany/Name: \n\nThanks!`
+                    )}`}
+                    className="flex items-center justify-center gap-[10px] h-[56px] w-full bg-[var(--burnt-orange)] hover:opacity-90 transition-opacity cursor-pointer"
+                  >
+                    <Building2 className="w-[20px] h-[20px] text-[var(--text-primary)]" />
+                    <span className="font-label font-bold text-[14px] tracking-[2px] text-[var(--text-primary)]">
+                      GET IN TOUCH ABOUT SPONSORSHIP
+                    </span>
+                  </a>
+                </div>
+              )}
+            </>
           )}
 
           <p className="font-heading italic text-[13px] leading-[1.5] text-[var(--text-muted)]">

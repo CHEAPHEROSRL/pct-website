@@ -20,6 +20,7 @@ import CountdownBanner from "@/components/CountdownBanner";
 import { useLocationData } from "@/hooks/useLocationData";
 import { useSession } from "@/hooks/useSession";
 import type { PledgeBoost } from "@/lib/types";
+import { getTrailSection } from "@/lib/trail";
 
 const TOTAL_MILES = 2650;
 
@@ -47,6 +48,7 @@ interface PledgeData {
   interval: number;
   totalPledge: number;
   boosts: PledgeBoost[];
+  claimedSection?: string;
   createdAt: number;
   updatedAt: number;
 }
@@ -680,6 +682,61 @@ export default function MyPledgePage() {
               email={email}
               onUpdated={(updated) => setPledge(updated)}
             />
+          </section>
+
+          {/* Trail Section Claim */}
+          <section className="flex flex-col gap-[16px] px-6 md:px-12 lg:px-[120px] py-[48px] bg-[var(--bg-white)] border-t border-[var(--border-subtle)] w-full">
+            <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-muted)]">
+              YOUR TRAIL SECTION CLAIM
+            </span>
+            {pledge.claimedSection && getTrailSection(pledge.claimedSection) ? (() => {
+              const section = getTrailSection(pledge.claimedSection)!;
+              const reached = totalMiles >= section.miles;
+              return (
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-[16px] bg-[var(--bg-card)] border border-[var(--border-subtle)] p-[24px]">
+                  <div className="flex flex-col gap-[4px]">
+                    <span className="font-heading font-semibold text-[20px] text-[var(--text-primary)]">
+                      {section.name}
+                    </span>
+                    <span className="font-label font-bold text-[11px] tracking-[1.5px] text-[var(--text-muted)]">
+                      MILE {section.miles.toLocaleString("en-US")}
+                      {section.subtitle ? ` · ${section.subtitle.toUpperCase()}` : ""}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-[10px]">
+                    {reached ? (
+                      <>
+                        <span className="font-label font-bold text-[10px] tracking-[1.5px] text-[var(--forest-green)] bg-[var(--forest-green-light)] px-[10px] py-[4px]">
+                          PIN LIVE ON MAP
+                        </span>
+                        <Link
+                          href="/trail-map"
+                          className="font-heading font-semibold text-[13px] text-[var(--burnt-orange)] hover:underline"
+                        >
+                          View on map →
+                        </Link>
+                      </>
+                    ) : (
+                      <span className="font-label font-bold text-[10px] tracking-[1.5px] text-[var(--text-muted)] bg-[var(--bg-warm)] px-[10px] py-[4px]">
+                        WAITING FOR PAUL · {Math.max(0, section.miles - Math.floor(totalMiles)).toLocaleString("en-US")} MI TO GO
+                      </span>
+                    )}
+                  </div>
+                </div>
+              );
+            })() : (
+              <div className="flex flex-col gap-[8px] bg-[var(--bg-card)] border border-[var(--border-subtle)] p-[24px]">
+                <span className="font-heading text-[14px] text-[var(--text-secondary)] leading-[1.6]">
+                  You haven&apos;t claimed a trail section. Paul will assign your pin to a random unclaimed landmark.
+                </span>
+                <span className="font-heading italic text-[12px] text-[var(--text-muted)]">
+                  Section claims are set at pledge time. To change yours, email{" "}
+                  <a href="mailto:paul@yeschapter.com" className="text-[var(--burnt-orange)] hover:underline not-italic">
+                    paul@yeschapter.com
+                  </a>.
+                </span>
+              </div>
+            )}
           </section>
 
           {/* Share Badge */}
