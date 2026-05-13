@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { timingSafeEqual } from "crypto";
+import { generateAdminSession } from "@/lib/security";
 
 function safeCompare(a: string, b: string): boolean {
   try {
@@ -44,5 +45,31 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Admin not configured" }, { status: 503 });
   }
 
-  return NextResponse.json({ ok: true, token: adminToken, user: match.name });
+  // Two parallel auth surfaces share this login:
+  //
+  //   1. Bearer token (returned in the JSON body) — admin SPA stores it in
+  //      localStorage and sends it as `Authorization: Bearer ...` on its
+  //      API calls. Works because XHR/fetch can attach arbitrary headers.
+  //
+  //   2. pct-admin-session cookie (set below) — used by endpoints that the
+  //      browser navigates to directly via <a href>, not via fetch.
+  //      Specifically /api/admin/gmail-oauth/start, which redirects to
+  //      Google's consent screen. <a href> navigations can't attach a
+  //      Bearer header, and the prior "?token=X" query-param workaround
+  //      was removed in commit 2505ee0 because query strings leak into
+  //      access logs, browser history, and Referer headers.
+  //
+  // Setting the cookie here means a single login covers both surfaces.
+  // The cookie has the same daily HMAC rotation that requireAdminAuth in
+  // lib/security validates.
+  const sessionValue = generateAdminSession(adminToken);
+  const response = NextResponse.json({ ok: true, token: adminToken, user: match.name });
+  response.cookies.set("pct-admin-session", sessionValue, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    path: "/",
+    maxAge: 60 * 60 * 24, // 24 hours
+  });
+  return response;
 }
