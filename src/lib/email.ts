@@ -113,6 +113,47 @@ export function endPreviewCapture(): CapturedPreview | null {
   return out;
 }
 
+/**
+ * RFC 2047 encoded-word for a Subject header containing non-ASCII characters.
+ *
+ * Raw UTF-8 bytes in mail headers are not valid per RFC 5322 — headers are
+ * strictly 7-bit ASCII. When we previously shoved an em-dash (—) straight
+ * into the Subject line, the bytes survived transit but many mail clients
+ * (Gmail web included) mis-decoded them as Latin-1 and rendered "Ã¢Â€Â—"
+ * mojibake. The fix is base64-encoded-word format: `=?utf-8?B?<base64>?=`.
+ * ASCII-only subjects bypass the encoding so they stay human-readable in
+ * raw headers / log output.
+ */
+function encodeSubjectHeader(subject: string): string {
+  // eslint-disable-next-line no-control-regex
+  if (/^[\x00-\x7F]*$/.test(subject)) return subject;
+  return `=?utf-8?B?${Buffer.from(subject, "utf-8").toString("base64")}?=`;
+}
+
+/**
+ * Shared email header (YESCHAPTER brand + WALKING FOR CANCER subtitle).
+ *
+ * Uses a <table> instead of flexbox because most email clients (Gmail web,
+ * Outlook, Apple Mail) don't reliably support `display: flex`. With the
+ * old flexbox `justify-content: space-between` div, the subtitle rendered
+ * jammed right next to the brand name instead of pushed to the right edge.
+ * Tables are the boring-but-reliable email layout primitive.
+ */
+function emailHeader(): string {
+  return `
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background: #1C1F1A;">
+      <tr>
+        <td style="padding: 16px 28px; vertical-align: middle;">
+          <span style="color: #FFFFFF; font-family: sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 3px;">YESCHAPTER</span>
+        </td>
+        <td style="padding: 16px 28px; vertical-align: middle; text-align: right;">
+          <span style="color: #FFFFFFAA; font-family: sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 2px;">WALKING FOR CANCER</span>
+        </td>
+      </tr>
+    </table>
+  `;
+}
+
 async function send(to: string, subject: string, html: string): Promise<SendResult> {
   if (_previewActive) {
     _previewCapture = {
@@ -137,7 +178,7 @@ async function send(to: string, subject: string, html: string): Promise<SendResu
     const message = [
       `To: ${to}`,
       `From: ${from}`,
-      `Subject: ${subject}`,
+      `Subject: ${encodeSubjectHeader(subject)}`,
       "MIME-Version: 1.0",
       "Content-Type: text/html; charset=utf-8",
       "",
@@ -203,11 +244,11 @@ function emailFooter(unsubscribeToken?: string): string {
     <div style="background: #1C1F1A; padding: 20px 32px; text-align: center; margin-top: 24px;">
       <p style="margin: 0 0 8px; font-size: 12px; letter-spacing: 3px; font-family: sans-serif; font-weight: 700; color: #FFFFFF88;">YESCHAPTER</p>
       <p style="margin: 0; font-size: 11px; color: #FFFFFF44;">
-        <a href="${SITE}/my-pledge" style="color: #FFFFFF66; text-decoration: none;">View My Pledge</a>
+        <a href="${SITE}/my-pledge" style="color: #FFFFFFAA; text-decoration: none;">View My Pledge</a>
         &nbsp;&middot;&nbsp;
-        <a href="${prefsLink}" style="color: #FFFFFF66; text-decoration: none;">Email Preferences</a>
+        <a href="${prefsLink}" style="color: #FFFFFFAA; text-decoration: none;">Email Preferences</a>
         &nbsp;&middot;&nbsp;
-        <a href="${prefsLink}&action=unsubscribe" style="color: #FFFFFF66; text-decoration: none;">Unsubscribe</a>
+        <a href="${prefsLink}&action=unsubscribe" style="color: #FFFFFFAA; text-decoration: none;">Unsubscribe</a>
       </p>
     </div>
   `;
@@ -277,29 +318,26 @@ export async function sendPledgeVerification(
 ): Promise<SendResult> {
   const html = `
     <div style="max-width: 600px; margin: 0 auto; background: #F4F1EC; font-family: Georgia, serif;">
-      <div style="background: #1C1F1A; padding: 16px 32px; display: flex; justify-content: space-between; align-items: center;">
-        <span style="color: #FFFFFF; font-family: sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 3px;">YESCHAPTER</span>
-        <span style="color: #FFFFFF66; font-family: sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 2px;">WALKING FOR CANCER</span>
-      </div>
+      ${emailHeader()}
       <div style="background: #3D7A5A; padding: 48px 40px; text-align: center;">
         <p style="margin: 0 0 16px; font-size: 13px; letter-spacing: 4px; font-family: sans-serif; font-weight: 700; color: #FFFFFF88;">CONFIRM YOUR PLEDGE</p>
         <h1 style="margin: 0 0 12px; font-size: 28px; font-weight: 600; color: #FFFFFF;">One More Step, ${name}.</h1>
-        <p style="margin: 0; font-size: 15px; color: #FFFFFFCC; line-height: 1.6;">Click the button below to confirm your pledge of ${rate}<br/>and join the community walking with Paul.</p>
+        <p style="margin: 0; font-size: 15px; color: #FFFFFFCC; line-height: 1.6;">Click the button below to confirm your pledge of US${rate}<br/>and join the community walking with Paul.</p>
       </div>
       <div style="background: #FFFFFF; padding: 36px 40px; text-align: center;">
         <p style="margin: 0 0 4px; font-size: 12px; letter-spacing: 3px; font-family: sans-serif; font-weight: 700; color: #8C8A87;">YOUR PLEDGE</p>
-        <p style="margin: 0 0 8px; font-size: 42px; font-weight: 600; color: #FABE64; letter-spacing: -1px;">$${totalPledge.toFixed(2)}</p>
-        <p style="margin: 0 0 24px; font-size: 15px; color: #5C5C5C;">${rate} × 2,650 miles</p>
+        <p style="margin: 0 0 8px; font-size: 42px; font-weight: 600; color: #FABE64; letter-spacing: -1px;">US$${totalPledge.toFixed(2)}</p>
+        <p style="margin: 0 0 24px; font-size: 15px; color: #5C5C5C;">US${rate} × 2,650 miles</p>
         <a href="${verifyUrl}" style="display: inline-block; background: #3D7A5A; color: #FFFFFF; padding: 16px 48px; font-family: sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 2px; text-decoration: none;">CONFIRM MY PLEDGE</a>
         <p style="margin: 16px 0 0; font-size: 12px; color: #8C8A87;">This link expires in 1 hour.</p>
       </div>
-      <div style="background: #F4F1EC; padding: 20px 40px; text-align: center;">
+      <div style="background: #F4F1EC; padding: 28px 40px; text-align: center;">
         <p style="margin: 0; font-size: 13px; color: #8C8A87; line-height: 1.6;">If you didn't request this, you can safely ignore this email.<br/>No pledge will be created.</p>
       </div>
       <div style="background: #1C1F1A; padding: 20px 32px; text-align: center;">
         <p style="margin: 0 0 8px; font-size: 12px; letter-spacing: 3px; font-family: sans-serif; font-weight: 700; color: #FFFFFF88;">YESCHAPTER</p>
         <p style="margin: 0; font-size: 11px; color: #FFFFFF44;">
-          <a href="https://yeschapter.com" style="color: #FFFFFF66; text-decoration: none;">yeschapter.com</a>
+          <a href="https://yeschapter.com" style="color: #FFFFFFAA; text-decoration: none;">yeschapter.com</a>
         </p>
       </div>
     </div>
@@ -331,7 +369,7 @@ export async function sendActionVerification(
       </div>
       <div style="background: #1C1F1A; padding: 16px 32px; text-align: center;">
         <p style="margin: 0; font-size: 11px; color: #FFFFFF44;">
-          <a href="https://yeschapter.com" style="color: #FFFFFF66; text-decoration: none;">yeschapter.com</a>
+          <a href="https://yeschapter.com" style="color: #FFFFFFAA; text-decoration: none;">yeschapter.com</a>
         </p>
       </div>
     </div>
@@ -357,7 +395,7 @@ export async function sendWeeklyUpdate(
   const pledgeTotal = pledgeRate * Math.floor(milesWalked / pledgeInterval);
   const halfTotal = (pledgeTotal / 2).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const totalFormatted = pledgeTotal.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  const rateFormatted = `$${pledgeRate}/${pledgeInterval === 1 ? "mi" : pledgeInterval + "mi"}`;
+  const rateFormatted = `US$${pledgeRate}/${pledgeInterval === 1 ? "mi" : pledgeInterval + "mi"}`;
   const percent = Math.min(100, Math.round((milesWalked / 2650) * 100));
 
   const journalSection = journalExcerpt
@@ -378,10 +416,7 @@ export async function sendWeeklyUpdate(
     `
     <div style="font-family: Georgia, serif; max-width: 560px; margin: 0 auto; color: #1C1C1C;">
       <!-- Header -->
-      <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 28px; background: #1C1F1A;">
-        <span style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 3px; color: #FFFFFF;">YESCHAPTER</span>
-        <span style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 600; font-size: 9px; letter-spacing: 2px; color: #FFFFFF66;">WALKING FOR CANCER</span>
-      </div>
+      ${emailHeader()}
       <!-- Hero -->
       <div style="text-align: center; padding: 36px 32px; background: #1C1F1A;">
         <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 2px; color: #FFFFFF; background: #FABE64; display: inline-block; padding: 5px 14px;">WEEK ${weekNumber} UPDATE</div>
@@ -392,9 +427,9 @@ export async function sendWeeklyUpdate(
       <!-- Pledge Total -->
       <div style="text-align: center; padding: 28px 32px; background: #FFFFFF;">
         <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 3px; color: #8C8A87;">YOUR RUNNING PLEDGE TOTAL</div>
-        <div style="font-size: 44px; font-weight: 600; letter-spacing: -1px; color: #FABE64; margin: 6px 0;">$${totalFormatted}</div>
+        <div style="font-size: 44px; font-weight: 600; letter-spacing: -1px; color: #FABE64; margin: 6px 0;">US$${totalFormatted}</div>
         <div style="font-size: 12px; color: #5C5C5C;">${rateFormatted} &times; ${milesWalked.toLocaleString()} miles walked</div>
-        <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 500; font-size: 10px; color: #8C8A87; margin-top: 4px;">$${halfTotal} to City of Hope &middot; $${halfTotal} to Leukaemia Foundation</div>
+        <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 500; font-size: 10px; color: #8C8A87; margin-top: 4px;">US$${halfTotal} to City of Hope &middot; US$${halfTotal} to Leukaemia Foundation</div>
       </div>
       <!-- Progress Bar -->
       <div style="padding: 18px 32px; background: #FFFFFF;">
@@ -444,7 +479,7 @@ export async function sendWeeklyUpdate(
       <!-- Footer -->
       <div style="text-align: center; padding: 20px 32px; background: #1C1F1A;">
         <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 3px; color: #FFFFFF88;">YESCHAPTER</div>
-        <p style="font-size: 11px; color: #FFFFFF66; margin: 10px 0; line-height: 1.6;">You're receiving this because you pledged to walk with Paul. Your pledge: ${rateFormatted} &middot; Total so far: $${totalFormatted}</p>
+        <p style="font-size: 11px; color: #FFFFFFAA; margin: 10px 0; line-height: 1.6;">You're receiving this because you pledged to walk with Paul. Your pledge: ${rateFormatted} &middot; Total so far: US$${totalFormatted}</p>
         <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 500; font-size: 10px; color: #FFFFFF44;">
           <a href="https://yeschapter.com/my-pledge" style="color: #FFFFFF44; text-decoration: none;">View My Pledge</a> &middot;
           <a href="https://yeschapter.com" style="color: #FFFFFF44; text-decoration: none;">yeschapter.com</a>
@@ -470,20 +505,17 @@ export async function sendMilestoneReached(
   const pledgeTotal = pledgeRate * Math.floor(milesWalked / pledgeInterval);
   const halfTotal = (pledgeTotal / 2).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const totalFormatted = pledgeTotal.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  const rateFormatted = `$${pledgeRate}/${pledgeInterval === 1 ? "mi" : pledgeInterval + "mi"}`;
+  const rateFormatted = `US$${pledgeRate}/${pledgeInterval === 1 ? "mi" : pledgeInterval + "mi"}`;
   const percent = Math.min(100, Math.round((milesWalked / 2650) * 100));
   const totalPledgedFormatted = totalPledgedAll.toLocaleString("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 0, maximumFractionDigits: 0 });
 
   return send(
     email,
-    `${milestoneName}! Your pledge is now $${totalFormatted}`,
+    `${milestoneName}! Your pledge is now US$${totalFormatted}`,
     `
     <div style="font-family: Georgia, serif; max-width: 560px; margin: 0 auto; color: #1C1C1C;">
       <!-- Header -->
-      <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 28px; background: #1C1F1A;">
-        <span style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 3px; color: #FFFFFF;">YESCHAPTER</span>
-        <span style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 600; font-size: 9px; letter-spacing: 2px; color: #FFFFFF66;">WALKING FOR CANCER</span>
-      </div>
+      ${emailHeader()}
       <!-- Hero -->
       <div style="text-align: center; padding: 40px 32px; background: #FABE64;">
         <div style="font-size: 36px; margin-bottom: 12px;">&#9968;</div>
@@ -497,9 +529,9 @@ export async function sendMilestoneReached(
       <!-- Pledge Total -->
       <div style="text-align: center; padding: 28px 32px; background: #FFFFFF;">
         <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 3px; color: #8C8A87;">YOUR PLEDGE IS NOW</div>
-        <div style="font-size: 48px; font-weight: 600; letter-spacing: -1px; color: #FABE64; margin: 6px 0;">$${totalFormatted}</div>
-        <div style="font-size: 12px; color: #5C5C5C;">${rateFormatted} &times; ${milesWalked.toLocaleString()} miles = $${totalFormatted} pledged so far</div>
-        <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 500; font-size: 10px; color: #8C8A87; margin-top: 4px;">$${halfTotal} to City of Hope &middot; $${halfTotal} to Leukaemia Foundation</div>
+        <div style="font-size: 48px; font-weight: 600; letter-spacing: -1px; color: #FABE64; margin: 6px 0;">US$${totalFormatted}</div>
+        <div style="font-size: 12px; color: #5C5C5C;">${rateFormatted} &times; ${milesWalked.toLocaleString()} miles = US$${totalFormatted} pledged so far</div>
+        <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 500; font-size: 10px; color: #8C8A87; margin-top: 4px;">US$${halfTotal} to City of Hope &middot; US$${halfTotal} to Leukaemia Foundation</div>
       </div>
       <!-- Progress Bar -->
       <div style="padding: 18px 32px; background: #FFFFFF;">
@@ -547,7 +579,7 @@ export async function sendMilestoneReached(
       <!-- Footer -->
       <div style="text-align: center; padding: 20px 32px; background: #1C1F1A;">
         <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 3px; color: #FFFFFF88;">YESCHAPTER</div>
-        <p style="font-size: 11px; color: #FFFFFF66; margin: 10px 0; line-height: 1.6;">You're receiving this because you pledged to walk with Paul.</p>
+        <p style="font-size: 11px; color: #FFFFFFAA; margin: 10px 0; line-height: 1.6;">You're receiving this because you pledged to walk with Paul.</p>
         <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 500; font-size: 10px; color: #FFFFFF44;">
           <a href="https://yeschapter.com/my-pledge" style="color: #FFFFFF44; text-decoration: none;">View My Pledge</a> &middot;
           <a href="https://yeschapter.com" style="color: #FFFFFF44; text-decoration: none;">yeschapter.com</a>
@@ -566,7 +598,7 @@ export async function sendPledgeIncreased(
   newRate: string,
   newTotalPledge: number
 ): Promise<SendResult> {
-  const oldRate = `$${oldAmount.toFixed(2)}/mi`;
+  const oldRate = `US$${oldAmount.toFixed(2)}/mi`;
   const totalFormatted = newTotalPledge.toLocaleString("en-US", { style: "currency", currency: "USD" });
   const halfTotal = (newTotalPledge / 2).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const addedPerMile = (newAmount - oldAmount).toFixed(2);
@@ -576,10 +608,7 @@ export async function sendPledgeIncreased(
     `Pledge increased! You're now at ${newRate} 🚀`,
     `
     <div style="font-family: Georgia, serif; max-width: 560px; margin: 0 auto; color: #1C1C1C;">
-      <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 28px; background: #1C1F1A;">
-        <span style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 3px; color: #FFFFFF;">YESCHAPTER</span>
-        <span style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 600; font-size: 9px; letter-spacing: 2px; color: #FFFFFF66;">WALKING FOR CANCER</span>
-      </div>
+      ${emailHeader()}
       <div style="text-align: center; padding: 36px 32px; background: #3D7A5A;">
         <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 2px; color: #FFFFFF; background: #FFFFFF22; display: inline-block; padding: 5px 14px;">PLEDGE INCREASED</div>
         <h2 style="margin: 12px 0 0; font-size: 24px; color: #FFFFFF;">Nice one, ${name}!</h2>
@@ -597,12 +626,12 @@ export async function sendPledgeIncreased(
             <div style="font-size: 28px; font-weight: 600; color: #3D7A5A;">${newRate}</div>
           </div>
         </div>
-        <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 600; font-size: 12px; color: #3D7A5A; margin-top: 12px;">+$${addedPerMile}/mi &times; 2,650 miles = +$${(parseFloat(addedPerMile) * 2650).toFixed(2)} more for cancer research</div>
+        <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 600; font-size: 12px; color: #3D7A5A; margin-top: 12px;">+US$${addedPerMile}/mi &times; 2,650 miles = +US$${(parseFloat(addedPerMile) * 2650).toFixed(2)} more for cancer research</div>
       </div>
       <div style="text-align: center; padding: 24px 32px; background: #F4F1EC;">
         <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 3px; color: #8C8A87; margin-bottom: 6px;">NEW TOTAL IF PAUL FINISHES</div>
         <div style="font-size: 44px; font-weight: 600; letter-spacing: -1px; color: #FABE64;">${totalFormatted}</div>
-        <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 500; font-size: 10px; color: #8C8A87; margin-top: 4px;">$${halfTotal} to City of Hope &middot; $${halfTotal} to Leukaemia Foundation</div>
+        <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 500; font-size: 10px; color: #8C8A87; margin-top: 4px;">US$${halfTotal} to City of Hope &middot; US$${halfTotal} to Leukaemia Foundation</div>
       </div>
       <div style="text-align: center; padding: 20px 32px; background: #FFFFFF;">
         <p style="font-size: 13px; color: #5C5C5C; margin: 0 0 10px;">Know someone who&rsquo;d walk alongside Paul (from their couch)?</p>
@@ -610,7 +639,7 @@ export async function sendPledgeIncreased(
       </div>
       <div style="text-align: center; padding: 20px 32px; background: #1C1F1A;">
         <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 3px; color: #FFFFFF88;">YESCHAPTER</div>
-        <p style="font-size: 11px; color: #FFFFFF66; margin: 10px 0;">Paul gets $0 from pledges — every cent goes directly to cancer foundations.</p>
+        <p style="font-size: 11px; color: #FFFFFFAA; margin: 10px 0;">Paul gets $0 from pledges — every cent goes directly to cancer foundations.</p>
         <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 500; font-size: 10px; color: #FFFFFF44;">
           <a href="https://yeschapter.com/my-pledge" style="color: #FFFFFF44; text-decoration: none;">View My Pledge</a> &middot;
           <a href="https://yeschapter.com" style="color: #FFFFFF44; text-decoration: none;">yeschapter.com</a>
@@ -636,7 +665,7 @@ export async function sendPreMilestoneNudge(
   const projectedTotal = pledgeRate * Math.floor(milestoneMiles / pledgeInterval);
   const runningFormatted = runningTotal.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const projectedFormatted = projectedTotal.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  const rateFormatted = `$${pledgeRate}/${pledgeInterval === 1 ? "mi" : pledgeInterval + "mi"}`;
+  const rateFormatted = `US$${pledgeRate}/${pledgeInterval === 1 ? "mi" : pledgeInterval + "mi"}`;
   const percent = Math.min(100, Math.round((currentMiles / 2650) * 100));
 
   return send(
@@ -644,10 +673,7 @@ export async function sendPreMilestoneNudge(
     `Paul is ${Math.round(milesLeft)} miles from ${milestoneName}`,
     `
     <div style="font-family: Georgia, serif; max-width: 560px; margin: 0 auto; color: #1C1C1C;">
-      <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 28px; background: #1C1F1A;">
-        <span style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 3px; color: #FFFFFF;">YESCHAPTER</span>
-        <span style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 600; font-size: 9px; letter-spacing: 2px; color: #FFFFFF66;">WALKING FOR CANCER</span>
-      </div>
+      ${emailHeader()}
       <div style="text-align: center; padding: 36px 32px; background: #1C1F1A;">
         <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 2px; color: #FFFFFF; background: #FABE64; display: inline-block; padding: 5px 14px;">MILESTONE APPROACHING</div>
         <h2 style="margin: 12px 0 0; font-size: 24px; color: #FFFFFF;">Paul is ${Math.round(milesLeft)} miles from ${milestoneName}</h2>
@@ -656,9 +682,9 @@ export async function sendPreMilestoneNudge(
       <!-- Pledge preview -->
       <div style="text-align: center; padding: 28px 32px; background: #FFFFFF;">
         <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 3px; color: #8C8A87;">YOUR PLEDGE SO FAR</div>
-        <div style="font-size: 40px; font-weight: 600; letter-spacing: -1px; color: #FABE64; margin: 6px 0;">$${runningFormatted}</div>
+        <div style="font-size: 40px; font-weight: 600; letter-spacing: -1px; color: #FABE64; margin: 6px 0;">US$${runningFormatted}</div>
         <div style="font-size: 12px; color: #5C5C5C;">${rateFormatted} &times; ${currentMiles.toLocaleString()} miles walked</div>
-        <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 600; font-size: 12px; color: #3D7A5A; margin-top: 12px;">At mile ${milestoneMiles.toLocaleString()}, your pledge will be $${projectedFormatted}</div>
+        <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 600; font-size: 12px; color: #3D7A5A; margin-top: 12px;">At mile ${milestoneMiles.toLocaleString()}, your pledge will be US$${projectedFormatted}</div>
       </div>
       <!-- Nudge CTA -->
       <div style="text-align: center; padding: 24px 32px; background: #F4F1EC;">
@@ -676,7 +702,7 @@ export async function sendPreMilestoneNudge(
       <!-- Footer -->
       <div style="text-align: center; padding: 20px 32px; background: #1C1F1A;">
         <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 3px; color: #FFFFFF88;">YESCHAPTER</div>
-        <p style="font-size: 11px; color: #FFFFFF66; margin: 10px 0;">You're receiving this because you pledged to walk with Paul.</p>
+        <p style="font-size: 11px; color: #FFFFFFAA; margin: 10px 0;">You're receiving this because you pledged to walk with Paul.</p>
         <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 500; font-size: 10px; color: #FFFFFF44;">
           <a href="https://yeschapter.com/my-pledge" style="color: #FFFFFF44; text-decoration: none;">View My Pledge</a> &middot;
           <a href="https://yeschapter.com" style="color: #FFFFFF44; text-decoration: none;">yeschapter.com</a>
@@ -703,7 +729,7 @@ export async function sendNearFinish(
   const finalFormatted = finalTotal.toLocaleString("en-US", { style: "currency", currency: "USD" });
   const halfFinal = (finalTotal / 2).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const totalPledgedFormatted = totalPledgedAll.toLocaleString("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 0, maximumFractionDigits: 0 });
-  const rateFormatted = `$${pledgeRate}/${pledgeInterval === 1 ? "mi" : pledgeInterval + "mi"}`;
+  const rateFormatted = `US$${pledgeRate}/${pledgeInterval === 1 ? "mi" : pledgeInterval + "mi"}`;
 
   if (variant === "200mi") {
     return send(
@@ -711,10 +737,7 @@ export async function sendNearFinish(
       `200 miles to go — Paul enters Washington!`,
       `
       <div style="font-family: Georgia, serif; max-width: 560px; margin: 0 auto; color: #1C1C1C;">
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 28px; background: #1C1F1A;">
-          <span style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 3px; color: #FFFFFF;">YESCHAPTER</span>
-          <span style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 600; font-size: 9px; letter-spacing: 2px; color: #FFFFFF66;">WALKING FOR CANCER</span>
-        </div>
+        ${emailHeader()}
         <div style="text-align: center; padding: 40px 32px; background: linear-gradient(135deg, #1C1F1A, #3D7A5A);">
           <div style="font-size: 48px; margin-bottom: 8px;">&#9968;</div>
           <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 3px; color: #FFFFFF; background: #FABE64; display: inline-block; padding: 5px 14px;">THE FINAL STRETCH</div>
@@ -725,7 +748,7 @@ export async function sendNearFinish(
         </div>
         <div style="text-align: center; padding: 28px 32px; background: #FFFFFF;">
           <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 3px; color: #8C8A87;">YOUR PLEDGE SO FAR</div>
-          <div style="font-size: 40px; font-weight: 600; letter-spacing: -1px; color: #FABE64; margin: 6px 0;">$${runningFormatted}</div>
+          <div style="font-size: 40px; font-weight: 600; letter-spacing: -1px; color: #FABE64; margin: 6px 0;">US$${runningFormatted}</div>
           <div style="font-size: 12px; color: #5C5C5C;">If Paul finishes: ${finalFormatted}</div>
         </div>
         <div style="text-align: center; padding: 24px 32px; background: #F4F1EC;">
@@ -737,7 +760,7 @@ export async function sendNearFinish(
         </div>
         <div style="text-align: center; padding: 20px 32px; background: #1C1F1A;">
           <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 3px; color: #FFFFFF88;">YESCHAPTER</div>
-          <p style="font-size: 11px; color: #FFFFFF66; margin: 10px 0;">Your pledge: ${rateFormatted}</p>
+          <p style="font-size: 11px; color: #FFFFFFAA; margin: 10px 0;">Your pledge: ${rateFormatted}</p>
           <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 500; font-size: 10px; color: #FFFFFF44;">
             <a href="https://yeschapter.com/my-pledge" style="color: #FFFFFF44; text-decoration: none;">View My Pledge</a> &middot;
             <a href="https://yeschapter.com" style="color: #FFFFFF44; text-decoration: none;">yeschapter.com</a>
@@ -754,10 +777,7 @@ export async function sendNearFinish(
       `100 miles to go — the final push!`,
       `
       <div style="font-family: Georgia, serif; max-width: 560px; margin: 0 auto; color: #1C1C1C;">
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 28px; background: #1C1F1A;">
-          <span style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 3px; color: #FFFFFF;">YESCHAPTER</span>
-          <span style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 600; font-size: 9px; letter-spacing: 2px; color: #FFFFFF66;">WALKING FOR CANCER</span>
-        </div>
+        ${emailHeader()}
         <div style="text-align: center; padding: 40px 32px; background: #FABE64;">
           <div style="font-size: 48px; margin-bottom: 8px;">&#127939;</div>
           <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 3px; color: #FFFFFF; background: #FFFFFF22; display: inline-block; padding: 5px 14px;">100 MILES TO GO</div>
@@ -768,10 +788,10 @@ export async function sendNearFinish(
         </div>
         <div style="text-align: center; padding: 28px 32px; background: #FFFFFF;">
           <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 3px; color: #8C8A87;">YOUR PLEDGE SO FAR</div>
-          <div style="font-size: 40px; font-weight: 600; letter-spacing: -1px; color: #FABE64; margin: 6px 0;">$${runningFormatted}</div>
+          <div style="font-size: 40px; font-weight: 600; letter-spacing: -1px; color: #FABE64; margin: 6px 0;">US$${runningFormatted}</div>
           <div style="font-size: 13px; color: #5C5C5C; line-height: 1.6;">
             When Paul finishes, your total pledge of <strong>${finalFormatted}</strong> will go directly to the foundations:<br/>
-            $${halfFinal} to City of Hope &middot; $${halfFinal} to Leukaemia Foundation
+            $${halfFinal} to City of Hope &middot; US$${halfFinal} to Leukaemia Foundation
           </div>
         </div>
         <div style="text-align: center; padding: 24px 32px; background: #F4F1EC;">
@@ -786,7 +806,7 @@ export async function sendNearFinish(
         </div>
         <div style="text-align: center; padding: 20px 32px; background: #1C1F1A;">
           <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 3px; color: #FFFFFF88;">YESCHAPTER</div>
-          <p style="font-size: 11px; color: #FFFFFF66; margin: 10px 0;">Your pledge: ${rateFormatted}</p>
+          <p style="font-size: 11px; color: #FFFFFFAA; margin: 10px 0;">Your pledge: ${rateFormatted}</p>
           <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 500; font-size: 10px; color: #FFFFFF44;">
             <a href="https://yeschapter.com/my-pledge" style="color: #FFFFFF44; text-decoration: none;">View My Pledge</a> &middot;
             <a href="https://yeschapter.com" style="color: #FFFFFF44; text-decoration: none;">yeschapter.com</a>
@@ -803,10 +823,7 @@ export async function sendNearFinish(
     `Paul made it to Canada! 🏔️ Your pledge: ${finalFormatted}`,
     `
     <div style="font-family: Georgia, serif; max-width: 560px; margin: 0 auto; color: #1C1C1C;">
-      <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 28px; background: #1C1F1A;">
-        <span style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 3px; color: #FFFFFF;">YESCHAPTER</span>
-        <span style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 600; font-size: 9px; letter-spacing: 2px; color: #FFFFFF66;">WALKING FOR CANCER</span>
-      </div>
+      ${emailHeader()}
       <div style="text-align: center; padding: 48px 32px; background: linear-gradient(135deg, #3D7A5A, #FABE64);">
         <div style="font-size: 64px; margin-bottom: 12px;">&#127881;</div>
         <h2 style="margin: 0 0 8px; font-size: 30px; color: #FFFFFF;">Paul Made It to Canada!</h2>
@@ -818,7 +835,7 @@ export async function sendNearFinish(
         <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 3px; color: #8C8A87;">YOUR FINAL PLEDGE</div>
         <div style="font-size: 52px; font-weight: 600; letter-spacing: -1px; color: #FABE64; margin: 8px 0;">${finalFormatted}</div>
         <div style="font-size: 13px; color: #5C5C5C;">${rateFormatted} &times; 2,650 miles</div>
-        <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 500; font-size: 11px; color: #8C8A87; margin-top: 8px;">$${halfFinal} to City of Hope &middot; $${halfFinal} to Leukaemia Foundation</div>
+        <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 500; font-size: 11px; color: #8C8A87; margin-top: 8px;">US$${halfFinal} to City of Hope &middot; US$${halfFinal} to Leukaemia Foundation</div>
       </div>
       <div style="text-align: center; padding: 32px; background: #3D7A5A;">
         <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 3px; color: #FFFFFF; margin-bottom: 12px;">HONOR YOUR PLEDGE</div>
@@ -833,7 +850,7 @@ export async function sendNearFinish(
       </div>
       <div style="text-align: center; padding: 20px 32px; background: #1C1F1A;">
         <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 3px; color: #FFFFFF88;">YESCHAPTER</div>
-        <p style="font-size: 11px; color: #FFFFFF66; margin: 10px 0;">Thank you for walking alongside Paul, ${name}. Together, we made a difference.</p>
+        <p style="font-size: 11px; color: #FFFFFFAA; margin: 10px 0;">Thank you for walking alongside Paul, ${name}. Together, we made a difference.</p>
         <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 500; font-size: 10px; color: #FFFFFF44;">
           <a href="https://yeschapter.com/my-pledge" style="color: #FFFFFF44; text-decoration: none;">View My Pledge</a> &middot;
           <a href="https://yeschapter.com" style="color: #FFFFFF44; text-decoration: none;">yeschapter.com</a>
@@ -864,10 +881,7 @@ export async function sendHonorReminder(
       `Your pledge of ${finalFormatted} is waiting — honor it today`,
       `
       <div style="font-family: Georgia, serif; max-width: 560px; margin: 0 auto; color: #1C1C1C;">
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 28px; background: #1C1F1A;">
-          <span style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 3px; color: #FFFFFF;">YESCHAPTER</span>
-          <span style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 600; font-size: 9px; letter-spacing: 2px; color: #FFFFFF66;">WALKING FOR CANCER</span>
-        </div>
+        ${emailHeader()}
         <div style="text-align: center; padding: 36px 32px; background: #3D7A5A;">
           <h2 style="margin: 0 0 8px; font-size: 24px; color: #FFFFFF;">Hey ${name},</h2>
           <p style="margin: 0; font-size: 14px; color: #FFFFFFCC; line-height: 1.6; max-width: 400px; margin: 0 auto;">
@@ -877,7 +891,7 @@ export async function sendHonorReminder(
         <div style="text-align: center; padding: 28px 32px; background: #FFFFFF;">
           <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 3px; color: #8C8A87;">YOUR PLEDGE</div>
           <div style="font-size: 44px; font-weight: 600; letter-spacing: -1px; color: #FABE64; margin: 6px 0;">${finalFormatted}</div>
-          <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 500; font-size: 11px; color: #8C8A87; margin-top: 4px;">$${halfTotal} to City of Hope &middot; $${halfTotal} to Leukaemia Foundation</div>
+          <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 500; font-size: 11px; color: #8C8A87; margin-top: 4px;">US$${halfTotal} to City of Hope &middot; US$${halfTotal} to Leukaemia Foundation</div>
         </div>
         <div style="text-align: center; padding: 24px 32px; background: #F4F1EC;">
           <p style="font-size: 13px; color: #5C5C5C; margin: 0 0 14px;">${honoredCount} of ${pledgerCount} pledgers have already honored (${honorRate}%)</p>
@@ -885,7 +899,7 @@ export async function sendHonorReminder(
         </div>
         <div style="text-align: center; padding: 20px 32px; background: #1C1F1A;">
           <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 3px; color: #FFFFFF88;">YESCHAPTER</div>
-          <p style="font-size: 11px; color: #FFFFFF66; margin: 10px 0;">Paul gets $0 — every cent goes directly to cancer foundations.</p>
+          <p style="font-size: 11px; color: #FFFFFFAA; margin: 10px 0;">Paul gets $0 — every cent goes directly to cancer foundations.</p>
           <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 500; font-size: 10px; color: #FFFFFF44;">
             <a href="https://yeschapter.com/honor" style="color: #FFFFFF44; text-decoration: none;">Honor My Pledge</a> &middot;
             <a href="https://yeschapter.com" style="color: #FFFFFF44; text-decoration: none;">yeschapter.com</a>
@@ -902,10 +916,7 @@ export async function sendHonorReminder(
     `Last call — your ${finalFormatted} pledge for cancer research`,
     `
     <div style="font-family: Georgia, serif; max-width: 560px; margin: 0 auto; color: #1C1C1C;">
-      <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 28px; background: #1C1F1A;">
-        <span style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 3px; color: #FFFFFF;">YESCHAPTER</span>
-        <span style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 600; font-size: 9px; letter-spacing: 2px; color: #FFFFFF66;">WALKING FOR CANCER</span>
-      </div>
+      ${emailHeader()}
       <div style="text-align: center; padding: 36px 32px; background: #FABE64;">
         <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 3px; color: #FFFFFF; background: #FFFFFF22; display: inline-block; padding: 5px 14px; margin-bottom: 12px;">FINAL REMINDER</div>
         <h2 style="margin: 0 0 8px; font-size: 24px; color: #FFFFFF;">Your pledge is still waiting</h2>
@@ -915,7 +926,7 @@ export async function sendHonorReminder(
       </div>
       <div style="text-align: center; padding: 28px 32px; background: #FFFFFF;">
         <div style="font-size: 44px; font-weight: 600; letter-spacing: -1px; color: #FABE64; margin: 6px 0;">${finalFormatted}</div>
-        <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 500; font-size: 11px; color: #8C8A87; margin-top: 4px;">$${halfTotal} to City of Hope &middot; $${halfTotal} to Leukaemia Foundation</div>
+        <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 500; font-size: 11px; color: #8C8A87; margin-top: 4px;">US$${halfTotal} to City of Hope &middot; US$${halfTotal} to Leukaemia Foundation</div>
       </div>
       <div style="text-align: center; padding: 24px 32px; background: #3D7A5A;">
         <a href="https://yeschapter.com/honor" style="display: inline-block; background: #FABE64; color: #1C1C1C; padding: 14px 36px; text-decoration: none; font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 2px;">HONOR MY PLEDGE NOW &rarr;</a>
@@ -923,7 +934,7 @@ export async function sendHonorReminder(
       </div>
       <div style="text-align: center; padding: 20px 32px; background: #1C1F1A;">
         <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 3px; color: #FFFFFF88;">YESCHAPTER</div>
-        <p style="font-size: 11px; color: #FFFFFF66; margin: 10px 0;">This is our final reminder. Thank you for being part of the YesChapter community.</p>
+        <p style="font-size: 11px; color: #FFFFFFAA; margin: 10px 0;">This is our final reminder. Thank you for being part of the YesChapter community.</p>
         <div style="font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 500; font-size: 10px; color: #FFFFFF44;">
           <a href="https://yeschapter.com/honor" style="color: #FFFFFF44; text-decoration: none;">Honor My Pledge</a> &middot;
           <a href="https://yeschapter.com" style="color: #FFFFFF44; text-decoration: none;">yeschapter.com</a>
@@ -998,7 +1009,7 @@ export async function sendChallengeResult(
       <p style="font-size: 16px; line-height: 1.6; color: #5C5C5C;">
         ${name}, Paul successfully completed <strong>${challengeTitle}</strong>!
         ${boostApplied
-          ? `Your pledge has been boosted by <strong style="color: #3D7A5A;">+$${boostApplied.toFixed(2)}/mi</strong>.`
+          ? `Your pledge has been boosted by <strong style="color: #3D7A5A;">+US$${boostApplied.toFixed(2)}/mi</strong>.`
           : "Check your pledge dashboard to see the latest totals."
         }
       </p>
@@ -1205,17 +1216,17 @@ export async function sendCommunityMilestone(
 ): Promise<SendResult> {
   const titles: Record<string, string> = {
     pledgers: `We just hit ${value.toLocaleString()} pledgers! 🎉`,
-    total: `$${value.toLocaleString()} total pledged!`,
+    total: `US$${value.toLocaleString()} total pledged!`,
     countries: `Pledgers from ${value} countries!`,
   };
   const headlines: Record<string, string> = {
     pledgers: `${value.toLocaleString()} People Walking With Paul`,
-    total: `$${value.toLocaleString()} Pledged for Cancer Research`,
+    total: `US$${value.toLocaleString()} Pledged for Cancer Research`,
     countries: `${value} Countries United Against Cancer`,
   };
   const descriptions: Record<string, string> = {
     pledgers: `The YesChapter community just reached <strong>${value.toLocaleString()} pledgers</strong>. That's ${value.toLocaleString()} people who believe every mile matters.`,
-    total: `Together, the community has pledged <strong>$${value.toLocaleString()}</strong> for cancer research and patient support — split equally between City of Hope and the Leukaemia Foundation.`,
+    total: `Together, the community has pledged <strong>US$${value.toLocaleString()}</strong> for cancer research and patient support — split equally between City of Hope and the Leukaemia Foundation.`,
     countries: `Pledgers from <strong>${value} countries</strong> are now walking with Paul. This started as one man's walk, and it's become a global movement.`,
   };
   const shareLink = shareUrl(name);
@@ -1245,7 +1256,7 @@ export async function sendCommunityMilestone(
             <p style="margin: 4px 0 0; font-size: 10px; letter-spacing: 2px; font-family: sans-serif; font-weight: 700; color: #8C8A87;">PLEDGERS</p>
           </div>
           <div style="flex: 1;">
-            <p style="margin: 0; font-size: 22px; font-weight: 700; color: #FABE64;">$${totalFormatted}</p>
+            <p style="margin: 0; font-size: 22px; font-weight: 700; color: #FABE64;">US$${totalFormatted}</p>
             <p style="margin: 4px 0 0; font-size: 10px; letter-spacing: 2px; font-family: sans-serif; font-weight: 700; color: #8C8A87;">TOTAL PLEDGED</p>
           </div>
         </div>
@@ -1319,7 +1330,7 @@ export async function sendNewPost(
     <div style="font-family: Georgia, serif; max-width: 560px; margin: 0 auto; color: #1C1C1C;">
       <div style="background: #1C1F1A; padding: 20px 32px; text-align: center;">
         <p style="margin: 0; font-size: 14px; letter-spacing: 3px; font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; color: #FFFFFF;">YESCHAPTER</p>
-        <p style="margin: 4px 0 0; font-size: 9px; letter-spacing: 2px; font-family: sans-serif; color: #FFFFFF66;">WALKING FOR CANCER</p>
+        <p style="margin: 4px 0 0; font-size: 9px; letter-spacing: 2px; font-family: sans-serif; color: #FFFFFFAA;">WALKING FOR CANCER</p>
       </div>
       <div style="background: #FABE64; padding: 16px 32px; text-align: center;">
         <p style="margin: 0; font-size: 10px; letter-spacing: 2px; font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; color: #1C1C1C;">

@@ -83,7 +83,7 @@ export async function GET(req: NextRequest) {
     await redis.del(pendingKey);
 
     // Send confirmation email (fire-and-forget)
-    const rate = `$${pendingRecord.amount}/${pendingRecord.interval === 1 ? "mi" : pendingRecord.interval + "mi"}`;
+    const rate = `$${pendingRecord.amount.toFixed(2)}/${pendingRecord.interval === 1 ? "mi" : pendingRecord.interval + "mi"}`;
     sendPledgeConfirmation(
       pendingRecord.email,
       pendingRecord.name,

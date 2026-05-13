@@ -134,7 +134,10 @@ export async function POST(req: NextRequest) {
     // time; that's the right trade for a confirmation email that must arrive.
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://yeschapter.com";
     const verifyUrl = `${siteUrl}/api/pledges/verify?token=${verifyToken}`;
-    const rate = `$${amount}/${interval === 1 ? "mi" : interval + "mi"}`;
+    // Format with 2 decimal places so $0.1 renders as $0.10 in the email body.
+    // The "US" prefix is added by the email template itself for site-wide
+    // consistency with the US$ convention used across all UI surfaces.
+    const rate = `$${amount.toFixed(2)}/${interval === 1 ? "mi" : interval + "mi"}`;
 
     await sendPledgeVerification(email, record.name, rate, totalPledge, verifyUrl);
 
