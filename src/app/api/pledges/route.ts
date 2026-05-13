@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { Redis } from "@upstash/redis";
 import type { PledgeRecord } from "@/lib/types";
 import { sendPledgeVerification, sendPledgeIncreased, sendCommunityMilestone, sendActionVerification } from "@/lib/email";
@@ -11,6 +12,7 @@ import {
   isHoneypotFilled,
   getClientIp,
 } from "@/lib/security";
+import { getSession, SESSION_COOKIE } from "@/lib/auth";
 import crypto from "crypto";
 
 const TOTAL_MILES = 2650;
@@ -154,14 +156,28 @@ export async function POST(req: NextRequest) {
 
 // GET — Retrieve a pledger's profile by email
 //
-// Returns 200 with { pledge: PledgeRecord | null } either way. Returning
-// 404 for missing emails was a minor enumeration vector: an attacker could
-// hammer the endpoint with candidate addresses and see which ones existed
-// by status code alone. Rate limiting caps volume but doesn't kill the
-// pattern. Uniform shape removes the signal entirely.
+// Authentication: REQUIRED. Must have a valid pledger session cookie AND the
+// requested ?email= must match the session's email. This closes the
+// previous enumeration vector — anyone with a guessable email could read
+// that pledger's amount/total/history via this endpoint. Now they have to
+// own the inbox to receive the magic-link first.
+//
+// Response shape preserved for backwards compat: 200 with
+// { pledge: PledgeRecord | null }. Unauthenticated callers get 401.
 export async function GET(req: NextRequest) {
   const rateLimited = await RATE_LIMITS.pledgeLookup(req);
   if (rateLimited) return rateLimited;
+
+  // ── Require a signed-in pledger session ──────────────────────────
+  const cookieStore = await cookies();
+  const sessionId = cookieStore.get(SESSION_COOKIE)?.value;
+  if (!sessionId) {
+    return NextResponse.json({ error: "Sign in required" }, { status: 401 });
+  }
+  const session = await getSession(sessionId);
+  if (!session) {
+    return NextResponse.json({ error: "Sign in required" }, { status: 401 });
+  }
 
   const redis = getRedis();
   if (!redis) {
@@ -171,6 +187,13 @@ export async function GET(req: NextRequest) {
   const email = req.nextUrl.searchParams.get("email");
   if (!email) {
     return NextResponse.json({ error: "Email parameter required" }, { status: 400 });
+  }
+
+  // The email param must match the session's email — a signed-in pledger
+  // can only look up their OWN pledge. Same 401 message regardless so
+  // we don't reveal whether a different email exists in the system.
+  if (email.toLowerCase().trim() !== session.email.toLowerCase().trim()) {
+    return NextResponse.json({ error: "Sign in required" }, { status: 401 });
   }
 
   try {

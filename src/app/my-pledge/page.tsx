@@ -369,46 +369,29 @@ export default function MyPledgePage() {
     return () => controller.abort();
   }, [user, pledge]);
 
-  const handleLookup = async (e: FormEvent) => {
+  // Magic-link-only auth. The previous "instant view by email" lookup let
+  // anyone read a pledger's amount/total/history by knowing the email
+  // address — a privacy hole. Now the only path in is: type email → receive
+  // sign-in link → click it → session cookie set → dashboard renders.
+  // Pairs with the API change in /api/pledges that now requires a session
+  // matching the requested email.
+  const handleSendMagicLink = async (e: FormEvent) => {
     e.preventDefault();
-    if (!email.trim()) return;
-    setLookupLoading(true);
-    setError(null);
-
-    try {
-      const res = await fetch(
-        `/api/pledges?email=${encodeURIComponent(email.trim())}`
-      );
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || "Something went wrong.");
-      } else if (!data.pledge) {
-        // API now returns 200 with pledge: null for unknown emails (uniform
-        // response defeats enumeration). Show the friendly not-found message.
-        setError("No pledge found for this email. Have you pledged yet?");
-      } else {
-        setPledge(data.pledge);
-      }
-    } catch {
-      setError("Network error. Please try again.");
-    } finally {
-      setLookupLoading(false);
-    }
-  };
-
-  const handleSendMagicLink = async () => {
     if (!email.trim() || magicSending) return;
     setMagicSending(true);
+    setError(null);
     try {
       await fetch("/api/auth/magic", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email.trim() }),
       });
+      // The magic endpoint always returns success to avoid leaking which
+      // emails exist. We mirror that on the UI — show "check your inbox"
+      // regardless of whether the email is in the system.
       setMagicSent(true);
     } catch {
-      // Silently fail
+      setError("Network error. Please try again.");
     } finally {
       setMagicSending(false);
     }
@@ -458,69 +441,74 @@ export default function MyPledgePage() {
             </div>
           ) : (
             <div className="flex flex-col gap-[16px] bg-[var(--bg-card)] border border-[var(--border-subtle)] p-[32px] max-w-[500px] mx-auto w-full">
-              <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-muted)]">
-                FIND YOUR PLEDGE
-              </span>
-              <p className="font-heading text-[14px] leading-[1.6] text-[var(--text-secondary)]">
-                Enter the email you used when setting your pledge.
-              </p>
-              <form onSubmit={handleLookup} className="flex flex-col gap-[12px]">
-                <div className="flex items-center w-full h-[48px] bg-[var(--bg-white)] border border-[var(--border-subtle)]">
-                  <Mail className="w-[18px] h-[18px] text-[var(--text-muted)] ml-[16px] shrink-0" />
-                  <input
-                    type="email"
-                    required
-                    placeholder="your@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="flex-1 h-full px-[12px] font-heading text-[15px] italic text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none bg-transparent"
-                  />
+              {magicSent ? (
+                /* Success state — magic link has been sent */
+                <div className="flex flex-col gap-[12px] items-center text-center py-[8px]">
+                  <Mail className="w-[28px] h-[28px] text-[var(--forest-green)]" />
+                  <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--forest-green)]">
+                    CHECK YOUR INBOX
+                  </span>
+                  <p className="font-heading text-[14px] leading-[1.6] text-[var(--text-secondary)]">
+                    If a pledge exists for <strong>{email}</strong>, we&apos;ve emailed
+                    you a sign-in link. Open it on this device — clicking the
+                    button inside will sign you in and bring you straight here.
+                  </p>
+                  <p className="font-heading text-[12px] text-[var(--text-muted)] mt-[4px]">
+                    The link expires in 15 minutes. Don&apos;t see it? Check spam.
+                  </p>
                 </div>
-                {error && (
-                  <span className="font-heading text-[13px] text-red-600">
-                    {error}
+              ) : (
+                <>
+                  <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-muted)]">
+                    SIGN IN TO VIEW YOUR PLEDGE
                   </span>
-                )}
-                <button
-                  type="submit"
-                  disabled={lookupLoading}
-                  className={`flex items-center justify-center gap-[8px] h-[48px] w-full transition-opacity ${
-                    lookupLoading
-                      ? "bg-[var(--text-muted)] cursor-not-allowed"
-                      : "bg-[var(--burnt-orange)] cursor-pointer hover:opacity-90"
-                  }`}
-                >
-                  <span className="font-label font-bold text-[13px] tracking-[2px] text-[var(--text-white)]">
-                    {lookupLoading ? "LOOKING UP..." : "VIEW MY PLEDGE"}
-                  </span>
-                </button>
-              </form>
+                  <p className="font-heading text-[14px] leading-[1.6] text-[var(--text-secondary)]">
+                    Enter the email you pledged with. We&apos;ll send you a one-time
+                    sign-in link — no password needed.
+                  </p>
+                  <form onSubmit={handleSendMagicLink} className="flex flex-col gap-[12px]">
+                    <div className="flex items-center w-full h-[48px] bg-[var(--bg-white)] border border-[var(--border-subtle)]">
+                      <Mail className="w-[18px] h-[18px] text-[var(--text-muted)] ml-[16px] shrink-0" />
+                      <input
+                        type="email"
+                        required
+                        placeholder="your@email.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="flex-1 h-full px-[12px] font-heading text-[15px] italic text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none bg-transparent"
+                      />
+                    </div>
+                    {error && (
+                      <span className="font-heading text-[13px] text-red-600">
+                        {error}
+                      </span>
+                    )}
+                    <button
+                      type="submit"
+                      disabled={magicSending}
+                      className={`flex items-center justify-center gap-[8px] h-[48px] w-full transition-opacity ${
+                        magicSending
+                          ? "bg-[var(--text-muted)] cursor-not-allowed"
+                          : "bg-[var(--burnt-orange)] cursor-pointer hover:opacity-90"
+                      }`}
+                    >
+                      <span className="font-label font-bold text-[13px] tracking-[2px] text-[var(--text-white)]">
+                        {magicSending ? "SENDING…" : "SEND ME A SIGN-IN LINK"}
+                      </span>
+                    </button>
+                  </form>
 
-              {/* Magic link option */}
-              {email.trim() && !magicSent && (
-                <button
-                  onClick={handleSendMagicLink}
-                  disabled={magicSending}
-                  className="font-heading text-[13px] text-[var(--forest-green)] hover:underline text-center cursor-pointer disabled:opacity-50 transition-opacity"
-                >
-                  {magicSending ? "Sending..." : "Or get a magic sign-in link →"}
-                </button>
+                  <p className="font-heading text-[13px] text-[var(--text-muted)] text-center">
+                    Don&apos;t have a pledge yet?{" "}
+                    <Link
+                      href="/pledge"
+                      className="text-[var(--burnt-orange)] font-semibold hover:underline"
+                    >
+                      Set one now
+                    </Link>
+                  </p>
+                </>
               )}
-              {magicSent && (
-                <p className="font-heading text-[13px] text-[var(--forest-green)] text-center">
-                  Magic link sent! Check your inbox.
-                </p>
-              )}
-
-              <p className="font-heading text-[13px] text-[var(--text-muted)] text-center">
-                Don&apos;t have a pledge yet?{" "}
-                <Link
-                  href="/pledge"
-                  className="text-[var(--burnt-orange)] font-semibold hover:underline"
-                >
-                  Set one now
-                </Link>
-              </p>
             </div>
           )}
         </section>

@@ -3,6 +3,7 @@ import { Redis } from "@upstash/redis";
 import { consumeEmailVerifyToken, RATE_LIMITS } from "@/lib/security";
 import { safeParse } from "@/lib/redis-safe";
 import { sendPledgeConfirmation, sendCommunityMilestone, bulkEmailsEnabled } from "@/lib/email";
+import { createSession, sessionCookieOptions, SESSION_COOKIE } from "@/lib/auth";
 import type { PledgeRecord } from "@/lib/types";
 
 function getRedis() {
@@ -96,11 +97,28 @@ export async function GET(req: NextRequest) {
     const newTotal = (await redis.get<number>("pledgers:total_pledged")) || 0;
     checkCommunityMilestones(redis, newCount, newTotal).catch(() => {});
 
-    // Redirect to success page
+    // Sign the pledger in by creating a session.
+    //
+    // They JUST proved they own this email (they clicked a token-bound link
+    // sent to it), so we treat this as equivalent to a magic-link login.
+    // Without this, the user lands on the success page in a "not signed in"
+    // state and has to request another email to view /my-pledge. With it,
+    // confirmation = signed in, and they can navigate straight to their
+    // dashboard. Cookie is the same one used by the magic-link flow.
+    const session = await createSession(pendingRecord.email);
+    const cookieOpts = sessionCookieOptions();
+
+    // Redirect to success page WITH the session cookie set on the response.
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://yeschapter.com";
-    return NextResponse.redirect(
+    const res = NextResponse.redirect(
       `${siteUrl}/pledge/verify?status=success&name=${encodeURIComponent(pendingRecord.anonymous ? "Friend" : pendingRecord.name)}&total=${pendingRecord.totalPledge}`
     );
+    res.cookies.set({
+      ...cookieOpts,
+      name: SESSION_COOKIE,
+      value: session.sessionId,
+    });
+    return res;
   } catch (err) {
     console.error("Pledge verification failed:", err);
     return NextResponse.json({ error: "Verification failed" }, { status: 500 });
