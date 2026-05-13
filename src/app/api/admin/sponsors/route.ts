@@ -50,10 +50,25 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Company name is required" }, { status: 400 });
     }
 
+    // Website URL is optional. Be friendly about it: if the admin types
+    // "acme.com" we silently upgrade to "https://acme.com" so the tooltip
+    // link still works. But any non-http(s) scheme (javascript:, mailto:,
+    // data:, etc.) is rejected outright — that link would render as a
+    // clickable target on the public trail-map tooltip.
     const websiteRaw = String(form.get("websiteUrl") || "").trim();
-    const websiteUrl = websiteRaw && /^https?:\/\//i.test(websiteRaw)
-      ? sanitizeText(websiteRaw, 200)
-      : undefined;
+    let websiteUrl: string | undefined;
+    if (websiteRaw) {
+      if (/^https?:\/\//i.test(websiteRaw)) {
+        websiteUrl = sanitizeText(websiteRaw, 200);
+      } else if (/^[a-z][a-z0-9+.-]*:/i.test(websiteRaw)) {
+        return NextResponse.json(
+          { error: "Website URL must be http:// or https://" },
+          { status: 400 }
+        );
+      } else {
+        websiteUrl = sanitizeText(`https://${websiteRaw}`, 200);
+      }
+    }
 
     const mode = String(form.get("mode") || "");
     if (mode !== "section" && mode !== "custom") {
