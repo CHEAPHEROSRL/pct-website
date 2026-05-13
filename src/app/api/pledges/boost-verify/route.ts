@@ -83,11 +83,14 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // Send confirmation
+    // Send confirmation — awaited so the serverless function stays alive
+    // until Gmail's API call resolves. Previously fire-and-forget, which
+    // was unreliable in Vercel's runtime (function could terminate before
+    // dispatch completed). Same fix as POST /api/pledges.
     if (!challengeId) {
       const displayName = record.anonymous ? "Pledger" : record.name;
       const newRate = `$${record.amount}/mi`;
-      sendPledgeIncreased(record.email, displayName, oldAmount, record.amount, newRate, record.totalPledge).catch(() => {});
+      await sendPledgeIncreased(record.email, displayName, oldAmount, record.amount, newRate, record.totalPledge);
     }
 
     return NextResponse.redirect(

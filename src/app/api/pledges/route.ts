@@ -123,12 +123,20 @@ export async function POST(req: NextRequest) {
     // Generate verification token that maps to the pending key
     const verifyToken = await generateEmailVerifyToken(redis, pendingKey, "pledge", 3600);
 
-    // Send verification email
+    // Send verification email — AWAIT it. Previously this was fire-and-forget
+    // with a swallow-the-error .catch(), but in Vercel's serverless runtime
+    // the function can be terminated as soon as the response is sent. If the
+    // Gmail API round-trip hadn't completed yet, the dispatch died mid-flight
+    // — the verification email never went out, the pledger sees "Pledge set,
+    // check your email" but no email arrives. The magic-link endpoint already
+    // awaits its send (which is why magic links reliably arrive while pledge
+    // verification emails sometimes vanished). Costs ~1-2s on the response
+    // time; that's the right trade for a confirmation email that must arrive.
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://yeschapter.com";
     const verifyUrl = `${siteUrl}/api/pledges/verify?token=${verifyToken}`;
     const rate = `$${amount}/${interval === 1 ? "mi" : interval + "mi"}`;
 
-    sendPledgeVerification(email, record.name, rate, totalPledge, verifyUrl).catch(() => {});
+    await sendPledgeVerification(email, record.name, rate, totalPledge, verifyUrl);
 
     return NextResponse.json({
       success: true,
@@ -284,7 +292,10 @@ export async function PUT(req: NextRequest) {
     if (!isChallenge) {
       const displayName = record.anonymous ? "Pledger" : record.name;
       const newRate = `$${record.amount}/mi`;
-      sendPledgeIncreased(record.email, displayName, oldAmount, record.amount, newRate, record.totalPledge).catch(() => {});
+      // Awaited so the serverless function stays alive long enough for
+      // Gmail's API round-trip to complete. See the long note in POST above
+      // explaining why fire-and-forget was unreliable in this runtime.
+      await sendPledgeIncreased(record.email, displayName, oldAmount, record.amount, newRate, record.totalPledge);
     }
 
     return NextResponse.json({
