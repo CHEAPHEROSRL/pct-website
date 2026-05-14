@@ -730,10 +730,10 @@ export default function MyPledgePage() {
                   You haven&apos;t claimed a trail section. Paul will assign your pin to a random unclaimed landmark.
                 </span>
                 <span className="font-heading italic text-[12px] text-[var(--text-muted)]">
-                  Section claims are set at pledge time. To change yours, email{" "}
-                  <a href="mailto:paul@yeschapter.com" className="text-[var(--burnt-orange)] hover:underline not-italic">
-                    paul@yeschapter.com
-                  </a>.
+                  Section claims are set at pledge time. To change yours, use the{" "}
+                  <Link href="/contact" className="text-[var(--burnt-orange)] hover:underline not-italic">
+                    contact form
+                  </Link>.
                 </span>
               </div>
             )}

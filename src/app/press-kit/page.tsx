@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Download, Globe, Camera, Video, Smartphone } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -308,6 +309,14 @@ export default function PressKitPage() {
                 <span className="font-label font-semibold text-[15px] tracking-[0.5px] text-[var(--text-white)]">yeschapter.com</span>
               </div>
             </div>
+            <Link
+              href="/contact"
+              className="flex items-center gap-[10px] mt-[8px] bg-[var(--burnt-orange)] px-[28px] py-[14px] hover:opacity-90 transition-opacity"
+            >
+              <span className="font-label font-bold text-[13px] tracking-[2px] text-[var(--text-primary)]">
+                MEDIA INQUIRIES — CONTACT PAUL
+              </span>
+            </Link>
           </div>
         </ScrollReveal>
       </section>

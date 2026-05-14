@@ -253,6 +253,28 @@ export default function SponsorAgreementPage() {
         </div>
       </section>
 
+      {/* Sponsorship inquiry CTA — placed after the agreement body so a
+          business reader has the full context before opening the contact form. */}
+      <section className="flex flex-col items-center gap-[16px] px-6 md:px-12 lg:px-[120px] py-[48px] md:py-[64px] bg-[var(--bg-dark)] w-full">
+        <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">
+          READY TO TALK?
+        </span>
+        <h2 className="font-heading font-semibold text-[26px] md:text-[32px] text-white text-center max-w-[640px]">
+          Discuss sponsorship with Paul
+        </h2>
+        <p className="font-heading text-[15px] leading-[1.7] text-[#FFFFFFAA] text-center max-w-[560px]">
+          Tell Paul about your company, the section you&apos;d like to sponsor, and any questions about the agreement. He&apos;ll reply within 48 hours.
+        </p>
+        <Link
+          href="/contact"
+          className="flex items-center gap-[10px] mt-[12px] bg-[var(--burnt-orange)] px-[32px] py-[14px] hover:opacity-90 transition-opacity"
+        >
+          <span className="font-label font-bold text-[13px] tracking-[2px] text-[var(--text-primary)]">
+            CONTACT PAUL ABOUT SPONSORSHIP
+          </span>
+        </Link>
+      </section>
+
       <Footer />
     </div>
   );

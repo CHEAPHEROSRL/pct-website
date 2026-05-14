@@ -137,8 +137,8 @@ export default function TransparencyPage() {
             <li>Publishing the total pledged amount on the website in real-time</li>
             <li>Providing clear instructions for pledgers to donate directly to foundations at the end of the hike</li>
             <li>Sharing periodic updates through the Journal about the journey and the cause</li>
-            <li>Making ourselves available to answer questions via{" "}
-              <a href="mailto:info@yeschapter.com" className="text-[var(--burnt-orange)] hover:underline">info@yeschapter.com</a>
+            <li>Making ourselves available to answer questions via the{" "}
+              <Link href="/contact" className="text-[var(--burnt-orange)] hover:underline">contact form</Link>
             </li>
           </ul>
           <p>
@@ -153,8 +153,9 @@ export default function TransparencyPage() {
             the transparency of this campaign, please reach out:
           </p>
           <p>
-            Email:{" "}
-            <a href="mailto:info@yeschapter.com" className="text-[var(--burnt-orange)] hover:underline">info@yeschapter.com</a>
+            Use the{" "}
+            <Link href="/contact" className="text-[var(--burnt-orange)] hover:underline">contact form</Link>
+            {" "}— it lands in Paul&apos;s inbox directly.
             <br />
             Website: yeschapter.com
           </p>

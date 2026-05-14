@@ -154,7 +154,7 @@ function emailHeader(): string {
   `;
 }
 
-async function send(to: string, subject: string, html: string): Promise<SendResult> {
+async function send(to: string, subject: string, html: string, replyTo?: string): Promise<SendResult> {
   if (_previewActive) {
     _previewCapture = {
       to,
@@ -174,16 +174,18 @@ async function send(to: string, subject: string, html: string): Promise<SendResu
   const from = await getFromAddress();
 
   try {
-    // Build RFC 2822 message
-    const message = [
+    // Build RFC 2822 message. Reply-To is optional — set it when we want
+    // "Paul hits reply" to go to someone other than the sending account
+    // (specifically: contact-form submissions, where reply should target
+    // the form submitter, not Paul's own outbox alias).
+    const headers = [
       `To: ${to}`,
       `From: ${from}`,
       `Subject: ${encodeSubjectHeader(subject)}`,
-      "MIME-Version: 1.0",
-      "Content-Type: text/html; charset=utf-8",
-      "",
-      html,
-    ].join("\r\n");
+    ];
+    if (replyTo) headers.push(`Reply-To: ${replyTo}`);
+    headers.push("MIME-Version: 1.0", "Content-Type: text/html; charset=utf-8");
+    const message = [...headers, "", html].join("\r\n");
 
     const raw = Buffer.from(message).toString("base64url");
 
@@ -859,6 +861,86 @@ export async function sendNearFinish(
     </div>
     `
   );
+}
+
+/**
+ * Send a contact-form submission to Paul's inbox.
+ *
+ * The form filter chain (Turnstile + honeypot + rate-limit + length caps) has
+ * already cleared the message by the time we get here. We just need to format
+ * it for Paul's scan-ability and set Reply-To so his "reply" goes to the
+ * submitter, not to his own outbox alias.
+ *
+ * HTML escaping is critical here: senderName, subject, and especially the
+ * message body are arbitrary user input flowing into an HTML email. Without
+ * escaping, a malicious sender could inject markup that renders in Paul's
+ * mail client (or worse, exfiltrates content via a remote image). We escape
+ * everything before interpolating.
+ */
+function htmlEscape(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+export async function sendContactNotification(
+  senderName: string,
+  senderEmail: string,
+  subject: string,
+  message: string
+): Promise<SendResult> {
+  const recipient = "paul@yeschapter.com";
+  const safeName = htmlEscape(senderName);
+  const safeEmail = htmlEscape(senderEmail);
+  const safeSubject = htmlEscape(subject);
+  // Preserve newlines from the message textarea by converting them to <br>
+  // AFTER escaping (so the <br> isn't escaped into &lt;br&gt;).
+  const safeMessage = htmlEscape(message).replace(/\n/g, "<br>");
+  const timestamp = new Date().toLocaleString("en-US", {
+    timeZone: "UTC",
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+
+  const html = `
+    <div style="max-width: 600px; margin: 0 auto; background: #F4F1EC; font-family: Georgia, serif;">
+      ${emailHeader()}
+      <div style="background: #C45C26; padding: 28px 32px;">
+        <p style="margin: 0 0 6px; font-size: 11px; letter-spacing: 3px; font-family: sans-serif; font-weight: 700; color: #FFFFFFAA;">CONTACT FORM</p>
+        <h1 style="margin: 0; font-size: 22px; font-weight: 600; color: #FFFFFF;">New message from ${safeName}</h1>
+      </div>
+      <div style="background: #FFFFFF; padding: 28px 32px;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse: collapse;">
+          <tr>
+            <td style="padding: 8px 0; font-family: sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: #8C8A87; width: 90px; vertical-align: top;">FROM</td>
+            <td style="padding: 8px 0; font-size: 14px; color: #1C1C1C;">${safeName} &lt;<a href="mailto:${safeEmail}" style="color: #C45C26; text-decoration: none;">${safeEmail}</a>&gt;</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0; font-family: sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: #8C8A87; vertical-align: top;">SUBJECT</td>
+            <td style="padding: 8px 0; font-size: 14px; color: #1C1C1C; font-weight: 600;">${safeSubject}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0; font-family: sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: #8C8A87; vertical-align: top;">RECEIVED</td>
+            <td style="padding: 8px 0; font-size: 13px; color: #5C5C5C;">${timestamp} UTC</td>
+          </tr>
+        </table>
+        <hr style="border: 0; border-top: 1px solid #D9D7D4; margin: 20px 0;" />
+        <p style="margin: 0 0 8px; font-family: sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: #8C8A87;">MESSAGE</p>
+        <div style="font-size: 15px; line-height: 1.7; color: #1C1C1C; white-space: pre-wrap;">${safeMessage}</div>
+      </div>
+      <div style="background: #FEF3EC; padding: 16px 32px; text-align: center;">
+        <p style="margin: 0; font-size: 12px; color: #5C5C5C; font-family: sans-serif;">Hit reply to respond directly to ${safeName}. Reply-To is set to their email.</p>
+      </div>
+      <div style="background: #1C1F1A; padding: 16px 32px; text-align: center;">
+        <p style="margin: 0; font-size: 10px; color: #FFFFFF55; font-family: sans-serif; letter-spacing: 0.5px;">Sent via yeschapter.com/contact</p>
+      </div>
+    </div>
+  `;
+
+  return send(recipient, `[YesChapter Contact] ${subject}`, html, senderEmail);
 }
 
 export async function sendHonorReminder(

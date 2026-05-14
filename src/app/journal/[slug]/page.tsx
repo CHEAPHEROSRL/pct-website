@@ -256,6 +256,26 @@ export default function JournalPostPage() {
       {/* Photo Gallery */}
       {post.images.length > 0 && <PhotoGallery images={post.images} />}
 
+      {/* Quiet contact prompt — sits between the post body and the next/prev
+          nav. Intentionally low-key so it doesn't compete with the writing,
+          but visible enough that anyone moved by the post can reach Paul. */}
+      <section className="flex flex-col items-center gap-[12px] px-6 md:px-12 lg:px-[120px] py-[40px] md:py-[48px] bg-[var(--bg-warm)] border-t border-[var(--border-subtle)] w-full">
+        <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--burnt-orange)]">
+          GOT THOUGHTS ON THIS?
+        </span>
+        <p className="font-heading text-[15px] leading-[1.6] text-[var(--text-secondary)] text-center max-w-[520px]">
+          Paul reads every message. Reply to this entry, ask a question, or just say hello.
+        </p>
+        <Link
+          href="/contact"
+          className="flex items-center gap-[8px] mt-[8px] px-[24px] py-[12px] border border-[var(--burnt-orange)] hover:bg-[var(--burnt-orange)] transition-colors group"
+        >
+          <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--burnt-orange)] group-hover:text-white">
+            REPLY TO PAUL
+          </span>
+        </Link>
+      </section>
+
       {/* Post Navigation */}
       <PostNavigation prevPost={prevPost} nextPost={nextPost} />
 
