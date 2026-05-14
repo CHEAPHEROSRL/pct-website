@@ -61,9 +61,8 @@ export default function Footer() {
             <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-muted)]">
               THE CAUSE
             </span>
-            <Link href="/the-cause" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Cancer Prevention</Link>
-            <Link href="/the-cause" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Survivor Support</Link>
-            <Link href="/the-cause" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Healthy Lifestyles</Link>
+            <Link href="/the-cause#prevention" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Cancer Prevention</Link>
+            <Link href="/the-cause#prevention" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Healthy Lifestyles</Link>
             <Link href="/pledge" className="font-heading text-[14px] text-[#FFFFFFAA] hover:text-white">Pledge Per Mile</Link>
           </div>
           <div className="flex flex-col gap-[16px]">

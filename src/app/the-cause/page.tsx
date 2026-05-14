@@ -144,7 +144,7 @@ export default function TheCausePage() {
       </section>
 
       {/* Prevention Section */}
-      <section className="flex flex-col items-center gap-[40px] md:gap-[60px] px-6 md:px-12 lg:px-[120px] py-[48px] md:py-[72px] lg:py-[100px] bg-[var(--bg-white)] w-full">
+      <section id="prevention" className="flex flex-col items-center gap-[40px] md:gap-[60px] px-6 md:px-12 lg:px-[120px] py-[48px] md:py-[72px] lg:py-[100px] bg-[var(--bg-white)] w-full scroll-mt-[120px]">
         <ScrollReveal animation="fade-up">
           <div className="flex flex-col items-center gap-[16px]">
             <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">CANCER PREVENTION</span>
