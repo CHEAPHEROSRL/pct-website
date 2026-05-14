@@ -692,6 +692,7 @@ export default function MyPledgePage() {
             {pledge.claimedSection && getTrailSection(pledge.claimedSection) ? (() => {
               const section = getTrailSection(pledge.claimedSection)!;
               const reached = totalMiles >= section.miles;
+              const milesToGo = Math.max(0, section.miles - Math.floor(totalMiles));
               return (
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-[16px] bg-[var(--bg-card)] border border-[var(--border-subtle)] p-[24px]">
                   <div className="flex flex-col gap-[4px]">
@@ -702,25 +703,25 @@ export default function MyPledgePage() {
                       MILE {section.miles.toLocaleString("en-US")}
                       {section.subtitle ? ` · ${section.subtitle.toUpperCase()}` : ""}
                     </span>
+                    {/* Progress hint — pin is always live on the map, but it's
+                        still useful for the pledger to know how close Paul is
+                        to actually reaching their section. */}
+                    <span className="font-heading italic text-[12px] text-[var(--text-muted)] mt-[2px]">
+                      {reached
+                        ? "Paul has reached this section ✓"
+                        : `Paul reaches this section in ${milesToGo.toLocaleString("en-US")} miles`}
+                    </span>
                   </div>
                   <div className="flex items-center gap-[10px]">
-                    {reached ? (
-                      <>
-                        <span className="font-label font-bold text-[10px] tracking-[1.5px] text-[var(--forest-green)] bg-[var(--forest-green-light)] px-[10px] py-[4px]">
-                          PIN LIVE ON MAP
-                        </span>
-                        <Link
-                          href="/trail-map"
-                          className="font-heading font-semibold text-[13px] text-[var(--burnt-orange)] hover:underline"
-                        >
-                          View on map →
-                        </Link>
-                      </>
-                    ) : (
-                      <span className="font-label font-bold text-[10px] tracking-[1.5px] text-[var(--text-muted)] bg-[var(--bg-warm)] px-[10px] py-[4px]">
-                        WAITING FOR PAUL · {Math.max(0, section.miles - Math.floor(totalMiles)).toLocaleString("en-US")} MI TO GO
-                      </span>
-                    )}
+                    <span className="font-label font-bold text-[10px] tracking-[1.5px] text-[var(--forest-green)] bg-[var(--forest-green-light)] px-[10px] py-[4px]">
+                      PIN LIVE ON MAP
+                    </span>
+                    <Link
+                      href="/trail-map"
+                      className="font-heading font-semibold text-[13px] text-[var(--burnt-orange)] hover:underline"
+                    >
+                      View on map →
+                    </Link>
                   </div>
                 </div>
               );

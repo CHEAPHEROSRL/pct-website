@@ -372,17 +372,18 @@ export default function TrailMapView({
     [pledgeCoveragePercent]
   );
 
-  // Two visibility rules:
-  //  • A pledger-only entry (no sponsor) requires Paul to have passed the
-  //    landmark — otherwise pin promises pile up on the early map.
-  //  • A sponsor entry shows from day one — the deal was signed; the brand
-  //    visibility is part of what was paid for.
-  const visibleClaimedSections = useMemo(() => {
-    if (!claimedSections || claimedSections.length === 0) return [];
-    return claimedSections.filter(
-      (entry) => entry.sponsor || entry.miles <= totalMiles + 0.01
-    );
-  }, [claimedSections, totalMiles]);
+  // All claimed-section pins render from the moment the pledger confirms,
+  // regardless of Paul's current mile. Previously pledger pins were gated
+  // behind "Paul has passed this landmark" for a cleaner early-trail map,
+  // but the cost was real: pledgers couldn't see their own commitment on
+  // the map for weeks or months. Showing immediately is more motivating
+  // and the pin density at typical pledge volumes isn't actually noisy.
+  // Sponsors already showed from day 1 — this just brings pledger pins
+  // into line with that rule.
+  const visibleClaimedSections = useMemo(
+    () => (claimedSections && claimedSections.length > 0 ? claimedSections : []),
+    [claimedSections]
+  );
 
   // Current Leaflet zoom, fed by <ZoomTracker> below. Initial value matches
   // what we pass to MapContainer's `zoom` prop so the first render uses the
