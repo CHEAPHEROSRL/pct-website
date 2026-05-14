@@ -27,13 +27,15 @@ import {
   Navigation,
   Building2,
   Upload,
+  Inbox,
+  CheckCircle2,
 } from "lucide-react";
-import type { JournalPost, ChallengePublic } from "@/lib/types";
+import type { JournalPost, ChallengePublic, ContactMessage } from "@/lib/types";
 import { getMileForDay, getLastTrackedDay } from "@/lib/day-mileage";
 import { trailSections, TRAIL_REGIONS, type SponsorRecord } from "@/lib/trail";
 
-type View = "login" | "tracker" | "list" | "editor" | "challenges" | "honor" | "waitlist" | "emails" | "email-detail" | "settings" | "sponsors";
-type AdminTab = "tracker" | "journal" | "challenges" | "honor" | "waitlist" | "emails" | "settings" | "sponsors";
+type View = "login" | "tracker" | "list" | "editor" | "challenges" | "honor" | "waitlist" | "emails" | "email-detail" | "settings" | "sponsors" | "contact" | "contact-detail";
+type AdminTab = "tracker" | "journal" | "challenges" | "honor" | "waitlist" | "emails" | "settings" | "sponsors" | "contact";
 
 interface EmailTemplateListItem {
   id: string;
@@ -121,6 +123,13 @@ export default function AdminPage() {
   });
   const [sponsorSubmitting, setSponsorSubmitting] = useState(false);
   const [sponsorError, setSponsorError] = useState<string | null>(null);
+
+  // Contact-messages state
+  const [contactMessages, setContactMessages] = useState<ContactMessage[]>([]);
+  const [contactLoading, setContactLoading] = useState(false);
+  const [contactDetail, setContactDetail] = useState<ContactMessage | null>(null);
+  const [contactFilter, setContactFilter] = useState<"all" | "unread" | "replied">("all");
+  const [contactSearch, setContactSearch] = useState("");
 
   // Email test state
   const [testEmailTo, setTestEmailTo] = useState("ciocanraul@gmail.com");
@@ -217,9 +226,52 @@ export default function AdminPage() {
         const data: JournalPost[] = await res.json();
         setPosts(data);
         setAuthenticated(true);
-        setActiveTab("tracker");
-        setView("tracker");
-        fetchSettings();
+        // Deep-link from contact notification email lands here:
+        //   /admin?tab=contact&id=<msgId>
+        // Honor it by jumping straight into the contact tab + opening
+        // the message. Without a deep-link param we default to tracker
+        // like before.
+        const params = new URLSearchParams(window.location.search);
+        const tabParam = params.get("tab");
+        const idParam = params.get("id");
+        if (tabParam === "contact") {
+          setActiveTab("contact");
+          if (idParam) {
+            // Fetch the list in the background AND open the detail directly.
+            // openContactDetail handles the read-flip + view switch.
+            fetch("/api/admin/contact", { headers: { Authorization: `Bearer ${saved}` } })
+              .then((r) => (r.ok ? r.json() : null))
+              .then((d) => {
+                if (Array.isArray(d?.messages)) setContactMessages(d.messages);
+              })
+              .catch(() => {});
+            fetch(`/api/admin/contact?id=${encodeURIComponent(idParam)}`, {
+              headers: { Authorization: `Bearer ${saved}` },
+            })
+              .then((r) => (r.ok ? r.json() : null))
+              .then((d) => {
+                if (d?.message) {
+                  setContactDetail(d.message);
+                  setView("contact-detail");
+                } else {
+                  setView("contact");
+                }
+              })
+              .catch(() => setView("contact"));
+          } else {
+            setView("contact");
+            fetch("/api/admin/contact", { headers: { Authorization: `Bearer ${saved}` } })
+              .then((r) => (r.ok ? r.json() : null))
+              .then((d) => {
+                if (Array.isArray(d?.messages)) setContactMessages(d.messages);
+              })
+              .catch(() => {});
+          }
+        } else {
+          setActiveTab("tracker");
+          setView("tracker");
+          fetchSettings();
+        }
       } else {
         localStorage.removeItem("pct-admin-token");
       }
@@ -470,6 +522,80 @@ export default function AdminPage() {
       alert("Network error");
     }
   }, [token]);
+
+  // — Contact messages —
+  const fetchContactMessages = useCallback(async () => {
+    setContactLoading(true);
+    try {
+      const res = await fetch("/api/admin/contact", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setContactMessages(Array.isArray(data?.messages) ? data.messages : []);
+      }
+    } catch {
+      setStatus("Failed to load contact messages");
+    } finally {
+      setContactLoading(false);
+    }
+  }, [token]);
+
+  const openContactDetail = useCallback(async (id: string) => {
+    // Fetch single — backend auto-flips readAt on first open
+    try {
+      const res = await fetch(`/api/admin/contact?id=${encodeURIComponent(id)}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (res.ok && data?.message) {
+        setContactDetail(data.message);
+        setView("contact-detail");
+        // Refresh the list silently so the "unread" pill clears
+        setContactMessages((prev) => prev.map((m) => (m.id === id ? data.message : m)));
+      } else {
+        alert(data?.error || "Failed to load message");
+      }
+    } catch {
+      alert("Network error");
+    }
+  }, [token]);
+
+  const handleContactPatch = useCallback(async (id: string, patch: { repliedAt?: number | null; readAt?: number | null }) => {
+    try {
+      const res = await fetch(`/api/admin/contact?id=${encodeURIComponent(id)}`, {
+        method: "PATCH",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify(patch),
+      });
+      const data = await res.json();
+      if (res.ok && data?.message) {
+        setContactDetail(data.message);
+        setContactMessages((prev) => prev.map((m) => (m.id === id ? data.message : m)));
+      }
+    } catch {
+      alert("Network error");
+    }
+  }, [token]);
+
+  const handleContactDelete = useCallback(async (id: string) => {
+    if (!confirm("Delete this message? This cannot be undone.")) return;
+    try {
+      const res = await fetch(`/api/admin/contact?id=${encodeURIComponent(id)}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        setContactMessages((prev) => prev.filter((m) => m.id !== id));
+        if (contactDetail?.id === id) {
+          setContactDetail(null);
+          setView("contact");
+        }
+      }
+    } catch {
+      alert("Network error");
+    }
+  }, [token, contactDetail]);
 
   const fetchGmailOAuthStatus = useCallback(async () => {
     setGmailOAuthLoading(true);
@@ -1114,6 +1240,22 @@ export default function AdminPage() {
           >
             <Building2 className="w-[16px] h-[16px]" />
             SPONSORS
+          </button>
+          <button
+            onClick={() => { setActiveTab("contact"); setView("contact"); setStatus(""); setContactDetail(null); fetchContactMessages(); }}
+            className={`flex items-center gap-[6px] md:gap-[8px] px-[14px] md:px-[24px] py-[14px] font-label font-bold text-[11px] md:text-[12px] tracking-[1.5px] md:tracking-[2px] border-b-2 transition-colors cursor-pointer shrink-0 ${
+              activeTab === "contact" || view === "contact-detail"
+                ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
+                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+            }`}
+          >
+            <Inbox className="w-[16px] h-[16px]" />
+            CONTACT
+            {contactMessages.filter((m) => !m.readAt).length > 0 && (
+              <span className="flex items-center justify-center min-w-[18px] h-[18px] px-[5px] rounded-full bg-[var(--burnt-orange)] font-label font-bold text-[10px] text-white">
+                {contactMessages.filter((m) => !m.readAt).length}
+              </span>
+            )}
           </button>
           <button
             onClick={() => { setActiveTab("settings"); setView("settings"); setStatus(""); fetchSettings(); fetchGmailOAuthStatus(); }}
@@ -4084,6 +4226,255 @@ export default function AdminPage() {
               </span>
             </button>
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  // --- CONTACT MESSAGES VIEW (list) ---
+  if (view === "contact" && authenticated) {
+    const filtered = contactMessages.filter((m) => {
+      if (contactFilter === "unread" && m.readAt) return false;
+      if (contactFilter === "replied" && !m.repliedAt) return false;
+      if (contactSearch) {
+        const q = contactSearch.toLowerCase();
+        if (
+          !m.name.toLowerCase().includes(q) &&
+          !m.email.toLowerCase().includes(q) &&
+          !m.subject.toLowerCase().includes(q)
+        ) return false;
+      }
+      return true;
+    });
+
+    return adminShell(
+      <div className="flex flex-col gap-[24px] md:gap-[32px] p-[16px] md:p-[40px] max-w-[960px]">
+        <div className="flex flex-col gap-[8px]">
+          <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">
+            CONTACT
+          </span>
+          <h1 className="font-heading font-semibold text-[28px] text-[var(--text-primary)]">
+            Contact Messages
+          </h1>
+          <p className="font-heading text-[14px] leading-[1.6] text-[var(--text-secondary)] max-w-[640px]">
+            Every submission from <a href="/contact" className="text-[var(--burnt-orange)] hover:underline">/contact</a> lands here. Reply via your Gmail (Reply-To is already set), then come back to mark as replied. Messages are kept for 90 days.
+          </p>
+        </div>
+
+        {/* Filters + search */}
+        <div className="flex flex-col sm:flex-row gap-[12px] sm:items-center">
+          <div className="flex gap-[8px]">
+            {(["all", "unread", "replied"] as const).map((f) => (
+              <button
+                key={f}
+                onClick={() => setContactFilter(f)}
+                className={`px-[14px] py-[8px] font-label font-bold text-[11px] tracking-[1.5px] transition-colors cursor-pointer ${
+                  contactFilter === f
+                    ? "bg-[var(--burnt-orange)] text-white"
+                    : "bg-[var(--bg-warm)] text-[var(--text-secondary)] hover:bg-[var(--warm-stone)]"
+                }`}
+              >
+                {f.toUpperCase()}
+              </button>
+            ))}
+          </div>
+          <input
+            type="text"
+            value={contactSearch}
+            onChange={(e) => setContactSearch(e.target.value)}
+            placeholder="Search sender, email, or subject…"
+            className="flex-1 h-[40px] px-[12px] font-heading text-[14px] text-[var(--text-primary)] bg-white border border-[var(--border-subtle)] focus:outline-none focus:border-[var(--burnt-orange)]"
+          />
+        </div>
+
+        {/* Message list */}
+        {contactLoading ? (
+          <span className="font-heading text-[14px] text-[var(--text-muted)]">Loading messages…</span>
+        ) : filtered.length === 0 ? (
+          <div className="flex items-center justify-center p-[40px] bg-[var(--bg-warm)] border border-[var(--border-subtle)]">
+            <span className="font-heading italic text-[14px] text-[var(--text-muted)]">
+              {contactMessages.length === 0 ? "No messages yet." : "No messages match the current filter."}
+            </span>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-[8px]">
+            {filtered.map((m) => {
+              const isUnread = !m.readAt;
+              const isReplied = !!m.repliedAt;
+              const isFailed = m.deliveryStatus === "failed";
+              return (
+                <button
+                  key={m.id}
+                  onClick={() => openContactDetail(m.id)}
+                  className={`flex flex-col gap-[8px] w-full p-[16px] md:p-[20px] text-left border transition-colors cursor-pointer ${
+                    isUnread
+                      ? "bg-white border-[var(--burnt-orange)] hover:bg-[var(--burnt-orange-light)]"
+                      : "bg-[var(--bg-warm)] border-[var(--border-subtle)] hover:bg-white"
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-[12px] flex-wrap">
+                    <div className="flex items-center gap-[10px] min-w-0 flex-1">
+                      <span className={`font-heading text-[15px] truncate ${isUnread ? "font-bold text-[var(--text-primary)]" : "font-semibold text-[var(--text-secondary)]"}`}>
+                        {m.name}
+                      </span>
+                      <span className="font-heading text-[13px] text-[var(--text-muted)] truncate">
+                        &lt;{m.email}&gt;
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-[6px] shrink-0">
+                      {isFailed && (
+                        <span className="font-label font-bold text-[9px] tracking-[1.5px] text-red-700 bg-red-100 px-[8px] py-[3px]">
+                          SEND FAILED
+                        </span>
+                      )}
+                      {isUnread && (
+                        <span className="font-label font-bold text-[9px] tracking-[1.5px] text-white bg-[var(--burnt-orange)] px-[8px] py-[3px]">
+                          UNREAD
+                        </span>
+                      )}
+                      {isReplied && (
+                        <span className="font-label font-bold text-[9px] tracking-[1.5px] text-[var(--forest-green)] bg-[var(--forest-green-light)] px-[8px] py-[3px]">
+                          REPLIED
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between gap-[12px]">
+                    <span className={`font-heading text-[14px] truncate min-w-0 flex-1 ${isUnread ? "font-semibold text-[var(--text-primary)]" : "text-[var(--text-secondary)]"}`}>
+                      {m.subject}
+                    </span>
+                    <span className="font-label text-[11px] text-[var(--text-muted)] shrink-0">
+                      {new Date(m.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // --- CONTACT MESSAGE DETAIL VIEW ---
+  if (view === "contact-detail" && authenticated && contactDetail) {
+    const m = contactDetail;
+    const replyMailto = `mailto:${encodeURIComponent(m.email)}?subject=${encodeURIComponent("Re: " + m.subject)}&body=${encodeURIComponent(`Hi ${m.name},\n\n`)}`;
+
+    return adminShell(
+      <div className="flex flex-col gap-[24px] md:gap-[32px] p-[16px] md:p-[40px] max-w-[840px]">
+        <button
+          onClick={() => { setContactDetail(null); setView("contact"); }}
+          className="flex items-center gap-[8px] self-start font-label font-bold text-[11px] tracking-[2px] text-[var(--text-secondary)] hover:text-[var(--burnt-orange)] transition-colors cursor-pointer"
+        >
+          <ArrowLeft className="w-[14px] h-[14px]" />
+          BACK TO INBOX
+        </button>
+
+        <div className="flex flex-col gap-[8px]">
+          <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">
+            CONTACT MESSAGE
+          </span>
+          <h1 className="font-heading font-semibold text-[26px] md:text-[32px] text-[var(--text-primary)]">
+            {m.subject}
+          </h1>
+        </div>
+
+        {/* Sender metadata + status row */}
+        <div className="flex flex-col gap-[16px] bg-white border border-[var(--border-subtle)] p-[20px] md:p-[28px]">
+          <div className="flex items-center justify-between gap-[16px] flex-wrap">
+            <div className="flex flex-col gap-[4px]">
+              <span className="font-heading font-semibold text-[16px] text-[var(--text-primary)]">{m.name}</span>
+              <a href={`mailto:${m.email}`} className="font-heading text-[13px] text-[var(--burnt-orange)] hover:underline">{m.email}</a>
+            </div>
+            <div className="flex items-center gap-[6px]">
+              {m.deliveryStatus === "failed" && (
+                <span className="font-label font-bold text-[10px] tracking-[1.5px] text-red-700 bg-red-100 px-[10px] py-[4px]">
+                  SEND FAILED
+                </span>
+              )}
+              {m.repliedAt ? (
+                <span className="font-label font-bold text-[10px] tracking-[1.5px] text-[var(--forest-green)] bg-[var(--forest-green-light)] px-[10px] py-[4px]">
+                  REPLIED
+                </span>
+              ) : (
+                <span className="font-label font-bold text-[10px] tracking-[1.5px] text-[var(--burnt-orange)] bg-[var(--burnt-orange-light)] px-[10px] py-[4px]">
+                  OPEN
+                </span>
+              )}
+            </div>
+          </div>
+          <div className="flex flex-col gap-[2px]">
+            <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">RECEIVED</span>
+            <span className="font-heading text-[13px] text-[var(--text-secondary)]">
+              {new Date(m.createdAt).toLocaleString("en-US", { dateStyle: "full", timeStyle: "short" })}
+            </span>
+          </div>
+          {m.repliedAt && (
+            <div className="flex flex-col gap-[2px]">
+              <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">REPLIED</span>
+              <span className="font-heading text-[13px] text-[var(--text-secondary)]">
+                {new Date(m.repliedAt).toLocaleString("en-US", { dateStyle: "full", timeStyle: "short" })}
+              </span>
+            </div>
+          )}
+          {m.deliveryStatus === "failed" && m.sendError && (
+            <div className="flex flex-col gap-[4px] bg-red-50 border border-red-200 p-[12px]">
+              <span className="font-label font-bold text-[10px] tracking-[1.5px] text-red-700">EMAIL DISPATCH ERROR</span>
+              <span className="font-heading text-[12px] text-red-800 break-words">{m.sendError}</span>
+              <span className="font-heading italic text-[11px] text-red-700">
+                Paul never received this in his inbox. Use the mailto button below to reply manually.
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Message body */}
+        <div className="flex flex-col gap-[8px] bg-white border border-[var(--border-subtle)] p-[20px] md:p-[28px]">
+          <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">MESSAGE</span>
+          <p className="font-heading text-[15px] leading-[1.7] text-[var(--text-primary)] whitespace-pre-wrap break-words">
+            {m.message}
+          </p>
+        </div>
+
+        {/* Action row */}
+        <div className="flex flex-wrap items-center gap-[12px]">
+          <a
+            href={replyMailto}
+            className="flex items-center gap-[8px] h-[48px] px-[24px] bg-[var(--burnt-orange)] hover:opacity-90 transition-opacity"
+          >
+            <Send className="w-[16px] h-[16px] text-[var(--text-primary)]" />
+            <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-primary)]">
+              REPLY VIA GMAIL
+            </span>
+          </a>
+          {m.repliedAt ? (
+            <button
+              onClick={() => handleContactPatch(m.id, { repliedAt: null })}
+              className="flex items-center gap-[8px] h-[48px] px-[20px] border border-[var(--border-subtle)] hover:border-[var(--burnt-orange)] transition-colors cursor-pointer"
+            >
+              <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-secondary)]">
+                MARK UNREPLIED
+              </span>
+            </button>
+          ) : (
+            <button
+              onClick={() => handleContactPatch(m.id, { repliedAt: Date.now() })}
+              className="flex items-center gap-[8px] h-[48px] px-[20px] bg-[var(--forest-green)] hover:opacity-90 transition-opacity cursor-pointer"
+            >
+              <CheckCircle2 className="w-[16px] h-[16px] text-white" />
+              <span className="font-label font-bold text-[12px] tracking-[2px] text-white">
+                MARK AS REPLIED
+              </span>
+            </button>
+          )}
+          <button
+            onClick={() => handleContactDelete(m.id)}
+            className="flex items-center gap-[8px] h-[48px] px-[20px] border border-red-300 hover:bg-red-50 transition-colors cursor-pointer ml-auto"
+          >
+            <Trash2 className="w-[14px] h-[14px] text-red-500" />
+            <span className="font-label font-bold text-[11px] tracking-[1.5px] text-red-600">DELETE</span>
+          </button>
         </div>
       </div>
     );

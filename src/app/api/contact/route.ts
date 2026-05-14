@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Redis } from "@upstash/redis";
 import { sendContactNotification } from "@/lib/email";
 import {
   RATE_LIMITS,
@@ -9,14 +8,9 @@ import {
   isHoneypotFilled,
   getClientIp,
 } from "@/lib/security";
+import { createMessage, updateMessage } from "@/lib/contact-messages";
+import type { ContactMessage } from "@/lib/types";
 import crypto from "crypto";
-
-function getRedis() {
-  const url = process.env.KV_REST_API_URL;
-  const token = process.env.KV_REST_API_TOKEN;
-  if (!url || !token) return null;
-  return new Redis({ url, token });
-}
 
 // POST /api/contact — public, sends a message to Paul.
 //
@@ -27,9 +21,11 @@ function getRedis() {
 //   4. Server-side sanitize — sanitizeText / sanitizeEmail
 //   5. Length caps         — enforced after sanitize, not just on the client
 //
-// On Gmail dispatch failure (token expired etc.) we fall back to a Redis
-// queue so the message isn't lost. The queue auto-expires in 7 days; if it
-// ever starts filling up regularly that's our signal to surface it in admin.
+// Every valid submission is persisted to Redis (90-day TTL) so it shows up
+// in the admin Contact tab regardless of whether the Gmail dispatch
+// succeeded. The notification email goes to paul@yeschapter.com with
+// Reply-To set to the submitter — so Paul replies via Gmail and the
+// admin tab is just for tracking / audit / "mark as replied".
 export async function POST(req: NextRequest) {
   const rateLimited = await RATE_LIMITS.general(req);
   if (rateLimited) return rateLimited;
@@ -39,6 +35,8 @@ export async function POST(req: NextRequest) {
     const { name: rawName, email: rawEmail, subject: rawSubject, message: rawMessage, turnstileToken, website } = body;
 
     // Honeypot — return success but don't process. Bot has no signal we caught it.
+    // We also DO NOT persist or send anything for honeypot submissions; the goal
+    // is to silently swallow them.
     if (isHoneypotFilled(website)) {
       return NextResponse.json({ success: true }, { status: 200 });
     }
@@ -64,37 +62,47 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Subject is required" }, { status: 400 });
     }
 
-    // Message: 2000 char cap matching the form's client-side counter. Anything
-    // longer is almost certainly accidental copy-paste or spam.
     const message = sanitizeText(rawMessage || "", 2000);
     if (!message || message.length < 10) {
       return NextResponse.json({ error: "Message must be at least 10 characters" }, { status: 400 });
     }
 
-    const result = await sendContactNotification(name, email, subject, message);
+    // Generate ID first so it can flow into the email link AND the storage
+    // key. ID is short (16 hex chars) — Redis-key-safe, URL-safe.
+    const id = crypto.randomBytes(8).toString("hex");
+
+    // Optimistically persist as "sent" before dispatching. If the email
+    // dispatch fails below we'll patch the record to "failed". This ordering
+    // ensures the admin always sees every submission, even ones that died
+    // mid-dispatch — Paul can then follow up manually.
+    const record: ContactMessage = {
+      id,
+      name,
+      email,
+      subject,
+      message,
+      createdAt: Date.now(),
+      deliveryStatus: "sent",
+    };
+    try {
+      await createMessage(record);
+    } catch (err) {
+      // Storage failure is rare but possible (Redis down). Don't block the
+      // user — try to send the email anyway. If THAT also fails, surface
+      // the original error to the user; otherwise they get a successful
+      // submit and we just lose the audit record.
+      console.error("Contact message store failed:", err);
+    }
+
+    const result = await sendContactNotification(name, email, subject, message, id);
 
     if (!result.success) {
-      // Gmail dispatch failed (token expired, API outage, etc.). Park the
-      // message in Redis so Paul can recover it once the email side is back.
-      // 7-day TTL is enough for Paul to spot the issue and re-send.
-      const redis = getRedis();
-      if (redis) {
-        const id = crypto.randomBytes(8).toString("hex");
-        await redis.set(
-          `contact:queue:${id}`,
-          JSON.stringify({
-            id,
-            name,
-            email,
-            subject,
-            message,
-            attemptedAt: Date.now(),
-            sendError: result.error || "unknown",
-          }),
-          { ex: 60 * 60 * 24 * 7 }
-        );
-      }
-      // Return user-friendly error — they retried already if it was their fault.
+      // Patch the persisted record so the admin tab shows this as failed.
+      // If the original store also failed, this no-ops cleanly.
+      await updateMessage(id, {
+        deliveryStatus: "failed",
+        sendError: result.error || "unknown",
+      }).catch(() => {});
       return NextResponse.json(
         { error: "We couldn't deliver your message right now, but we've saved it. Try again in a few minutes, or email paul@yeschapter.com directly." },
         { status: 502 }

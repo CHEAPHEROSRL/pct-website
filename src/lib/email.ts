@@ -890,7 +890,8 @@ export async function sendContactNotification(
   senderName: string,
   senderEmail: string,
   subject: string,
-  message: string
+  message: string,
+  messageId: string
 ): Promise<SendResult> {
   const recipient = "paul@yeschapter.com";
   const safeName = htmlEscape(senderName);
@@ -904,6 +905,9 @@ export async function sendContactNotification(
     dateStyle: "medium",
     timeStyle: "short",
   });
+
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://yeschapter.com";
+  const adminUrl = `${siteUrl}/admin?tab=contact&id=${encodeURIComponent(messageId)}`;
 
   const html = `
     <div style="max-width: 600px; margin: 0 auto; background: #F4F1EC; font-family: Georgia, serif;">
@@ -931,8 +935,9 @@ export async function sendContactNotification(
         <p style="margin: 0 0 8px; font-family: sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: #8C8A87;">MESSAGE</p>
         <div style="font-size: 15px; line-height: 1.7; color: #1C1C1C; white-space: pre-wrap;">${safeMessage}</div>
       </div>
-      <div style="background: #FEF3EC; padding: 16px 32px; text-align: center;">
-        <p style="margin: 0; font-size: 12px; color: #5C5C5C; font-family: sans-serif;">Hit reply to respond directly to ${safeName}. Reply-To is set to their email.</p>
+      <div style="background: #FEF3EC; padding: 24px 32px; text-align: center;">
+        <p style="margin: 0 0 16px; font-size: 13px; color: #5C5C5C; font-family: sans-serif; line-height: 1.5;">Hit reply to respond directly to ${safeName} — or open this in the admin to track status and mark as replied.</p>
+        <a href="${adminUrl}" style="display: inline-block; background: #C45C26; color: #1C1C1C; padding: 12px 28px; font-family: sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-decoration: none;">VIEW IN ADMIN</a>
       </div>
       <div style="background: #1C1F1A; padding: 16px 32px; text-align: center;">
         <p style="margin: 0; font-size: 10px; color: #FFFFFF55; font-family: sans-serif; letter-spacing: 0.5px;">Sent via yeschapter.com/contact</p>

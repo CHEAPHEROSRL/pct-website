@@ -203,6 +203,31 @@ export interface PledgeStats {
   totalBoosts: number;
 }
 
+// Contact form types
+
+/**
+ * One submission from /contact, persisted in Redis with a 90-day TTL.
+ * Stored regardless of whether Gmail delivery succeeded — if it failed,
+ * `deliveryStatus: "failed"` + `sendError` tells Paul there's a message
+ * that never reached his inbox and he should follow up manually.
+ */
+export interface ContactMessage {
+  id: string;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  createdAt: number;
+  /** When Paul first opened the detail view in admin. Optional — null = unread. */
+  readAt?: number;
+  /** When Paul marked the conversation as replied. Optional — null = open. */
+  repliedAt?: number;
+  /** "sent" when Gmail accepted the message; "failed" when dispatch errored. */
+  deliveryStatus: "sent" | "failed";
+  /** Only set when deliveryStatus = "failed". The Gmail error message. */
+  sendError?: string;
+}
+
 // Comment types
 
 export interface PledgerComment {
