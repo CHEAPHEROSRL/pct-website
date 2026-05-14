@@ -42,6 +42,10 @@ export default function PledgePage() {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  // Set when the server returns 409 (email already has a confirmed pledge).
+  // Drives a distinct "you already pledged" success state so we don't lie
+  // to the user with the standard "confirmation email sent" copy.
+  const [existingPledge, setExistingPledge] = useState<{ rate: string; totalPledge: number; createdAt: number } | null>(null);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [honeypot, setHoneypot] = useState("");
   const [avatar, setAvatar] = useState<string>("💚");
@@ -179,10 +183,13 @@ export default function PledgePage() {
       const data = await res.json();
 
       if (res.status === 409) {
-        // Already-pledged user re-submitting. The server didn't send a new
-        // verification email (there's nothing to verify), so we send them a
-        // magic link as the "way back in" — otherwise they'd see "already
-        // pledged" with no entry path to their dashboard.
+        // Already-pledged user re-submitting. Server returns the existing
+        // pledge details so we can show an honest "you already pledged X"
+        // state instead of pretending a new pledge was created. The new
+        // amount they typed was NOT saved — we don't replace pledges from
+        // this form (boost flow on /my-pledge is the way to change amounts).
+        // Magic link sent so they can get into their dashboard to manage it.
+        setExistingPledge(data?.pledge || null);
         setSubmitted(true);
         fetch("/api/auth/magic", {
           method: "POST",
@@ -713,7 +720,39 @@ export default function PledgePage() {
             onExpire={() => setTurnstileToken(null)}
           />
 
-          {submitted ? (
+          {submitted && existingPledge ? (
+            // 409 path — they already had a pledge. Be honest: their NEW amount
+            // wasn't saved. Direct them to the dashboard to manage what they
+            // have (or boost it).
+            <div className="flex flex-col items-center gap-[14px] bg-[var(--burnt-orange-light)] border border-[var(--burnt-orange)] p-[24px]">
+              <Mail className="w-[28px] h-[28px] text-[var(--burnt-orange)]" />
+              <span className="font-heading font-semibold text-[18px] text-[var(--burnt-orange)]">
+                You already have a pledge for this email
+              </span>
+              <p className="font-heading text-[14px] text-[var(--text-secondary)] text-center leading-[1.6]">
+                <strong>{email}</strong> is already pledged at <strong>{existingPledge.rate}</strong> ({formatCurrency(existingPledge.totalPledge)} total), set on {new Date(existingPledge.createdAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}.
+                <br />
+                <span className="text-[var(--text-muted)]">
+                  Your new amount of {formatCurrency(amount)}/mile was <strong>not saved</strong> — we don&apos;t replace existing pledges from this form.
+                </span>
+              </p>
+              <p className="font-heading text-[14px] text-[var(--text-secondary)] text-center leading-[1.6]">
+                We&apos;ve sent a <strong>sign-in link</strong> to your inbox. Click it to open your dashboard, where you can review your pledge or <strong>boost</strong> it during a trail challenge.
+              </p>
+              <Link
+                href="/my-pledge"
+                className="flex items-center gap-[8px] mt-[4px] px-[24px] py-[12px] bg-[var(--burnt-orange)] hover:opacity-90 transition-opacity"
+              >
+                <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-primary)]">
+                  GO TO MY DASHBOARD
+                </span>
+                <ArrowRight className="w-[14px] h-[14px] text-[var(--text-primary)]" />
+              </Link>
+              <p className="font-heading italic text-[12px] text-[var(--text-muted)] text-center">
+                Can&apos;t find the email? Check your spam folder for &ldquo;Sign in to YesChapter&rdquo;.
+              </p>
+            </div>
+          ) : submitted ? (
             <div className="flex flex-col items-center gap-[12px] bg-[var(--forest-green-light)] border border-[var(--forest-green)] p-[24px]">
               <Mail className="w-[28px] h-[28px] text-[var(--forest-green)]" />
               <span className="font-heading font-semibold text-[18px] text-[var(--forest-green)]">
