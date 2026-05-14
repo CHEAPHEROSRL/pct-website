@@ -76,8 +76,19 @@ export default function ContactPage() {
     <div className="flex flex-col w-full bg-[var(--bg-warm)]">
       <Header />
 
-      {/* Hero — text left, portrait right */}
+      {/* Hero — portrait left, text right. Mobile stacks with the portrait
+          on top so the face still leads visually. */}
       <section className="flex flex-col lg:flex-row items-center gap-[32px] lg:gap-[48px] px-6 md:px-12 lg:px-[120px] py-[48px] md:py-[64px] lg:py-[72px] bg-[var(--bg-white)] w-full">
+        <div className="relative w-full max-w-[360px] h-[400px] lg:h-[460px] rounded-lg overflow-hidden border border-[var(--border-subtle)] shrink-0">
+          <Image
+            src="/images/portraits/20251214_133250.jpg"
+            alt="Paul Barry on the trail"
+            fill
+            sizes="(max-width: 1024px) 100vw, 360px"
+            className="object-cover"
+            priority
+          />
+        </div>
         <div className="flex flex-col gap-[16px] flex-1">
           <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">
             GET IN TOUCH
@@ -88,16 +99,6 @@ export default function ContactPage() {
           <p className="font-heading text-[16px] leading-[1.7] text-[var(--text-secondary)] max-w-[640px]">
             Questions about the journey, your pledge, sponsorship, or just want to say hello? Send a message below — Paul reads every one and tries to reply within 48 hours.
           </p>
-        </div>
-        <div className="relative w-full max-w-[360px] h-[400px] lg:h-[460px] rounded-lg overflow-hidden border border-[var(--border-subtle)] shrink-0">
-          <Image
-            src="/images/portraits/20251214_133250.jpg"
-            alt="Paul Barry on the trail"
-            fill
-            sizes="(max-width: 1024px) 100vw, 360px"
-            className="object-cover"
-            priority
-          />
         </div>
       </section>
 
