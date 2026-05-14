@@ -4359,7 +4359,11 @@ export default function AdminPage() {
   // --- CONTACT MESSAGE DETAIL VIEW ---
   if (view === "contact-detail" && authenticated && contactDetail) {
     const m = contactDetail;
-    const replyMailto = `mailto:${encodeURIComponent(m.email)}?subject=${encodeURIComponent("Re: " + m.subject)}&body=${encodeURIComponent(`Hi ${m.name},\n\n`)}`;
+    // Use Gmail's web compose URL rather than mailto:. The button label is
+    // "REPLY VIA GMAIL" — it should open Gmail reliably regardless of the
+    // OS-level mailto handler configuration. opens in a new tab so Paul
+    // doesn't lose the admin view while drafting.
+    const gmailReply = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(m.email)}&su=${encodeURIComponent("Re: " + m.subject)}&body=${encodeURIComponent(`Hi ${m.name},\n\n`)}`;
 
     return adminShell(
       <div className="flex flex-col gap-[24px] md:gap-[32px] p-[16px] md:p-[40px] max-w-[840px]">
@@ -4440,7 +4444,9 @@ export default function AdminPage() {
         {/* Action row */}
         <div className="flex flex-wrap items-center gap-[12px]">
           <a
-            href={replyMailto}
+            href={gmailReply}
+            target="_blank"
+            rel="noopener noreferrer"
             className="flex items-center gap-[8px] h-[48px] px-[24px] bg-[var(--burnt-orange)] hover:opacity-90 transition-opacity"
           >
             <Send className="w-[16px] h-[16px] text-[var(--text-primary)]" />
