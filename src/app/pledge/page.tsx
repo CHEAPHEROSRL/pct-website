@@ -721,32 +721,49 @@ export default function PledgePage() {
           />
 
           {submitted && existingPledge ? (
-            // 409 path — they already had a pledge. Be honest: their NEW amount
-            // wasn't saved. Direct them to the dashboard to manage what they
-            // have (or boost it).
+            // 409 path — they already had a pledge. Be brutally clear: NOTHING
+            // happened, their old pledge is intact, their new amount is gone.
+            // Then offer an explicit "add this as a boost" path (which is what
+            // most re-pledgers actually want) — primary CTA carries the typed
+            // amount through to the boost form via sessionStorage, surviving
+            // the magic-link auth redirect.
             <div className="flex flex-col items-center gap-[14px] bg-[var(--burnt-orange-light)] border border-[var(--burnt-orange)] p-[24px]">
               <Mail className="w-[28px] h-[28px] text-[var(--burnt-orange)]" />
               <span className="font-heading font-semibold text-[18px] text-[var(--burnt-orange)]">
-                You already have a pledge for this email
+                Nothing was saved — you already have a pledge
               </span>
               <p className="font-heading text-[14px] text-[var(--text-secondary)] text-center leading-[1.6]">
-                <strong>{email}</strong> is already pledged at <strong>{existingPledge.rate}</strong> ({formatCurrency(existingPledge.totalPledge)} total), set on {new Date(existingPledge.createdAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}.
+                <strong>{email}</strong> already has a pledge at <strong>{existingPledge.rate}</strong> ({formatCurrency(existingPledge.totalPledge)} total), set on {new Date(existingPledge.createdAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}.
                 <br />
                 <span className="text-[var(--text-muted)]">
-                  Your new amount of {formatCurrency(amount)}/mile was <strong>not saved</strong> — we don&apos;t replace existing pledges from this form.
+                  Your new entry of <strong>{formatCurrency(amount)}/mile</strong> was <strong>not saved</strong> and your existing pledge is unchanged. This form only accepts brand-new pledges — to change yours, you need to add to it via the dashboard.
                 </span>
               </p>
               <p className="font-heading text-[14px] text-[var(--text-secondary)] text-center leading-[1.6]">
-                We&apos;ve sent a <strong>sign-in link</strong> to your inbox. Click it to open your dashboard, where you can review your pledge or <strong>boost</strong> it during a trail challenge.
+                Want to <strong>add {formatCurrency(amount)}/mile</strong> to your existing pledge? The button below jumps to the boost form with that amount pre-filled. We&apos;ve also sent you a <strong>sign-in link</strong> by email so you can access your dashboard.
               </p>
               <Link
                 href="/my-pledge"
-                className="flex items-center gap-[8px] mt-[4px] px-[24px] py-[12px] bg-[var(--burnt-orange)] hover:opacity-90 transition-opacity"
+                onClick={() => {
+                  // Survives the magic-link auth redirect — /my-pledge's
+                  // boost form reads this on mount, applies the amount,
+                  // and scrolls itself into view.
+                  if (typeof window !== "undefined") {
+                    window.sessionStorage.setItem("pledgeBoostAmount", String(amount));
+                  }
+                }}
+                className="flex items-center gap-[8px] mt-[4px] px-[24px] py-[14px] bg-[var(--burnt-orange)] hover:opacity-90 transition-opacity"
               >
-                <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-primary)]">
-                  GO TO MY DASHBOARD
+                <span className="font-label font-bold text-[13px] tracking-[2px] text-[var(--text-primary)]">
+                  ADD {formatCurrency(amount)}/MILE TO MY PLEDGE
                 </span>
                 <ArrowRight className="w-[14px] h-[14px] text-[var(--text-primary)]" />
+              </Link>
+              <Link
+                href="/my-pledge"
+                className="font-heading text-[13px] text-[var(--text-secondary)] hover:text-[var(--burnt-orange)] hover:underline"
+              >
+                Or just open my dashboard →
               </Link>
               <p className="font-heading italic text-[12px] text-[var(--text-muted)] text-center">
                 Can&apos;t find the email? Check your spam folder for &ldquo;Sign in to YesChapter&rdquo;.

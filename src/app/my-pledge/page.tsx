@@ -187,6 +187,30 @@ function IncreasePledgeForm({
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Boost-amount prefill: when someone hits the 409 ("already pledged")
+  // state on /pledge and clicks "ADD $X/MILE TO MY PLEDGE", that page
+  // writes the typed amount into sessionStorage before navigating here.
+  // sessionStorage survives the magic-link auth redirect, so this works
+  // whether the user is already signed in or has to sign in first.
+  // We consume the value once on mount and clear it so a later visit
+  // doesn't accidentally re-apply it.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const raw = window.sessionStorage.getItem("pledgeBoostAmount");
+    if (!raw) return;
+    window.sessionStorage.removeItem("pledgeBoostAmount");
+    const parsed = parseFloat(raw);
+    if (!Number.isFinite(parsed) || parsed < 0.01 || parsed > 100) return;
+    setAddAmount(parsed);
+    // Scroll the boost form into view so it's obvious the prefill worked
+    requestAnimationFrame(() => {
+      document.getElementById("boost-form-anchor")?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    });
+  }, []);
+
   const presets = [0.01, 0.02, 0.05, 0.10];
   const newRate = pledge.amount + addAmount;
   const newTotal = (newRate * TOTAL_MILES) / pledge.interval;
@@ -676,7 +700,7 @@ export default function MyPledgePage() {
           </section>
 
           {/* Increase Pledge Form */}
-          <section className="flex flex-col gap-[16px] px-6 md:px-12 lg:px-[120px] py-[48px] bg-[var(--bg-white)] border-t border-[var(--border-subtle)] w-full">
+          <section id="boost-form-anchor" className="flex flex-col gap-[16px] px-6 md:px-12 lg:px-[120px] py-[48px] bg-[var(--bg-white)] border-t border-[var(--border-subtle)] w-full scroll-mt-[120px]">
             <IncreasePledgeForm
               pledge={pledge}
               email={email}
