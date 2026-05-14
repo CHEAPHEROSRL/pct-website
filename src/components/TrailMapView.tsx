@@ -248,7 +248,7 @@ function createSponsorIcon(logoUrl: string, companyName: string, sectionName: st
     className: "",
     html: `<div style="transform:scale(${scale});transform-origin:center;display:flex;flex-direction:column;align-items:center;gap:3px;">
       <div style="display:flex;align-items:center;justify-content:center;width:50px;height:50px;background:#FFFFFF;border:3px solid #C45C26;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.3);overflow:hidden;">
-        <img src="${logoUrl}" alt="${companyName}" style="max-width:42px;max-height:42px;object-fit:contain;" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=\\'font-family:Barlow Semi Condensed,sans-serif;font-weight:700;font-size:10px;color:#C45C26;letter-spacing:1px;text-align:center;\\'>'+this.alt.toUpperCase().slice(0,8)+'</span>';" />
+        <img src="${logoUrl}" alt="${companyName}" style="width:42px;height:42px;object-fit:contain;display:block;" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=\\'font-family:Barlow Semi Condensed,sans-serif;font-weight:700;font-size:10px;color:#C45C26;letter-spacing:1px;text-align:center;\\'>'+this.alt.toUpperCase().slice(0,8)+'</span>';" />
       </div>
       <div style="background:#C45C26;padding:2px 6px;border-radius:3px;white-space:nowrap;font-family:'Barlow Semi Condensed',sans-serif;font-weight:700;font-size:8px;letter-spacing:1.5px;color:#1C1C1C;">SPONSORED · ${sectionName.toUpperCase()}</div>
     </div>`,
