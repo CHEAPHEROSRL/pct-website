@@ -136,9 +136,16 @@ export async function GET(req: NextRequest) {
       });
     }
 
+    // No-store: sponsor add/remove from the admin tab must reflect on the
+    // public map within one page load. A CDN cache (s-maxage) would leave a
+    // deleted sponsor's pin sitting on the map for up to ~90 seconds, which
+    // is jarring when the admin's list already shows "Active Sponsors (0)".
+    // Pledger pins also benefit — new pledges show up on the map immediately
+    // instead of needing a CDN tick. Endpoint cost is small (one Redis read
+    // for pledgers + one for sponsors), so giving up the cache is cheap.
     return NextResponse.json(
       { sections: out },
-      { headers: { "Cache-Control": "s-maxage=30, stale-while-revalidate=60" } }
+      { headers: { "Cache-Control": "no-store" } }
     );
   } catch (err) {
     console.error("Failed to compute claimed sections:", err);
