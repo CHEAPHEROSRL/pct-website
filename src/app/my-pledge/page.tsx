@@ -184,16 +184,20 @@ function IncreasePledgeForm({
 }) {
   const [addAmount, setAddAmount] = useState(0.01);
   const [submitting, setSubmitting] = useState(false);
-  // Two distinct post-submit states. The boost flow requires email
-  // verification — the dashboard does NOT update at submit time, it
-  // updates after the user clicks the verification link. Previously we
-  // showed "Pledge increased!" immediately on submit, which lied to
-  // the user: the pledge wasn't actually changed and the dashboard
-  // showed the old amount. Now we distinguish:
-  //   pendingVerification = "we sent you an email, click the link"
-  //   appliedSuccess      = (currently unused — only reachable when
-  //                          the boost-verify endpoint redirects back
-  //                          here after applying the change)
+  // Two distinct post-submit states because the server has two paths:
+  //   1. Signed-in caller (session cookie matches the pledge email) →
+  //      boost applied immediately, response includes updated pledge.
+  //      Show green "Pledge increased!" card; dashboard reflects the
+  //      new amount in the same render cycle via onUpdated().
+  //   2. Signed-out caller (no/mismatched session) → server sends a
+  //      verification email and returns { pending: true } — the pledge
+  //      stays at its old amount until the user clicks the email link.
+  //      Show orange "Check your email" card; the pledge is NOT yet
+  //      updated and saying it is would be a lie.
+  // The signed-in case is the common one on /my-pledge (you must be
+  // signed in to even reach this form); pending-verification is the
+  // fallback if the session has expired between page load and submit.
+  const [appliedSuccess, setAppliedSuccess] = useState(false);
   const [pendingVerification, setPendingVerification] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -237,14 +241,21 @@ function IncreasePledgeForm({
         body: JSON.stringify({ email, addAmount }),
       });
       const data = await res.json();
-      if (res.ok) {
-        // The boost is NOT applied at this point. The server has sent a
-        // verification email and the pledge stays at its current amount
-        // until the user clicks the email link. data.pledge is undefined
-        // here — don't try to onUpdated() with it.
-        setPendingVerification(true);
-      } else {
+      if (!res.ok) {
         setError(data.error || "Something went wrong.");
+        return;
+      }
+      if (data.pending) {
+        // Signed-out fallback path — server sent a verification email
+        // and the pledge stays at its current amount until the user clicks
+        setPendingVerification(true);
+      } else if (data.pledge) {
+        // Signed-in path — boost applied immediately, dashboard updates now
+        setAppliedSuccess(true);
+        onUpdated(data.pledge);
+      } else {
+        // Server returned 200 but neither pending nor pledge — unexpected
+        setError("Unexpected response from server. Please refresh and try again.");
       }
     } catch {
       setError("Network error. Please try again.");
@@ -252,6 +263,20 @@ function IncreasePledgeForm({
       setSubmitting(false);
     }
   };
+
+  if (appliedSuccess) {
+    return (
+      <div className="flex flex-col items-center gap-[16px] bg-[var(--forest-green-light)] border border-[var(--forest-green)] p-[28px]">
+        <Check className="w-[32px] h-[32px] text-[var(--forest-green)]" />
+        <span className="font-heading font-semibold text-[18px] text-[var(--forest-green)]">
+          Pledge increased!
+        </span>
+        <p className="font-heading text-[14px] text-[var(--text-secondary)] text-center leading-[1.6]">
+          Your new rate is <strong>{formatCurrency(pledge.amount)}/mile</strong> ({formatCurrency((pledge.amount * TOTAL_MILES) / pledge.interval)} total). Your dashboard above is already updated. We&apos;ve also emailed you a confirmation receipt.
+        </p>
+      </div>
+    );
+  }
 
   if (pendingVerification) {
     return (

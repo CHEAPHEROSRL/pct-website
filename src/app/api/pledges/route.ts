@@ -279,9 +279,34 @@ export async function PUT(req: NextRequest) {
 
     const record: PledgeRecord = typeof raw === "string" ? JSON.parse(raw) : raw;
 
-    // If no verifyToken provided, send a verification email instead of applying immediately
-    if (!verifyToken) {
-      // Store the boost request as pending
+    // Two paths to applying the boost without sending a "click this email"
+    // verification round-trip:
+    //   1. verifyToken — the boost-verify endpoint calls us with this after
+    //      the user clicked an emailed link. Legacy path, used by signed-out
+    //      callers (originally the only path).
+    //   2. matching session cookie — the caller is signed in as the
+    //      pledge's owner, which already proves email ownership. Requiring
+    //      a second email verification on top is security theatre and a
+    //      UX disaster (user clicks "submit", sees nothing change, has to
+    //      hunt through inbox to confirm something they just confirmed via
+    //      session). Sending verification IS still the fallback for
+    //      signed-out callers.
+    let authorized = !!verifyToken;
+    if (!authorized) {
+      const cookieStore = await cookies();
+      const sessionId = cookieStore.get(SESSION_COOKIE)?.value;
+      if (sessionId) {
+        const session = await getSession(sessionId);
+        if (session && session.email.toLowerCase().trim() === email.toLowerCase().trim()) {
+          authorized = true;
+        }
+      }
+    }
+
+    if (!authorized) {
+      // Fallback for signed-out callers: send a verification email and
+      // store the boost as pending. The boost-verify endpoint will then
+      // call us back with a verifyToken when the user clicks.
       const boostData = JSON.stringify({ email, addAmount, challengeId, challengeTitle });
       const token = await generateEmailVerifyToken(redis, boostData, "boost", 3600);
 
@@ -304,8 +329,9 @@ export async function PUT(req: NextRequest) {
       });
     }
 
-    // If verifyToken IS provided, this is the internal call after verification
-    // (The boost-verify endpoint calls this internally — not exposed to clients)
+    // Authorized (either via verifyToken or matching session) — apply
+    // the boost immediately and return the updated pledge so the dashboard
+    // can re-render with the new amount in the same response cycle.
     const oldAmount = record.amount;
     const oldTotal = record.totalPledge;
 
