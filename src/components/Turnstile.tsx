@@ -41,7 +41,11 @@ export default function Turnstile({ onVerify, onExpire, onError, className }: Tu
 
     const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
     if (!siteKey) {
-      console.warn("NEXT_PUBLIC_TURNSTILE_SITE_KEY not set — Turnstile disabled");
+      // No site key → CAPTCHA is intentionally disabled. The server side
+      // already handles this gracefully (verifyTurnstile detects "fully
+      // unconfigured" and allows submissions through). Use console.info so
+      // the message is debuggable without looking alarming in DevTools.
+      console.info("[Turnstile] site key not configured — widget skipped");
       return;
     }
 
