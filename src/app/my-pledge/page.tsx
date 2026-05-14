@@ -184,7 +184,17 @@ function IncreasePledgeForm({
 }) {
   const [addAmount, setAddAmount] = useState(0.01);
   const [submitting, setSubmitting] = useState(false);
-  const [success, setSuccess] = useState(false);
+  // Two distinct post-submit states. The boost flow requires email
+  // verification — the dashboard does NOT update at submit time, it
+  // updates after the user clicks the verification link. Previously we
+  // showed "Pledge increased!" immediately on submit, which lied to
+  // the user: the pledge wasn't actually changed and the dashboard
+  // showed the old amount. Now we distinguish:
+  //   pendingVerification = "we sent you an email, click the link"
+  //   appliedSuccess      = (currently unused — only reachable when
+  //                          the boost-verify endpoint redirects back
+  //                          here after applying the change)
+  const [pendingVerification, setPendingVerification] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Boost-amount prefill: when someone hits the 409 ("already pledged")
@@ -228,8 +238,11 @@ function IncreasePledgeForm({
       });
       const data = await res.json();
       if (res.ok) {
-        setSuccess(true);
-        onUpdated(data.pledge);
+        // The boost is NOT applied at this point. The server has sent a
+        // verification email and the pledge stays at its current amount
+        // until the user clicks the email link. data.pledge is undefined
+        // here — don't try to onUpdated() with it.
+        setPendingVerification(true);
       } else {
         setError(data.error || "Something went wrong.");
       }
@@ -240,16 +253,21 @@ function IncreasePledgeForm({
     }
   };
 
-  if (success) {
+  if (pendingVerification) {
     return (
-      <div className="flex flex-col items-center gap-[16px] bg-[var(--forest-green-light)] border border-[var(--forest-green)] p-[28px]">
-        <Check className="w-[32px] h-[32px] text-[var(--forest-green)]" />
-        <span className="font-heading font-semibold text-[18px] text-[var(--forest-green)]">
-          Pledge increased!
+      <div className="flex flex-col items-center gap-[14px] bg-[var(--burnt-orange-light)] border border-[var(--burnt-orange)] p-[28px]">
+        <Mail className="w-[32px] h-[32px] text-[var(--burnt-orange)]" />
+        <span className="font-heading font-semibold text-[18px] text-[var(--burnt-orange)]">
+          Almost there — check your email
         </span>
-        <span className="font-heading text-[14px] text-[var(--text-secondary)]">
-          Your new rate is {formatCurrency(newRate)}/mile — {formatCurrency(newTotal)} maximum (at 2,650 mi).
-        </span>
+        <p className="font-heading text-[14px] text-[var(--text-secondary)] text-center leading-[1.6]">
+          We&apos;ve sent a confirmation link to <strong>{email}</strong>. Click
+          the &ldquo;Confirm Pledge Increase&rdquo; button in that email and
+          your pledge will jump from <strong>{formatCurrency(pledge.amount)}/mile</strong> to <strong>{formatCurrency(newRate)}/mile</strong> ({formatCurrency(newTotal)} total).
+        </p>
+        <p className="font-heading italic text-[12px] text-[var(--text-muted)] text-center">
+          Nothing has changed yet — your pledge stays at {formatCurrency(pledge.amount)}/mile until you click the link. Can&apos;t find the email? Check your spam folder.
+        </p>
       </div>
     );
   }
