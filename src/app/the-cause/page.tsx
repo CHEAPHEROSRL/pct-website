@@ -175,7 +175,7 @@ export default function TheCausePage() {
           </div>
         </ScrollReveal>
         <ScrollReveal animation="fade-up" delay={100}>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[24px] lg:gap-[32px] w-full">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-[24px] lg:gap-[32px] w-full max-w-[1100px] mx-auto">
           {[
             { pct: "50%", title: "Cancer Research", desc: "Funding breakthrough research into early detection and treatment of pancreatic and lung cancers." },
             { pct: "25%", title: "Patient Support", desc: "Helping cancer patients and their families with counseling, resources, and access to treatment." },
