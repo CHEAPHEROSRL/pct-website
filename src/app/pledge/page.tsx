@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef, useMemo } from "react";
-import { Heart, Mail, ArrowRight, HeartHandshake, Building2, Sparkles, Check } from "lucide-react";
+import { Heart, Mail, ArrowRight, HeartHandshake, Building2, Sparkles, Check, X } from "lucide-react";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -49,6 +49,17 @@ export default function PledgePage() {
   const [claimedSection, setClaimedSection] = useState<string | null>(null);
   const [sectionCounts, setSectionCounts] = useState<Record<string, number>>({});
 
+  // Sponsorship modal — opens automatically the FIRST time the running total
+  // crosses US$5K, so a business rep dragging the slider sees the option
+  // before they invest time filling out the rest of the form. After dismiss,
+  // it doesn't reappear in this page session (sliding under and over again
+  // won't re-trigger). Rising-edge detected by tracking the previous total
+  // in a ref so we only fire on the up-cross, not on every render at high
+  // amounts.
+  const [sponsorModalOpen, setSponsorModalOpen] = useState(false);
+  const [sponsorModalDismissedThisSession, setSponsorModalDismissedThisSession] = useState(false);
+  const prevTotalRef = useRef(0);
+
   // Silent IP geolocation on mount
   const geoRef = useRef<{ city?: string; country?: string; lat?: number; lng?: number }>({});
   useEffect(() => {
@@ -83,6 +94,47 @@ export default function PledgePage() {
 
   const totalPledge = amount * TOTAL_MILES;
   const perFoundation = totalPledge / 2;
+
+  // Rising-edge detect: open the modal exactly on the transition from
+  // below-threshold to above-threshold. Skips re-trigger after dismiss
+  // (the visitor said no, leave them alone for the rest of the session)
+  // and skips re-trigger on every render while above threshold.
+  useEffect(() => {
+    const prev = prevTotalRef.current;
+    const justCrossed = prev < SPONSOR_CTA_THRESHOLD && totalPledge >= SPONSOR_CTA_THRESHOLD;
+    if (justCrossed && !sponsorModalDismissedThisSession) {
+      setSponsorModalOpen(true);
+    }
+    prevTotalRef.current = totalPledge;
+  }, [totalPledge, sponsorModalDismissedThisSession]);
+
+  // ESC key closes the modal — basic accessibility
+  useEffect(() => {
+    if (!sponsorModalOpen) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setSponsorModalOpen(false);
+        setSponsorModalDismissedThisSession(true);
+      }
+    };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [sponsorModalOpen]);
+
+  // Body scroll lock while modal is open so the page behind doesn't scroll
+  useEffect(() => {
+    if (!sponsorModalOpen) return;
+    const original = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = original;
+    };
+  }, [sponsorModalOpen]);
+
+  function dismissSponsorModal() {
+    setSponsorModalOpen(false);
+    setSponsorModalDismissedThisSession(true);
+  }
 
   const handleSliderChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -156,8 +208,129 @@ export default function PledgePage() {
   // Slider position percentage for the custom track fill
   const sliderPercent = ((amount - 0.01) / (5 - 0.01)) * 100;
 
+  // Build the sponsor contact URL with the current pledge details pre-filled.
+  // Same shape as the inline celebration card uses — keeps the modal and the
+  // card pointing at exactly the same conversion path.
+  const modalSectionName = claimedSection
+    ? trailSections.find((s) => s.id === claimedSection)?.name
+    : undefined;
+  const modalSponsorParams = new URLSearchParams();
+  modalSponsorParams.set("type", "sponsor");
+  modalSponsorParams.set("amount", Math.round(totalPledge).toString());
+  if (modalSectionName) modalSponsorParams.set("section", modalSectionName);
+  const modalSponsorUrl = `/contact?${modalSponsorParams.toString()}`;
+
   return (
     <div className="flex flex-col w-full bg-[var(--bg-warm)]">
+      {/* Sponsorship modal — appears once per session on first cross of $5K.
+          Backdrop click + ESC both dismiss; primary CTA routes to the
+          pre-filled contact form; secondary just closes the modal so the
+          visitor can continue pledging normally. */}
+      {sponsorModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/60"
+          onClick={dismissSponsorModal}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="sponsor-modal-title"
+        >
+          <div
+            className="relative bg-white max-w-[640px] w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header band — warm orange accent, matches the inline card */}
+            <div className="flex items-center justify-between gap-[12px] px-[24px] md:px-[32px] py-[20px] bg-[var(--burnt-orange-light)] border-b-2 border-[var(--burnt-orange)]">
+              <div className="flex items-center gap-[10px]">
+                <Sparkles className="w-[20px] h-[20px] text-[var(--burnt-orange)] shrink-0" />
+                <span className="font-label font-bold text-[11px] md:text-[12px] tracking-[2px] md:tracking-[3px] text-[var(--burnt-orange)]">
+                  EXTRAORDINARY COMMITMENT — QUICK QUESTION
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={dismissSponsorModal}
+                aria-label="Close sponsorship dialog"
+                className="flex items-center justify-center w-[32px] h-[32px] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors cursor-pointer shrink-0"
+              >
+                <X className="w-[20px] h-[20px]" />
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="flex flex-col gap-[20px] p-[24px] md:p-[32px]">
+              <h2
+                id="sponsor-modal-title"
+                className="font-heading font-semibold text-[22px] md:text-[28px] tracking-[-0.5px] text-[var(--text-primary)] leading-tight"
+              >
+                Before you submit — are you representing a company?
+              </h2>
+              <p className="font-heading text-[15px] leading-[1.7] text-[var(--text-secondary)]">
+                At <strong className="text-[var(--text-primary)]">{formatCurrency(totalPledge)}</strong>, you&apos;re funding thousands of trail miles. If this is on behalf of a business, your sponsorship gets:
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-[20px] items-start">
+                <div className="flex flex-col items-center gap-[6px] shrink-0 mx-auto sm:mx-0">
+                  <div className="flex items-center justify-center w-[80px] h-[80px] bg-white border-[3px] border-[var(--burnt-orange)] rounded-md shadow-md">
+                    <span className="font-label font-bold text-[10px] tracking-[1px] text-[var(--burnt-orange)] text-center px-[6px] leading-[1.2]">
+                      YOUR<br />LOGO
+                    </span>
+                  </div>
+                  <div className="px-[8px] py-[3px] bg-[var(--burnt-orange)] rounded-sm">
+                    <span className="font-label font-bold text-[8px] tracking-[1.2px] text-[var(--text-primary)] whitespace-nowrap">
+                      SPONSORED · {(modalSectionName || "YOUR SECTION").toUpperCase()}
+                    </span>
+                  </div>
+                </div>
+                <ul className="flex flex-col gap-[8px] flex-1">
+                  <li className="flex items-start gap-[10px]">
+                    <Check className="w-[16px] h-[16px] text-[var(--forest-green)] shrink-0 mt-[3px]" />
+                    <span className="font-heading text-[14px] leading-[1.5] text-[var(--text-secondary)]">
+                      Your logo on the live trail map at the section you choose
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-[10px]">
+                    <Check className="w-[16px] h-[16px] text-[var(--forest-green)] shrink-0 mt-[3px]" />
+                    <span className="font-heading text-[14px] leading-[1.5] text-[var(--text-secondary)]">
+                      Linked to your website when visitors tap the pin
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-[10px]">
+                    <Check className="w-[16px] h-[16px] text-[var(--forest-green)] shrink-0 mt-[3px]" />
+                    <span className="font-heading text-[14px] leading-[1.5] text-[var(--text-secondary)]">
+                      A personal photo from Paul when he reaches your section
+                    </span>
+                  </li>
+                </ul>
+              </div>
+
+              <p className="font-heading italic text-[13px] leading-[1.6] text-[var(--text-muted)]">
+                Pledging as an individual? Just close this and continue — no pressure, both paths are valid.
+              </p>
+
+              <div className="flex flex-col gap-[10px]">
+                <Link
+                  href={modalSponsorUrl}
+                  className="flex items-center justify-center gap-[10px] w-full h-[56px] bg-[var(--burnt-orange)] hover:opacity-90 transition-opacity"
+                >
+                  <Building2 className="w-[20px] h-[20px] text-[var(--text-primary)]" />
+                  <span className="font-label font-bold text-[14px] tracking-[2px] text-[var(--text-primary)]">
+                    TALK SPONSORSHIP →
+                  </span>
+                </Link>
+                <button
+                  type="button"
+                  onClick={dismissSponsorModal}
+                  className="flex items-center justify-center w-full h-[44px] border border-[var(--border-subtle)] hover:border-[var(--burnt-orange)] transition-colors cursor-pointer"
+                >
+                  <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-secondary)]">
+                    CONTINUE AS INDIVIDUAL
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       <Header />
       <CountdownBanner />
 
@@ -258,6 +431,23 @@ export default function PledgePage() {
               </span>
             </div>
           </div>
+
+          {/* Sponsorship awareness banner — always visible, sits right under
+              the slider so business reps see the option from the moment they
+              start interacting with the form, not after they've filled out
+              every field. Subtle by design; the heavy lift happens in the
+              celebration card + modal once the slider actually crosses $5K. */}
+          <Link
+            href="/sponsor-agreement"
+            target="_blank"
+            className="flex items-center gap-[10px] px-[14px] py-[10px] bg-[var(--bg-warm)] border border-[var(--border-subtle)] hover:border-[var(--burnt-orange)] transition-colors"
+          >
+            <Building2 className="w-[16px] h-[16px] text-[var(--burnt-orange)] shrink-0" />
+            <span className="font-heading text-[13px] leading-[1.4] text-[var(--text-secondary)] flex-1">
+              <strong className="text-[var(--text-primary)]">Pledging as a company?</strong> Pledges over US$5,000 unlock sponsor section options on the live trail map.
+            </span>
+            <ArrowRight className="w-[14px] h-[14px] text-[var(--burnt-orange)] shrink-0" />
+          </Link>
 
           {/* Quick Pick */}
           <div className="flex flex-col gap-[12px]">
