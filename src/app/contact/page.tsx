@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Mail, Send, Check, Clock, MessageCircle, BookOpen, ShieldCheck, Building2 } from "lucide-react";
@@ -18,6 +18,30 @@ export default function ContactPage() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [sponsorContext, setSponsorContext] = useState<{ amount: string; section: string } | null>(null);
+
+  // Pre-fill from URL params when the visitor arrives via the pledge page's
+  // "TALK SPONSORSHIP" path: /contact?type=sponsor&amount=NNNN&section=Name
+  // Sets a contextual banner above the form too, so the visitor knows
+  // immediately what context they're contacting in.
+  //
+  // Reading via window.location instead of useSearchParams avoids the App
+  // Router's Suspense-boundary requirement for static prerendering. The
+  // initial render shows empty fields for a frame, then the effect populates
+  // them — invisible because the visitor hasn't started typing yet.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("type") !== "sponsor") return;
+    const amount = params.get("amount") || "";
+    const section = params.get("section") || "";
+    const amountLabel = amount ? `US$${Number(amount).toLocaleString("en-US")}` : "US$5,000+";
+    const sectionLabel = section ? ` (${section})` : "";
+    setSubject(`Trail Section Sponsorship — ${amountLabel}${sectionLabel}`.slice(0, 120));
+    setMessage(
+      `I'm interested in sponsoring${section ? ` the ${section} section` : " a section of the Pacific Crest Trail"}.\n\nMy pledge calculator shows ${amountLabel}.\n\nCompany / details: `
+    );
+    setSponsorContext({ amount: amountLabel, section });
+  }, []);
 
   const messagePercent = (message.length / 2000) * 100;
   const messageCountColor =
@@ -139,6 +163,19 @@ export default function ContactPage() {
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="flex flex-col gap-[24px]">
+              {sponsorContext && (
+                <div className="flex items-start gap-[12px] bg-[var(--burnt-orange-light)] border-l-[3px] border-[var(--burnt-orange)] p-[16px]">
+                  <Building2 className="w-[20px] h-[20px] text-[var(--burnt-orange)] shrink-0 mt-[2px]" />
+                  <div className="flex flex-col gap-[4px]">
+                    <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--burnt-orange)]">
+                      SPONSORSHIP INQUIRY · {sponsorContext.amount}
+                    </span>
+                    <p className="font-heading text-[13px] leading-[1.5] text-[var(--text-secondary)]">
+                      Subject and message are pre-filled with your pledge details{sponsorContext.section ? ` for the ${sponsorContext.section} section` : ""}. Just add your company name + anything else, then send. Paul will reply within 48 hours.
+                    </p>
+                  </div>
+                </div>
+              )}
               <div className="flex flex-col gap-[8px]">
                 <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">
                   SEND A MESSAGE

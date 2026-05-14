@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef, useMemo } from "react";
-import { Heart, Mail, ArrowRight, HeartHandshake, Building2 } from "lucide-react";
+import { Heart, Mail, ArrowRight, HeartHandshake, Building2, Sparkles, Check } from "lucide-react";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -536,7 +536,126 @@ export default function PledgePage() {
             </div>
           ) : (
             <>
+              {/* High-value sponsorship celebration card. Appears when the
+                  running total crosses US$5,000. Designed to:
+                    1. Celebrate the commitment (warm, not salesy)
+                    2. Surface the sponsorship offer with substance — what
+                       the company actually gets, including a small visual
+                       mockup of the pin so they can see it's tangible
+                    3. Provide two clear paths: primary "TALK SPONSORSHIP"
+                       routes to /contact with the pledge details pre-filled,
+                       secondary link scrolls down to SET MY PLEDGE for
+                       individuals who don't want the sponsorship path.
+                  The submit button below stays clickable — both paths are
+                  always available, no one is blocked. */}
+              {totalPledge >= SPONSOR_CTA_THRESHOLD && (() => {
+                const sectionName = claimedSection
+                  ? trailSections.find((s) => s.id === claimedSection)?.name
+                  : undefined;
+                const sponsorContactParams = new URLSearchParams();
+                sponsorContactParams.set("type", "sponsor");
+                sponsorContactParams.set("amount", Math.round(totalPledge).toString());
+                if (sectionName) sponsorContactParams.set("section", sectionName);
+                const sponsorContactUrl = `/contact?${sponsorContactParams.toString()}`;
+                return (
+                  <div className="flex flex-col gap-[20px] bg-[var(--burnt-orange-light)] border-2 border-[var(--burnt-orange)] p-[24px] md:p-[32px]">
+                    <div className="flex items-center gap-[10px]">
+                      <Sparkles className="w-[20px] h-[20px] text-[var(--burnt-orange)]" />
+                      <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">
+                        EXTRAORDINARY COMMITMENT
+                      </span>
+                    </div>
+                    <h3 className="font-heading font-semibold text-[22px] md:text-[26px] tracking-[-0.5px] text-[var(--text-primary)] leading-tight">
+                      Thank you for considering this.
+                    </h3>
+                    <p className="font-heading text-[15px] leading-[1.7] text-[var(--text-secondary)]">
+                      At <strong className="text-[var(--text-primary)]">{formatCurrency(totalPledge)}</strong>, you&apos;re funding thousands of trail miles. Quick question — are you representing a <strong>company</strong>, or pledging as an <strong>individual</strong>?
+                    </p>
+
+                    <div className="flex flex-col sm:flex-row gap-[24px] items-start">
+                      {/* Pin mockup — concrete proof of what sponsorship looks like */}
+                      <div className="flex flex-col items-center gap-[6px] shrink-0 mx-auto sm:mx-0">
+                        <div className="flex items-center justify-center w-[80px] h-[80px] bg-white border-[3px] border-[var(--burnt-orange)] rounded-md shadow-md">
+                          <span className="font-label font-bold text-[10px] tracking-[1px] text-[var(--burnt-orange)] text-center px-[6px] leading-[1.2]">
+                            YOUR<br />LOGO
+                          </span>
+                        </div>
+                        <div className="px-[8px] py-[3px] bg-[var(--burnt-orange)] rounded-sm">
+                          <span className="font-label font-bold text-[8px] tracking-[1.2px] text-[var(--text-primary)] whitespace-nowrap">
+                            SPONSORED · {(sectionName || "YOUR SECTION").toUpperCase()}
+                          </span>
+                        </div>
+                        <span className="font-heading italic text-[10px] text-[var(--text-muted)] text-center max-w-[160px] mt-[2px]">
+                          What it looks like on the{" "}
+                          <Link href="/trail-map" target="_blank" className="text-[var(--burnt-orange)] hover:underline not-italic">
+                            live map ↗
+                          </Link>
+                        </span>
+                      </div>
+
+                      {/* Bullets */}
+                      <div className="flex flex-col gap-[12px] flex-1">
+                        <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-muted)]">
+                          WHAT SPONSORSHIP INCLUDES
+                        </span>
+                        <ul className="flex flex-col gap-[8px]">
+                          <li className="flex items-start gap-[10px]">
+                            <Check className="w-[16px] h-[16px] text-[var(--forest-green)] shrink-0 mt-[3px]" />
+                            <span className="font-heading text-[14px] leading-[1.5] text-[var(--text-secondary)]">
+                              Your logo on the live trail map at the section you choose
+                            </span>
+                          </li>
+                          <li className="flex items-start gap-[10px]">
+                            <Check className="w-[16px] h-[16px] text-[var(--forest-green)] shrink-0 mt-[3px]" />
+                            <span className="font-heading text-[14px] leading-[1.5] text-[var(--text-secondary)]">
+                              Linked to your website when visitors tap the pin
+                            </span>
+                          </li>
+                          <li className="flex items-start gap-[10px]">
+                            <Check className="w-[16px] h-[16px] text-[var(--forest-green)] shrink-0 mt-[3px]" />
+                            <span className="font-heading text-[14px] leading-[1.5] text-[var(--text-secondary)]">
+                              A personal photo from Paul when he reaches your section
+                            </span>
+                          </li>
+                        </ul>
+                        <Link
+                          href="/sponsor-agreement"
+                          target="_blank"
+                          className="font-heading text-[13px] text-[var(--burnt-orange)] hover:underline self-start"
+                        >
+                          Full terms on the sponsor agreement →
+                        </Link>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col gap-[12px]">
+                      <Link
+                        href={sponsorContactUrl}
+                        className="flex items-center justify-center gap-[10px] w-full h-[56px] bg-[var(--burnt-orange)] hover:opacity-90 transition-opacity"
+                      >
+                        <Building2 className="w-[20px] h-[20px] text-[var(--text-primary)]" />
+                        <span className="font-label font-bold text-[14px] tracking-[2px] text-[var(--text-primary)]">
+                          TALK SPONSORSHIP →
+                        </span>
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          document
+                            .getElementById("set-my-pledge-btn")
+                            ?.scrollIntoView({ behavior: "smooth", block: "center" });
+                        }}
+                        className="font-heading text-[13px] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:underline cursor-pointer self-center"
+                      >
+                        I&apos;m an individual — pledge below ↓
+                      </button>
+                    </div>
+                  </div>
+                );
+              })()}
+
               <button
+                id="set-my-pledge-btn"
                 type="submit"
                 disabled={submitting}
                 className={`flex items-center justify-center gap-[10px] h-[56px] w-full transition-opacity ${
@@ -550,37 +669,6 @@ export default function PledgePage() {
                   {submitting ? "REGISTERING..." : "SET MY PLEDGE"}
                 </span>
               </button>
-
-              {/* Company sponsorship CTA — appears at US$5,000+ AS AN ADDITION
-                  to the submit button above, not a replacement. Individuals who
-                  genuinely want to pledge this much personally are not forced
-                  into the email path; the burnt-orange callout simply offers
-                  the sponsorship option in parallel. Below threshold: nothing
-                  shows, so the form stays clean for the common case. */}
-              {totalPledge >= SPONSOR_CTA_THRESHOLD && (
-                <div className="flex flex-col gap-[16px] bg-[var(--burnt-orange-light)] border border-[var(--burnt-orange)] p-[24px]">
-                  <div className="flex items-center gap-[10px]">
-                    <Building2 className="w-[24px] h-[24px] text-[var(--burnt-orange)]" />
-                    <span className="font-heading font-semibold text-[18px] text-[var(--text-primary)]">
-                      That&apos;s a remarkable commitment.
-                    </span>
-                  </div>
-                  <p className="font-heading text-[14px] leading-[1.7] text-[var(--text-secondary)]">
-                    At US$5,000+ you&apos;re funding thousands of trail miles. If this is on behalf of a company, we&apos;d love to feature your logo on a section of the Pacific Crest Trail map — visible to everyone tracking Paul&apos;s progress. If you&apos;re an individual, just use the SET MY PLEDGE button above — both paths work.
-                  </p>
-                  <a
-                    href={`mailto:paul@yeschapter.com?subject=${encodeURIComponent("Trail Section Sponsorship Inquiry")}&body=${encodeURIComponent(
-                      `Hi Paul,\n\nI'm interested in sponsoring a section of the PCT.\n\nMy pledge amount: ${formatCurrency(totalPledge)} (${formatCurrency(amount)}/mi)\nSection: ${claimedSection ? trailSections.find((s) => s.id === claimedSection)?.name || "(unspecified)" : "(no preference yet)"}\nCompany/Name: \n\nThanks!`
-                    )}`}
-                    className="flex items-center justify-center gap-[10px] h-[56px] w-full bg-[var(--burnt-orange)] hover:opacity-90 transition-opacity cursor-pointer"
-                  >
-                    <Building2 className="w-[20px] h-[20px] text-[var(--text-primary)]" />
-                    <span className="font-label font-bold text-[14px] tracking-[2px] text-[var(--text-primary)]">
-                      GET IN TOUCH ABOUT SPONSORSHIP
-                    </span>
-                  </a>
-                </div>
-              )}
             </>
           )}
 

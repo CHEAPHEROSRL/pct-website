@@ -174,6 +174,15 @@ export interface PledgeRecord {
    * a pin on the live map once Paul passes that landmark's mile marker.
    */
   claimedSection?: string;
+  /**
+   * Set to true when the pledger's calculator crossed the US$5,000
+   * sponsorship threshold at submit time. Doesn't matter whether they
+   * clicked the sponsorship path or pledged anyway — the flag is purely a
+   * "this person is a sponsorship lead" marker so Paul can spot them in
+   * the admin and consider a personal follow-up. Absent on pledges below
+   * the threshold.
+   */
+  seenSponsorCTA?: boolean;
   createdAt: number;
   updatedAt: number;
 }

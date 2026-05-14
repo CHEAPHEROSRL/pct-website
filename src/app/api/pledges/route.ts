@@ -129,6 +129,12 @@ export async function POST(req: NextRequest) {
       avatar: typeof avatar === "string" && avatar.length <= 10 ? avatar : undefined,
       referredBy: typeof referredBy === "string" && referredBy.trim() ? sanitizeText(referredBy, 100) : undefined,
       claimedSection,
+      // Flag any pledge that crossed the US$5K sponsorship threshold. The
+      // celebration card on /pledge surfaced the offer to them at this point;
+      // setting the flag regardless of which path they chose lets Paul see
+      // these high-value leads in the admin and consider a personal follow-up
+      // if they pledged-anyway instead of going through the sponsor path.
+      seenSponsorCTA: totalPledge >= 5000 ? true : undefined,
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };
