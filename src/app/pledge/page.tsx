@@ -179,9 +179,11 @@ export default function PledgePage() {
       const data = await res.json();
 
       if (res.status === 409) {
-        // Already pledged — still show success
+        // Already-pledged user re-submitting. The server didn't send a new
+        // verification email (there's nothing to verify), so we send them a
+        // magic link as the "way back in" — otherwise they'd see "already
+        // pledged" with no entry path to their dashboard.
         setSubmitted(true);
-        // Send magic link so they can access dashboard
         fetch("/api/auth/magic", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -190,13 +192,12 @@ export default function PledgePage() {
       } else if (!res.ok) {
         setSubmitError(data.error || "Something went wrong. Please try again.");
       } else {
+        // New pledge — server already sent the "Confirm Your Pledge" email
+        // and clicking that link both confirms the pledge AND creates a
+        // session cookie (see /api/pledges/verify). No magic-link email
+        // needed; sending one would result in two emails landing back-to-back
+        // for the same purpose, which is confusing and triggers spam filters.
         setSubmitted(true);
-        // Automatically send magic sign-in link so new pledger can access their dashboard
-        fetch("/api/auth/magic", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, name: name || undefined }),
-        }).catch(() => {});
       }
     } catch {
       setSubmitError("Network error. Please check your connection and try again.");
@@ -716,12 +717,14 @@ export default function PledgePage() {
             <div className="flex flex-col items-center gap-[12px] bg-[var(--forest-green-light)] border border-[var(--forest-green)] p-[24px]">
               <Mail className="w-[28px] h-[28px] text-[var(--forest-green)]" />
               <span className="font-heading font-semibold text-[18px] text-[var(--forest-green)]">
-                Pledge set — check your email!
+                Almost done — check your email!
               </span>
               <p className="font-heading text-[14px] text-[var(--text-secondary)] text-center leading-[1.6]">
-                We&apos;ve emailed <strong>{email}</strong> a magic sign-in link.
-                Click it to open your personal pledge dashboard — no password needed.
-                Your pledge: {formatCurrency(amount)}/mile ({formatCurrency(totalPledge)} total).
+                We&apos;ve sent a <strong>confirmation link</strong> to <strong>{email}</strong>.
+                Clicking it confirms your pledge of {formatCurrency(amount)}/mile ({formatCurrency(totalPledge)} total) and opens your personal dashboard — no password needed.
+              </p>
+              <p className="font-heading italic text-[12px] text-[var(--text-muted)] text-center">
+                Can&apos;t find it? Check your spam folder. The email comes from <strong>paul@yeschapter.com</strong> with the subject &ldquo;Confirm Your Pledge&rdquo;.
               </p>
             </div>
           ) : (

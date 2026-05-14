@@ -330,8 +330,8 @@ export async function sendPledgeVerification(
         <p style="margin: 0 0 4px; font-size: 12px; letter-spacing: 3px; font-family: sans-serif; font-weight: 700; color: #8C8A87;">YOUR PLEDGE</p>
         <p style="margin: 0 0 8px; font-size: 42px; font-weight: 600; color: #FABE64; letter-spacing: -1px;">US$${totalPledge.toFixed(2)}</p>
         <p style="margin: 0 0 24px; font-size: 15px; color: #5C5C5C;">US${rate} × 2,650 miles</p>
-        <a href="${verifyUrl}" style="display: inline-block; background: #3D7A5A; color: #FFFFFF; padding: 16px 48px; font-family: sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 2px; text-decoration: none;">CONFIRM MY PLEDGE</a>
-        <p style="margin: 16px 0 0; font-size: 12px; color: #8C8A87;">This link expires in 1 hour.</p>
+        <a href="${verifyUrl}" style="display: inline-block; background: #3D7A5A; color: #FFFFFF; padding: 16px 48px; font-family: sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 2px; text-decoration: none;">CONFIRM &amp; OPEN MY DASHBOARD</a>
+        <p style="margin: 16px 0 0; font-size: 12px; color: #8C8A87;">One click confirms your pledge AND signs you in. No password to remember. Link expires in 1 hour.</p>
       </div>
       <div style="background: #F4F1EC; padding: 28px 40px; text-align: center;">
         <p style="margin: 0; font-size: 13px; color: #8C8A87; line-height: 1.6;">If you didn't request this, you can safely ignore this email.<br/>No pledge will be created.</p>
