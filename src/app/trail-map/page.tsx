@@ -484,7 +484,13 @@ export default function TrailMapPage() {
         </div>
 
         {/* Map Area */}
-        <div className="relative flex-1 h-[400px] md:h-[500px] lg:h-full overflow-hidden bg-[#E8E5E0]">
+        {/* flex-1 ONLY applies on lg+ where the parent container has an
+            explicit lg:h-[800px]. On mobile the parent has no defined
+            height — and flex-1 sets flex-basis: 0% which silently wins
+            over `height: 400px` on the main axis, collapsing the map to
+            0px. Reproducible enough that an entire user-visible "the map
+            is missing" bug came from this single missing breakpoint. */}
+        <div className="relative h-[400px] md:h-[500px] lg:flex-1 lg:h-full shrink-0 overflow-hidden bg-[#E8E5E0]">
           <TrailMapView
             flyTo={flyTo}
             currentPosition={data?.current ? { lat: data.current.lat, lng: data.current.lng } : null}
