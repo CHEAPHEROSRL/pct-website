@@ -197,10 +197,16 @@ export default function TrailMapPage() {
         </div>
       )}
 
-      {/* Map Main */}
-      <div className="flex flex-col lg:flex-row w-full lg:h-[800px]">
-        {/* Sidebar */}
-        <div className="flex flex-col w-full lg:w-[400px] max-h-[300px] lg:max-h-none lg:h-full bg-[var(--bg-white)] border-r border-[var(--border-subtle)] shrink-0 overflow-auto">
+      {/* Map Main — on mobile the map renders ABOVE the sidebar (flex-col-
+          reverse) so visitors see the actual feature of the page first
+          instead of scrolling past 300px of tabs/stats. On desktop the
+          familiar side-by-side layout returns. */}
+      <div className="flex flex-col-reverse lg:flex-row w-full lg:h-[800px]">
+        {/* Sidebar — natural-height list on mobile (page scroll handles it),
+            fixed scrollable column on desktop. The previous max-h-[300px] +
+            overflow-auto cramped everything into a tiny scrollable box on
+            mobile that competed with the page's own scroll. */}
+        <div className="flex flex-col w-full lg:w-[400px] lg:h-full bg-[var(--bg-white)] border-t lg:border-t-0 lg:border-r border-[var(--border-subtle)] shrink-0 lg:overflow-auto">
           {/* Mode Toggle */}
           <div className="flex w-full border-b border-[var(--border-subtle)]">
             <button
