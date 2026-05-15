@@ -335,8 +335,15 @@ export async function PUT(req: NextRequest) {
     const oldAmount = record.amount;
     const oldTotal = record.totalPledge;
 
-    record.amount += addAmount;
-    record.totalPledge = (record.amount * TOTAL_MILES) / record.interval;
+    // Round the new amount to cents to avoid float drift. JS's binary
+    // floating point can't represent 0.1 + 0.05 exactly — it returns
+    // 0.15000000000000002, which then bleeds into the confirmation email
+    // and the dashboard. Quantizing on every write keeps amounts clean
+    // ($0.15, never $0.15000...02). Same treatment for addedAmount so
+    // the boosts history reads cleanly too.
+    const roundedAddAmount = Math.round(addAmount * 100) / 100;
+    record.amount = Math.round((record.amount + roundedAddAmount) * 100) / 100;
+    record.totalPledge = Math.round(((record.amount * TOTAL_MILES) / record.interval) * 100) / 100;
     record.updatedAt = Date.now();
 
     const isChallenge = !!challengeId;
@@ -344,7 +351,7 @@ export async function PUT(req: NextRequest) {
     record.boosts.push({
       challengeId: challengeId || "manual",
       challengeTitle: challengeTitle || "Manual increase",
-      addedAmount: addAmount,
+      addedAmount: roundedAddAmount,
       addedAt: Date.now(),
     });
 
@@ -365,7 +372,11 @@ export async function PUT(req: NextRequest) {
 
     if (!isChallenge) {
       const displayName = record.anonymous ? "Pledger" : record.name;
-      const newRate = `$${record.amount}/mi`;
+      // toFixed(2) guarantees consistent currency formatting in the email
+      // subject and body — record.amount is already quantized to cents
+      // above, but interpolating a number directly drops trailing zeros
+      // ($0.1/mi instead of $0.10/mi) which reads as broken.
+      const newRate = `$${record.amount.toFixed(2)}/mi`;
       // Awaited so the serverless function stays alive long enough for
       // Gmail's API round-trip to complete. See the long note in POST above
       // explaining why fire-and-forget was unreliable in this runtime.

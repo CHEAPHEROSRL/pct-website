@@ -43,8 +43,6 @@ const trailSections = [
   { name: "Washington", info: "Mi 2,147 - 2,650 · Cascade Locks to Manning Park", center: [47.3, -121.0, 7] as [number, number, number] },
 ];
 
-const fallbackPledgerLocations: PledgerLocation[] = [];
-
 const TrailMapView = dynamic(() => import("@/components/TrailMapView"), {
   ssr: false,
   loading: () => (
@@ -152,8 +150,12 @@ export default function TrailMapPage() {
       .catch(() => setSideFetchError(true));
   }, []);
 
-  const displayLocations = pledgerLocations.length > 0 ? pledgerLocations : fallbackPledgerLocations;
-  const displayCountryCount = countryCount > 0 ? countryCount : 12;
+  // No more hardcoded "12 countries" fallback — show real data even when
+  // it's zero. Previously a brand-new site with no pledgers would falsely
+  // display "12 countries" because the country count fell back to a stub
+  // value, which is misleading.
+  const displayLocations = pledgerLocations;
+  const displayCountryCount = countryCount;
 
   const stats = data?.stats;
   const totalMiles = stats?.totalMiles ?? 0;
