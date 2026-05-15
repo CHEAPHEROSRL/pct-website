@@ -3422,15 +3422,35 @@ export default function AdminPage() {
                     <p className="font-heading text-[13px] leading-[1.6] text-[var(--text-secondary)]">
                       Click the button below. It redirects you to Google&apos;s consent screen where you sign in and grant the <strong>gmail.send</strong> permission. After you tap Allow, you&apos;re sent back here and the website can send as your account. The permission can&apos;t read your inbox, delete emails, or touch anything else — sending only.
                     </p>
-                    <a
-                      href="/api/admin/gmail-oauth/start"
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        // Refresh the cookie via the bearer token RIGHT before
+                        // navigating. Some sessions (Paul's iPhone first
+                        // login over a flaky mountain connection, browsers
+                        // that don't fully persist cookies set via fetch
+                        // responses, etc.) end up with a Bearer-only auth
+                        // state and no usable cookie — which would 401 the
+                        // <a href> navigation. This guarantees the cookie
+                        // is fresh, then redirects.
+                        try {
+                          await fetch("/api/admin/refresh-cookie", {
+                            method: "POST",
+                            headers: { Authorization: `Bearer ${token}` },
+                          });
+                        } catch {
+                          // If refresh fails, try anyway — the existing
+                          // cookie might already be valid for this session
+                        }
+                        window.location.href = "/api/admin/gmail-oauth/start";
+                      }}
                       className="flex items-center justify-center gap-[8px] px-[20px] py-[12px] bg-[var(--burnt-orange)] hover:opacity-90 transition-opacity cursor-pointer w-fit"
                     >
                       <Mail className="w-[14px] h-[14px] text-white" />
                       <span className="font-label font-bold text-[12px] tracking-[2px] text-white">
                         CONNECT GMAIL ACCOUNT
                       </span>
-                    </a>
+                    </button>
                     <p className="font-heading text-[11px] leading-[1.5] text-[var(--text-muted)]">
                       You&apos;ll see a &ldquo;Google hasn&apos;t verified this app&rdquo; warning — that&apos;s expected. Tap <strong>Advanced → Go to YesChapter Email (unsafe)</strong> to continue. It&apos;s not actually unsafe — that warning appears for any app that hasn&apos;t paid for Google&apos;s verification review.
                     </p>
