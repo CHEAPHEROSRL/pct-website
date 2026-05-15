@@ -90,6 +90,31 @@ export async function POST(req: NextRequest) {
         ? rawClaimedSection
         : undefined;
 
+    // Server-side geolocation via Vercel's edge headers. Previously we tried
+    // ip-api.com from the browser, which gets rate-limited (403 Forbidden)
+    // from Vercel's outbound IP — so the country/city/lat/lng silently never
+    // made it onto pledger records. Vercel injects geo headers on every
+    // request based on the actual visitor's IP; free, no rate limit, always
+    // available in production. We use the headers as a fallback when the
+    // client didn't provide values (or as the primary source, since the
+    // client never reliably did).
+    const headerCountry = req.headers.get("x-vercel-ip-country") || undefined;
+    const rawHeaderCity = req.headers.get("x-vercel-ip-city");
+    const headerCity = rawHeaderCity ? decodeURIComponent(rawHeaderCity) : undefined;
+    const rawHeaderLat = req.headers.get("x-vercel-ip-latitude");
+    const rawHeaderLng = req.headers.get("x-vercel-ip-longitude");
+    const headerLat = rawHeaderLat ? parseFloat(rawHeaderLat) : undefined;
+    const headerLng = rawHeaderLng ? parseFloat(rawHeaderLng) : undefined;
+
+    const finalCountry = typeof country === "string" && country.trim() ? sanitizeText(country, 100) : headerCountry;
+    const finalCity = typeof city === "string" && city.trim() ? sanitizeText(city, 100) : headerCity;
+    const finalLat = typeof lat === "number" && lat >= -90 && lat <= 90
+      ? lat
+      : (headerLat !== undefined && Number.isFinite(headerLat) && headerLat >= -90 && headerLat <= 90 ? headerLat : undefined);
+    const finalLng = typeof lng === "number" && lng >= -180 && lng <= 180
+      ? lng
+      : (headerLng !== undefined && Number.isFinite(headerLng) && headerLng >= -180 && headerLng <= 180 ? headerLng : undefined);
+
     const hash = emailHash(email);
     const liveKey = `pledger:${hash}`;
 
@@ -124,10 +149,10 @@ export async function POST(req: NextRequest) {
       unsubscribeToken,
       emailPreference: (rawEmailPref === "all" || rawEmailPref === "milestones" || rawEmailPref === "finish") ? rawEmailPref : "finish",
       message: message || undefined,
-      city: typeof city === "string" ? sanitizeText(city, 100) : undefined,
-      country: typeof country === "string" ? sanitizeText(country, 100) : undefined,
-      lat: typeof lat === "number" && lat >= -90 && lat <= 90 ? lat : undefined,
-      lng: typeof lng === "number" && lng >= -180 && lng <= 180 ? lng : undefined,
+      city: finalCity,
+      country: finalCountry,
+      lat: finalLat,
+      lng: finalLng,
       avatar: typeof avatar === "string" && avatar.length <= 10 ? avatar : undefined,
       referredBy: typeof referredBy === "string" && referredBy.trim() ? sanitizeText(referredBy, 100) : undefined,
       claimedSection,

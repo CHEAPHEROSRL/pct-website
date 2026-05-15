@@ -210,15 +210,23 @@ function createJournalMarkerIcon(dayNumber: number) {
 // is technically larger than the visible pin (click targets get slightly more
 // forgiving), which is fine.
 
-function createSingleClaimedIcon(sectionName: string, scale = 1) {
+function createSingleClaimedIcon(sectionName: string, scale = 1, avatar?: string) {
+  // When the single pledger picked an avatar emoji, show it inside the green
+  // circle instead of the generic map-pin SVG — the pledger's personal choice
+  // becomes their visible mark on the trail. Falls back to the SVG for legacy
+  // pledges without avatars or for sections claimed without one.
+  const innerMark = avatar
+    ? `<span style="font-size:16px;line-height:1;">${avatar}</span>`
+    : `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>`;
+  // Emoji renders better on a white background — switch the inner-circle
+  // colour when an avatar is present so the emoji has good contrast.
+  const bg = avatar ? "#FFFFFF" : "#3D7A5A";
+  const borderColor = avatar ? "#3D7A5A" : "#FFFFFF";
   return new L.DivIcon({
     className: "",
     html: `<div style="transform:scale(${scale});transform-origin:center;display:flex;flex-direction:column;align-items:center;gap:3px;">
-      <div style="display:flex;align-items:center;justify-content:center;width:30px;height:30px;background:#3D7A5A;border:3px solid #FFFFFF;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,0.25);">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/>
-          <circle cx="12" cy="10" r="3"/>
-        </svg>
+      <div style="display:flex;align-items:center;justify-content:center;width:30px;height:30px;background:${bg};border:3px solid ${borderColor};border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,0.25);">
+        ${innerMark}
       </div>
       <div style="background:#FFFFFF;padding:2px 6px;border:1px solid #D9D7D4;border-radius:3px;white-space:nowrap;font-family:'Barlow Semi Condensed',sans-serif;font-weight:700;font-size:9px;letter-spacing:1px;color:#1C1C1C;">${sectionName.toUpperCase()}</div>
     </div>`,
@@ -514,7 +522,7 @@ export default function TrailMapView({
               ? createSponsorIcon(entry.sponsor.logoUrl, entry.sponsor.companyName, entry.name, pinScale)
               : entry.count > 1
                 ? createClusterClaimedIcon(entry.count, entry.name, pinScale)
-                : createSingleClaimedIcon(entry.name, pinScale);
+                : createSingleClaimedIcon(entry.name, pinScale, entry.samples[0]?.avatar);
             return (
               <Marker
                 key={`claimed-${entry.id}`}

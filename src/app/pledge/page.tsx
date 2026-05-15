@@ -64,18 +64,11 @@ export default function PledgePage() {
   const [sponsorModalDismissedThisSession, setSponsorModalDismissedThisSession] = useState(false);
   const prevTotalRef = useRef(0);
 
-  // Silent IP geolocation on mount
-  const geoRef = useRef<{ city?: string; country?: string; lat?: number; lng?: number }>({});
-  useEffect(() => {
-    fetch("https://ip-api.com/json/?fields=city,country,lat,lon")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.lat && data.lon) {
-          geoRef.current = { city: data.city, country: data.country, lat: data.lat, lng: data.lon };
-        }
-      })
-      .catch(() => {});
-  }, []);
+  // Geolocation is now done server-side via Vercel's edge headers in the
+  // POST /api/pledges handler — see the headerCountry/headerCity/etc.
+  // block there. The browser-side ip-api.com fetch we used previously was
+  // unreliable (rate-limited 403 from Vercel's outbound IP, broken self-
+  // sends, etc.) and meaningfully blank for ~every real pledge.
 
   // Fetch pledger count per section so the picker can show "X pledgers" badges.
   // Silent-fail: an empty {} is fine — the picker just doesn't show counts.
@@ -176,7 +169,8 @@ export default function PledgePage() {
           claimedSection: claimedSection || undefined,
           turnstileToken: turnstileToken || "",
           website: honeypot, // honeypot field
-          ...geoRef.current,
+          // No client-side geolocation spread anymore — the server fills
+          // city/country/lat/lng from Vercel's x-vercel-ip-* headers.
         }),
       });
 
