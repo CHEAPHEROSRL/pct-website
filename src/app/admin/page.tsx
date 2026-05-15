@@ -226,6 +226,20 @@ export default function AdminPage() {
         const data: JournalPost[] = await res.json();
         setPosts(data);
         setAuthenticated(true);
+        // Refresh the admin session cookie. Auto-login validates the
+        // Bearer token but doesn't touch the cookie — if the cookie has
+        // expired (24h) or got invalidated by a sameSite config change,
+        // API calls keep working (Bearer header) but <a href> navigations
+        // to cookie-only endpoints (Gmail OAuth start, etc.) 401. This
+        // POST refreshes the cookie so every subsequent admin session
+        // can use both auth surfaces.
+        fetch("/api/admin/refresh-cookie", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${saved}` },
+        }).catch(() => {
+          // Best-effort — failure just means cookie-only endpoints
+          // continue to 401 until the user manually logs out and back in
+        });
         // Deep-link from contact notification email lands here:
         //   /admin?tab=contact&id=<msgId>
         // Honor it by jumping straight into the contact tab + opening
