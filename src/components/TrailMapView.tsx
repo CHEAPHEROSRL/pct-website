@@ -423,10 +423,23 @@ export default function TrailMapView({
   // so the user's manual zoom is preserved across tab switches.
   const effectiveFlyTo = flyTo;
 
+  // Initial map center: Paul's current position when known (zoom 8 puts
+  // him visibly inside the viewport with the surrounding trail context),
+  // falling back to a wider California view when his location hasn't
+  // loaded yet. The MapContainer center/zoom props are init-only, so a
+  // useLocationData race could leave us on the fallback — but the dynamic
+  // import of the map usually finishes AFTER the location fetch resolves,
+  // so in practice currentPosition is already populated when this runs.
+  // FlyToHandler still handles imperative re-centering (sidebar clicks).
+  const initialTrailCenter: [number, number] = currentPosition
+    ? [currentPosition.lat, currentPosition.lng]
+    : [40.0, -120.0];
+  const initialTrailZoom = currentPosition ? 8 : 6;
+
   return (
     <MapContainer
-      center={mode === "pledgers" ? [20, -40] : [40.0, -120.0]}
-      zoom={mode === "pledgers" ? 2 : 6}
+      center={mode === "pledgers" ? [20, -40] : initialTrailCenter}
+      zoom={mode === "pledgers" ? 2 : initialTrailZoom}
       zoomControl={true}
       style={{ width: "100%", height: "100%" }}
       scrollWheelZoom={true}
