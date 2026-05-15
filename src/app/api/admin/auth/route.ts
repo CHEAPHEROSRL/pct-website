@@ -67,7 +67,13 @@ export async function POST(req: NextRequest) {
   response.cookies.set("pct-admin-session", sessionValue, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    // "lax" so the cookie is sent on top-level GETs even when the user
+    // types an admin URL directly into the address bar (Chrome treats that
+    // as a cross-site navigation under "strict" because there's no
+    // referrer). "lax" still blocks cookie on cross-site POST/forms, which
+    // is the actual CSRF surface — and admin POSTs additionally require a
+    // bearer token, so practical security is unchanged.
+    sameSite: "lax",
     path: "/",
     maxAge: 60 * 60 * 24, // 24 hours
   });

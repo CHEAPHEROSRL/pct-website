@@ -25,7 +25,11 @@ export async function POST(req: NextRequest) {
     response.cookies.set("pct-admin-session", sessionValue, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      // Must match /api/admin/auth — see the note there. "lax" lets the
+      // cookie ride along on direct URL navigations (e.g. typing an admin
+      // API URL into the address bar) while still blocking cross-site
+      // POST/form CSRF.
+      sameSite: "lax",
       path: "/",
       maxAge: 60 * 60 * 24, // 24 hours
     });
