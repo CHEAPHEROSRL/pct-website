@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
-import { constantTimeEqual } from "@/lib/security";
+import { requireAdminAuth } from "@/lib/security";
 import { safeParse } from "@/lib/redis-safe";
 import type { PledgeRecord } from "@/lib/types";
 
@@ -31,22 +31,17 @@ function getRedis() {
   return new Redis({ url, token });
 }
 
-function checkAuth(request: NextRequest): boolean {
-  const auth = request.headers.get("authorization");
-  if (!auth) return false;
-  const token = auth.replace("Bearer ", "");
-  return constantTimeEqual(token, process.env.ADMIN_AUTH_TOKEN);
-}
-
 interface DumpEntry {
   key: string;
   record: PledgeRecord | unknown;
 }
 
 export async function GET(request: NextRequest) {
-  if (!checkAuth(request)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  // Accept either bearer token (API/CLI use) OR admin session cookie
+  // (browser use — lets you hit this URL directly from the admin's
+  // signed-in session without manually attaching auth headers).
+  const authError = requireAdminAuth(request);
+  if (authError) return authError;
 
   const redis = getRedis();
   if (!redis) {
