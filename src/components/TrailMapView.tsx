@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { MapContainer, TileLayer, Polyline, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -95,6 +95,39 @@ function FlyToHandler({ target }: { target?: [number, number, number] }) {
       map.flyTo([target[0], target[1]], target[2], { duration: 1.5 });
     }
   }, [map, target]);
+  return null;
+}
+
+/**
+ * One-shot: snap the map to Paul's current position the first time it
+ * becomes available after mount. The MapContainer's center/zoom props are
+ * init-only — if the dynamic-imported map mounts before useLocationData
+ * resolves (a real race on hard refresh), the initial center prop gets
+ * baked in as [40, -120] and the map never re-centers when the position
+ * data arrives. This component closes that gap.
+ *
+ * Uses setView (no animation) for an instant snap so the user doesn't
+ * see a momentary "wrong center" flash followed by a fly. Tracks
+ * "already done" via a ref so the periodic useLocationData refetches
+ * (every 30s) don't keep yanking the user back to Paul after they've
+ * panned away.
+ */
+function InitialFlyToPaul({
+  position,
+  active,
+}: {
+  position: { lat: number; lng: number } | null | undefined;
+  active: boolean;
+}) {
+  const map = useMap();
+  const hasSnapped = useRef(false);
+  useEffect(() => {
+    if (hasSnapped.current) return;
+    if (!active) return;
+    if (!position) return;
+    map.setView([position.lat, position.lng], 8, { animate: false });
+    hasSnapped.current = true;
+  }, [map, position, active]);
   return null;
 }
 
@@ -445,6 +478,7 @@ export default function TrailMapView({
       scrollWheelZoom={true}
     >
       <FlyToHandler target={effectiveFlyTo} />
+      <InitialFlyToPaul position={currentPosition} active={mode === "trail"} />
       <ZoomTracker onZoom={setCurrentZoom} />
       <TileLayer
         url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
