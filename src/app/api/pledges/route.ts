@@ -100,7 +100,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({
         error: "A pledge already exists for this email",
         pledge: {
-          rate: `$${record.amount}/${record.interval === 1 ? "mi" : record.interval + "mi"}`,
+          // toFixed(2) so the 409 orange card on /pledge shows a clean
+          // "$0.15/mi" instead of float-drifted "$0.15000000000000002/mi"
+          rate: `$${record.amount.toFixed(2)}/${record.interval === 1 ? "mi" : record.interval + "mi"}`,
           totalPledge: record.totalPledge,
           createdAt: record.createdAt,
         },

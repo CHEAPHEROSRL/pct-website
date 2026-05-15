@@ -56,10 +56,14 @@ export async function GET() {
       totalBoosts,
     };
 
-    // Top 20 pledgers (public info only)
+    // Top 20 pledgers (public info only). toFixed(2) on the amount prevents
+    // legacy records with float-drifted amounts (0.15000000000000002, etc.)
+    // from rendering ugly on the public /pledgers page. New pledges write
+    // cent-quantized amounts via the PUT route's Math.round, so this is
+    // mostly a defensive net for old data.
     const topPledgers: PledgePublic[] = records.slice(0, 20).map((r) => ({
       name: r.anonymous ? "Anonymous" : r.name,
-      rate: `$${r.amount}/${r.interval === 1 ? "mi" : r.interval + "mi"}`,
+      rate: `$${r.amount.toFixed(2)}/${r.interval === 1 ? "mi" : r.interval + "mi"}`,
       totalPledge: Math.round(r.totalPledge * 100) / 100,
       boostCount: r.boosts?.length || 0,
       createdAt: r.createdAt,

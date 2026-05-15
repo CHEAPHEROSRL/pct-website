@@ -411,10 +411,11 @@ export default function TrailMapView({
       .sort((a, b) => a.mileMarker - b.mileMarker);
   }, [journalPosts, totalMiles]);
 
-  // For pledger mode, zoom out to world view; supporters mode uses trail view
-  const effectiveFlyTo = mode === "pledgers"
-    ? [20, -40, 2] as [number, number, number]
-    : flyTo;
+  // No mode-based auto-flyTo override. Previously switching to "pledgers"
+  // would force a global world-view fly-out on every render, which was
+  // disorienting. flyTo is now passed through unchanged from the parent,
+  // so the user's manual zoom is preserved across tab switches.
+  const effectiveFlyTo = flyTo;
 
   return (
     <MapContainer

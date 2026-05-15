@@ -14,7 +14,7 @@ export async function GET() {
 
   if (!redis) {
     return NextResponse.json(
-      { locations: [], countryCount: 0 },
+      { locations: [], countryCount: 0, pledgerCount: 0 },
       { headers: { "Cache-Control": "s-maxage=30, stale-while-revalidate=60" } }
     );
   }
@@ -26,9 +26,16 @@ export async function GET() {
     );
 
     const locations: PledgerLocation[] = [];
+    // Two distinct country sets: one that counts every country mentioned on
+    // any pledge (used for the "X COUNTRIES" tab counter — represents real
+    // global reach) and one we don't actually need separately for now. The
+    // geolocated-only filter on the locations array is what feeds the
+    // individual pins on the world-view map; the headline counts should
+    // reflect ALL pledgers, not just the subset with lat/lng.
     const countries = new Set<string>();
 
     for (const r of records) {
+      // Pin on the world map requires lat/lng — keep that filter
       if (typeof r.lat === "number" && typeof r.lng === "number") {
         locations.push({
           name: r.anonymous ? "Anonymous" : r.name,
@@ -39,16 +46,28 @@ export async function GET() {
           lng: r.lng,
           avatar: r.avatar,
         });
-        if (r.country) countries.add(r.country);
       }
+      // Country counter: any record with a country field counts. Pledges
+      // without geolocation (ip-api rate-limited, etc.) can still have a
+      // country if it was passed through some other path; we don't want to
+      // arbitrarily hide them from the headline count.
+      if (r.country) countries.add(r.country);
     }
 
     return NextResponse.json(
-      { locations, countryCount: countries.size },
+      {
+        locations,
+        countryCount: countries.size,
+        // Headline pledger count = every confirmed pledger in the list,
+        // regardless of whether we have geolocation for them. The trail-map
+        // UI's "X PLEDGERS" counter was previously locations.length, which
+        // silently dropped to 0 anytime ip-api.com rate-limited us.
+        pledgerCount: records.length,
+      },
       { headers: { "Cache-Control": "s-maxage=30, stale-while-revalidate=60" } }
     );
   } catch (err) {
     console.error("Failed to fetch pledge locations:", err);
-    return NextResponse.json({ locations: [], countryCount: 0 });
+    return NextResponse.json({ locations: [], countryCount: 0, pledgerCount: 0 });
   }
 }

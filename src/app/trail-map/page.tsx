@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { Heart, Footprints, Mountain, Flame, Clock, TrendingUp, MapPin, Milestone, CalendarDays, Ruler, ArrowUp, Gift } from "lucide-react";
@@ -77,10 +77,12 @@ export default function TrailMapPage() {
   // Pledger locations
   const [pledgerLocations, setPledgerLocations] = useState<PledgerLocation[]>([]);
   const [countryCount, setCountryCount] = useState(0);
+  // Total confirmed pledgers — feeds the "X PLEDGERS" headline counter.
+  // Distinct from pledgerLocations.length: the locations array only contains
+  // pledgers we have lat/lng for, which excludes anyone whose IP geolocation
+  // lookup failed at pledge time. pledgerCount is the real headline number.
+  const [pledgerCount, setPledgerCount] = useState(0);
   const [totalPledged, setTotalPledged] = useState(0);
-
-  // Track whether pledgers world-view has been shown once — sticky map
-  const pledgersVisited = useRef(false);
 
   // Gift locations for supporters mode
   const { locations: giftLocations } = useGiftLocations();
@@ -122,10 +124,14 @@ export default function TrailMapPage() {
     fetch("/api/pledges/locations")
       .then((res) => res.json())
       .then((data) => {
-        if (data.locations && data.locations.length > 0) {
-          setPledgerLocations(data.locations);
-          setCountryCount(data.countryCount || 0);
-        }
+        // Previously this block was wrapped in `if (data.locations.length > 0)`
+        // — meaning if no pledges had lat/lng data, NONE of the headline
+        // counters updated and they all stayed at zero. We want the real
+        // numbers even when geolocation is missing, so the assignments are
+        // now unconditional.
+        if (Array.isArray(data.locations)) setPledgerLocations(data.locations);
+        if (typeof data.countryCount === "number") setCountryCount(data.countryCount);
+        if (typeof data.pledgerCount === "number") setPledgerCount(data.pledgerCount);
       })
       .catch(() => setSideFetchError(true));
   }, []);
@@ -164,14 +170,11 @@ export default function TrailMapPage() {
 
   const handleModeSwitch = (newMode: MapMode) => {
     setMode(newMode);
-    // Only fly to world view the first time pledgers tab is opened.
-    // After that, keep whatever viewport the user is on (sticky map).
-    if (newMode === "pledgers" && !pledgersVisited.current) {
-      pledgersVisited.current = true;
-      setFlyTo([20, -40, 2]);
-    }
-    // Switching back to trail/supporters does NOT reset the viewport —
-    // the user stays wherever they were looking.
+    // No auto-zoom on tab switch — the user's current viewport stays put.
+    // Previously the PLEDGERS tab auto-flew to a global world view on first
+    // open, which was disorienting: you'd be looking at the trail, click
+    // PLEDGERS, and suddenly the whole world appears. If a user wants the
+    // global view, they can zoom out themselves.
   };
 
   const totalGiftAmount = giftLocations.reduce((sum, g) => sum + g.amount, 0);
@@ -308,7 +311,7 @@ export default function TrailMapPage() {
               <div className="flex gap-[16px] px-[24px] pb-[16px]">
                 <div className="flex flex-col gap-[4px] flex-1 bg-[var(--bg-warm)] p-[16px]">
                   <span className="font-heading font-semibold text-[28px] tracking-[-0.5px] text-[var(--burnt-orange)] leading-[1]">
-                    {displayLocations.length}
+                    {pledgerCount}
                   </span>
                   <span className="font-label font-bold text-[10px] tracking-[1px] text-[var(--text-muted)]">PLEDGERS</span>
                 </div>
