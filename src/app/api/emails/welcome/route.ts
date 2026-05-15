@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
         const sentKey = `emails:welcome:day1:${record.id}`;
         const alreadySent = await redis.get(sentKey);
         if (!alreadySent) {
-          const rate = `$${record.amount}/${record.interval === 1 ? "mi" : record.interval + "mi"}`;
+          const rate = `$${record.amount.toFixed(2)}/${record.interval === 1 ? "mi" : record.interval + "mi"}`;
           const result = await sendWelcomeDay1(
             record.email,
             record.anonymous ? "Friend" : record.name,

@@ -56,7 +56,7 @@ interface PledgeData {
 function ShareBadge({ pledge }: { pledge: PledgeData }) {
   const [copied, setCopied] = useState(false);
 
-  const rateStr = `$${pledge.amount}/${pledge.interval === 1 ? "mi" : pledge.interval + "mi"}`;
+  const rateStr = `$${pledge.amount.toFixed(2)}/${pledge.interval === 1 ? "mi" : pledge.interval + "mi"}`;
   const totalStr = formatCurrency(pledge.totalPledge);
   const badgeUrl = `/api/share-badge?name=${encodeURIComponent(pledge.name)}&rate=${encodeURIComponent(rateStr)}&total=${encodeURIComponent(totalStr)}`;
 

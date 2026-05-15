@@ -89,7 +89,7 @@ export async function GET(req: NextRequest) {
     // dispatch completed). Same fix as POST /api/pledges.
     if (!challengeId) {
       const displayName = record.anonymous ? "Pledger" : record.name;
-      const newRate = `$${record.amount}/mi`;
+      const newRate = `$${record.amount.toFixed(2)}/mi`;
       await sendPledgeIncreased(record.email, displayName, oldAmount, record.amount, newRate, record.totalPledge);
     }
 
