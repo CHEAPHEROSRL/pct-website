@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { MapContainer, TileLayer, Polyline, Marker, Popup, CircleMarker, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Polyline, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { pctRouteCoords, pctWaypoints, interpolateFromMile } from "@/lib/trail";
-import type { PledgerLocation, SupportGiftLocation } from "@/lib/types";
+import { countryCodeToFlag } from "@/lib/country-centers";
+import type { SupportGiftLocation, CountryAggregate } from "@/lib/types";
 
 /**
  * One claimed-section entry rendered as a pin on the trail. Wire-shape mirrors
@@ -39,23 +40,6 @@ export interface JournalMarkerPost {
   dayNumber: number;
   date: string;
   mileMarker: number;
-}
-
-/** Group pledgers by country for heatmap-style clusters */
-function buildCountryClusters(pledgers: PledgerLocation[]) {
-  const map = new Map<string, { lat: number; lng: number; count: number; country: string }>();
-  for (const p of pledgers) {
-    const key = p.country;
-    const existing = map.get(key);
-    if (existing) {
-      existing.lat = (existing.lat * existing.count + p.lat) / (existing.count + 1);
-      existing.lng = (existing.lng * existing.count + p.lng) / (existing.count + 1);
-      existing.count++;
-    } else {
-      map.set(key, { lat: p.lat, lng: p.lng, count: 1, country: key });
-    }
-  }
-  return Array.from(map.values());
 }
 
 /**
@@ -141,27 +125,6 @@ function createMarkerIcon(dayNumber: number, locationName: string) {
     iconSize: [160, 60],
     iconAnchor: [80, 32],
     popupAnchor: [0, -36],
-  });
-}
-
-function createPledgerIcon(avatar: string) {
-  return new L.DivIcon({
-    className: "",
-    html: `<div style="
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 30px;
-      height: 30px;
-      background: #FFFFFF;
-      border: 2px solid #C45C26;
-      border-radius: 50%;
-      font-size: 14px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-    ">${avatar}</div>`,
-    iconSize: [30, 30],
-    iconAnchor: [15, 15],
-    popupAnchor: [0, -18],
   });
 }
 
@@ -266,6 +229,39 @@ function createSponsorIcon(logoUrl: string, companyName: string, sectionName: st
   });
 }
 
+/**
+ * Country aggregate pin for the PLEDGERS world map. Subtle by design —
+ * the PCT trail itself is still the visual hero, country pins are
+ * supporting information. White rounded card with the flag emoji,
+ * dark count pill underneath. Tiny drop shadow, no loud colour.
+ *
+ * Scale uses a gentler curve than the trail pins because the PLEDGERS
+ * map opens at world zoom (zoom 2), where the default getPinScale would
+ * shrink pins below readability.
+ */
+function getCountryPinScale(zoom: number): number {
+  // 0.7 at world view, 1.0 at country-level zoom and above. Half the
+  // dynamic range of the trail pins — country pins stay legible at low
+  // zoom because that IS their natural state.
+  if (zoom >= 5) return 1;
+  if (zoom <= 2) return 0.7;
+  return 0.7 + ((zoom - 2) / 3) * 0.3;
+}
+
+function createCountryIcon(code: string, count: number, scale: number = 1) {
+  const flag = countryCodeToFlag(code);
+  return new L.DivIcon({
+    className: "",
+    html: `<div style="transform:scale(${scale});transform-origin:center;display:flex;flex-direction:column;align-items:center;gap:3px;">
+      <div style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;background:#FFFFFF;border:1px solid rgba(0,0,0,0.12);border-radius:6px;box-shadow:0 2px 4px rgba(0,0,0,0.15);font-size:20px;line-height:1;">${flag}</div>
+      <div style="background:#1C1F1A;color:#FFFFFF;border-radius:8px;padding:1px 7px;font-family:'Barlow Semi Condensed',sans-serif;font-weight:700;font-size:10px;letter-spacing:0.5px;box-shadow:0 1px 3px rgba(0,0,0,0.2);">${count}</div>
+    </div>`,
+    iconSize: [60, 50],
+    iconAnchor: [30, 25],
+    popupAnchor: [0, -22],
+  });
+}
+
 function createGiftIcon(giftTitle: string) {
   const emoji = GIFT_EMOJI[giftTitle] || "💚";
   return new L.DivIcon({
@@ -318,7 +314,6 @@ interface TrailMapViewProps {
   totalMiles?: number;
   currentElevation?: number;
   mode?: "trail" | "pledgers" | "supporters";
-  pledgerLocations?: PledgerLocation[];
   supportGiftLocations?: SupportGiftLocation[];
   /** 0–100: how much of the trail to fill with pledge coverage colour */
   pledgeCoveragePercent?: number;
@@ -337,6 +332,14 @@ interface TrailMapViewProps {
    * since a sponsorship is a paid commitment that should display from day one.
    */
   claimedSections?: ClaimedSection[];
+  /**
+   * Country aggregate pin data for the PLEDGERS world map. Replaces the
+   * previous per-pledger pin layer — one entry per country, with a count.
+   * No individual pledger location ever appears on the map; aggregating
+   * to country level is privacy-friendly and matches IP geolocation's
+   * actual precision (which is ~country-level anyway).
+   */
+  countryAggregates?: CountryAggregate[];
 }
 
 // Default fallback position (Campo, CA — starting point)
@@ -350,11 +353,11 @@ export default function TrailMapView({
   totalMiles = 0,
   currentElevation = 2915,
   mode = "trail",
-  pledgerLocations = [],
   supportGiftLocations = [],
   pledgeCoveragePercent = 0,
   journalPosts = [],
   claimedSections = [],
+  countryAggregates = [],
 }: TrailMapViewProps) {
   const position: [number, number] = currentPosition
     ? [currentPosition.lat, currentPosition.lng]
@@ -368,11 +371,6 @@ export default function TrailMapView({
   const fundedSegments = useMemo(
     () => buildFundedSegments(supportGiftLocations),
     [supportGiftLocations]
-  );
-
-  const countryClusters = useMemo(
-    () => buildCountryClusters(pledgerLocations),
-    [pledgerLocations]
   );
 
   const pledgeCoverageCoords = useMemo(
@@ -613,44 +611,24 @@ export default function TrailMapView({
             />
           )}
 
-          {/* Country heatmap clusters — large translucent circles */}
-          {countryClusters.map((cluster) => (
-            <CircleMarker
-              key={`cluster-${cluster.country}`}
-              center={[cluster.lat, cluster.lng]}
-              radius={Math.min(6 + Math.sqrt(cluster.count) * 8, 40)}
-              pathOptions={{
-                color: "transparent",
-                weight: 0,
-                fillColor: "#C45C26",
-                fillOpacity: Math.min(0.08 + cluster.count * 0.04, 0.35),
-              }}
-            />
-          ))}
-
-          {/* Individual pledger avatar markers */}
-          {pledgerLocations.map((loc, i) => (
+          {/* Country aggregate pins. One pin per country with ≥1 pledger,
+              placed at the country's geographic centroid (NOT at any
+              individual pledger's IP-derived coordinates — privacy-friendly
+              and cleaner than per-pledger pins). Flag emoji inside a small
+              white card, count in a dark pill underneath. */}
+          {countryAggregates.map((c) => (
             <Marker
-              key={`pledger-${loc.lat}-${loc.lng}-${i}`}
-              position={[loc.lat, loc.lng]}
-              icon={createPledgerIcon(loc.avatar || "💚")}
+              key={`country-${c.code}`}
+              position={[c.lat, c.lng]}
+              icon={createCountryIcon(c.code, c.count, getCountryPinScale(currentZoom))}
             >
               <Popup>
-                <div style={{ fontFamily: "'Barlow Semi Condensed', sans-serif", textAlign: "center", maxWidth: 200 }}>
-                  <div style={{ fontSize: 22, marginBottom: 4 }}>{loc.avatar || "💚"}</div>
-                  <strong style={{ fontSize: 13 }}>{loc.name}</strong>
-                  <br />
-                  <span style={{ fontSize: 11, color: "#5C5C5C" }}>
-                    {loc.city}, {loc.country}
+                <div style={{ fontFamily: "'Barlow Semi Condensed', sans-serif", textAlign: "center", maxWidth: 200, padding: "2px 0" }}>
+                  <div style={{ fontSize: 26, marginBottom: 4, lineHeight: 1 }}>{countryCodeToFlag(c.code)}</div>
+                  <strong style={{ fontSize: 14, color: "#1C1C1C", display: "block", marginBottom: 2 }}>{c.name}</strong>
+                  <span style={{ fontSize: 12, color: "#5C5C5C" }}>
+                    {c.count} pledger{c.count === 1 ? "" : "s"}
                   </span>
-                  {loc.message && (
-                    <>
-                      <br />
-                      <span style={{ fontSize: 11, color: "#1C1C1C", fontStyle: "italic", display: "block", marginTop: 4 }}>
-                        &ldquo;{loc.message}&rdquo;
-                      </span>
-                    </>
-                  )}
                 </div>
               </Popup>
             </Marker>

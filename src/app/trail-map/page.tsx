@@ -13,8 +13,9 @@ import { useGiftLocations } from "@/hooks/useGiftLocations";
 import { getTrailFundingPercent } from "@/lib/trail-funding";
 import { getTrailSectionIndex, getMaxElevationUpTo } from "@/lib/trail";
 import DistanceTracker from "@/components/DistanceTracker";
-import type { PledgerLocation, JournalPostPublic } from "@/lib/types";
+import type { JournalPostPublic, CountryAggregate } from "@/lib/types";
 import type { ClaimedSection } from "@/components/TrailMapView";
+import { countryCodeToFlag } from "@/lib/country-centers";
 
 interface JournalMarkerPost {
   slug: string;
@@ -74,14 +75,11 @@ export default function TrailMapPage() {
   const [mode, setMode] = useState<MapMode>("trail");
   const { data } = useLocationData(30000);
 
-  // Pledger locations
-  const [pledgerLocations, setPledgerLocations] = useState<PledgerLocation[]>([]);
+  // Pledger headline counters (from /api/pledges/locations):
   const [countryCount, setCountryCount] = useState(0);
-  // Total confirmed pledgers — feeds the "X PLEDGERS" headline counter.
-  // Distinct from pledgerLocations.length: the locations array only contains
-  // pledgers we have lat/lng for, which excludes anyone whose IP geolocation
-  // lookup failed at pledge time. pledgerCount is the real headline number.
   const [pledgerCount, setPledgerCount] = useState(0);
+  // Country aggregates for the PLEDGERS world-map flag pins:
+  const [countryAggregates, setCountryAggregates] = useState<CountryAggregate[]>([]);
   const [totalPledged, setTotalPledged] = useState(0);
 
   // Gift locations for supporters mode
@@ -124,14 +122,22 @@ export default function TrailMapPage() {
     fetch("/api/pledges/locations")
       .then((res) => res.json())
       .then((data) => {
-        // Previously this block was wrapped in `if (data.locations.length > 0)`
-        // — meaning if no pledges had lat/lng data, NONE of the headline
-        // counters updated and they all stayed at zero. We want the real
-        // numbers even when geolocation is missing, so the assignments are
-        // now unconditional.
-        if (Array.isArray(data.locations)) setPledgerLocations(data.locations);
+        // The locations endpoint still drives the headline counters
+        // (X PLEDGERS, X COUNTRIES). The individual locations payload is
+        // no longer consumed by the map — the country-aggregate endpoint
+        // below replaces that.
         if (typeof data.countryCount === "number") setCountryCount(data.countryCount);
         if (typeof data.pledgerCount === "number") setPledgerCount(data.pledgerCount);
+      })
+      .catch(() => setSideFetchError(true));
+  }, []);
+
+  // Country aggregate pins for the PLEDGERS world map
+  useEffect(() => {
+    fetch("/api/pledges/countries")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data?.countries)) setCountryAggregates(data.countries);
       })
       .catch(() => setSideFetchError(true));
   }, []);
@@ -156,11 +162,9 @@ export default function TrailMapPage() {
       .catch(() => setSideFetchError(true));
   }, []);
 
-  // No more hardcoded "12 countries" fallback — show real data even when
-  // it's zero. Previously a brand-new site with no pledgers would falsely
-  // display "12 countries" because the country count fell back to a stub
-  // value, which is misleading.
-  const displayLocations = pledgerLocations;
+  // No more hardcoded fallbacks — show real data even when it's zero.
+  // Previously a brand-new site with no pledgers would falsely display
+  // "12 countries" because the country count fell back to a stub value.
   const displayCountryCount = countryCount;
 
   const stats = data?.stats;
@@ -342,23 +346,33 @@ export default function TrailMapPage() {
 
               <div className="w-full h-[1px] bg-[var(--border-subtle)]" />
 
-              {/* Recent Pledgers List */}
+              {/* Country breakdown — mirrors what's on the world map: one
+                  row per country with a flag + count. Replaces the older
+                  per-pledger list, which exposed each pledger's city/IP-
+                  approximate location. Privacy-friendlier and consistent
+                  with the map view. */}
               <div className="flex flex-col w-full overflow-hidden">
                 <div className="px-[24px] py-[12px]">
                   <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">PLEDGERS AROUND THE WORLD</span>
                 </div>
-                {displayLocations.slice(0, 12).map((loc, i) => (
-                  <div
-                    key={`${loc.lat}-${loc.lng}-${i}`}
-                    className="flex items-center gap-[12px] px-[24px] py-[10px] border-b border-[var(--border-subtle)]"
-                  >
-                    <div className="w-[8px] h-[8px] rounded-full bg-[var(--burnt-orange)] shrink-0" />
-                    <div className="flex flex-col">
-                      <span className="font-heading font-semibold text-[14px] text-[var(--text-primary)]">{loc.name}</span>
-                      <span className="font-label text-[11px] text-[var(--text-muted)]">{loc.city}, {loc.country}</span>
-                    </div>
+                {countryAggregates.length === 0 ? (
+                  <div className="px-[24px] py-[14px]">
+                    <span className="font-heading italic text-[12px] text-[var(--text-muted)]">No pledgers from a known country yet.</span>
                   </div>
-                ))}
+                ) : (
+                  countryAggregates.slice(0, 12).map((c) => (
+                    <div
+                      key={c.code}
+                      className="flex items-center gap-[12px] px-[24px] py-[10px] border-b border-[var(--border-subtle)]"
+                    >
+                      <span className="text-[20px] leading-none shrink-0">{countryCodeToFlag(c.code)}</span>
+                      <div className="flex flex-col flex-1 min-w-0">
+                        <span className="font-heading font-semibold text-[14px] text-[var(--text-primary)] truncate">{c.name}</span>
+                      </div>
+                      <span className="font-label font-bold text-[11px] tracking-[1px] text-[var(--burnt-orange)]">{c.count} pledger{c.count === 1 ? "" : "s"}</span>
+                    </div>
+                  ))
+                )}
               </div>
 
               {/* CTA */}
@@ -473,7 +487,7 @@ export default function TrailMapPage() {
             totalMiles={stats?.totalMiles}
             currentElevation={stats?.currentElevation}
             mode={mode}
-            pledgerLocations={displayLocations}
+            countryAggregates={countryAggregates}
             supportGiftLocations={giftLocations}
             pledgeCoveragePercent={pledgeCoveragePercent}
             journalPosts={journalMarkerPosts}

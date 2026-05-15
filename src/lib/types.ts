@@ -197,6 +197,26 @@ export interface PledgerLocation {
   avatar?: string;
 }
 
+/**
+ * One country-aggregated entry for the PLEDGERS world map. Replaces the
+ * earlier "one pin per pledger" model — we now collapse all pledgers from
+ * a country down to a single pin at the country's geographic center, with
+ * a count badge. Privacy-friendly (no individual IP-derived location ever
+ * appears on the map) and visually quiet (the PCT trail stays the hero).
+ */
+export interface CountryAggregate {
+  /** ISO 3166-1 alpha-2 code, e.g. "US" */
+  code: string;
+  /** Display name from COUNTRY_CENTERS — used in tooltips */
+  name: string;
+  /** Number of confirmed pledgers from this country */
+  count: number;
+  /** Country geographic centroid lat */
+  lat: number;
+  /** Country geographic centroid lng */
+  lng: number;
+}
+
 export interface PledgePublic {
   name: string;
   rate: string;
