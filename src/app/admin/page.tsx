@@ -3454,6 +3454,50 @@ export default function AdminPage() {
                     <p className="font-heading text-[11px] leading-[1.5] text-[var(--text-muted)]">
                       You&apos;ll see a &ldquo;Google hasn&apos;t verified this app&rdquo; warning — that&apos;s expected. Tap <strong>Advanced → Go to YesChapter Email (unsafe)</strong> to continue. It&apos;s not actually unsafe — that warning appears for any app that hasn&apos;t paid for Google&apos;s verification review.
                     </p>
+
+                    {/* Inline troubleshooting — closed by default, opens on
+                        tap. Documents the iOS Safari cache-staleness gotcha
+                        that bit Paul on a weak-signal connection, plus the
+                        guaranteed workarounds. Lives inside the Connect
+                        section so it's right where users hit the problem. */}
+                    <details className="mt-[4px] border border-amber-200 bg-amber-50">
+                      <summary className="flex items-center gap-[8px] px-[14px] py-[10px] cursor-pointer font-label font-bold text-[11px] tracking-[1.5px] text-amber-900 select-none">
+                        <span aria-hidden="true">⚠</span>
+                        STUCK ON &ldquo;UNAUTHORIZED&rdquo;? TAP HERE
+                      </summary>
+                      <div className="px-[14px] pb-[14px] pt-[4px] flex flex-col gap-[10px]">
+                        <p className="font-heading text-[12px] leading-[1.6] text-[var(--text-secondary)]">
+                          The error usually means your phone&apos;s browser is serving a <strong>cached, older version</strong> of this page that doesn&apos;t have the latest fix. Happens most on iPhone Safari over a weak connection — Safari aggressively reuses cache to save data, so even &ldquo;clear cache + refresh&rdquo; doesn&apos;t always pull a fresh page.
+                        </p>
+                        <p className="font-label font-bold text-[10px] tracking-[1.5px] text-[var(--text-muted)]">
+                          TRY THESE IN ORDER
+                        </p>
+                        <ol className="flex flex-col gap-[8px] pl-[16px] list-decimal text-[12px] font-heading text-[var(--text-secondary)] leading-[1.5]">
+                          <li>
+                            <strong>Force-quit the browser</strong> entirely (on iPhone: swipe up from the bottom and flick the Safari card away). Reopen, navigate back here, click Connect again.
+                          </li>
+                          <li>
+                            <strong>Load this URL instead</strong> — the random query parameter forces a fresh page:<br />
+                            <code className="font-mono text-[11px] bg-white px-[6px] py-[2px] border border-[var(--border-subtle)] inline-block mt-[2px]">yeschapter.com/admin?fresh=1</code>
+                          </li>
+                          <li>
+                            <strong>Try a different browser</strong> — install Chrome from the App Store (or vice versa) and load <code className="font-mono text-[11px]">yeschapter.com/admin</code> there. Different browser = different cache.
+                          </li>
+                          <li>
+                            <strong>Safari Private Mode</strong> — tap the tabs icon (bottom right), tap &ldquo;Private&rdquo;, then load <code className="font-mono text-[11px]">yeschapter.com/admin</code>. Private mode has no cache from your main session.
+                          </li>
+                          <li>
+                            <strong>If you saved YesChapter as a home-screen app</strong> — delete the icon and re-add it after a fresh Safari load. Standalone webview has its own cache.
+                          </li>
+                          <li>
+                            <strong>Get to better wifi</strong> if possible — your phone is more willing to fetch fresh resources on a strong connection instead of falling back to cache.
+                          </li>
+                        </ol>
+                        <p className="font-heading italic text-[11px] leading-[1.5] text-[var(--text-muted)]">
+                          If you&apos;ve tried all of these and the error persists, screenshot the page (with the URL bar visible) and send it to Raul — there&apos;s a deeper issue to debug.
+                        </p>
+                      </div>
+                    </details>
                   </div>
                 )}
 
