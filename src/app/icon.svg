@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32">
+  <title>YesChapter</title>
+  <!-- lucide-react Mountain icon path, the same shape used in <Header />.
+       Filled (not stroked) for legibility at favicon sizes — outline-only
+       strokes get pixel-mushy at 16x16. Forest-green (--forest-green from
+       globals.css) on transparent so it works in light + dark browser
+       chrome equally well. -->
+  <path d="m8 3 4 8 5-5 5 15H2L8 3z" fill="#3D7A5A"/>
+</svg>
