@@ -102,6 +102,32 @@ export default function AdminPage() {
   const [waitlistEmails, setWaitlistEmails] = useState<{ email: string; signedUpAt: string }[]>([]);
   const [waitlistLoading, setWaitlistLoading] = useState(false);
 
+  // Launch invite blast state (Waitlist tab → "Send launch invite" panel)
+  interface LaunchLock {
+    sending?: boolean;
+    variant?: "A" | "B" | "C";
+    sent?: number;
+    failed?: number;
+    sentAt?: number;
+    totalRecipients?: number;
+  }
+  interface LaunchStatus {
+    recipientCount: number;
+    bulkEmailsEnabled: boolean;
+    lock: LaunchLock | null;
+  }
+  const [launchStatus, setLaunchStatus] = useState<LaunchStatus | null>(null);
+  const [launchStatusLoading, setLaunchStatusLoading] = useState(false);
+  const [launchVariant, setLaunchVariant] = useState<"A" | "B" | "C">("A");
+  const [launchSending, setLaunchSending] = useState(false);
+  const [launchResult, setLaunchResult] = useState<{
+    success: boolean;
+    message: string;
+    sent?: number;
+    failed?: number;
+    errors?: string[];
+  } | null>(null);
+
   // Settings state
   const [settings, setSettings] = useState<Record<string, string>>({});
   const [settingsLoading, setSettingsLoading] = useState(false);
@@ -387,6 +413,83 @@ export default function AdminPage() {
       setWaitlistLoading(false);
     }
   }, [token]);
+
+  const fetchLaunchStatus = useCallback(async () => {
+    setLaunchStatusLoading(true);
+    try {
+      const res = await fetch("/api/admin/waitlist-launch", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = (await res.json()) as LaunchStatus;
+        setLaunchStatus(data);
+      }
+    } catch {
+      // non-fatal — panel just hides
+    } finally {
+      setLaunchStatusLoading(false);
+    }
+  }, [token]);
+
+  const sendLaunchBlast = useCallback(async () => {
+    if (!launchStatus) return;
+    if (launchStatus.lock) return; // already sent / sending
+
+    const variant = launchVariant;
+    const count = launchStatus.recipientCount;
+
+    // Triple confirmation. Friction is the feature here — these emails
+    // CANNOT be unsent and the lock blocks any second attempt.
+    const confirm1 = window.confirm(
+      `Send "Launch invite (Option ${variant})" to ${count} waitlist subscriber${count === 1 ? "" : "s"}?\n\nThis cannot be undone. The lock will prevent re-sending afterward.`
+    );
+    if (!confirm1) return;
+
+    const typed = window.prompt(
+      `Final confirmation. Type SEND (all caps) to blast Option ${variant} to ${count} recipient${count === 1 ? "" : "s"}.`
+    );
+    if (typed !== "SEND") {
+      setLaunchResult({ success: false, message: "Cancelled — confirmation text didn't match." });
+      return;
+    }
+
+    setLaunchSending(true);
+    setLaunchResult(null);
+    try {
+      const res = await fetch("/api/admin/waitlist-launch", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ variant, confirm: "SEND" }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setLaunchResult({
+          success: true,
+          message: `Sent Option ${variant} to ${data.sent}/${data.totalRecipients} recipients.${data.failed ? ` ${data.failed} failed.` : ""}`,
+          sent: data.sent,
+          failed: data.failed,
+          errors: data.errors,
+        });
+      } else {
+        setLaunchResult({
+          success: false,
+          message: data.error || "Send failed (unknown error).",
+        });
+      }
+    } catch (err) {
+      setLaunchResult({
+        success: false,
+        message: err instanceof Error ? err.message : "Network error.",
+      });
+    } finally {
+      setLaunchSending(false);
+      // Re-fetch lock status so UI updates regardless of outcome
+      fetchLaunchStatus();
+    }
+  }, [launchStatus, launchVariant, token, fetchLaunchStatus]);
 
   const fetchSettings = useCallback(async () => {
     setSettingsLoading(true);
@@ -1223,7 +1326,7 @@ export default function AdminPage() {
             <span className="sm:hidden">HONOR</span>
           </button>
           <button
-            onClick={() => { setActiveTab("waitlist"); setView("waitlist"); setStatus(""); fetchWaitlist(); }}
+            onClick={() => { setActiveTab("waitlist"); setView("waitlist"); setStatus(""); fetchWaitlist(); fetchLaunchStatus(); }}
             className={`flex items-center gap-[6px] md:gap-[8px] px-[14px] md:px-[24px] py-[14px] font-label font-bold text-[11px] md:text-[12px] tracking-[1.5px] md:tracking-[2px] border-b-2 transition-colors cursor-pointer shrink-0 ${
               activeTab === "waitlist"
                 ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
@@ -2754,7 +2857,7 @@ export default function AdminPage() {
               </h1>
             </div>
             <button
-              onClick={fetchWaitlist}
+              onClick={() => { fetchWaitlist(); fetchLaunchStatus(); }}
               className="flex items-center gap-[8px] px-[20px] py-[10px] border border-[var(--border-subtle)] hover:bg-[var(--bg-white)] transition-colors cursor-pointer"
             >
               <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-secondary)]">
@@ -2785,6 +2888,146 @@ export default function AdminPage() {
                 Collecting emails
               </span>
             </div>
+          </div>
+
+          {/* Launch Invite Blast Panel */}
+          <div className="flex flex-col gap-[18px] p-[20px] md:p-[28px] bg-[var(--bg-white)] border-2 border-[var(--burnt-orange)]">
+            <div className="flex flex-col gap-[6px]">
+              <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--burnt-orange)]">
+                LAUNCH INVITE — ONE-TIME BLAST
+              </span>
+              <h2 className="font-heading font-semibold text-[20px] md:text-[22px] text-[var(--text-primary)]">
+                Send the &ldquo;site is live&rdquo; email to the waitlist
+              </h2>
+              <p className="font-heading text-[13px] leading-[1.6] text-[var(--text-secondary)] max-w-[640px]">
+                Pick one of three voice variants and blast it to every email on the waitlist. This is a <strong>one-shot</strong> action &mdash; once any variant has been sent, the lock prevents all three from being sent again. Preview each one in the Emails tab before sending.
+              </p>
+            </div>
+
+            {launchStatusLoading && !launchStatus ? (
+              <span className="font-heading text-[13px] text-[var(--text-muted)]">Loading launch status&hellip;</span>
+            ) : launchStatus?.lock ? (
+              /* Already sent (or in flight) — locked state */
+              <div className="flex flex-col gap-[8px] p-[16px] bg-[var(--forest-green-light)] border border-[var(--forest-green)]">
+                <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--forest-green)]">
+                  {launchStatus.lock.sending ? "SENDING IN PROGRESS" : "ALREADY SENT — LOCKED"}
+                </span>
+                <p className="font-heading text-[14px] leading-[1.6] text-[var(--text-primary)]">
+                  {launchStatus.lock.sending
+                    ? `A blast is currently in flight (variant ${launchStatus.lock.variant ?? "?"} to ${launchStatus.lock.totalRecipients ?? "?"} recipients). Refresh in a moment.`
+                    : <>
+                        Option <strong>{launchStatus.lock.variant ?? "?"}</strong> was sent to <strong>{launchStatus.lock.sent ?? "?"}/{launchStatus.lock.totalRecipients ?? "?"}</strong> waitlist subscribers
+                        {launchStatus.lock.sentAt ? ` on ${new Date(launchStatus.lock.sentAt).toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" })}` : ""}.
+                        {launchStatus.lock.failed ? ` ${launchStatus.lock.failed} failed.` : ""}
+                      </>}
+                </p>
+                <p className="font-heading text-[12px] leading-[1.6] text-[var(--text-muted)]">
+                  This panel is locked. To unlock (e.g. for a re-send after deliberately clearing the lock), delete the <code className="font-label text-[11px] bg-[var(--bg-card)] px-[4px] py-[1px] border border-[var(--border-subtle)]">waitlist:launch:sent</code> key from Redis.
+                </p>
+              </div>
+            ) : (
+              <>
+                {/* Kill-switch warning */}
+                {launchStatus && !launchStatus.bulkEmailsEnabled && (
+                  <div className="flex flex-col gap-[6px] p-[14px] bg-amber-50 border border-amber-300">
+                    <span className="font-label font-bold text-[10px] tracking-[2px] text-amber-800">
+                      BULK EMAILS DISABLED
+                    </span>
+                    <p className="font-heading text-[13px] leading-[1.6] text-amber-900">
+                      The <code className="font-label text-[11px] bg-white px-[4px] py-[1px] border border-amber-300">EMAILS_ENABLED</code> env var is not set to <code className="font-label text-[11px] bg-white px-[4px] py-[1px] border border-amber-300">true</code> in Vercel. The send button below will return a 503 until that&rsquo;s changed and the site is redeployed.
+                    </p>
+                  </div>
+                )}
+
+                {/* Variant picker */}
+                <div className="flex flex-col gap-[10px]">
+                  <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                    PICK A VARIANT
+                  </span>
+                  {[
+                    { id: "A", title: "Option A — Pledge-focused", desc: "Leads with \"Pledge per mile\" as the primary CTA. Trail support mentioned as a softer P.S." },
+                    { id: "B", title: "Option B — Two equal CTAs", desc: "Presents Pledge and Support side-by-side as equally valid choices." },
+                    { id: "C", title: "Option C — Soft launch", desc: "No ask, just \"we're live, come explore.\" Drives to the homepage." },
+                  ].map((v) => (
+                    <label
+                      key={v.id}
+                      className={`flex items-start gap-[12px] p-[14px] border cursor-pointer transition-colors ${
+                        launchVariant === v.id
+                          ? "border-[var(--burnt-orange)] bg-[var(--burnt-orange-light)]"
+                          : "border-[var(--border-subtle)] hover:border-[var(--text-secondary)]"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="launch-variant"
+                        value={v.id}
+                        checked={launchVariant === v.id}
+                        onChange={() => setLaunchVariant(v.id as "A" | "B" | "C")}
+                        className="mt-[4px] accent-[var(--burnt-orange)] cursor-pointer"
+                      />
+                      <div className="flex flex-col gap-[2px]">
+                        <span className="font-heading font-semibold text-[14px] text-[var(--text-primary)]">
+                          {v.title}
+                        </span>
+                        <span className="font-heading text-[12px] leading-[1.6] text-[var(--text-secondary)]">
+                          {v.desc}
+                        </span>
+                      </div>
+                    </label>
+                  ))}
+                  <p className="font-heading text-[12px] text-[var(--text-muted)]">
+                    Preview each variant in the <strong>Emails</strong> tab (look for &ldquo;Waitlist launch&rdquo; under Content publishing) before sending.
+                  </p>
+                </div>
+
+                {/* Send button */}
+                <div className="flex flex-col gap-[10px] pt-[8px] border-t border-[var(--border-subtle)]">
+                  <button
+                    onClick={sendLaunchBlast}
+                    disabled={launchSending || !launchStatus || launchStatus.recipientCount === 0}
+                    className="self-start flex items-center gap-[10px] px-[24px] py-[12px] bg-[var(--burnt-orange)] hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                  >
+                    <span className="font-label font-bold text-[12px] tracking-[2px] text-white">
+                      {launchSending
+                        ? "SENDING…"
+                        : `SEND OPTION ${launchVariant} TO ${launchStatus?.recipientCount ?? 0} RECIPIENT${launchStatus?.recipientCount === 1 ? "" : "S"}`}
+                    </span>
+                  </button>
+                  <p className="font-heading text-[12px] text-[var(--text-muted)] max-w-[640px]">
+                    You&rsquo;ll be asked to confirm twice (a dialog, then a typed <code className="font-label text-[11px] bg-[var(--bg-card)] px-[4px] py-[1px] border border-[var(--border-subtle)]">SEND</code>). After that the lock engages and this panel will refuse any further sends.
+                  </p>
+                </div>
+              </>
+            )}
+
+            {/* Result banner */}
+            {launchResult && (
+              <div
+                className={`flex flex-col gap-[6px] p-[14px] border ${
+                  launchResult.success
+                    ? "bg-[var(--forest-green-light)] border-[var(--forest-green)]"
+                    : "bg-red-50 border-red-300"
+                }`}
+              >
+                <span
+                  className={`font-label font-bold text-[10px] tracking-[2px] ${
+                    launchResult.success ? "text-[var(--forest-green)]" : "text-red-700"
+                  }`}
+                >
+                  {launchResult.success ? "✓ SENT" : "✗ NOT SENT"}
+                </span>
+                <p className="font-heading text-[13px] leading-[1.6] text-[var(--text-primary)]">
+                  {launchResult.message}
+                </p>
+                {launchResult.errors && launchResult.errors.length > 0 && (
+                  <ul className="font-heading text-[12px] leading-[1.6] text-[var(--text-secondary)] list-disc pl-[20px]">
+                    {launchResult.errors.map((e, i) => (
+                      <li key={i}>{e}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Email list */}

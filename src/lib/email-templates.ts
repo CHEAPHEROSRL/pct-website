@@ -37,6 +37,9 @@ import {
   sendCommunityMilestone,
   sendMagicLink,
   sendNewPost,
+  sendWaitlistLaunchA,
+  sendWaitlistLaunchB,
+  sendWaitlistLaunchC,
   startPreviewCapture,
   endPreviewCapture,
   type CapturedPreview,
@@ -578,6 +581,42 @@ export const EMAIL_TEMPLATES: EmailTemplateEntry[] = [
           18
         )
       ),
+  },
+  {
+    id: "waitlist-launch-a",
+    name: "Waitlist launch — Option A (pledge-focused)",
+    category: "publishing",
+    categoryLabel: "Content publishing",
+    trigger:
+      "Sent ONCE to every waitlist subscriber when Paul announces the site is live. Option A leads with 'Pledge per mile' as the primary CTA and mentions trail support as a softer P.S. Paul picks ONE variant (A, B, or C) in the admin Waitlist tab and triggers the blast manually.",
+    recipient: "All waitlist subscribers (one-shot — lock prevents re-sending across all three variants).",
+    cron: null,
+    dedupKey: "One-shot per site: waitlist:launch:sent (locks A/B/C together)",
+    render: () => withPreviewCapture(() => sendWaitlistLaunchA(PREVIEW_EMAIL)),
+  },
+  {
+    id: "waitlist-launch-b",
+    name: "Waitlist launch — Option B (two equal CTAs)",
+    category: "publishing",
+    categoryLabel: "Content publishing",
+    trigger:
+      "Sent ONCE to every waitlist subscriber when Paul announces the site is live. Option B presents Pledge and Support as equal-weight side-by-side CTAs. Paul picks ONE variant (A, B, or C) in the admin Waitlist tab and triggers the blast manually.",
+    recipient: "All waitlist subscribers (one-shot — lock prevents re-sending across all three variants).",
+    cron: null,
+    dedupKey: "One-shot per site: waitlist:launch:sent (locks A/B/C together)",
+    render: () => withPreviewCapture(() => sendWaitlistLaunchB(PREVIEW_EMAIL)),
+  },
+  {
+    id: "waitlist-launch-c",
+    name: "Waitlist launch — Option C (soft launch, no ask)",
+    category: "publishing",
+    categoryLabel: "Content publishing",
+    trigger:
+      "Sent ONCE to every waitlist subscriber when Paul announces the site is live. Option C is a soft 'come explore' announcement with no explicit ask — drives to the homepage. Paul picks ONE variant (A, B, or C) in the admin Waitlist tab and triggers the blast manually.",
+    recipient: "All waitlist subscribers (one-shot — lock prevents re-sending across all three variants).",
+    cron: null,
+    dedupKey: "One-shot per site: waitlist:launch:sent (locks A/B/C together)",
+    render: () => withPreviewCapture(() => sendWaitlistLaunchC(PREVIEW_EMAIL)),
   },
 ];
 

@@ -1443,3 +1443,156 @@ export async function sendNewPost(
     `
   );
 }
+
+// ---------------------------------------------------------------------------
+// Waitlist Launch Invite — three voice variants (A/B/C)
+// ---------------------------------------------------------------------------
+//
+// Sent ONCE to every waitlist subscriber when Paul wants to announce the site
+// is live and (optionally) ask them to pledge. Paul picks ONE variant via the
+// admin "Waitlist" tab and triggers the blast manually. A one-shot lock in
+// Redis (waitlist:launch:sent) prevents accidental double-sends across all
+// three variants — once any variant has been sent, all three are locked out.
+//
+// The three variants share the same dark-header + footer chrome but differ
+// in the body / CTA:
+//   A — Pledge per mile (primary CTA, support as P.S.)
+//   B — Equal weight: two side-by-side CTAs (pledge + support)
+//   C — Soft launch: single "visit the site" CTA, no ask
+//
+// Recipients have no name on file (the WaitlistPopup only collects email),
+// so the greeting is "Hi —" rather than "Hi {name}".
+
+function launchEmailShell(bodyHtml: string, unsubscribeToken?: string): string {
+  return `
+    <div style="font-family: Georgia, serif; max-width: 560px; margin: 0 auto; color: #1C1C1C;">
+      <div style="background: #1C1F1A; padding: 20px 32px; text-align: center;">
+        <p style="margin: 0; font-size: 14px; letter-spacing: 3px; font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; color: #FFFFFF;">YESCHAPTER</p>
+        <p style="margin: 4px 0 0; font-size: 9px; letter-spacing: 2px; font-family: sans-serif; color: #FFFFFFAA;">WALKING FOR CANCER</p>
+      </div>
+      <div style="padding: 32px;">
+        ${bodyHtml}
+      </div>
+      ${emailFooter(unsubscribeToken)}
+    </div>
+  `;
+}
+
+export async function sendWaitlistLaunchA(
+  email: string,
+  unsubscribeToken?: string
+): Promise<SendResult> {
+  const body = `
+    <p style="font-size: 16px; line-height: 1.7; color: #5C5C5C; margin: 0 0 18px;">Hi &mdash;</p>
+    <p style="font-size: 16px; line-height: 1.7; color: #5C5C5C; margin: 0 0 18px;">
+      Paul here. A few months ago you signed up to hear when YesChapter went live. It's live, and I'm on the trail.
+    </p>
+    <p style="font-size: 16px; line-height: 1.7; color: #5C5C5C; margin: 0 0 18px;">
+      I'm walking 2,650 miles from Mexico to Canada for cancer research, patient support, and prevention &mdash; in memory of both my parents. Every mile is a chance for you to turn this walk into something that outlasts it.
+    </p>
+    <p style="font-size: 16px; line-height: 1.7; color: #5C5C5C; margin: 0 0 24px;">
+      <strong style="color: #1C1C1C;">Pledge per mile.</strong> Pick an amount &mdash; 1&cent;, 10&cent;, a dollar. When I cross the Canadian border, you'll donate directly to our partner foundations. I never touch the money. You only pay what you pledged for the miles I actually walked.
+    </p>
+    <div style="text-align: center; margin: 32px 0;">
+      <a href="${SITE}/pledge" style="display: inline-block; background: #3D7A5A; color: #FFFFFF; padding: 14px 36px; text-decoration: none; font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 2px;">
+        PLEDGE PER MILE &rarr;
+      </a>
+    </div>
+    <p style="font-size: 15px; line-height: 1.7; color: #5C5C5C; margin: 0 0 18px;">
+      Track me at <a href="${SITE}" style="color: #3D7A5A; text-decoration: underline;">yeschapter.com</a> &mdash; there's a live map, journal entries from camp, and a daily count of where I am on the PCT.
+    </p>
+    <p style="font-size: 15px; line-height: 1.7; color: #5C5C5C; margin: 0 0 12px;">
+      Thank you for being here from day one.
+    </p>
+    <p style="font-size: 15px; line-height: 1.7; color: #1C1C1C; margin: 0 0 8px;">
+      Paul
+    </p>
+    <p style="font-size: 13px; line-height: 1.6; color: #8C8A87; border-top: 1px solid #E8E5E0; padding-top: 16px; margin: 28px 0 0;">
+      <em>P.S. If a pledge isn't your thing right now, you can also send a one-off gift to keep me on the trail &mdash; meals, a hostel night, dry socks. <a href="${SITE}/support" style="color: #C45C26; text-decoration: underline;">yeschapter.com/support</a></em>
+    </p>
+  `;
+  return send(email, "I'm on the trail. Walk with me.", launchEmailShell(body, unsubscribeToken));
+}
+
+export async function sendWaitlistLaunchB(
+  email: string,
+  unsubscribeToken?: string
+): Promise<SendResult> {
+  const body = `
+    <p style="font-size: 16px; line-height: 1.7; color: #5C5C5C; margin: 0 0 18px;">Hi &mdash;</p>
+    <p style="font-size: 16px; line-height: 1.7; color: #5C5C5C; margin: 0 0 18px;">
+      Paul here. A few months ago you signed up to hear when YesChapter went live. It's live, and I'm on the trail.
+    </p>
+    <p style="font-size: 16px; line-height: 1.7; color: #5C5C5C; margin: 0 0 24px;">
+      I'm walking 2,650 miles from Mexico to Canada for cancer research, in memory of both my parents. There are two ways to walk this with me, and they're completely separate:
+    </p>
+
+    <div style="background: #E8F0EB; border-left: 3px solid #3D7A5A; padding: 20px 22px; margin: 0 0 16px;">
+      <p style="margin: 0 0 6px; font-family: 'Barlow Semi Condensed', sans-serif; font-size: 11px; letter-spacing: 2px; font-weight: 700; color: #3D7A5A;">
+        1. PLEDGE PER MILE
+      </p>
+      <p style="margin: 0 0 14px; font-size: 15px; line-height: 1.6; color: #5C5C5C;">
+        For the cause. Pick an amount. When I finish, you'll donate directly to our partner foundations. I never touch the money. You only pay for the miles I actually walked.
+      </p>
+      <a href="${SITE}/pledge" style="display: inline-block; background: #3D7A5A; color: #FFFFFF; padding: 12px 28px; text-decoration: none; font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 2px;">
+        PLEDGE PER MILE &rarr;
+      </a>
+    </div>
+
+    <div style="background: #FEF3EC; border-left: 3px solid #C45C26; padding: 20px 22px; margin: 0 0 24px;">
+      <p style="margin: 0 0 6px; font-family: 'Barlow Semi Condensed', sans-serif; font-size: 11px; letter-spacing: 2px; font-weight: 700; color: #C45C26;">
+        2. SUPPORT ME ON THE TRAIL
+      </p>
+      <p style="margin: 0 0 14px; font-size: 15px; line-height: 1.6; color: #5C5C5C;">
+        A direct gift &mdash; meal, hostel night, new socks. This one's a real payment, and it goes straight to keeping me hiking.
+      </p>
+      <a href="${SITE}/support" style="display: inline-block; background: #C45C26; color: #FFFFFF; padding: 12px 28px; text-decoration: none; font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 2px;">
+        SUPPORT THE HIKE &rarr;
+      </a>
+    </div>
+
+    <p style="font-size: 15px; line-height: 1.7; color: #5C5C5C; margin: 0 0 18px;">
+      Or just come watch &mdash; live map, daily journal entries, all at <a href="${SITE}" style="color: #3D7A5A; text-decoration: underline;">yeschapter.com</a>.
+    </p>
+    <p style="font-size: 15px; line-height: 1.7; color: #5C5C5C; margin: 0 0 12px;">
+      Thank you for being here from day one.
+    </p>
+    <p style="font-size: 15px; line-height: 1.7; color: #1C1C1C; margin: 0;">
+      Paul
+    </p>
+  `;
+  return send(email, "I'm on the trail. Two ways to walk with me.", launchEmailShell(body, unsubscribeToken));
+}
+
+export async function sendWaitlistLaunchC(
+  email: string,
+  unsubscribeToken?: string
+): Promise<SendResult> {
+  const body = `
+    <p style="font-size: 16px; line-height: 1.7; color: #5C5C5C; margin: 0 0 18px;">Hi &mdash;</p>
+    <p style="font-size: 16px; line-height: 1.7; color: #5C5C5C; margin: 0 0 18px;">
+      Paul here. A few months ago you signed up to hear when YesChapter went live. It's live.
+    </p>
+    <p style="font-size: 16px; line-height: 1.7; color: #5C5C5C; margin: 0 0 18px;">
+      I'm on the Pacific Crest Trail right now &mdash; 2,650 miles from Mexico to Canada, walking for cancer research in memory of both my parents.
+    </p>
+    <p style="font-size: 16px; line-height: 1.7; color: #5C5C5C; margin: 0 0 24px;">
+      The site has everything: a live map showing where I am, journal entries from camp, the story behind why I'm doing this, and a few ways to walk this with me if you want to.
+    </p>
+    <div style="text-align: center; margin: 32px 0;">
+      <a href="${SITE}" style="display: inline-block; background: #3D7A5A; color: #FFFFFF; padding: 14px 36px; text-decoration: none; font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 2px;">
+        VISIT YESCHAPTER &rarr;
+      </a>
+    </div>
+    <p style="font-size: 15px; line-height: 1.7; color: #5C5C5C; margin: 0 0 18px;">
+      No pressure, no ask in this email. Just wanted you to know it's live and you're invited.
+    </p>
+    <p style="font-size: 15px; line-height: 1.7; color: #5C5C5C; margin: 0 0 12px;">
+      Thank you for being here from day one.
+    </p>
+    <p style="font-size: 15px; line-height: 1.7; color: #1C1C1C; margin: 0;">
+      Paul
+    </p>
+  `;
+  return send(email, "It's live. Come walk with me.", launchEmailShell(body, unsubscribeToken));
+}
