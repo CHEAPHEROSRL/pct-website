@@ -3229,6 +3229,91 @@ export default function AdminPage() {
           </p>
         </div>
 
+        {/* How the email system works — three categories explained */}
+        <div className="flex flex-col gap-[14px] p-[20px] md:p-[24px] bg-[var(--bg-white)] border-2 border-[var(--burnt-orange)]">
+          <div className="flex items-center gap-[10px]">
+            <Send className="w-[16px] h-[16px] text-[var(--burnt-orange)]" />
+            <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--burnt-orange)]">
+              HOW EMAILS FIRE — THE THREE LAYERS
+            </span>
+          </div>
+          <p className="font-heading text-[13px] leading-[1.7] text-[var(--text-secondary)]">
+            The site has <strong>three different categories</strong> of email. They behave very differently. Understanding which is which makes it clear when each one will actually leave the building.
+          </p>
+
+          <div className="flex flex-col gap-[10px]">
+            {/* User-triggered */}
+            <div className="flex flex-col gap-[4px] p-[14px] bg-[var(--forest-green-light)] border-l-3 border-[var(--forest-green)]">
+              <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--forest-green)]">
+                1. USER-TRIGGERED — ALWAYS ON
+              </span>
+              <p className="font-heading text-[13px] leading-[1.6] text-[var(--text-primary)]">
+                Fires the moment a real visitor does the thing (signs in, pledges, marks honoured). Always works as long as Gmail is connected. <strong>Cannot be paused</strong> — breaking them would break real users.
+              </p>
+              <p className="font-heading text-[12px] leading-[1.6] text-[var(--text-secondary)]">
+                Examples: <em>Magic sign-in link, Pledge verification, Pledge confirmation, Honour confirmation.</em>
+              </p>
+            </div>
+
+            {/* Admin-triggered */}
+            <div className="flex flex-col gap-[4px] p-[14px] bg-[var(--burnt-orange-light)] border-l-3 border-[var(--burnt-orange)]">
+              <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--burnt-orange)]">
+                2. ADMIN-TRIGGERED — PAUL CLICKS A BUTTON
+              </span>
+              <p className="font-heading text-[13px] leading-[1.6] text-[var(--text-primary)]">
+                Fires when Paul takes an action in the admin (publishes a journal post, launches a challenge, sends the waitlist launch invite). Each has its own confirm flow and lock.
+              </p>
+              <p className="font-heading text-[12px] leading-[1.6] text-[var(--text-secondary)]">
+                Examples: <em>New journal post notification, Challenge started, Challenge result, Waitlist launch (A/B/C).</em>
+              </p>
+            </div>
+
+            {/* Cron-driven */}
+            <div className="flex flex-col gap-[6px] p-[14px] bg-blue-50 border-l-3 border-blue-500">
+              <span className="font-label font-bold text-[10px] tracking-[2px] text-blue-700">
+                3. CRON-DRIVEN — VERCEL CALLS ON SCHEDULE
+              </span>
+              <p className="font-heading text-[13px] leading-[1.6] text-[var(--text-primary)]">
+                Vercel runs these on a fixed schedule (no human involvement). Whether they actually send depends on the <strong>STANDBY</strong> switch — when standby is on, Vercel still calls them but they return early without sending.
+              </p>
+              <div className="flex flex-col gap-[3px] mt-[2px]">
+                <span className="font-label text-[11px] text-[var(--text-secondary)]">
+                  <Clock className="inline-block w-[11px] h-[11px] mr-[4px] -mt-[1px] text-blue-700" />
+                  <strong>Welcome drip (Day 1 + Day 3)</strong> — every 6 hours
+                </span>
+                <span className="font-label text-[11px] text-[var(--text-secondary)]">
+                  <Clock className="inline-block w-[11px] h-[11px] mr-[4px] -mt-[1px] text-blue-700" />
+                  <strong>Weekly update</strong> — Mondays 15:00 UTC
+                </span>
+                <span className="font-label text-[11px] text-[var(--text-secondary)]">
+                  <Clock className="inline-block w-[11px] h-[11px] mr-[4px] -mt-[1px] text-blue-700" />
+                  <strong>Milestone alerts (reached + pre-milestone + near-finish)</strong> — daily 09:00 UTC
+                </span>
+                <span className="font-label text-[11px] text-[var(--text-secondary)]">
+                  <Clock className="inline-block w-[11px] h-[11px] mr-[4px] -mt-[1px] text-blue-700" />
+                  <strong>Honour reminders (Day 5 + Day 14)</strong> — daily 12:00 UTC
+                </span>
+              </div>
+              <p className="font-heading text-[12px] leading-[1.6] text-[var(--text-secondary)] mt-[4px]">
+                Control these in <strong>Settings → Email Crons</strong>: flip STANDBY on/off, see when each last sent, or click <strong>Send Now</strong> to fire one manually.
+              </p>
+              <button
+                onClick={() => { setActiveTab("settings"); setView("settings"); setStatus(""); fetchSettings(); fetchGmailOAuthStatus(); fetchEmailCronStatus(); }}
+                className="self-start flex items-center gap-[6px] mt-[6px] px-[14px] py-[8px] bg-blue-600 hover:bg-blue-700 transition-colors cursor-pointer"
+              >
+                <Settings className="w-[12px] h-[12px] text-white" />
+                <span className="font-label font-bold text-[11px] tracking-[2px] text-white">
+                  OPEN EMAIL CRONS PANEL →
+                </span>
+              </button>
+            </div>
+          </div>
+
+          <p className="font-heading text-[12px] leading-[1.7] text-[var(--text-muted)] border-t border-[var(--border-subtle)] pt-[10px]">
+            On top of all three categories: <code className="font-label text-[11px] bg-[var(--bg-card)] px-[4px] py-[1px] border border-[var(--border-subtle)]">EMAILS_ENABLED</code> in Vercel is the master kill switch for categories 2 and 3. Category 1 (user-triggered) bypasses it on purpose so account flows never break.
+          </p>
+        </div>
+
         {emailTemplatesLoading && emailTemplates.length === 0 ? (
           <div className="flex items-center gap-[10px] py-[32px]">
             <Loader2 className="w-[16px] h-[16px] text-[var(--text-muted)] animate-spin" />
@@ -3360,6 +3445,49 @@ export default function AdminPage() {
             </div>
           )}
         </div>
+
+        {/* Operations callout — only shown for cron-driven emails */}
+        {emailDetail.cron && (
+          <div className="flex flex-col gap-[14px] p-[16px] md:p-[20px] bg-blue-50 border-2 border-blue-500">
+            <div className="flex items-center gap-[10px]">
+              <Send className="w-[16px] h-[16px] text-blue-700" />
+              <span className="font-label font-bold text-[11px] tracking-[2px] text-blue-700">
+                OPERATIONS — THIS IS A CRON-DRIVEN EMAIL
+              </span>
+            </div>
+            <p className="font-heading text-[13px] leading-[1.7] text-[var(--text-primary)]">
+              Vercel calls the underlying endpoint on the schedule above without any human involvement. <strong>Whether it actually sends to anyone</strong> depends on three independent gates:
+            </p>
+            <ol className="flex flex-col gap-[6px] font-heading text-[13px] leading-[1.7] text-[var(--text-primary)] list-decimal pl-[20px]">
+              <li>
+                <strong>EMAILS_ENABLED env var</strong> must be <code className="font-label text-[11px] bg-white px-[4px] py-[1px] border border-blue-300">true</code> in Vercel (master kill — requires redeploy to change).
+              </li>
+              <li>
+                <strong>STANDBY toggle</strong> in Settings → Email Crons must be <strong>OFF</strong>. When on, the endpoint returns early without sending. Flips instantly, no deploy needed.
+              </li>
+              <li>
+                <strong>Per-pledger dedup keys</strong> filter out anyone who already received this exact email (so a re-run never double-sends).
+              </li>
+            </ol>
+            <div className="flex flex-col gap-[6px] p-[12px] bg-white border border-blue-300">
+              <span className="font-label font-bold text-[10px] tracking-[2px] text-blue-700">
+                MANUAL OVERRIDE
+              </span>
+              <p className="font-heading text-[12px] leading-[1.7] text-[var(--text-secondary)]">
+                Paul can fire this on demand from Settings → Email Crons → <strong>Send Now</strong>. Manual triggers bypass the STANDBY gate but still respect <code className="font-label text-[11px] bg-[var(--bg-card)] px-[3px] py-[1px] border border-[var(--border-subtle)]">EMAILS_ENABLED</code> and per-pledger dedup.
+              </p>
+            </div>
+            <button
+              onClick={() => { setActiveTab("settings"); setView("settings"); setStatus(""); fetchSettings(); fetchGmailOAuthStatus(); fetchEmailCronStatus(); }}
+              className="self-start flex items-center gap-[6px] px-[14px] py-[8px] bg-blue-600 hover:bg-blue-700 transition-colors cursor-pointer"
+            >
+              <Settings className="w-[12px] h-[12px] text-white" />
+              <span className="font-label font-bold text-[11px] tracking-[2px] text-white">
+                OPEN EMAIL CRONS PANEL →
+              </span>
+            </button>
+          </div>
+        )}
 
         {/* Subject line */}
         <div className="flex flex-col gap-[8px] p-[16px] md:p-[20px] bg-[var(--bg-white)] border border-[var(--border-subtle)]">
