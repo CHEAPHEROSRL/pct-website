@@ -128,6 +128,23 @@ export default function AdminPage() {
     errors?: string[];
   } | null>(null);
 
+  // YouTube PubSubHubbub subscription state (Settings tab → YouTube panel)
+  interface YoutubeSubStatus {
+    hasSubscription: boolean;
+    expiry?: number;
+    expired?: boolean;
+    daysRemaining?: number;
+    webhookSecretConfigured: boolean;
+    error?: string;
+  }
+  const [ytSubStatus, setYtSubStatus] = useState<YoutubeSubStatus | null>(null);
+  const [ytSubLoading, setYtSubLoading] = useState(false);
+  const [ytSubscribing, setYtSubscribing] = useState(false);
+  const [ytSubResult, setYtSubResult] = useState<{
+    success: boolean;
+    message: string;
+  } | null>(null);
+
   // Email-cron control panel state (Settings tab → Email Crons)
   type EmailCronId = "welcome" | "weekly" | "milestone" | "honor";
   interface EmailCronDef {
@@ -440,6 +457,73 @@ export default function AdminPage() {
       setWaitlistLoading(false);
     }
   }, [token]);
+
+  const fetchYtSubStatus = useCallback(async () => {
+    setYtSubLoading(true);
+    try {
+      const res = await fetch("/api/admin/youtube-subscription", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = (await res.json()) as YoutubeSubStatus;
+        setYtSubStatus(data);
+      }
+    } catch {
+      // non-fatal — panel just hides
+    } finally {
+      setYtSubLoading(false);
+    }
+  }, [token]);
+
+  const subscribeYoutubeChannel = useCallback(async () => {
+    if (ytSubscribing) return;
+    const channelId = settings.youtubeChannelId;
+    if (!channelId) {
+      setYtSubResult({
+        success: false,
+        message: "Set the YouTube Channel ID above and Save before subscribing.",
+      });
+      return;
+    }
+
+    const ok = window.confirm(
+      "Subscribe to PubSubHubbub for this channel? YouTube will start pushing webhook notifications to the site when Paul uploads. Re-clicking renews the subscription early."
+    );
+    if (!ok) return;
+
+    setYtSubscribing(true);
+    setYtSubResult(null);
+    try {
+      const res = await fetch("/api/automation/subscribe", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ channelId }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setYtSubResult({
+          success: true,
+          message: `Subscribed. YouTube will verify the callback shortly. Renews automatically before ${data.renewBefore ? new Date(data.renewBefore).toLocaleDateString() : "expiry"}.`,
+        });
+      } else {
+        setYtSubResult({
+          success: false,
+          message: data.error || `HTTP ${res.status} — check Vercel logs.`,
+        });
+      }
+    } catch (err) {
+      setYtSubResult({
+        success: false,
+        message: err instanceof Error ? err.message : "Network error",
+      });
+    } finally {
+      setYtSubscribing(false);
+      fetchYtSubStatus();
+    }
+  }, [ytSubscribing, settings.youtubeChannelId, token, fetchYtSubStatus]);
 
   const fetchEmailCronStatus = useCallback(async () => {
     setEmailCronLoading(true);
@@ -1503,7 +1587,7 @@ export default function AdminPage() {
             )}
           </button>
           <button
-            onClick={() => { setActiveTab("settings"); setView("settings"); setStatus(""); fetchSettings(); fetchGmailOAuthStatus(); fetchEmailCronStatus(); }}
+            onClick={() => { setActiveTab("settings"); setView("settings"); setStatus(""); fetchSettings(); fetchGmailOAuthStatus(); fetchEmailCronStatus(); fetchYtSubStatus(); }}
             className={`flex items-center gap-[6px] md:gap-[8px] px-[14px] md:px-[24px] py-[14px] font-label font-bold text-[11px] md:text-[12px] tracking-[1.5px] md:tracking-[2px] border-b-2 transition-colors cursor-pointer shrink-0 ${
               activeTab === "settings"
                 ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
@@ -3298,7 +3382,7 @@ export default function AdminPage() {
                 Control these in <strong>Settings → Email Crons</strong>: flip STANDBY on/off, see when each last sent, or click <strong>Send Now</strong> to fire one manually.
               </p>
               <button
-                onClick={() => { setActiveTab("settings"); setView("settings"); setStatus(""); fetchSettings(); fetchGmailOAuthStatus(); fetchEmailCronStatus(); }}
+                onClick={() => { setActiveTab("settings"); setView("settings"); setStatus(""); fetchSettings(); fetchGmailOAuthStatus(); fetchEmailCronStatus(); fetchYtSubStatus(); }}
                 className="self-start flex items-center gap-[6px] mt-[6px] px-[14px] py-[8px] bg-blue-600 hover:bg-blue-700 transition-colors cursor-pointer"
               >
                 <Settings className="w-[12px] h-[12px] text-white" />
@@ -3478,7 +3562,7 @@ export default function AdminPage() {
               </p>
             </div>
             <button
-              onClick={() => { setActiveTab("settings"); setView("settings"); setStatus(""); fetchSettings(); fetchGmailOAuthStatus(); fetchEmailCronStatus(); }}
+              onClick={() => { setActiveTab("settings"); setView("settings"); setStatus(""); fetchSettings(); fetchGmailOAuthStatus(); fetchEmailCronStatus(); fetchYtSubStatus(); }}
               className="self-start flex items-center gap-[6px] px-[14px] py-[8px] bg-blue-600 hover:bg-blue-700 transition-colors cursor-pointer"
             >
               <Settings className="w-[12px] h-[12px] text-white" />
@@ -4417,6 +4501,102 @@ export default function AdminPage() {
                     <li>Admin reviews, edits if needed, and publishes</li>
                     <li>Instagram caption is ready to copy-paste from the admin panel</li>
                   </ol>
+                </div>
+
+                {/* Webhook subscription panel */}
+                <div className="flex flex-col gap-[12px] p-[16px] bg-[var(--bg-card)] border border-[var(--border-subtle)]">
+                  <div className="flex items-center gap-[8px]">
+                    <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                      WEBHOOK SUBSCRIPTION
+                    </span>
+                  </div>
+                  <p className="font-heading text-[12px] leading-[1.6] text-[var(--text-secondary)]">
+                    Step 2 of automation: tell YouTube where to push notifications. Without an active subscription, the manual paste-URL flow still works but new uploads won&apos;t auto-create drafts. Subscriptions expire every ~10 days; the daily 09:00 UTC <code className="font-label text-[11px] bg-white px-[3px] py-[1px] border border-[var(--border-subtle)]">/api/automation/youtube-renew</code> cron handles auto-renewal.
+                  </p>
+
+                  {ytSubLoading && !ytSubStatus ? (
+                    <span className="font-heading text-[13px] text-[var(--text-muted)]">Loading subscription status&hellip;</span>
+                  ) : !ytSubStatus ? (
+                    <span className="font-heading text-[13px] text-[var(--text-muted)]">Subscription status unavailable.</span>
+                  ) : (
+                    <div className="flex flex-col gap-[10px]">
+                      {/* YOUTUBE_WEBHOOK_SECRET warning */}
+                      {!ytSubStatus.webhookSecretConfigured && (
+                        <div className="flex flex-col gap-[4px] p-[12px] bg-amber-50 border border-amber-300">
+                          <span className="font-label font-bold text-[10px] tracking-[2px] text-amber-800">
+                            YOUTUBE_WEBHOOK_SECRET NOT SET
+                          </span>
+                          <p className="font-heading text-[12px] leading-[1.6] text-amber-900">
+                            Subscribe will still work but YouTube&apos;s verification will be unsigned. For production, set <code className="font-label text-[11px] bg-white px-[3px] py-[1px] border border-amber-300">YOUTUBE_WEBHOOK_SECRET</code> in Vercel env vars to any random string (20+ chars), then redeploy + re-subscribe.
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Status badge */}
+                      <div className="flex items-center justify-between gap-[12px] flex-wrap">
+                        <div className="flex flex-col gap-[2px]">
+                          <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                            STATUS
+                          </span>
+                          {!ytSubStatus.hasSubscription ? (
+                            <span className="font-heading font-semibold text-[14px] text-[var(--text-muted)]">
+                              ⚪ No subscription yet
+                            </span>
+                          ) : ytSubStatus.expired ? (
+                            <span className="font-heading font-semibold text-[14px] text-red-600">
+                              🔴 Expired — re-subscribe needed
+                            </span>
+                          ) : (
+                            <span className="font-heading font-semibold text-[14px] text-[var(--forest-green)]">
+                              🟢 Active — {ytSubStatus.daysRemaining} day{ytSubStatus.daysRemaining === 1 ? "" : "s"} until renewal
+                            </span>
+                          )}
+                          {ytSubStatus.expiry && (
+                            <span className="font-heading text-[11px] text-[var(--text-muted)]">
+                              Expires {new Date(ytSubStatus.expiry).toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" })}
+                            </span>
+                          )}
+                        </div>
+                        <button
+                          onClick={subscribeYoutubeChannel}
+                          disabled={ytSubscribing || !settings.youtubeChannelId}
+                          className="flex items-center gap-[6px] px-[16px] py-[10px] bg-[var(--burnt-orange)] hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                          title={!settings.youtubeChannelId ? "Set the YouTube Channel ID above first" : "Subscribe / renew the PubSubHubbub feed"}
+                        >
+                          <Video className="w-[12px] h-[12px] text-white" />
+                          <span className="font-label font-bold text-[11px] tracking-[2px] text-white">
+                            {ytSubscribing
+                              ? "SUBSCRIBING…"
+                              : ytSubStatus.hasSubscription
+                              ? "RE-SUBSCRIBE"
+                              : "SUBSCRIBE NOW"}
+                          </span>
+                        </button>
+                      </div>
+
+                      {/* Result banner */}
+                      {ytSubResult && (
+                        <div
+                          className={`flex flex-col gap-[2px] p-[10px] border ${
+                            ytSubResult.success
+                              ? "bg-[var(--forest-green-light)] border-[var(--forest-green)]"
+                              : "bg-red-50 border-red-300"
+                          }`}
+                        >
+                          <span
+                            className={`font-label font-bold text-[10px] tracking-[2px] ${
+                              ytSubResult.success ? "text-[var(--forest-green)]" : "text-red-700"
+                            }`}
+                          >
+                            {ytSubResult.success ? "✓ DONE" : "✗ FAILED"}
+                          </span>
+                          <span className="font-heading text-[12px] leading-[1.6] text-[var(--text-primary)]">
+                            {ytSubResult.message}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
 
