@@ -239,9 +239,18 @@ async function markGmailTokenInvalid(): Promise<void> {
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://yeschapter.com";
 
 function emailFooter(unsubscribeToken?: string): string {
+  // Build the prefs/unsubscribe URLs separately so the unsubscribe link is
+  // always well-formed. The naive "always append &action=unsubscribe" version
+  // produced /unsubscribe&action=unsubscribe (malformed — no leading "?")
+  // when no token was present, which Next.js treated as a 404 pathname
+  // rather than a query string on /unsubscribe. The page itself handles
+  // the no-token case (recovery form), it just never got reached.
   const prefsLink = unsubscribeToken
     ? `${SITE}/unsubscribe?token=${unsubscribeToken}`
     : `${SITE}/unsubscribe`;
+  const unsubLink = unsubscribeToken
+    ? `${SITE}/unsubscribe?token=${unsubscribeToken}&action=unsubscribe`
+    : `${SITE}/unsubscribe?action=unsubscribe`;
   return `
     <div style="background: #1C1F1A; padding: 20px 32px; text-align: center; margin-top: 24px;">
       <p style="margin: 0 0 8px; font-size: 12px; letter-spacing: 3px; font-family: sans-serif; font-weight: 700; color: #FFFFFF88;">YESCHAPTER</p>
@@ -250,7 +259,7 @@ function emailFooter(unsubscribeToken?: string): string {
         &nbsp;&middot;&nbsp;
         <a href="${prefsLink}" style="color: #FFFFFFAA; text-decoration: none;">Email Preferences</a>
         &nbsp;&middot;&nbsp;
-        <a href="${prefsLink}&action=unsubscribe" style="color: #FFFFFFAA; text-decoration: none;">Unsubscribe</a>
+        <a href="${unsubLink}" style="color: #FFFFFFAA; text-decoration: none;">Unsubscribe</a>
       </p>
     </div>
   `;
