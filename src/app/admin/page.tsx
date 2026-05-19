@@ -128,6 +128,33 @@ export default function AdminPage() {
     errors?: string[];
   } | null>(null);
 
+  // Email-cron control panel state (Settings tab → Email Crons)
+  type EmailCronId = "welcome" | "weekly" | "milestone" | "honor";
+  interface EmailCronDef {
+    id: EmailCronId;
+    name: string;
+    schedule: string;
+  }
+  interface EmailCronLastSent {
+    ts?: number;
+    weekNumber?: number;
+  }
+  interface EmailCronStatus {
+    standby: boolean;
+    bulkEmailsEnabled: boolean;
+    lastSent: Record<EmailCronId, EmailCronLastSent>;
+    crons: EmailCronDef[];
+  }
+  const [emailCronStatus, setEmailCronStatus] = useState<EmailCronStatus | null>(null);
+  const [emailCronLoading, setEmailCronLoading] = useState(false);
+  const [emailCronToggling, setEmailCronToggling] = useState(false);
+  const [emailCronTriggering, setEmailCronTriggering] = useState<EmailCronId | null>(null);
+  const [emailCronResult, setEmailCronResult] = useState<{
+    which: EmailCronId;
+    success: boolean;
+    message: string;
+  } | null>(null);
+
   // Settings state
   const [settings, setSettings] = useState<Record<string, string>>({});
   const [settingsLoading, setSettingsLoading] = useState(false);
@@ -413,6 +440,107 @@ export default function AdminPage() {
       setWaitlistLoading(false);
     }
   }, [token]);
+
+  const fetchEmailCronStatus = useCallback(async () => {
+    setEmailCronLoading(true);
+    try {
+      const res = await fetch("/api/admin/email-cron-status", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = (await res.json()) as EmailCronStatus;
+        setEmailCronStatus(data);
+      }
+    } catch {
+      // non-fatal — panel just stays hidden
+    } finally {
+      setEmailCronLoading(false);
+    }
+  }, [token]);
+
+  const toggleEmailCronStandby = useCallback(async (nextStandby: boolean) => {
+    if (!emailCronStatus) return;
+    const verb = nextStandby ? "PAUSE" : "ACTIVATE";
+    const ok = window.confirm(
+      nextStandby
+        ? "Pause the email crons? They will stop firing on schedule. Manual 'Send Now' buttons still work."
+        : "Activate the email crons? They will start firing on their normal schedules (welcome every 6h, weekly Mondays, etc.). EMAILS_ENABLED must also be true for anything to actually send."
+    );
+    if (!ok) return;
+    setEmailCronToggling(true);
+    try {
+      const res = await fetch("/api/admin/email-cron-status", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ standby: nextStandby }),
+      });
+      if (res.ok) {
+        await fetchEmailCronStatus();
+      } else {
+        setStatus(`Failed to ${verb.toLowerCase()} crons`);
+      }
+    } catch {
+      setStatus(`Failed to ${verb.toLowerCase()} crons`);
+    } finally {
+      setEmailCronToggling(false);
+    }
+  }, [emailCronStatus, token, fetchEmailCronStatus]);
+
+  const triggerEmailCron = useCallback(async (which: EmailCronId, displayName: string) => {
+    if (emailCronTriggering) return;
+
+    const ok = window.confirm(
+      `Manually trigger "${displayName}" now? Per-pledger dedup keys still apply — pledgers already sent this email will be skipped.`
+    );
+    if (!ok) return;
+
+    setEmailCronTriggering(which);
+    setEmailCronResult(null);
+    try {
+      const res = await fetch("/api/admin/email-cron-trigger", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ which }),
+      });
+      const data = await res.json();
+      if (res.ok && data.ok) {
+        // The underlying cron response is in data.response
+        const r = data.response || {};
+        let msg = `Triggered.`;
+        if (r.skipped) {
+          msg = `Skipped: ${r.reason || "unknown reason"}`;
+        } else if (typeof r.sent === "number") {
+          msg = `Sent: ${r.sent}, failed: ${r.failed ?? 0}, skipped: ${r.skipped ?? 0}.`;
+        } else if (r.message) {
+          msg = r.message;
+        } else {
+          msg = JSON.stringify(r).slice(0, 280);
+        }
+        setEmailCronResult({ which, success: true, message: msg });
+      } else {
+        setEmailCronResult({
+          which,
+          success: false,
+          message: data.error || data.response?.error || `HTTP ${res.status}`,
+        });
+      }
+    } catch (err) {
+      setEmailCronResult({
+        which,
+        success: false,
+        message: err instanceof Error ? err.message : "Network error",
+      });
+    } finally {
+      setEmailCronTriggering(null);
+      fetchEmailCronStatus();
+    }
+  }, [emailCronTriggering, token, fetchEmailCronStatus]);
 
   const fetchLaunchStatus = useCallback(async () => {
     setLaunchStatusLoading(true);
@@ -1375,7 +1503,7 @@ export default function AdminPage() {
             )}
           </button>
           <button
-            onClick={() => { setActiveTab("settings"); setView("settings"); setStatus(""); fetchSettings(); fetchGmailOAuthStatus(); }}
+            onClick={() => { setActiveTab("settings"); setView("settings"); setStatus(""); fetchSettings(); fetchGmailOAuthStatus(); fetchEmailCronStatus(); }}
             className={`flex items-center gap-[6px] md:gap-[8px] px-[14px] md:px-[24px] py-[14px] font-label font-bold text-[11px] md:text-[12px] tracking-[1.5px] md:tracking-[2px] border-b-2 transition-colors cursor-pointer shrink-0 ${
               activeTab === "settings"
                 ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
@@ -4179,6 +4307,152 @@ export default function AdminPage() {
                   <span className="font-label font-bold text-[12px] tracking-[1px] text-[var(--forest-green)]">
                     Settings saved!
                   </span>
+                )}
+              </div>
+
+              {/* Email Crons control panel */}
+              <div className="flex flex-col gap-[20px] p-[20px] md:p-[28px] bg-[var(--bg-white)] border-2 border-[var(--burnt-orange)] mt-[24px]">
+                <div className="flex items-center gap-[10px]">
+                  <Send className="w-[18px] h-[18px] text-[var(--burnt-orange)]" />
+                  <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-primary)]">
+                    EMAIL CRONS — AUTOMATED BLASTS
+                  </span>
+                </div>
+
+                <div className="flex flex-col gap-[10px] p-[16px] bg-[var(--burnt-orange-light)] border border-[var(--burnt-orange)]/20">
+                  <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--burnt-orange)]">HOW THIS WORKS</span>
+                  <p className="font-heading text-[13px] leading-[1.7] text-[var(--text-secondary)]">
+                    The four email types below are designed to fire <strong>automatically on a schedule</strong> (welcome drip when new pledgers sign up, weekly digest on Mondays, milestone alerts when Paul crosses a threshold, honor reminders after the hike ends). They are currently in <strong>STANDBY</strong> by default so a fresh deploy doesn&apos;t surprise-blast anyone.
+                  </p>
+                  <ul className="flex flex-col gap-[2px] font-heading text-[12px] leading-[1.6] text-[var(--text-secondary)] list-disc pl-[20px]">
+                    <li><strong>STANDBY</strong> = crons are paused. Vercel still calls them on schedule, they just return early.</li>
+                    <li><strong>ACTIVE</strong> = crons fire normally on their schedule.</li>
+                    <li><strong>Send Now</strong> button = manual blast on demand. Bypasses STANDBY but still respects per-pledger dedup (clicking twice in a row skips already-sent pledgers).</li>
+                  </ul>
+                </div>
+
+                {emailCronLoading && !emailCronStatus ? (
+                  <span className="font-heading text-[13px] text-[var(--text-muted)]">Loading cron status&hellip;</span>
+                ) : !emailCronStatus ? (
+                  <span className="font-heading text-[13px] text-[var(--text-muted)]">Cron status unavailable.</span>
+                ) : (
+                  <>
+                    {/* Master kill-switch warning */}
+                    {!emailCronStatus.bulkEmailsEnabled && (
+                      <div className="flex flex-col gap-[6px] p-[14px] bg-amber-50 border border-amber-300">
+                        <span className="font-label font-bold text-[10px] tracking-[2px] text-amber-800">
+                          EMAILS_ENABLED IS OFF
+                        </span>
+                        <p className="font-heading text-[13px] leading-[1.6] text-amber-900">
+                          The master <code className="font-label text-[11px] bg-white px-[4px] py-[1px] border border-amber-300">EMAILS_ENABLED</code> env var is not <code className="font-label text-[11px] bg-white px-[4px] py-[1px] border border-amber-300">true</code> in Vercel. Even if you take crons off STANDBY, no emails will leave the building. Send Now buttons will also return 503.
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Standby toggle */}
+                    <div className="flex flex-col gap-[10px] p-[16px] bg-[var(--bg-card)] border border-[var(--border-subtle)]">
+                      <div className="flex items-center justify-between gap-[16px]">
+                        <div className="flex flex-col gap-[4px]">
+                          <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                            CURRENT MODE
+                          </span>
+                          <span
+                            className={`font-heading font-semibold text-[20px] ${
+                              emailCronStatus.standby ? "text-[var(--burnt-orange)]" : "text-[var(--forest-green)]"
+                            }`}
+                          >
+                            {emailCronStatus.standby ? "🟠 STANDBY" : "🟢 ACTIVE"}
+                          </span>
+                          <span className="font-heading text-[12px] text-[var(--text-secondary)]">
+                            {emailCronStatus.standby
+                              ? "No automatic sends. Vercel still calls the endpoints, they return early."
+                              : "Crons fire on schedule. Per-pledger dedup keys still prevent double-sends."}
+                          </span>
+                        </div>
+                        <button
+                          onClick={() => toggleEmailCronStandby(!emailCronStatus.standby)}
+                          disabled={emailCronToggling}
+                          className={`flex items-center gap-[8px] px-[24px] py-[12px] transition-opacity disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer ${
+                            emailCronStatus.standby
+                              ? "bg-[var(--forest-green)] hover:opacity-90"
+                              : "bg-[var(--burnt-orange)] hover:opacity-90"
+                          }`}
+                        >
+                          <span className="font-label font-bold text-[12px] tracking-[2px] text-white">
+                            {emailCronToggling
+                              ? "…"
+                              : emailCronStatus.standby
+                              ? "ACTIVATE"
+                              : "PAUSE (STANDBY)"}
+                          </span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Per-cron rows: schedule, last-sent, Send Now button */}
+                    <div className="flex flex-col gap-[10px]">
+                      <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
+                        THE FOUR CRONS
+                      </span>
+                      {emailCronStatus.crons.map((c) => {
+                        const last = emailCronStatus.lastSent[c.id];
+                        const lastLabel = last?.ts
+                          ? `Last sent ${new Date(last.ts).toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" })}${last.weekNumber ? ` (week ${last.weekNumber})` : ""}`
+                          : "Never sent";
+                        const isThisRunning = emailCronTriggering === c.id;
+                        const result = emailCronResult?.which === c.id ? emailCronResult : null;
+                        return (
+                          <div key={c.id} className="flex flex-col gap-[10px] p-[14px] md:p-[16px] bg-[var(--bg-card)] border border-[var(--border-subtle)]">
+                            <div className="flex items-start justify-between gap-[16px] flex-wrap">
+                              <div className="flex flex-col gap-[4px] flex-1 min-w-[200px]">
+                                <span className="font-heading font-semibold text-[14px] text-[var(--text-primary)]">
+                                  {c.name}
+                                </span>
+                                <span className="font-label text-[11px] text-[var(--text-muted)]">
+                                  <Clock className="inline-block w-[12px] h-[12px] mr-[4px] -mt-[2px]" />
+                                  {c.schedule}
+                                </span>
+                                <span className="font-heading text-[12px] text-[var(--text-secondary)]">
+                                  {lastLabel}
+                                </span>
+                              </div>
+                              <button
+                                onClick={() => triggerEmailCron(c.id, c.name)}
+                                disabled={!!emailCronTriggering || !emailCronStatus.bulkEmailsEnabled}
+                                className="flex items-center gap-[6px] px-[16px] py-[10px] bg-[var(--bg-white)] border border-[var(--burnt-orange)] hover:bg-[var(--burnt-orange-light)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                                title={!emailCronStatus.bulkEmailsEnabled ? "EMAILS_ENABLED env var is off — sends would 503" : "Trigger this cron manually now"}
+                              >
+                                <Send className="w-[12px] h-[12px] text-[var(--burnt-orange)]" />
+                                <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--burnt-orange)]">
+                                  {isThisRunning ? "SENDING…" : "SEND NOW"}
+                                </span>
+                              </button>
+                            </div>
+                            {result && (
+                              <div
+                                className={`flex flex-col gap-[2px] p-[10px] border ${
+                                  result.success
+                                    ? "bg-[var(--forest-green-light)] border-[var(--forest-green)]"
+                                    : "bg-red-50 border-red-300"
+                                }`}
+                              >
+                                <span
+                                  className={`font-label font-bold text-[10px] tracking-[2px] ${
+                                    result.success ? "text-[var(--forest-green)]" : "text-red-700"
+                                  }`}
+                                >
+                                  {result.success ? "✓ TRIGGERED" : "✗ FAILED"}
+                                </span>
+                                <span className="font-heading text-[12px] leading-[1.6] text-[var(--text-primary)]">
+                                  {result.message}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </>
                 )}
               </div>
 

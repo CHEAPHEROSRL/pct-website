@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
 import { requireCronAuth } from "@/lib/security";
-import { sendWeeklyUpdate, bulkEmailsEnabled } from "@/lib/email";
+import { sendWeeklyUpdate, bulkEmailsEnabled, isEmailCronStandby } from "@/lib/email";
 import { snapToTrail, metersToFeet } from "@/lib/trail";
 import type { PledgeRecord, GpsPoint, JournalPost } from "@/lib/types";
 
@@ -33,6 +33,20 @@ async function handleWeeklySend(request: NextRequest) {
       success: true,
       skipped: true,
       reason: "bulk emails disabled — set EMAILS_ENABLED=true in Vercel env to enable",
+    });
+  }
+
+  // STANDBY gate. ?bypassStandby=1 is set by the admin "Send Now" trigger so
+  // Paul can fire the blast on demand even while standby is on (the cron
+  // schedule stays paused). Anyone calling this without bypassStandby is
+  // either the Vercel scheduler or a manual curl with CRON_SECRET — both
+  // legitimately governed by standby.
+  const bypassStandby = request.nextUrl.searchParams.get("bypassStandby") === "1";
+  if (!bypassStandby && (await isEmailCronStandby())) {
+    return NextResponse.json({
+      success: true,
+      skipped: true,
+      reason: "email crons in STANDBY — flip the switch in admin Settings → Email Crons",
     });
   }
 

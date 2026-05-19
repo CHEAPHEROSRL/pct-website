@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
 import { requireCronAuth } from "@/lib/security";
-import { sendMilestoneReached, sendPreMilestoneNudge, sendNearFinish, bulkEmailsEnabled } from "@/lib/email";
+import { sendMilestoneReached, sendPreMilestoneNudge, sendNearFinish, bulkEmailsEnabled, isEmailCronStandby } from "@/lib/email";
 import { snapToTrail } from "@/lib/trail";
 import type { PledgeRecord, GpsPoint } from "@/lib/types";
 
@@ -12,6 +12,14 @@ function bulkEmailsKillSwitchResponse(): NextResponse {
     success: true,
     skipped: true,
     reason: "bulk emails disabled — set EMAILS_ENABLED=true in Vercel env to enable",
+  });
+}
+
+function standbyResponse(): NextResponse {
+  return NextResponse.json({
+    success: true,
+    skipped: true,
+    reason: "email crons in STANDBY — flip the switch in admin Settings → Email Crons",
   });
 }
 
@@ -71,6 +79,9 @@ export async function GET(request: NextRequest) {
 
   if (!bulkEmailsEnabled()) return bulkEmailsKillSwitchResponse();
 
+  const bypassStandby = request.nextUrl.searchParams.get("bypassStandby") === "1";
+  if (!bypassStandby && (await isEmailCronStandby())) return standbyResponse();
+
   const redis = getRedis();
   if (!redis) {
     return NextResponse.json({ error: "Storage not configured" }, { status: 503 });
@@ -98,6 +109,9 @@ export async function POST(request: NextRequest) {
   if (authError) return authError;
 
   if (!bulkEmailsEnabled()) return bulkEmailsKillSwitchResponse();
+
+  const bypassStandby = request.nextUrl.searchParams.get("bypassStandby") === "1";
+  if (!bypassStandby && (await isEmailCronStandby())) return standbyResponse();
 
   const redis = getRedis();
   if (!redis) {

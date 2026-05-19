@@ -45,6 +45,39 @@ export function bulkEmailsEnabled(): boolean {
   return process.env.EMAILS_ENABLED === "true";
 }
 
+/**
+ * Per-site STANDBY toggle for the cron-driven email blasts (welcome drip,
+ * weekly update, milestone alerts, honor reminders). Sits ABOVE the
+ * per-pledger dedup keys but BELOW the `bulkEmailsEnabled()` master gate —
+ * so the layers are:
+ *
+ *   EMAILS_ENABLED env var (master kill, requires Vercel redeploy to flip)
+ *     ↓
+ *   emails:cron:standby Redis flag (Paul toggles instantly from admin)
+ *     ↓
+ *   per-recipient dedup keys (e.g. welcome:day1:<pledgerId>)
+ *
+ * Defaults to STANDBY (true) when:
+ *   - Redis is misconfigured (fail-safe — don't auto-send if storage is broken)
+ *   - The key has never been set (so a fresh deploy doesn't surprise-blast)
+ *
+ * Set the key to the literal string "false" (or boolean false) to disengage
+ * standby. The admin Settings → Email Crons panel writes this.
+ */
+export async function isEmailCronStandby(): Promise<boolean> {
+  const url = process.env.KV_REST_API_URL;
+  const token = process.env.KV_REST_API_TOKEN;
+  if (!url || !token) return true;
+  try {
+    const redis = new Redis({ url, token });
+    const raw = await redis.get<string | boolean>("emails:cron:standby");
+    if (raw === false || raw === "false") return false;
+    return true;
+  } catch {
+    return true; // Fail-safe: any Redis hiccup defaults to standby
+  }
+}
+
 async function getGmailClient() {
   const clientId =
     process.env.GMAIL_CLIENT_ID ||

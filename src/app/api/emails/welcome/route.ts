@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
 import { requireCronAuth } from "@/lib/security";
-import { sendWelcomeDay1, sendWelcomeDay3, bulkEmailsEnabled } from "@/lib/email";
+import { sendWelcomeDay1, sendWelcomeDay3, bulkEmailsEnabled, isEmailCronStandby } from "@/lib/email";
 import type { PledgeRecord } from "@/lib/types";
 
 // Max Vercel Hobby tier duration. Without this, the cron is killed at 30s,
@@ -28,6 +28,15 @@ export async function GET(request: NextRequest) {
       success: true,
       skipped: true,
       reason: "bulk emails disabled — set EMAILS_ENABLED=true in Vercel env to enable",
+    });
+  }
+
+  const bypassStandby = request.nextUrl.searchParams.get("bypassStandby") === "1";
+  if (!bypassStandby && (await isEmailCronStandby())) {
+    return NextResponse.json({
+      success: true,
+      skipped: true,
+      reason: "email crons in STANDBY — flip the switch in admin Settings → Email Crons",
     });
   }
 
