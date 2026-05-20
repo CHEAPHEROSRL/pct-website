@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__pencil__get_screenshot",
+      "mcp__pencil__batch_get",
+      "mcp__pencil__export_nodes",
+      "mcp__pencil__get_editor_state",
+      "mcp__pencil__find_empty_space_on_canvas",
+      "mcp__pencil__snapshot_layout",
+      "mcp__playwright__browser_snapshot",
+      "mcp__playwright__browser_close",
+      "mcp__claude_ai_Supabase__list_migrations",
+      "mcp__claude_ai_Supabase__get_advisors",
+      "Bash(nslookup *)",
+      "Bash(npm ls *)"
+    ]
+  }
+}

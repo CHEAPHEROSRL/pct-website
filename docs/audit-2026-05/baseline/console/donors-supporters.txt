@@ -1,0 +1,13 @@
+Total messages: 1 (Errors: 1, Warnings: 0)
+
+[ERROR] Error: Minified React error #300; visit https://react.dev/errors/300 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at ay (https://www.yeschapter.com/_next/static/chunks/c822c9cf3949811d.js:1:63374)
+    at av (https://www.yeschapter.com/_next/static/chunks/c822c9cf3949811d.js:1:63263)
+    at oY (https://www.yeschapter.com/_next/static/chunks/c822c9cf3949811d.js:1:83503)
+    at io (https://www.yeschapter.com/_next/static/chunks/c822c9cf3949811d.js:1:94935)
+    at sc (https://www.yeschapter.com/_next/static/chunks/c822c9cf3949811d.js:1:137956)
+    at https://www.yeschapter.com/_next/static/chunks/c822c9cf3949811d.js:1:137801
+    at ss (https://www.yeschapter.com/_next/static/chunks/c822c9cf3949811d.js:1:137809)
+    at u9 (https://www.yeschapter.com/_next/static/chunks/c822c9cf3949811d.js:1:133734)
+    at sV (https://www.yeschapter.com/_next/static/chunks/c822c9cf3949811d.js:1:159329)
+    at MessagePort.O (https://www.yeschapter.com/_next/static/chunks/c822c9cf3949811d.js:1:8295) @ https://www.yeschapter.com/_next/static/chunks/c822c9cf3949811d.js:0

@@ -1,0 +1,137 @@
+
+> pct-website@0.1.0 build
+> next build
+
+▲ Next.js 16.1.6 (Turbopack)
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 15.4s
+  Running TypeScript ...
+  Collecting page data using 11 workers ...
+  Generating static pages using 11 workers (0/108) ...
+  Generating static pages using 11 workers (27/108) 
+  Generating static pages using 11 workers (54/108) 
+  Generating static pages using 11 workers (81/108) 
+✓ Generating static pages using 11 workers (108/108) in 1265.2ms
+  Finalizing page optimization ...
+
+Route (app)                            Revalidate  Expire
+┌ ○ /
+├ ○ /_not-found
+├ ○ /admin
+├ ƒ /api/admin/auth
+├ ƒ /api/admin/blog-knowledge-default
+├ ƒ /api/admin/contact
+├ ƒ /api/admin/email-cron-status
+├ ƒ /api/admin/email-cron-trigger
+├ ƒ /api/admin/email-notes
+├ ƒ /api/admin/email-previews
+├ ƒ /api/admin/gmail-oauth/callback
+├ ƒ /api/admin/gmail-oauth/disconnect
+├ ƒ /api/admin/gmail-oauth/start
+├ ƒ /api/admin/gmail-oauth/status
+├ ƒ /api/admin/instagram-sync
+├ ƒ /api/admin/login
+├ ƒ /api/admin/media
+├ ƒ /api/admin/pledges/list-all
+├ ƒ /api/admin/refresh-cookie
+├ ƒ /api/admin/reset-pledges
+├ ƒ /api/admin/settings
+├ ƒ /api/admin/sponsors
+├ ƒ /api/admin/waitlist-launch
+├ ƒ /api/admin/youtube-subscription
+├ ƒ /api/auth/logout
+├ ƒ /api/auth/magic
+├ ƒ /api/auth/session
+├ ƒ /api/auth/site-login
+├ ƒ /api/auth/verify
+├ ƒ /api/automation/generate-post
+├ ƒ /api/automation/instagram-caption
+├ ƒ /api/automation/instagram-sync
+├ ƒ /api/automation/subscribe
+├ ƒ /api/automation/youtube-renew
+├ ƒ /api/automation/youtube-retry
+├ ƒ /api/automation/youtube-sync
+├ ƒ /api/challenges
+├ ƒ /api/challenges/commit
+├ ƒ /api/comments
+├ ƒ /api/contact
+├ ƒ /api/donors
+├ ƒ /api/emails/honor
+├ ƒ /api/emails/milestone
+├ ƒ /api/emails/new-post
+├ ƒ /api/emails/test
+├ ƒ /api/emails/weekly
+├ ƒ /api/emails/welcome
+├ ƒ /api/geo
+├ ƒ /api/honor
+├ ƒ /api/honor/stats
+├ ƒ /api/honor/verify
+├ ƒ /api/instagram
+├ ƒ /api/instagram/image
+├ ƒ /api/journal
+├ ƒ /api/journal/[slug]
+├ ƒ /api/location
+├ ƒ /api/og
+├ ƒ /api/pledges
+├ ƒ /api/pledges/boost-verify
+├ ƒ /api/pledges/claimed-sections
+├ ƒ /api/pledges/countries
+├ ƒ /api/pledges/locations
+├ ƒ /api/pledges/section-counts
+├ ƒ /api/pledges/stats
+├ ƒ /api/pledges/verify
+├ ƒ /api/share-badge
+├ ƒ /api/support
+├ ƒ /api/support/media
+├ ƒ /api/support/verify
+├ ƒ /api/supporters/locations
+├ ƒ /api/unsubscribe
+├ ƒ /api/unsubscribe/request-link
+├ ƒ /api/waitlist
+├ ƒ /api/webhooks/stripe
+├ ƒ /api/webhooks/youtube
+├ ƒ /api/youtube
+├ ○ /auth/check-email
+├ ○ /auth/verify
+├ ○ /contact
+├ ○ /donate
+├ ○ /donate/cancelled
+├ ○ /donate/success
+├ ○ /donors
+├ ○ /foundations
+├ ○ /honor
+├ ƒ /icon
+├ ○ /icon.svg
+├ ○ /join
+├ ○ /journal
+├ ƒ /journal/[slug]
+├ ○ /map-styles
+├ ○ /my-pledge
+├ ○ /pledge
+├ ○ /pledge/verify
+├ ○ /pledgers
+├ ○ /press-kit
+├ ○ /privacy-policy
+├ ○ /robots.txt
+├ ○ /site-login
+├ ○ /sitemap.xml                               1h      1y
+├ ○ /sponsor-agreement
+├ ○ /strategy
+├ ○ /support
+├ ○ /support/cancelled
+├ ○ /support/success
+├ ○ /supporters
+├ ○ /terms-of-use
+├ ○ /the-cause
+├ ○ /tracker
+├ ○ /trail-map
+├ ○ /transparency
+└ ○ /unsubscribe
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

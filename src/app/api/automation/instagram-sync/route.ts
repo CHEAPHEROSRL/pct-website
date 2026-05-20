@@ -19,7 +19,7 @@ import { syncInstagramPosts } from "@/lib/instagram";
 // Allow up to 60s (Vercel Hobby cap) — Apify scrape + fetch + Redis write
 export const maxDuration = 60;
 
-export async function POST(req: NextRequest): Promise<NextResponse> {
+async function handle(req: NextRequest): Promise<NextResponse> {
   const authError = requireCronAuth(req);
   if (authError) return authError;
 
@@ -31,4 +31,16 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   }
 
   return NextResponse.json({ ok: true, synced: result.synced });
+}
+
+// Vercel Cron always calls GET. The endpoint also accepts POST so the same
+// route can be triggered by curl / admin scripts. Earlier the endpoint only
+// exported POST, so the daily cron silently returned 405 and never actually
+// ran — fixed by adding the GET shim that delegates to the same handler.
+export async function GET(req: NextRequest): Promise<NextResponse> {
+  return handle(req);
+}
+
+export async function POST(req: NextRequest): Promise<NextResponse> {
+  return handle(req);
 }
