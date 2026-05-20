@@ -7,7 +7,7 @@ import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
 
 export const metadata: Metadata = {
-  title: "Our Partner Foundations — YesChapter",
+  title: "Our Partner Foundations",
   description:
     "Meet the two cancer foundations receiving 100% of YesChapter pledges. City of Hope (California) and the Leukaemia Foundation of Australia.",
 };

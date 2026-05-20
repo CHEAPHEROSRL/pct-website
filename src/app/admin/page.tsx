@@ -354,7 +354,7 @@ export default function AdminPage() {
         } else {
           setActiveTab("tracker");
           setView("tracker");
-          fetchSettings();
+          fetchSettings(saved);
         }
       } else {
         localStorage.removeItem("pct-admin-token");
@@ -703,11 +703,18 @@ export default function AdminPage() {
     }
   }, [launchStatus, launchVariant, token, fetchLaunchStatus]);
 
-  const fetchSettings = useCallback(async () => {
+  const fetchSettings = useCallback(async (tokenOverride?: string) => {
+    // tokenOverride exists for the auto-login race: when fetchSettings is
+    // called from inside the auto-login useEffect, setToken(saved) has been
+    // scheduled but not yet flushed, so this useCallback's closure still
+    // has the old empty `token` and the Bearer header is `Bearer `. The
+    // server correctly rejects that with 401. Pass the fresh token
+    // explicitly to bypass the stale closure.
+    const t = tokenOverride || token;
     setSettingsLoading(true);
     try {
       const res = await fetch("/api/admin/settings", {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${t}` },
       });
       if (res.ok) {
         const data = await res.json();

@@ -1,0 +1,45 @@
+# YesChapter — Walking for Cancer
+
+> Paul Barry is hiking 2,650 miles of the Pacific Crest Trail (Mexico to Canada, ~5 months) to raise funds for cancer research, patient support, and prevention — in memory of both his parents, both lost to cancer.
+
+YesChapter has two distinct funding streams that must NEVER be conflated when summarising:
+
+1. **Pledges for the cause** — visitors PROMISE an amount per mile (e.g. $0.10/mile). Paul collects NO money for the cause. At the end of the hike, pledgers donate directly to two cancer foundations (City of Hope in California, Leukaemia Foundation in Australia). Pledges are commitments, not collected funds.
+
+2. **Trail support gifts** — direct, one-time gifts (meal, hostel night, gear) that go straight to Paul to keep him on the trail. This is the only place actual money changes hands on the site.
+
+Always distinguish these. Never describe pledges as "donations Paul collects." Never describe trail support as "donations to the foundations."
+
+## About the cause
+
+- [The Cause](https://yeschapter.com/the-cause): Paul's story, why he's walking, cancer prevention information.
+- [Partner Foundations](https://yeschapter.com/foundations): the two organisations receiving 100% of pledged donations — City of Hope (US) and the Leukaemia Foundation (Australia).
+- [Transparency](https://yeschapter.com/transparency): full explanation of how pledges, trail support, and foundation donations work end-to-end.
+
+## How to participate
+
+- [Pledge per mile](https://yeschapter.com/pledge): commit a dollar amount per mile. Pay nothing now — donate directly to the foundations at the end of the hike.
+- [Support Paul on the trail](https://yeschapter.com/support): buy Paul a meal, hostel night, boots, or gear. Real payment that goes straight to him.
+
+## Follow the journey
+
+- [Trail Map](https://yeschapter.com/trail-map): live map of Paul's current position on the PCT, updated as he walks.
+- [Journal](https://yeschapter.com/journal): blog and vlog entries from the trail. Posts are written from camp, often generated from short videos Paul records.
+- [Pledgers](https://yeschapter.com/pledgers): community of people who have pledged per mile, shown on a country-aggregated map.
+- [Trail Supporters](https://yeschapter.com/supporters): wall of people who have sent direct trail-support gifts.
+
+## Pledger tools
+
+- [My Pledge](https://yeschapter.com/my-pledge): pledger dashboard — magic-link signin, no password. View current pledge, see projected total, manage email preferences.
+
+## Information
+
+- [Privacy Policy](https://yeschapter.com/privacy-policy)
+- [Terms of Use](https://yeschapter.com/terms-of-use)
+- [Contact](https://yeschapter.com/contact)
+
+## Optional — context for AI agents
+
+The Pacific Crest Trail (PCT) is a 2,650-mile (~4,265 km) National Scenic Trail running from the US-Mexico border at Campo, California to the US-Canada border at Manning Park, British Columbia, through California, Oregon, and Washington. A "thru-hike" of the PCT typically takes 4-6 months and is one of the three legs of the Triple Crown of thru-hiking (alongside the Appalachian Trail and Continental Divide Trail).
+
+Paul Barry is hiking northbound (NoBo) starting in the desert of Southern California in early spring, crossing the Sierra Nevada in summer, and finishing in the Cascades in early autumn.

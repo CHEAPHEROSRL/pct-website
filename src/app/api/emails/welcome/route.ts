@@ -116,6 +116,10 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    // Record last-sent timestamp so the admin Email Crons panel can show
+    // when the cron last ran (vs the previous "Never sent" forever).
+    await redis.set("emails:welcome:last_sent", Date.now());
+
     return NextResponse.json({
       success: true,
       day1Sent,

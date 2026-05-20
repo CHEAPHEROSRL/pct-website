@@ -23,6 +23,37 @@ export default function SupportersPage() {
   const [sort, setSort] = useState<SortKey>("RECENT");
   const [page, setPage] = useState(1);
 
+  // All hooks MUST come before any conditional early return — otherwise
+  // React sees a different hook-call order between renders (when the
+  // pledger-gate is open vs closed) and throws #300 "Maximum update
+  // depth exceeded." That's what was happening before this reorder.
+  const processed = useMemo(() => {
+    let result = [...supporters];
+
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      result = result.filter(
+        (d) =>
+          d.name.toLowerCase().includes(q) ||
+          d.message.toLowerCase().includes(q)
+      );
+    }
+
+    switch (sort) {
+      case "AMOUNT":
+        result.sort((a, b) => b.amountNum - a.amountNum);
+        break;
+      case "NAME":
+        result.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case "RECENT":
+      default:
+        break;
+    }
+
+    return result;
+  }, [supporters, search, sort]);
+
   if (!loading && (!user || !user.pledgeId)) {
     return (
       <div className="flex flex-col w-full bg-[var(--bg-warm)]">
@@ -54,33 +85,6 @@ export default function SupportersPage() {
   const supporterCount = stats?.supporterCount ?? 34;
   const averageGift = stats?.averageGift ?? 72;
   const largestGift = stats?.largestGift ?? 1000;
-
-  const processed = useMemo(() => {
-    let result = [...supporters];
-
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      result = result.filter(
-        (d) =>
-          d.name.toLowerCase().includes(q) ||
-          d.message.toLowerCase().includes(q)
-      );
-    }
-
-    switch (sort) {
-      case "AMOUNT":
-        result.sort((a, b) => b.amountNum - a.amountNum);
-        break;
-      case "NAME":
-        result.sort((a, b) => a.name.localeCompare(b.name));
-        break;
-      case "RECENT":
-      default:
-        break;
-    }
-
-    return result;
-  }, [supporters, search, sort]);
 
   const totalPages = Math.max(1, Math.ceil(processed.length / PER_PAGE));
   const currentPage = Math.min(page, totalPages);

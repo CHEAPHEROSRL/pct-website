@@ -157,6 +157,11 @@ export async function GET(request: NextRequest) {
       await redis.sadd("emails:honor:sent", variant);
     }
 
+    // Record last-sent timestamp so the admin Email Crons panel reflects
+    // when this cron last ran (regardless of whether anything actually went
+    // out — even a "no eligible reminders" return is still a successful run).
+    await redis.set("emails:honor:last_sent", Date.now());
+
     return NextResponse.json({
       success: true,
       variant,

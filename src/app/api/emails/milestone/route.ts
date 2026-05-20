@@ -96,6 +96,12 @@ export async function GET(request: NextRequest) {
   const nudge = await nudgeResult.json();
   const nearFinish = await nearFinishResult.json();
 
+  // Record last-sent timestamp so the admin Email Crons panel reflects
+  // when this cron last ran. The cron may have returned "no new milestones
+  // to send" — that's still a successful run; we record the timestamp
+  // regardless of whether any specific email went out.
+  await redis.set("emails:milestone:last_sent", Date.now());
+
   return NextResponse.json({
     milestones: combined,
     nudges: nudge,

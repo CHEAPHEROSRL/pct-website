@@ -83,14 +83,14 @@ export default function Footer() {
 
       {/* Bottom */}
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0 w-full">
-        <span className="font-label font-medium text-[11px] tracking-[0.5px] text-[#FFFFFF55]">
+        <span className="font-label font-medium text-[11px] tracking-[0.5px] text-[#FFFFFFB3]">
           &copy; 2026 YesChapter — Walk for Cancer. All rights reserved.
         </span>
         <div className="flex gap-[24px]">
-          <Link href="/privacy-policy" className="font-label font-medium text-[11px] tracking-[0.5px] text-[#FFFFFF55] hover:text-white cursor-pointer">
+          <Link href="/privacy-policy" className="font-label font-medium text-[11px] tracking-[0.5px] text-[#FFFFFFB3] hover:text-white cursor-pointer">
             Privacy Policy
           </Link>
-          <Link href="/terms-of-use" className="font-label font-medium text-[11px] tracking-[0.5px] text-[#FFFFFF55] hover:text-white cursor-pointer">
+          <Link href="/terms-of-use" className="font-label font-medium text-[11px] tracking-[0.5px] text-[#FFFFFFB3] hover:text-white cursor-pointer">
             Terms of Use
           </Link>
         </div>
