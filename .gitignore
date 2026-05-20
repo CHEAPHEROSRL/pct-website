@@ -41,3 +41,10 @@ yarn-error.log*
 next-env.d.ts
 
 .vercel
+.env*.local
+
+# Claude Code per-user settings (may contain API tokens, admin secrets,
+# session-specific bash command allowlists). Project-wide preferences go
+# in .claude/settings.json which IS tracked.
+.claude/settings.local.json
+.playwright-mcp/
