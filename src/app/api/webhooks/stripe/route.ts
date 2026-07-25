@@ -52,6 +52,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ received: true });
     }
 
+    // This Stripe account is shared with Paul's other business, which runs its
+    // own live integration (Payment Links / Checkout) on the same account.
+    // Stripe fans every matching event out to every subscribed endpoint, so
+    // that business's sales arrive here too. Only trail support gifts belong
+    // in this site's data — drop everything else rather than filing an
+    // unrelated customer's name and email under "donors".
+    if (session.metadata?.type !== "trail_support") {
+      return NextResponse.json({ received: true, ignored: true });
+    }
+
     // Idempotency: key on event.id (Stripe's own recommendation), set NX at
     // the TOP of processing. If the marker already exists, another delivery
     // of this event is in flight or has already completed — we return early
@@ -77,6 +87,11 @@ export async function POST(request: NextRequest) {
       ? "Anonymous"
       : `${meta.firstName || ""} ${meta.lastName || ""}`.trim() || "Supporter";
 
+    // Checkout only populates `customer_email` when it was pre-filled at
+    // session creation — we don't pre-fill it, so the address the buyer
+    // actually typed arrives in `customer_details.email`.
+    const email = meta.email || session.customer_details?.email || session.customer_email || "";
+
     // Capture Paul's trail position at time of gift
     let trailLat: number | undefined;
     let trailLng: number | undefined;
@@ -95,11 +110,11 @@ export async function POST(request: NextRequest) {
     const record: SupportRecord = {
       id: session.id,
       name: displayName,
-      email: meta.email || session.customer_email || "",
+      email,
       amount: amountDollars,
       message: isTrailSupport ? (meta.message || meta.giftTitle || "Trail support gift") : (meta.message || ""),
       anonymous: meta.anonymous === "true",
-      color: avatarColor(meta.email || session.customer_email || session.id),
+      color: avatarColor(email || session.id),
       giftTitle: meta.giftTitle || null,
       createdAt: Date.now(),
       trailLat,
@@ -119,6 +134,16 @@ export async function POST(request: NextRequest) {
     // Track per-gift-type counts for progress bars
     if (isTrailSupport && meta.giftTitle && meta.giftTitle in GIFT_ESTIMATES) {
       await redis.incr(`supporters:gift-count:${meta.giftTitle}`);
+    }
+
+    // Unlocks the optional photo/video upload on /support/success.
+    // /api/support/media requires this marker, so media can only ever attach
+    // to a gift we actually recorded. TTL outlasts any realistic delay
+    // between paying and coming back to add a photo.
+    if (isTrailSupport) {
+      await redis.set(`supporters:processed:${session.id}`, "1", {
+        ex: 60 * 60 * 24 * 90,
+      });
     }
   }
 

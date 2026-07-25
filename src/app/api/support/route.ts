@@ -25,14 +25,22 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const origin = request.headers.get("origin") || "http://localhost:3000";
+  // A request without an Origin header must never send a paying customer to
+  // localhost after checkout — fall back to the real site like the rest of
+  // the codebase does.
+  const origin =
+    request.headers.get("origin") ||
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    "https://yeschapter.com";
   const description = giftTitle
     ? `Trail support gift: ${giftTitle}`
     : `Trail support gift — $${amountNum}`;
 
   try {
+    // payment_method_types is deliberately omitted: Stripe then offers every
+    // method enabled in the dashboard (Apple Pay, Google Pay, Link), which
+    // matters because most gift traffic arrives on mobile from social.
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
       mode: "payment",
       line_items: [
         {
