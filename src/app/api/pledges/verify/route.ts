@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
 import { consumeEmailVerifyToken, RATE_LIMITS } from "@/lib/security";
 import { safeParse } from "@/lib/redis-safe";
-import { sendPledgeConfirmation, sendCommunityMilestone, bulkEmailsEnabled } from "@/lib/email";
+import { sendPledgeConfirmation, sendPledgeAlert, sendCommunityMilestone, bulkEmailsEnabled } from "@/lib/email";
 import { createSession, sessionCookieOptions, SESSION_COOKIE } from "@/lib/auth";
 import type { PledgeRecord } from "@/lib/types";
 
@@ -83,18 +83,29 @@ export async function GET(req: NextRequest) {
     // Clean up pending record
     await redis.del(pendingKey);
 
-    // Send confirmation email (fire-and-forget)
     const rate = `$${pendingRecord.amount.toFixed(2)}/${pendingRecord.interval === 1 ? "mi" : pendingRecord.interval + "mi"}`;
-    sendPledgeConfirmation(
-      pendingRecord.email,
-      pendingRecord.name,
-      rate,
-      pendingRecord.totalPledge
-    ).catch(() => {});
 
-    // Check community milestones
     const newCount = (await redis.get<number>("pledgers:count")) || 0;
     const newTotal = (await redis.get<number>("pledgers:total_pledged")) || 0;
+
+    // Two emails, both awaited: the pledger's confirmation receipt, and the
+    // alert telling Paul a pledge landed. Awaited rather than fire-and-forget
+    // because Vercel can terminate this function the instant the redirect is
+    // returned, killing an in-flight Gmail round-trip — the same reason
+    // POST /api/pledges awaits its verification send. allSettled so that a
+    // failed send never turns the pledger's successful confirmation into an
+    // error page; the pledge itself is already committed above.
+    await Promise.allSettled([
+      sendPledgeConfirmation(
+        pendingRecord.email,
+        pendingRecord.name,
+        rate,
+        pendingRecord.totalPledge
+      ),
+      sendPledgeAlert(pendingRecord, newCount, newTotal),
+    ]);
+
+    // Check community milestones
     checkCommunityMilestones(redis, newCount, newTotal).catch(() => {});
 
     // Sign the pledger in by creating a session.

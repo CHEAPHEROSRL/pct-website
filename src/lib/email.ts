@@ -2,6 +2,7 @@ import { google } from "googleapis";
 import { getSetting } from "./settings";
 import { Redis } from "@upstash/redis";
 import { safeParse } from "./redis-safe";
+import type { PledgeRecord } from "./types";
 
 // ---------------------------------------------------------------------------
 // Gmail API client (Google Workspace OAuth2)
@@ -988,6 +989,96 @@ export async function sendContactNotification(
   `;
 
   return send(recipient, `[YesChapter Contact] ${subject}`, html, senderEmail);
+}
+
+/**
+ * Admin alert — a new pledge just confirmed.
+ *
+ * Nothing previously told Paul a pledge had arrived. Four pledges landed over
+ * two months and he only found out because one of the pledgers mentioned it to
+ * him in person, then couldn't find them in the admin either (there is no
+ * pledgers tab). This closes that blind spot.
+ *
+ * Deliberately NOT gated by bulkEmailsEnabled(): this is a single-recipient
+ * operational alert, the same class as the contact-form notification, and
+ * gating it behind the pre-launch bulk kill switch would defeat its purpose.
+ *
+ * Recipient is overridable via ADMIN_NOTIFY_EMAIL. paul@yeschapter.com has no
+ * mailbox of its own and relies on domain forwarding, so the override exists
+ * to reroute alerts without a code change if forwarding isn't in place.
+ *
+ * Reply-To is the pledger, so Paul can thank them by simply hitting reply.
+ */
+export async function sendPledgeAlert(
+  record: PledgeRecord,
+  pledgerCount: number,
+  totalPledged: number
+): Promise<SendResult> {
+  const recipient = process.env.ADMIN_NOTIFY_EMAIL || "paul@yeschapter.com";
+
+  const safeName = htmlEscape(record.anonymous ? `${record.name} (listed anonymously)` : record.name);
+  const safeEmail = htmlEscape(record.email);
+  const safeMessage = record.message ? htmlEscape(record.message).replace(/\n/g, "<br>") : "";
+  const location = [record.city, record.country].filter(Boolean).join(", ");
+  const safeLocation = location ? htmlEscape(location) : "Unknown";
+
+  const rate = `$${record.amount.toFixed(2)}/${record.interval === 1 ? "mi" : record.interval + "mi"}`;
+  const money = (n: number) =>
+    `US$${n.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
+
+  const row = (label: string, value: string) => `
+    <tr>
+      <td style="padding: 8px 0; font-family: sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: #8C8A87; width: 110px; vertical-align: top;">${label}</td>
+      <td style="padding: 8px 0; font-size: 14px; color: #1C1C1C;">${value}</td>
+    </tr>`;
+
+  const html = `
+    <div style="max-width: 600px; margin: 0 auto; background: #F4F1EC; font-family: Georgia, serif;">
+      ${emailHeader()}
+      <div style="background: #3D7A5A; padding: 28px 32px;">
+        <p style="margin: 0 0 6px; font-size: 11px; letter-spacing: 3px; font-family: sans-serif; font-weight: 700; color: #FFFFFFAA;">NEW PLEDGE CONFIRMED</p>
+        <h1 style="margin: 0; font-size: 22px; font-weight: 600; color: #FFFFFF;">${safeName} pledged ${rate}</h1>
+      </div>
+      <div style="text-align: center; padding: 28px 32px; background: #FFFFFF;">
+        <div style="font-family: sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 3px; color: #8C8A87;">THEIR TOTAL COMMITMENT</div>
+        <div style="font-size: 44px; font-weight: 600; letter-spacing: -1px; color: #3D7A5A; margin: 6px 0;">${money(record.totalPledge)}</div>
+        <div style="font-family: sans-serif; font-weight: 500; font-size: 11px; color: #8C8A87;">${rate} &times; 2,650 miles &mdash; payable to the foundations when you finish</div>
+      </div>
+      <div style="background: #FFFFFF; padding: 4px 32px 24px;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse: collapse;">
+          ${row("EMAIL", `<a href="mailto:${safeEmail}" style="color: #C45C26; text-decoration: none;">${safeEmail}</a>`)}
+          ${row("LOCATION", safeLocation)}
+          ${row("EMAILS", htmlEscape(record.emailPreference || "finish"))}
+          ${record.claimedSection ? row("CLAIMED", htmlEscape(record.claimedSection)) : ""}
+        </table>
+        ${safeMessage
+          ? `<hr style="border: 0; border-top: 1px solid #D9D7D4; margin: 20px 0;" />
+             <p style="margin: 0 0 8px; font-family: sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: #8C8A87;">THEIR MESSAGE</p>
+             <div style="font-size: 15px; line-height: 1.7; color: #1C1C1C;">${safeMessage}</div>`
+          : ""}
+      </div>
+      <div style="background: #E8F0EB; padding: 20px 32px; text-align: center;">
+        <p style="margin: 0; font-family: sans-serif; font-size: 12px; letter-spacing: 1px; color: #3D7A5A; font-weight: 700;">
+          ${pledgerCount} ${pledgerCount === 1 ? "PLEDGER" : "PLEDGERS"} &middot; ${money(totalPledged)} PLEDGED SO FAR
+        </p>
+      </div>
+      <div style="background: #FEF3EC; padding: 24px 32px; text-align: center;">
+        <p style="margin: 0 0 16px; font-size: 13px; color: #5C5C5C; font-family: sans-serif; line-height: 1.5;">Hit reply to thank ${safeName} directly &mdash; it goes straight to them, not to the site.</p>
+        <a href="${SITE}/pledgers" style="display: inline-block; background: #C45C26; color: #FFFFFF; padding: 12px 28px; font-family: sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-decoration: none;">SEE ALL PLEDGERS</a>
+      </div>
+      <div style="background: #1C1F1A; padding: 16px 32px; text-align: center;">
+        <p style="margin: 0; font-size: 10px; color: #FFFFFF55; font-family: sans-serif; letter-spacing: 0.5px;">Automatic alert &mdash; sent when a pledge is confirmed on yeschapter.com</p>
+      </div>
+    </div>
+  `;
+
+  const subjectName = record.anonymous ? "Anonymous pledger" : record.name;
+  return send(
+    recipient,
+    `[YesChapter] New pledge: ${subjectName} — ${money(record.totalPledge)}`,
+    html,
+    record.email
+  );
 }
 
 export async function sendHonorReminder(

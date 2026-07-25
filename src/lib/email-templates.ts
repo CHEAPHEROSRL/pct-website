@@ -37,6 +37,7 @@ import {
   sendCommunityMilestone,
   sendMagicLink,
   sendNewPost,
+  sendPledgeAlert,
   sendWaitlistLaunchA,
   sendWaitlistLaunchB,
   sendWaitlistLaunchC,
@@ -177,6 +178,43 @@ export const EMAIL_TEMPLATES: EmailTemplateEntry[] = [
           "Sarah",
           "$0.25/mile",
           662.5
+        )
+      ),
+  },
+  {
+    id: "pledge-alert",
+    name: "New pledge alert (to Paul)",
+    category: "pledger-lifecycle",
+    categoryLabel: "Pledger lifecycle",
+    trigger:
+      "Sent to Paul the moment a pledge is confirmed. This is the only thing that tells him a pledge arrived — the admin has no pledgers tab, so before this existed pledges landed silently.",
+    recipient:
+      "Paul — ADMIN_NOTIFY_EMAIL if set, otherwise paul@yeschapter.com. Reply-To is the pledger, so replying thanks them directly.",
+    cron: null,
+    dedupKey: null,
+    render: () =>
+      withPreviewCapture(() =>
+        sendPledgeAlert(
+          {
+            id: "preview",
+            email: PREVIEW_EMAIL,
+            name: "Sarah Whitfield",
+            amount: 0.25,
+            interval: 1,
+            totalPledge: 662.5,
+            anonymous: false,
+            boosts: [],
+            unsubscribeToken: "preview",
+            emailPreference: "all",
+            message: "Walking for both your parents — that means something. Go get it, Paul.",
+            city: "Portland",
+            country: "US",
+            claimedSection: "crater-lake",
+            createdAt: 0,
+            updatedAt: 0,
+          },
+          5,
+          1616.5
         )
       ),
   },
