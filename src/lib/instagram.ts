@@ -80,6 +80,31 @@ function getRedis(): Redis {
 // state the UI handles cleanly) instead of a gallery of broken-image icons.
 const CACHE_MAX_AGE_MS = 5 * 24 * 60 * 60 * 1000; // 5 days — comfortably inside the ~7d expiry window
 
+/**
+ * Instagram encodes each signed URL's expiry in an `oe=` query param, as a
+ * hex unix timestamp. Past it, the CDN answers 403 and the gallery renders as
+ * broken-image icons.
+ *
+ * Reading the URL is strictly better than trusting our own sync timestamp,
+ * which is only a proxy for it. A sync that falls back to an older Apify
+ * dataset writes long-dead URLs stamped with a fresh sync time — which is
+ * exactly how twelve broken images reached the live journal on 2026-07-26.
+ * Returns null when there's no expiry to read, so an Instagram URL-format
+ * change fails open rather than blanking the gallery.
+ */
+function urlExpiresAt(mediaUrl: string): number | null {
+  const match = /[?&]oe=([0-9A-Fa-f]+)/.exec(mediaUrl || "");
+  if (!match) return null;
+  const seconds = parseInt(match[1], 16);
+  return Number.isFinite(seconds) ? seconds * 1000 : null;
+}
+
+/** True unless we can prove the post's image URL is already dead. */
+function hasLiveImageUrl(post: InstagramPost): boolean {
+  const expiresAt = urlExpiresAt(post.mediaUrl);
+  return expiresAt === null || expiresAt > Date.now();
+}
+
 export async function getCachedPosts(
   options: { allowStale?: boolean } = {}
 ): Promise<InstagramPost[]> {
@@ -99,6 +124,9 @@ export async function getCachedPosts(
         // empty-state instead of rendering broken-image icons.
         return [];
       }
+      // Belt and braces: the sync-age guard above can be defeated by a fresh
+      // sync of a stale dataset, so also drop individually-dead URLs.
+      return parsed.filter(hasLiveImageUrl);
     }
     return parsed;
   } catch {
@@ -298,8 +326,23 @@ export async function syncInstagramPosts(
       return { posts: await getCachedPosts(), synced: 0 };
     }
 
-    await cachePosts(posts);
-    return { posts, synced: posts.length };
+    // The fresh-scrape trigger above is deliberately non-fatal, and it also
+    // gives up waiting after 45s to stay inside Vercel's function limit. Both
+    // paths land us on Apify's LAST SUCCEEDED dataset, which may predate
+    // Instagram's ~7-day URL expiry. Caching that would swap working images
+    // for a grid of 403s, so refuse it and keep what we already have.
+    const usable = posts.filter(hasLiveImageUrl);
+    if (usable.length === 0) {
+      return {
+        posts: await getCachedPosts(),
+        synced: 0,
+        error:
+          "Apify returned only expired image URLs — its last run predates Instagram's URL expiry. Trigger a fresh run in the Apify console, then sync again.",
+      };
+    }
+
+    await cachePosts(usable);
+    return { posts: usable, synced: usable.length };
   } catch (err) {
     const error = err instanceof Error ? err.message : String(err);
     console.error("Instagram sync failed:", error);
