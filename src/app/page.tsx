@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import ShareButton from "@/components/ShareButton";
 import HomeTrailProgress from "@/components/HomeTrailProgress";
 import HomeJournalSection from "@/components/HomeJournalSection";
+import HomePledgerWall from "@/components/HomePledgerWall";
 import ScrollReveal from "@/components/ScrollReveal";
 import HeroParallax from "@/components/HeroParallax";
 import {
@@ -164,49 +165,8 @@ export default function Home() {
         </ScrollReveal>
       </section>
 
-      {/* Pledger Wall */}
-      <section className="flex flex-col items-center gap-[32px] md:gap-[48px] px-6 md:px-12 lg:px-[120px] py-[48px] md:py-[64px] lg:py-[80px] bg-[var(--bg-white)] w-full">
-        <ScrollReveal animation="fade-up">
-          <div className="flex flex-col items-center gap-[16px] w-full">
-            <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">PLEDGER WALL</span>
-            <h2 className="font-heading font-semibold text-[28px] md:text-[34px] lg:text-[40px] tracking-[-0.5px] text-[var(--text-primary)] text-center">
-              Help Make This Possible
-            </h2>
-            <p className="font-heading text-[18px] leading-[1.6] text-[var(--text-secondary)] text-center">
-              These spots are waiting for people like you. Pledge per mile and see your name here.
-            </p>
-          </div>
-        </ScrollReveal>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[16px] w-full">
-          <ScrollReveal animation="fade-up" className="flex flex-col gap-[12px]">
-            <PlaceholderCard label="This could be you" />
-            <PlaceholderCard label="Your name here" />
-            <PlaceholderCard label="This could be you" />
-          </ScrollReveal>
-          <ScrollReveal animation="fade-up" delay={100} className="flex flex-col gap-[12px]">
-            <PlaceholderCard label="Your name here" />
-            <PlaceholderCard label="This could be you" />
-            <PlaceholderCard label="Your name here" />
-          </ScrollReveal>
-          <ScrollReveal animation="fade-up" delay={200} className="flex flex-col gap-[12px]">
-            <PlaceholderCard label="This could be you" />
-            <PlaceholderCard label="Your name here" />
-            <PlaceholderCard label="This could be you" />
-          </ScrollReveal>
-          <ScrollReveal animation="fade-up" delay={300} className="flex flex-col gap-[12px]">
-            <PlaceholderCard label="Your name here" />
-            <PlaceholderCard label="This could be you" />
-            <PlaceholderCard label="Your name here" />
-          </ScrollReveal>
-        </div>
-        <Link
-          href="/pledge"
-          className="flex items-center justify-center gap-[8px] border border-[var(--border-subtle)] px-[32px] py-[14px]"
-        >
-          <span className="font-label font-bold text-[12px] tracking-[2px] text-[var(--text-secondary)]">PLEDGE NOW</span>
-          <Heart className="w-[14px] h-[14px] text-[var(--text-secondary)]" />
-        </Link>
-      </section>
+      {/* Pledger Wall — real pledgers fill from the top, open slots always remain */}
+      <HomePledgerWall />
 
       {/* Blog / Vlog — entire section is hidden until at least one published post exists */}
       <HomeJournalSection />
@@ -273,14 +233,3 @@ export default function Home() {
   );
 }
 
-function PlaceholderCard({ label }: { label: string }) {
-  return (
-    <div className="flex items-center gap-[12px] bg-[var(--bg-card)] border border-dashed border-[var(--border-subtle)] p-[16px]">
-      <div className="w-[36px] h-[36px] rounded-full shrink-0 bg-[var(--bg-warm)] border border-dashed border-[var(--border-subtle)]" />
-      <div className="flex flex-col gap-[2px]">
-        <span className="font-heading font-medium italic text-[14px] text-[var(--text-muted)]">{label}</span>
-        <span className="font-label font-semibold text-[11px] tracking-[1px] text-[var(--text-muted)]">$/mi</span>
-      </div>
-    </div>
-  );
-}
