@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Heart } from "lucide-react";
 import ScrollReveal from "@/components/ScrollReveal";
+import { useLocationData } from "@/hooks/useLocationData";
 import { avatarColor } from "@/lib/donor-utils";
 import type { PledgePublic } from "@/lib/types";
 
@@ -30,9 +31,43 @@ const MIN_OPEN_SLOTS = 3;
 const MAX_NAMED = TOTAL_SLOTS - MIN_OPEN_SLOTS;
 const COLUMNS = 4;
 const PER_COLUMN = TOTAL_SLOTS / COLUMNS;
+const TOTAL_MILES = 2650;
+
+/**
+ * Which distance the money figures are measured against.
+ *
+ *   "full"    — what a pledge is worth if Paul walks all 2,650 miles. This is
+ *               the number the rest of the site calls "total pledged", so it's
+ *               the default; switching it would silently restate every figure
+ *               a visitor has already seen elsewhere.
+ *   "current" — what the same pledge is worth at the mile Paul has actually
+ *               reached today.
+ */
+type DistanceMode = "full" | "current";
+
+/**
+ * A pledge's value at an arbitrary distance.
+ *
+ * Derived from totalPledge rather than by parsing the "$0.10/mi" rate string:
+ * totalPledge is always rate x 2,650 / interval, so scaling it by the fraction
+ * of the trail walked gives the same answer for per-mile, per-10-mile and
+ * per-100-mile pledges alike, with no string parsing and no extra API fields.
+ */
+function valueAtMiles(totalPledge: number, miles: number): number {
+  const fraction = Math.min(1, Math.max(0, miles / TOTAL_MILES));
+  return totalPledge * fraction;
+}
+
+function money(amount: number): string {
+  return `$${Math.round(amount).toLocaleString("en-US")}`;
+}
 
 export default function HomePledgerWall() {
   const [pledgers, setPledgers] = useState<PledgePublic[]>([]);
+  const [totalPledged, setTotalPledged] = useState(0);
+  const [pledgerCount, setPledgerCount] = useState(0);
+  const [mode, setMode] = useState<DistanceMode>("full");
+  const { data: location } = useLocationData();
 
   useEffect(() => {
     let active = true;
@@ -42,6 +77,8 @@ export default function HomePledgerWall() {
         if (!active) return;
         const list = Array.isArray(data?.topPledgers) ? data.topPledgers : [];
         setPledgers(list.slice(0, MAX_NAMED));
+        setTotalPledged(data?.stats?.totalPledged ?? 0);
+        setPledgerCount(data?.stats?.pledgerCount ?? 0);
       })
       .catch(() => {
         // Keep the placeholder-only wall rather than showing an error state
@@ -51,11 +88,31 @@ export default function HomePledgerWall() {
     };
   }, []);
 
+  const milesWalked = location?.stats?.totalMiles ?? 0;
+
+  // The toggle is only meaningful once we know how far Paul has walked. If the
+  // location endpoint hasn't answered, we quietly show full-distance figures
+  // only — better than offering a switch that would read $0.
+  const canToggle = milesWalked > 0;
+  const showCurrent = mode === "current" && canToggle;
+
+  const displayedTotal = showCurrent
+    ? valueAtMiles(totalPledged, milesWalked)
+    : totalPledged;
+
   // Build all 12 slots up front, then deal them into columns. Doing it in one
   // pass keeps the named/open boundary in a single place.
   const slots = Array.from({ length: TOTAL_SLOTS }, (_, i) =>
     i < pledgers.length ? (
-      <PledgerCard key={`p-${pledgers[i].name}-${i}`} pledger={pledgers[i]} />
+      <PledgerCard
+        key={`p-${pledgers[i].name}-${i}`}
+        pledger={pledgers[i]}
+        amount={
+          showCurrent
+            ? valueAtMiles(pledgers[i].totalPledge, milesWalked)
+            : pledgers[i].totalPledge
+        }
+      />
     ) : (
       <PlaceholderCard
         key={`open-${i}`}
@@ -65,7 +122,7 @@ export default function HomePledgerWall() {
   );
 
   return (
-    <section className="flex flex-col items-center gap-[32px] md:gap-[48px] px-6 md:px-12 lg:px-[120px] py-[48px] md:py-[64px] lg:py-[80px] bg-[var(--bg-white)] w-full">
+    <section className="flex flex-col items-center gap-[32px] md:gap-[40px] px-6 md:px-12 lg:px-[120px] py-[48px] md:py-[64px] lg:py-[80px] bg-[var(--bg-white)] w-full">
       <ScrollReveal animation="fade-up">
         <div className="flex flex-col items-center gap-[16px] w-full">
           <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">
@@ -81,6 +138,58 @@ export default function HomePledgerWall() {
           </p>
         </div>
       </ScrollReveal>
+
+      {/* Cumulative total + distance toggle — only once there's a real pledge */}
+      {pledgerCount > 0 && (
+        <ScrollReveal animation="fade-up">
+          <div className="flex flex-col items-center gap-[14px]">
+            <span className="font-heading font-semibold text-[40px] md:text-[52px] leading-[1] tracking-[-1px] text-[var(--forest-green)]">
+              {money(displayedTotal)}
+            </span>
+            <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-muted)] text-center">
+              {showCurrent
+                ? `PLEDGED AT MILE ${Math.round(milesWalked).toLocaleString("en-US")}`
+                : "PLEDGED IF PAUL FINISHES ALL 2,650 MILES"}
+            </span>
+            <span className="font-heading text-[14px] text-[var(--text-secondary)]">
+              from {pledgerCount} {pledgerCount === 1 ? "pledger" : "pledgers"}
+            </span>
+
+            {canToggle && (
+              <div className="flex items-center border border-[var(--border-subtle)] mt-[4px]">
+                <button
+                  onClick={() => setMode("current")}
+                  aria-pressed={mode === "current"}
+                  className={`font-label font-bold text-[11px] tracking-[2px] px-[16px] py-[8px] cursor-pointer transition-colors ${
+                    mode === "current"
+                      ? "bg-[var(--burnt-orange)] text-[var(--text-white)]"
+                      : "bg-[var(--bg-white)] text-[var(--text-muted)] hover:bg-[var(--bg-warm)]"
+                  }`}
+                >
+                  SO FAR
+                </button>
+                <button
+                  onClick={() => setMode("full")}
+                  aria-pressed={mode === "full"}
+                  className={`font-label font-bold text-[11px] tracking-[2px] px-[16px] py-[8px] cursor-pointer transition-colors ${
+                    mode === "full"
+                      ? "bg-[var(--burnt-orange)] text-[var(--text-white)]"
+                      : "bg-[var(--bg-white)] text-[var(--text-muted)] hover:bg-[var(--bg-warm)]"
+                  }`}
+                >
+                  FULL HIKE
+                </button>
+              </div>
+            )}
+
+            <span className="font-heading text-[12px] leading-[1.5] text-[var(--text-muted)] text-center max-w-[420px]">
+              Pledges are promises, not payments. Pledgers donate directly to the
+              two foundations when Paul finishes. Paul receives nothing.
+            </span>
+          </div>
+        </ScrollReveal>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[16px] w-full">
         {Array.from({ length: COLUMNS }, (_, col) => (
           <ScrollReveal
@@ -107,7 +216,13 @@ export default function HomePledgerWall() {
 }
 
 /** A confirmed pledger. Same geometry as PlaceholderCard so the grid doesn't shift. */
-function PledgerCard({ pledger }: { pledger: PledgePublic }) {
+function PledgerCard({
+  pledger,
+  amount,
+}: {
+  pledger: PledgePublic;
+  amount: number;
+}) {
   const initial = (pledger.name || "?").trim().charAt(0).toUpperCase() || "?";
   return (
     <div className="flex items-center gap-[12px] bg-[var(--bg-card)] border border-[var(--border-subtle)] p-[16px]">
@@ -124,7 +239,7 @@ function PledgerCard({ pledger }: { pledger: PledgePublic }) {
           {pledger.name}
         </span>
         <span className="font-label font-semibold text-[11px] tracking-[1px] text-[var(--forest-green)]">
-          {pledger.rate}
+          {pledger.rate} &middot; {money(amount)}
         </span>
       </div>
     </div>

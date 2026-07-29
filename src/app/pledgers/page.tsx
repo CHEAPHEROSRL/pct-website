@@ -5,8 +5,6 @@ import Link from "next/link";
 import {
   Users,
   TrendingUp,
-  Zap,
-  Trophy,
   Heart,
   ArrowRight,
 } from "lucide-react";
@@ -14,7 +12,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CountdownBanner from "@/components/CountdownBanner";
 import ScrollReveal from "@/components/ScrollReveal";
-import type { PledgePublic, PledgeStats, ChallengePublic, PledgerComment } from "@/lib/types";
+import type { PledgePublic, PledgeStats, PledgerComment } from "@/lib/types";
 import { useSession } from "@/hooks/useSession";
 
 function formatCurrency(value: number): string {
@@ -48,7 +46,6 @@ type SortOrder = "amount" | "chronological";
 export default function PledgersPage() {
   const [stats, setStats] = useState<PledgeStats | null>(null);
   const [topPledgers, setTopPledgers] = useState<PledgePublic[]>([]);
-  const [challenges, setChallenges] = useState<ChallengePublic[]>([]);
   const [sortOrder, setSortOrder] = useState<SortOrder>("amount");
   const [comments, setComments] = useState<PledgerComment[]>([]);
   const [commentBody, setCommentBody] = useState("");
@@ -65,9 +62,11 @@ export default function PledgersPage() {
     async function fetchData() {
       let anyFailed = false;
       try {
-        const [pledgeRes, challengeRes, commentsRes] = await Promise.all([
+        // /api/challenges is deliberately no longer fetched — nothing on this
+        // page renders challenges or boosts any more, so requesting them would
+        // be a wasted round trip and a failure mode for data we don't show.
+        const [pledgeRes, commentsRes] = await Promise.all([
           fetch("/api/pledges/stats"),
-          fetch("/api/challenges"),
           fetch("/api/comments"),
         ]);
 
@@ -75,13 +74,6 @@ export default function PledgersPage() {
           const data = await pledgeRes.json();
           setStats(data.stats);
           setTopPledgers(data.topPledgers || []);
-        } else {
-          anyFailed = true;
-        }
-
-        if (challengeRes.ok) {
-          const data = await challengeRes.json();
-          setChallenges(data.history || []);
         } else {
           anyFailed = true;
         }
@@ -101,8 +93,6 @@ export default function PledgersPage() {
     }
     fetchData();
   }, []);
-
-  const succeededChallenges = challenges.filter((c) => c.status === "succeeded");
 
   async function submitComment(e: React.FormEvent) {
     e.preventDefault();
@@ -214,28 +204,6 @@ export default function PledgersPage() {
             </span>
           </div>
         </div>
-        <div className="flex items-center gap-[12px] sm:px-[40px]">
-          <Trophy className="w-[20px] h-[20px] text-[var(--burnt-orange)]" />
-          <div className="flex flex-col">
-            <span className="font-heading font-semibold text-[24px] text-[var(--text-primary)] leading-[1]">
-              {succeededChallenges.length}
-            </span>
-            <span className="font-label text-[11px] tracking-[1px] text-[var(--text-muted)]">
-              CHALLENGES WON
-            </span>
-          </div>
-        </div>
-        <div className="flex items-center gap-[12px] sm:pl-[40px]">
-          <Zap className="w-[20px] h-[20px] text-[var(--forest-green)]" />
-          <div className="flex flex-col">
-            <span className="font-heading font-semibold text-[24px] text-[var(--text-primary)] leading-[1]">
-              {stats?.totalBoosts ?? 0}
-            </span>
-            <span className="font-label text-[11px] tracking-[1px] text-[var(--text-muted)]">
-              BOOSTS
-            </span>
-          </div>
-        </div>
       </section>
 
       {/* Top Pledgers Table */}
@@ -279,9 +247,6 @@ export default function PledgersPage() {
             </span>
             <span className="w-[160px] font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
               RATE
-            </span>
-            <span className="w-[140px] font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">
-              BOOSTS
             </span>
             <span className="w-[160px] font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)] text-right">
               TOTAL PLEDGE
@@ -333,15 +298,6 @@ export default function PledgersPage() {
                 <span className="hidden md:block w-[160px] font-heading text-[14px] text-[var(--text-secondary)]">
                   {pledger.rate}
                 </span>
-                <span className="hidden md:block w-[140px] font-heading text-[14px] text-[var(--text-secondary)]">
-                  {pledger.boostCount > 0 ? (
-                    <span className="text-[var(--forest-green)] font-semibold">
-                      {pledger.boostCount} boost{pledger.boostCount > 1 ? "s" : ""}
-                    </span>
-                  ) : (
-                    <span className="text-[var(--text-muted)]">—</span>
-                  )}
-                </span>
                 <span className="md:w-[160px] md:text-right font-heading font-semibold text-[16px] text-[var(--text-primary)]">
                   {formatCurrency(pledger.totalPledge)}
                 </span>
@@ -382,36 +338,10 @@ export default function PledgersPage() {
         </section>
       )}
 
-      {/* Challenge History */}
-      {succeededChallenges.length > 0 && (
-        <section className="flex flex-col gap-[16px] px-6 md:px-12 lg:px-[120px] py-[48px] bg-[var(--bg-white)] border-t border-[var(--border-subtle)] w-full">
-          <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-muted)]">
-            COMPLETED CHALLENGES
-          </span>
-          <div className="flex flex-col gap-[12px]">
-            {succeededChallenges.map((ch) => (
-              <div
-                key={ch.id}
-                className="flex items-center gap-[16px] bg-[var(--bg-card)] border border-[var(--border-subtle)] px-[24px] py-[16px]"
-              >
-                <Trophy className="w-[20px] h-[20px] text-[var(--forest-green)] shrink-0" />
-                <div className="flex flex-col gap-[2px] flex-1">
-                  <span className="font-heading font-semibold text-[15px] text-[var(--text-primary)]">
-                    {ch.title}
-                  </span>
-                  <span className="font-heading text-[13px] text-[var(--text-secondary)]">
-                    {ch.target} {ch.unit} · {ch.commitmentCount} boosts applied
-                    {ch.resolvedAt && ` · ${formatDate(ch.resolvedAt)}`}
-                  </span>
-                </div>
-                <span className="font-label font-bold text-[10px] tracking-[1px] px-[10px] py-[4px] bg-[var(--forest-green-light)] text-[var(--forest-green)]">
-                  SUCCEEDED
-                </span>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
+      {/* Challenges and boosts are deliberately not surfaced here. Paul asked for
+          them to come off the public page until he actually runs one — the API,
+          the admin tab and the stored data are all untouched, so re-adding this
+          section is a UI change and nothing more. */}
 
       {/* Pledger Comments */}
       <section className="flex flex-col gap-[32px] px-6 md:px-12 lg:px-[120px] py-[48px] bg-[var(--bg-white)] border-t border-[var(--border-subtle)] w-full">
