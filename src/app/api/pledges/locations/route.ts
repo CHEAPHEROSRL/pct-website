@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
 import type { PledgeRecord, PledgerLocation } from "@/lib/types";
+import { isMessagePublic } from "@/lib/pledge-store";
 
 function getRedis() {
   const url = process.env.KV_REST_API_URL;
@@ -39,7 +40,10 @@ export async function GET() {
       if (typeof r.lat === "number" && typeof r.lng === "number") {
         locations.push({
           name: r.anonymous ? "Anonymous" : r.name,
-          message: r.message,
+          // Respect the pledger's choice here too. This endpoint published the
+          // message unconditionally, so without this an opt-out on the form
+          // would still leak onto the trail map pins.
+          message: isMessagePublic(r) ? r.message : undefined,
           city: r.city || "Unknown",
           country: r.country || "Unknown",
           lat: r.lat,

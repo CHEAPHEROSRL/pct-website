@@ -116,6 +116,7 @@ export default function AdminPage() {
     city?: string;
     country?: string;
     message?: string;
+    messagePublic?: boolean;
     createdAt: number;
   }
   interface AdminUnconfirmedPledge {
@@ -3344,6 +3345,12 @@ export default function AdminPage() {
                     {p.message && (
                       <span className="font-heading italic text-[13px] text-[var(--text-muted)]">
                         &ldquo;{p.message}&rdquo;
+                        {p.messagePublic === false && (
+                          <span className="font-label not-italic text-[10px] tracking-[1px] text-[var(--burnt-orange)]">
+                            {" "}
+                            · PRIVATE — DON&apos;T SHARE
+                          </span>
+                        )}
                       </span>
                     )}
                   </div>

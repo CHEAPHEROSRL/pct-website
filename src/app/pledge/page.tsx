@@ -39,6 +39,11 @@ export default function PledgePage() {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
+  // Defaults to public: the wall is meant to show why people are pledging, and
+  // this field has always been described as appearing on the trail map. The
+  // checkbox exists so anyone writing something private can opt out, which
+  // previously wasn't possible at all.
+  const [messagePublic, setMessagePublic] = useState(true);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -164,6 +169,7 @@ export default function PledgePage() {
           interval: 1,
           anonymous: !name,
           message: message || undefined,
+          messagePublic,
           avatar,
           emailPreference: mailingList ? "all" : "finish",
           claimedSection: claimedSection || undefined,
@@ -524,7 +530,7 @@ export default function PledgePage() {
               LEAVE A MESSAGE FOR PAUL (OPTIONAL)
             </span>
             <textarea
-              placeholder="Why are you pledging? Your message will appear on the trail map."
+              placeholder="Why are you pledging?"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               maxLength={280}
@@ -534,6 +540,27 @@ export default function PledgePage() {
             <span className="font-label text-[11px] text-[var(--text-muted)] text-right">
               {message.length}/280
             </span>
+
+            {/* Public/private choice — only asked once there's something to share */}
+            {message.trim().length > 0 && (
+              <label className="flex items-start gap-[10px] cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={messagePublic}
+                  onChange={(e) => setMessagePublic(e.target.checked)}
+                  className="mt-[3px] w-[16px] h-[16px] accent-[var(--forest-green)] cursor-pointer shrink-0"
+                />
+                <span className="font-heading text-[13px] leading-[1.5] text-[var(--text-secondary)]">
+                  Show my message publicly on the pledger wall and the trail map.
+                  {!messagePublic && (
+                    <strong className="text-[var(--text-primary)]">
+                      {" "}
+                      Currently private — only Paul will read it.
+                    </strong>
+                  )}
+                </span>
+              </label>
+            )}
           </div>
 
           {/* Avatar Picker */}

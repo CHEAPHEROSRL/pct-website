@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { email: rawEmail, name: rawName, amount, interval, anonymous, message: rawMessage, city, country, lat, lng, avatar, referredBy, turnstileToken, website, emailPreference: rawEmailPref, claimedSection: rawClaimedSection } = body;
+    const { email: rawEmail, name: rawName, amount, interval, anonymous, message: rawMessage, messagePublic: rawMessagePublic, city, country, lat, lng, avatar, referredBy, turnstileToken, website, emailPreference: rawEmailPref, claimedSection: rawClaimedSection } = body;
 
     // Honeypot check — "website" is a hidden field that should be empty
     if (isHoneypotFilled(website)) {
@@ -155,6 +155,11 @@ export async function POST(req: NextRequest) {
       unsubscribeToken,
       emailPreference: (rawEmailPref === "all" || rawEmailPref === "milestones" || rawEmailPref === "finish") ? rawEmailPref : "finish",
       message: message || undefined,
+      // Only ever stored as an explicit false. The form sends true for the
+      // default (public), and older clients that don't send the field at all
+      // land on undefined, which isMessagePublic() reads as public — matching
+      // what the form has always promised about the trail map.
+      messagePublic: rawMessagePublic === false ? false : undefined,
       city: finalCity,
       country: finalCountry,
       lat: finalLat,

@@ -158,6 +158,12 @@ export interface PledgeRecord {
   anonymous: boolean;
   boosts: PledgeBoost[];
   message?: string;
+  /**
+   * Whether `message` may be displayed publicly. Chosen on the pledge form.
+   * Undefined on records written before the choice existed and treated as
+   * public — see isMessagePublic() in lib/pledge-store for why.
+   */
+  messagePublic?: boolean;
   city?: string;
   country?: string;
   lat?: number;
@@ -223,6 +229,12 @@ export interface PledgePublic {
   totalPledge: number;
   boostCount: number;
   createdAt: number;
+  /**
+   * Only present when the pledger allowed their message to be shown publicly.
+   * Gate every use through isMessagePublic() in lib/pledge-store rather than
+   * reading record.message directly.
+   */
+  message?: string;
 }
 
 export interface PledgeStats {

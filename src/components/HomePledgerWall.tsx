@@ -224,24 +224,34 @@ function PledgerCard({
   amount: number;
 }) {
   const initial = (pledger.name || "?").trim().charAt(0).toUpperCase() || "?";
+  // Only ever present when the pledger allowed it — the API omits the field
+  // entirely otherwise, so there's nothing to accidentally render.
+  const message = pledger.message?.trim();
   return (
-    <div className="flex items-center gap-[12px] bg-[var(--bg-card)] border border-[var(--border-subtle)] p-[16px]">
-      <div
-        className="flex items-center justify-center w-[36px] h-[36px] rounded-full shrink-0"
-        style={{ backgroundColor: avatarColor(pledger.name) }}
-      >
-        <span className="font-label font-bold text-[14px] text-[var(--text-white)]">
-          {initial}
-        </span>
+    <div className="flex flex-col gap-[10px] bg-[var(--bg-card)] border border-[var(--border-subtle)] p-[16px]">
+      <div className="flex items-center gap-[12px]">
+        <div
+          className="flex items-center justify-center w-[36px] h-[36px] rounded-full shrink-0"
+          style={{ backgroundColor: avatarColor(pledger.name) }}
+        >
+          <span className="font-label font-bold text-[14px] text-[var(--text-white)]">
+            {initial}
+          </span>
+        </div>
+        <div className="flex flex-col gap-[2px] min-w-0">
+          <span className="font-heading font-medium text-[14px] text-[var(--text-primary)] truncate">
+            {pledger.name}
+          </span>
+          <span className="font-label font-semibold text-[11px] tracking-[1px] text-[var(--forest-green)]">
+            {pledger.rate} &middot; {money(amount)}
+          </span>
+        </div>
       </div>
-      <div className="flex flex-col gap-[2px] min-w-0">
-        <span className="font-heading font-medium text-[14px] text-[var(--text-primary)] truncate">
-          {pledger.name}
-        </span>
-        <span className="font-label font-semibold text-[11px] tracking-[1px] text-[var(--forest-green)]">
-          {pledger.rate} &middot; {money(amount)}
-        </span>
-      </div>
+      {message && (
+        <p className="font-heading italic text-[13px] leading-[1.55] text-[var(--text-secondary)] border-l-2 border-[var(--warm-stone)] pl-[10px] line-clamp-3">
+          &ldquo;{message}&rdquo;
+        </p>
+      )}
     </div>
   );
 }

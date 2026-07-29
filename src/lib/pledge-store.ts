@@ -27,3 +27,24 @@ export const PENDING_TTL_SECONDS = 8 * 24 * 60 * 60;
  * still need chasing.
  */
 export const UNCONFIRMED_KEY = "pledges:unconfirmed";
+
+/**
+ * Whether a pledger's message may be shown publicly.
+ *
+ * `messagePublic === false` is the only value that hides it. Undefined means
+ * public, which is the right default for records written before the choice
+ * existed: the pledge form has always told people "Your message will appear on
+ * the trail map", and /api/pledges/locations has always published it there, so
+ * those messages are already public and treating them as private now would
+ * retroactively contradict what the form promised.
+ *
+ * Every public surface must go through this one function, so a pledger who
+ * opts out disappears from all of them at once rather than leaking through
+ * whichever endpoint was missed.
+ */
+export function isMessagePublic(record: {
+  message?: string;
+  messagePublic?: boolean;
+}): boolean {
+  return !!record.message && record.messagePublic !== false;
+}

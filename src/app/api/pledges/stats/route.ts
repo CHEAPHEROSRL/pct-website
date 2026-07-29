@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
 import type { PledgeRecord, PledgePublic, PledgeStats } from "@/lib/types";
+import { isMessagePublic } from "@/lib/pledge-store";
 
 function getRedis() {
   const url = process.env.KV_REST_API_URL;
@@ -67,6 +68,9 @@ export async function GET() {
       totalPledge: Math.round(r.totalPledge * 100) / 100,
       boostCount: r.boosts?.length || 0,
       createdAt: r.createdAt,
+      // Omitted entirely when the pledger opted out, so a private message is
+      // never serialised into a public response in the first place.
+      ...(isMessagePublic(r) ? { message: r.message } : {}),
     }));
 
     return NextResponse.json(

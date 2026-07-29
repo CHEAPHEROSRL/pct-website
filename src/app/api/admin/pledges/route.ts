@@ -7,6 +7,7 @@ import {
   UNCONFIRMED_KEY,
   PENDING_TTL_SECONDS,
   VERIFY_TOKEN_TTL_SECONDS,
+  isMessagePublic,
 } from "@/lib/pledge-store";
 import type { PledgeRecord, UnconfirmedPledge } from "@/lib/types";
 
@@ -71,6 +72,9 @@ export async function GET(request: NextRequest) {
         city: r.city,
         country: r.country,
         message: r.message,
+        // Paul sees every message, public or not — but he needs to know which
+        // ones he's allowed to quote publicly.
+        messagePublic: isMessagePublic(r),
         createdAt: r.createdAt,
       }))
       .sort((a, b) => b.createdAt - a.createdAt);
