@@ -4,6 +4,7 @@ import { consumeEmailVerifyToken, RATE_LIMITS } from "@/lib/security";
 import { safeParse } from "@/lib/redis-safe";
 import { sendPledgeConfirmation, sendPledgeAlert, sendCommunityMilestone, bulkEmailsEnabled } from "@/lib/email";
 import { createSession, sessionCookieOptions, SESSION_COOKIE } from "@/lib/auth";
+import { UNCONFIRMED_KEY } from "@/lib/pledge-store";
 import type { PledgeRecord } from "@/lib/types";
 
 function getRedis() {
@@ -82,6 +83,10 @@ export async function GET(req: NextRequest) {
 
     // Clean up pending record
     await redis.del(pendingKey);
+
+    // They've confirmed, so drop them from the chase list. Non-fatal: a stale
+    // row there is a cosmetic nuisance in admin, not a broken pledge.
+    await redis.hdel(UNCONFIRMED_KEY, pendingRecord.id).catch(() => {});
 
     const rate = `$${pendingRecord.amount.toFixed(2)}/${pendingRecord.interval === 1 ? "mi" : pendingRecord.interval + "mi"}`;
 

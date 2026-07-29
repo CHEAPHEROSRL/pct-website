@@ -232,6 +232,33 @@ export interface PledgeStats {
   totalBoosts: number;
 }
 
+/**
+ * Someone who filled in the pledge form but never clicked the confirmation
+ * link in their email, so their pledge never became real.
+ *
+ * Kept in a Redis hash with NO expiry, deliberately. The `pending:<hash>`
+ * record it shadows does expire, and before this existed an unconfirmed
+ * pledge vanished without trace — leaving Paul with people telling him
+ * "I pledged!" and no way to find them. This is that missing list.
+ *
+ * Removed the moment the pledge is confirmed, so the list only ever holds
+ * people who genuinely need chasing.
+ */
+export interface UnconfirmedPledge {
+  /** Same email hash used for pledger:<id>, so it survives a re-submit. */
+  id: string;
+  email: string;
+  name: string;
+  rate: string;
+  totalPledge: number;
+  /** First time they submitted the form. */
+  createdAt: number;
+  /** Most recent submit or resend — what "reminded 2h ago" is measured from. */
+  lastSentAt: number;
+  /** How many verification emails have gone out, including the first. */
+  sendCount: number;
+}
+
 // Contact form types
 
 /**

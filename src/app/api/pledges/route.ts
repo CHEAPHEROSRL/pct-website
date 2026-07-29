@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { Redis } from "@upstash/redis";
-import type { PledgeRecord } from "@/lib/types";
+import type { PledgeRecord, UnconfirmedPledge } from "@/lib/types";
+import { safeParse } from "@/lib/redis-safe";
+import {
+  UNCONFIRMED_KEY,
+  PENDING_TTL_SECONDS,
+  VERIFY_TOKEN_TTL_SECONDS,
+} from "@/lib/pledge-store";
 import { trailSections } from "@/lib/trail";
 import { sendPledgeVerification, sendPledgeIncreased, sendCommunityMilestone, sendActionVerification } from "@/lib/email";
 import {
@@ -166,12 +172,25 @@ export async function POST(req: NextRequest) {
       updatedAt: Date.now(),
     };
 
-    // Store as PENDING pledge (not live yet, expires in 2 hours)
+    // Store as PENDING pledge — not live until they click the emailed link.
+    //
+    // The window used to be 1h for the token and 2h for the record, which
+    // quietly lost anyone who pledged in the evening and opened their email
+    // the next morning: link dead, record gone, no trace that they ever
+    // tried. Paul kept meeting people who said they'd pledged and weren't on
+    // the wall. A week is forgiving enough to cover that without keeping
+    // unconfirmed personal data around indefinitely. The record outlives the
+    // token by a day so a link used on the last day still finds its pledge.
     const pendingKey = `pending:${hash}`;
-    await redis.set(pendingKey, JSON.stringify(record), { ex: 7200 });
+    await redis.set(pendingKey, JSON.stringify(record), { ex: PENDING_TTL_SECONDS });
 
     // Generate verification token that maps to the pending key
-    const verifyToken = await generateEmailVerifyToken(redis, pendingKey, "pledge", 3600);
+    const verifyToken = await generateEmailVerifyToken(
+      redis,
+      pendingKey,
+      "pledge",
+      VERIFY_TOKEN_TTL_SECONDS
+    );
 
     // Send verification email — AWAIT it. Previously this was fire-and-forget
     // with a swallow-the-error .catch(), but in Vercel's serverless runtime
@@ -190,6 +209,30 @@ export async function POST(req: NextRequest) {
     const rate = `$${amount.toFixed(2)}/${interval === 1 ? "mi" : interval + "mi"}`;
 
     await sendPledgeVerification(email, record.name, rate, totalPledge, verifyUrl);
+
+    // Log the attempt in the durable unconfirmed registry so Paul can chase
+    // anyone who never clicks. Deleted by /api/pledges/verify on success, so
+    // the list only ever contains people who still need a nudge. A re-submit
+    // by the same email updates the existing row rather than duplicating it.
+    try {
+      const priorRaw = await redis.hget<string>(UNCONFIRMED_KEY, hash);
+      const prior = safeParse<UnconfirmedPledge | null>(priorRaw, null);
+      const entry: UnconfirmedPledge = {
+        id: hash,
+        email,
+        name: record.name,
+        rate,
+        totalPledge,
+        createdAt: prior?.createdAt ?? Date.now(),
+        lastSentAt: Date.now(),
+        sendCount: (prior?.sendCount ?? 0) + 1,
+      };
+      await redis.hset(UNCONFIRMED_KEY, { [hash]: JSON.stringify(entry) });
+    } catch {
+      // Bookkeeping only — never fail a pledge because the follow-up list
+      // couldn't be written. The pledge itself is already pending and the
+      // verification email has gone out.
+    }
 
     return NextResponse.json({
       success: true,

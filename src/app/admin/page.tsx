@@ -25,6 +25,7 @@ import {
   Settings,
   MapPin,
   Navigation,
+  Heart,
   Building2,
   Upload,
   Inbox,
@@ -34,8 +35,8 @@ import type { JournalPost, ChallengePublic, ContactMessage } from "@/lib/types";
 import { getMileForDay, getLastTrackedDay } from "@/lib/day-mileage";
 import { trailSections, TRAIL_REGIONS, type SponsorRecord } from "@/lib/trail";
 
-type View = "login" | "tracker" | "list" | "editor" | "challenges" | "honor" | "waitlist" | "emails" | "email-detail" | "settings" | "sponsors" | "contact" | "contact-detail";
-type AdminTab = "tracker" | "journal" | "challenges" | "honor" | "waitlist" | "emails" | "settings" | "sponsors" | "contact";
+type View = "login" | "tracker" | "pledgers" | "list" | "editor" | "challenges" | "honor" | "waitlist" | "emails" | "email-detail" | "settings" | "sponsors" | "contact" | "contact-detail";
+type AdminTab = "tracker" | "pledgers" | "journal" | "challenges" | "honor" | "waitlist" | "emails" | "settings" | "sponsors" | "contact";
 
 interface EmailTemplateListItem {
   id: string;
@@ -101,6 +102,36 @@ export default function AdminPage() {
   // Waitlist state
   const [waitlistEmails, setWaitlistEmails] = useState<{ email: string; signedUpAt: string }[]>([]);
   const [waitlistLoading, setWaitlistLoading] = useState(false);
+
+  // Pledgers tab. `unconfirmed` is the answer to "how do I find the people who
+  // told me they pledged but aren't on the wall" — they filled in the form but
+  // never clicked the confirmation link.
+  interface AdminConfirmedPledge {
+    id: string;
+    name: string;
+    email: string;
+    rate: string;
+    totalPledge: number;
+    anonymous: boolean;
+    city?: string;
+    country?: string;
+    message?: string;
+    createdAt: number;
+  }
+  interface AdminUnconfirmedPledge {
+    id: string;
+    name: string;
+    email: string;
+    rate: string;
+    totalPledge: number;
+    createdAt: number;
+    lastSentAt: number;
+    sendCount: number;
+  }
+  const [confirmedPledges, setConfirmedPledges] = useState<AdminConfirmedPledge[]>([]);
+  const [unconfirmedPledges, setUnconfirmedPledges] = useState<AdminUnconfirmedPledge[]>([]);
+  const [pledgesLoading, setPledgesLoading] = useState(false);
+  const [pledgeActionId, setPledgeActionId] = useState<string | null>(null);
 
   // Launch invite blast state (Waitlist tab → "Send launch invite" panel)
   interface LaunchLock {
@@ -440,6 +471,86 @@ export default function AdminPage() {
       setHonorLoading(false);
     }
   }, [token]);
+
+  const fetchPledges = useCallback(async () => {
+    setPledgesLoading(true);
+    try {
+      const res = await fetch("/api/admin/pledges", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setConfirmedPledges(data.confirmed || []);
+        setUnconfirmedPledges(data.unconfirmed || []);
+      } else {
+        setStatus("Failed to load pledgers");
+      }
+    } catch {
+      setStatus("Failed to load pledgers");
+    } finally {
+      setPledgesLoading(false);
+    }
+  }, [token]);
+
+  const resendPledgeVerification = useCallback(
+    async (id: string, name: string) => {
+      setPledgeActionId(id);
+      setStatus("");
+      try {
+        const res = await fetch("/api/admin/pledges", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ id }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok) {
+          setStatus(`Confirmation email resent to ${name}`);
+          setUnconfirmedPledges((prev) =>
+            prev.map((p) => (p.id === id ? { ...p, ...data.entry } : p))
+          );
+        } else {
+          setStatus(data.error || "Could not resend");
+        }
+      } catch {
+        setStatus("Could not resend");
+      } finally {
+        setPledgeActionId(null);
+        setTimeout(() => setStatus(""), 6000);
+      }
+    },
+    [token]
+  );
+
+  const dismissUnconfirmedPledge = useCallback(
+    async (id: string, name: string) => {
+      if (
+        !confirm(
+          `Remove ${name} from the follow-up list?\n\nThis only clears the reminder — it does not create or delete a pledge.`
+        )
+      )
+        return;
+      setPledgeActionId(id);
+      try {
+        const res = await fetch(`/api/admin/pledges?id=${encodeURIComponent(id)}`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) {
+          setUnconfirmedPledges((prev) => prev.filter((p) => p.id !== id));
+        } else {
+          setStatus("Could not remove");
+        }
+      } catch {
+        setStatus("Could not remove");
+      } finally {
+        setPledgeActionId(null);
+      }
+    },
+    [token]
+  );
 
   const fetchWaitlist = useCallback(async () => {
     setWaitlistLoading(true);
@@ -1509,6 +1620,17 @@ export default function AdminPage() {
           >
             <Navigation className="w-[16px] h-[16px]" />
             TRACKER
+          </button>
+          <button
+            onClick={() => { setActiveTab("pledgers"); setView("pledgers"); setStatus(""); fetchPledges(); }}
+            className={`flex items-center gap-[6px] md:gap-[8px] px-[14px] md:px-[24px] py-[14px] font-label font-bold text-[11px] md:text-[12px] tracking-[1.5px] md:tracking-[2px] border-b-2 transition-colors cursor-pointer shrink-0 ${
+              activeTab === "pledgers"
+                ? "border-[var(--burnt-orange)] text-[var(--burnt-orange)]"
+                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+            }`}
+          >
+            <Heart className="w-[16px] h-[16px]" />
+            PLEDGERS
           </button>
           <button
             onClick={() => { setActiveTab("journal"); setView("list"); setStatus(""); }}
@@ -3063,6 +3185,188 @@ export default function AdminPage() {
   }
 
   // --- WAITLIST VIEW ---
+  // --- PLEDGERS VIEW ---
+  // Answers Paul's "how do I find those who told me they pledged but aren't
+  // appearing?" — the unconfirmed list at the top is exactly those people.
+  if (view === "pledgers" && authenticated) {
+    const totalConfirmed = confirmedPledges.reduce((sum, p) => sum + p.totalPledge, 0);
+    const relTime = (ts: number) => {
+      const mins = Math.floor((Date.now() - ts) / 60000);
+      if (mins < 60) return `${mins}m ago`;
+      const hours = Math.floor(mins / 60);
+      if (hours < 24) return `${hours}h ago`;
+      return `${Math.floor(hours / 24)}d ago`;
+    };
+    const money = (n: number) => `$${Math.round(n).toLocaleString("en-US")}`;
+
+    return adminShell(
+      <div className="flex flex-col gap-[20px] md:gap-[24px] p-[16px] md:p-[40px]">
+        <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-[8px]">
+            <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">
+              PLEDGERS
+            </span>
+            <h1 className="font-heading font-semibold text-[28px] text-[var(--text-primary)]">
+              Who has pledged
+            </h1>
+          </div>
+          <button
+            onClick={fetchPledges}
+            className="flex items-center gap-[8px] px-[20px] py-[10px] border border-[var(--border-subtle)] hover:bg-[var(--bg-white)] transition-colors cursor-pointer"
+          >
+            <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-secondary)]">
+              REFRESH
+            </span>
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-[16px]">
+          <div className="flex flex-col gap-[8px] bg-[var(--bg-white)] border border-[var(--border-subtle)] p-[24px]">
+            <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">CONFIRMED PLEDGERS</span>
+            <span className="font-heading font-semibold text-[36px] text-[var(--forest-green)]">
+              {pledgesLoading ? "..." : confirmedPledges.length}
+            </span>
+          </div>
+          <div className="flex flex-col gap-[8px] bg-[var(--bg-white)] border border-[var(--border-subtle)] p-[24px]">
+            <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">TOTAL PLEDGED</span>
+            <span className="font-heading font-semibold text-[36px] text-[var(--text-primary)]">
+              {pledgesLoading ? "..." : money(totalConfirmed)}
+            </span>
+          </div>
+          <div className="flex flex-col gap-[8px] bg-[var(--bg-white)] border border-[var(--border-subtle)] p-[24px]">
+            <span className="font-label font-bold text-[10px] tracking-[2px] text-[var(--text-muted)]">NEVER CONFIRMED</span>
+            <span className={`font-heading font-semibold text-[36px] ${unconfirmedPledges.length > 0 ? "text-[var(--burnt-orange)]" : "text-[var(--text-muted)]"}`}>
+              {pledgesLoading ? "..." : unconfirmedPledges.length}
+            </span>
+          </div>
+        </div>
+
+        {/* Never confirmed — the list Paul asked for */}
+        <div className="flex flex-col gap-[14px] p-[20px] md:p-[28px] bg-[var(--bg-white)] border-2 border-[var(--burnt-orange)]">
+          <div className="flex flex-col gap-[6px]">
+            <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--burnt-orange)]">
+              STARTED A PLEDGE BUT NEVER CONFIRMED
+            </span>
+            <p className="font-heading text-[13px] leading-[1.6] text-[var(--text-secondary)] max-w-[680px]">
+              These people filled in the pledge form but never clicked the link in
+              their confirmation email, so their pledge never went live and they
+              don&apos;t appear on the wall. They usually think they&apos;ve
+              pledged. <strong>Resend</strong> emails them a fresh link.
+            </p>
+          </div>
+
+          {pledgesLoading ? (
+            <span className="font-heading text-[14px] text-[var(--text-muted)]">Loading…</span>
+          ) : unconfirmedPledges.length === 0 ? (
+            <span className="font-heading text-[14px] text-[var(--forest-green)]">
+              Nobody is waiting — everyone who started a pledge has confirmed it.
+            </span>
+          ) : (
+            <div className="flex flex-col gap-[10px]">
+              {unconfirmedPledges.map((p) => (
+                <div
+                  key={p.id}
+                  className="flex flex-col md:flex-row md:items-center gap-[10px] md:gap-[16px] bg-[var(--bg-card)] border border-[var(--border-subtle)] p-[14px]"
+                >
+                  <div className="flex flex-col gap-[2px] flex-1 min-w-0">
+                    <span className="font-heading font-semibold text-[15px] text-[var(--text-primary)]">
+                      {p.name}
+                    </span>
+                    <span className="font-heading text-[13px] text-[var(--text-secondary)] truncate">
+                      {p.email}
+                    </span>
+                    <span className="font-label text-[11px] tracking-[1px] text-[var(--text-muted)]">
+                      {p.rate} · {money(p.totalPledge)} · tried {relTime(p.createdAt)}
+                      {p.sendCount > 1 ? ` · ${p.sendCount} emails sent` : ""}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-[8px] shrink-0">
+                    <a
+                      href={`mailto:${p.email}`}
+                      className="px-[14px] py-[8px] border border-[var(--border-subtle)] hover:bg-[var(--bg-warm)] transition-colors"
+                    >
+                      <span className="font-label font-bold text-[11px] tracking-[1px] text-[var(--text-secondary)]">
+                        EMAIL
+                      </span>
+                    </a>
+                    <button
+                      onClick={() => resendPledgeVerification(p.id, p.name)}
+                      disabled={pledgeActionId === p.id}
+                      className="px-[14px] py-[8px] bg-[var(--forest-green)] hover:opacity-90 transition-opacity disabled:opacity-50 cursor-pointer"
+                    >
+                      <span className="font-label font-bold text-[11px] tracking-[1px] text-white">
+                        {pledgeActionId === p.id ? "SENDING…" : "RESEND"}
+                      </span>
+                    </button>
+                    <button
+                      onClick={() => dismissUnconfirmedPledge(p.id, p.name)}
+                      disabled={pledgeActionId === p.id}
+                      className="px-[14px] py-[8px] border border-[var(--border-subtle)] hover:bg-[var(--bg-warm)] transition-colors disabled:opacity-50 cursor-pointer"
+                    >
+                      <span className="font-label font-bold text-[11px] tracking-[1px] text-[var(--text-muted)]">
+                        DISMISS
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Confirmed pledgers */}
+        <div className="flex flex-col gap-[14px]">
+          <span className="font-label font-bold text-[11px] tracking-[2px] text-[var(--text-muted)]">
+            CONFIRMED &mdash; LIVE ON THE WALL
+          </span>
+          {pledgesLoading ? (
+            <span className="font-heading text-[14px] text-[var(--text-muted)]">Loading…</span>
+          ) : confirmedPledges.length === 0 ? (
+            <span className="font-heading text-[14px] text-[var(--text-muted)]">No pledgers yet.</span>
+          ) : (
+            <div className="flex flex-col bg-[var(--bg-white)] border border-[var(--border-subtle)]">
+              {confirmedPledges.map((p) => (
+                <div
+                  key={p.id}
+                  className="flex flex-col md:flex-row md:items-center gap-[6px] md:gap-[16px] px-[16px] py-[14px] border-b border-[var(--border-subtle)] last:border-b-0"
+                >
+                  <div className="flex flex-col gap-[2px] flex-1 min-w-0">
+                    <span className="font-heading font-semibold text-[15px] text-[var(--text-primary)]">
+                      {p.name}
+                      {p.anonymous && (
+                        <span className="font-label text-[10px] tracking-[1px] text-[var(--text-muted)]"> · ANONYMOUS ON SITE</span>
+                      )}
+                    </span>
+                    <span className="font-heading text-[13px] text-[var(--text-secondary)] truncate">
+                      {p.email}
+                      {(p.city || p.country) && ` · ${[p.city, p.country].filter(Boolean).join(", ")}`}
+                    </span>
+                    {p.message && (
+                      <span className="font-heading italic text-[13px] text-[var(--text-muted)]">
+                        &ldquo;{p.message}&rdquo;
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-[16px] shrink-0">
+                    <span className="font-label text-[11px] tracking-[1px] text-[var(--text-muted)]">
+                      {relTime(p.createdAt)}
+                    </span>
+                    <span className="font-heading text-[13px] text-[var(--text-secondary)] w-[90px]">
+                      {p.rate}
+                    </span>
+                    <span className="font-heading font-semibold text-[15px] text-[var(--text-primary)] w-[70px] text-right">
+                      {money(p.totalPledge)}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   if (view === "waitlist" && authenticated) {
     return adminShell(
         <div className="flex flex-col gap-[20px] md:gap-[24px] p-[16px] md:p-[40px]">
