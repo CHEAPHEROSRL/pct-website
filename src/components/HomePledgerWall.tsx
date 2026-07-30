@@ -122,7 +122,13 @@ export default function HomePledgerWall() {
   );
 
   return (
-    <section className="flex flex-col items-center gap-[32px] md:gap-[40px] px-6 md:px-12 lg:px-[120px] py-[48px] md:py-[64px] lg:py-[80px] bg-[var(--bg-white)] w-full">
+    // id is a deep-link target: yeschapter.com/#pledger-wall, used in the
+    // progress reports sent to Paul so a link lands on the wall itself
+    // rather than the top of a long homepage.
+    <section
+      id="pledger-wall"
+      className="flex flex-col items-center gap-[32px] md:gap-[40px] px-6 md:px-12 lg:px-[120px] py-[48px] md:py-[64px] lg:py-[80px] bg-[var(--bg-white)] w-full scroll-mt-[120px]"
+    >
       <ScrollReveal animation="fade-up">
         <div className="flex flex-col items-center gap-[16px] w-full">
           <span className="font-label font-bold text-[12px] tracking-[3px] text-[var(--burnt-orange)]">

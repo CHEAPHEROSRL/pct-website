@@ -383,6 +383,20 @@ export default function AdminPage() {
               })
               .catch(() => {});
           }
+        } else if (tabParam === "pledgers") {
+          // /admin?tab=pledgers — used in the progress reports sent to Paul so
+          // he lands on the pledger list instead of hunting for the tab.
+          setActiveTab("pledgers");
+          setView("pledgers");
+          fetch("/api/admin/pledges", { headers: { Authorization: `Bearer ${saved}` } })
+            .then((r) => (r.ok ? r.json() : null))
+            .then((d) => {
+              if (d) {
+                setConfirmedPledges(d.confirmed || []);
+                setUnconfirmedPledges(d.unconfirmed || []);
+              }
+            })
+            .catch(() => {});
         } else {
           setActiveTab("tracker");
           setView("tracker");
