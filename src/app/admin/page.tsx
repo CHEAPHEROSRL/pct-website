@@ -128,6 +128,9 @@ export default function AdminPage() {
     createdAt: number;
     lastSentAt: number;
     sendCount: number;
+    reminderCount?: number;
+    lastReminderAt?: number;
+    expired?: boolean;
   }
   const [confirmedPledges, setConfirmedPledges] = useState<AdminConfirmedPledge[]>([]);
   const [unconfirmedPledges, setUnconfirmedPledges] = useState<AdminUnconfirmedPledge[]>([]);
@@ -3268,6 +3271,12 @@ export default function AdminPage() {
               don&apos;t appear on the wall. They usually think they&apos;ve
               pledged. <strong>Resend</strong> emails them a fresh link.
             </p>
+            <p className="font-heading text-[13px] leading-[1.6] text-[var(--text-secondary)] max-w-[680px]">
+              Automatic reminders now go out on their own &mdash; 1 day after they
+              sign up, then 2, 4 and 7 days later. After 4 reminders it stops and
+              they stay listed here for a personal nudge from you, which converts
+              better than a fifth automated email.
+            </p>
           </div>
 
           {pledgesLoading ? (
@@ -3293,7 +3302,15 @@ export default function AdminPage() {
                     <span className="font-label text-[11px] tracking-[1px] text-[var(--text-muted)]">
                       {p.rate} · {money(p.totalPledge)} · tried {relTime(p.createdAt)}
                       {p.sendCount > 1 ? ` · ${p.sendCount} emails sent` : ""}
+                      {typeof p.reminderCount === "number" && p.reminderCount > 0
+                        ? ` · ${p.reminderCount}/4 reminders`
+                        : ""}
                     </span>
+                    {p.expired && (
+                      <span className="font-label font-bold text-[10px] tracking-[1px] text-[var(--burnt-orange)]">
+                        DETAILS EXPIRED — ASK THEM TO PLEDGE AGAIN
+                      </span>
+                    )}
                   </div>
                   <div className="flex items-center gap-[8px] shrink-0">
                     <a

@@ -374,7 +374,7 @@ export async function sendPledgeVerification(
         <p style="margin: 0 0 8px; font-size: 42px; font-weight: 600; color: #FABE64; letter-spacing: -1px;">US$${totalPledge.toFixed(2)}</p>
         <p style="margin: 0 0 24px; font-size: 15px; color: #5C5C5C;">US${rate} × 2,650 miles</p>
         <a href="${verifyUrl}" style="display: inline-block; background: #3D7A5A; color: #FFFFFF; padding: 16px 48px; font-family: sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 2px; text-decoration: none;">CONFIRM &amp; OPEN MY DASHBOARD</a>
-        <p style="margin: 16px 0 0; font-size: 12px; color: #8C8A87;">One click confirms your pledge AND signs you in. No password to remember. Link expires in 1 hour.</p>
+        <p style="margin: 16px 0 0; font-size: 12px; color: #8C8A87;">One click confirms your pledge AND signs you in. No password to remember. Link works for 7 days.</p>
       </div>
       <div style="background: #F4F1EC; padding: 28px 40px; text-align: center;">
         <p style="margin: 0; font-size: 13px; color: #8C8A87; line-height: 1.6;">If you didn't request this, you can safely ignore this email.<br/>No pledge will be created.</p>
@@ -989,6 +989,65 @@ export async function sendContactNotification(
   `;
 
   return send(recipient, `[YesChapter Contact] ${subject}`, html, senderEmail);
+}
+
+/**
+ * Reminder that a pledge was started but never confirmed.
+ *
+ * Deliberately NOT gated by bulkEmailsEnabled(). This is a single-recipient
+ * email finishing a flow the recipient started themselves — the same class as
+ * the original verification email, which also bypasses that flag. Gating it
+ * behind the pre-launch bulk kill switch would mean it silently never sent,
+ * which is precisely the failure we're fixing.
+ *
+ * `attempt` drives the tone: the first nudge assumes the email was simply
+ * missed, the last one says plainly that it's the last.
+ */
+export async function sendPledgeReminder(
+  email: string,
+  name: string,
+  rate: string,
+  totalPledge: number,
+  verifyUrl: string,
+  attempt: number,
+  totalAttempts: number
+): Promise<SendResult> {
+  const isLast = attempt >= totalAttempts;
+  const safeName = htmlEscape(name);
+
+  const subject = isLast
+    ? `Last reminder: your pledge isn't active yet, ${name}`
+    : `${name}, your pledge needs one more click`;
+
+  const opener = isLast
+    ? "This is the last reminder we'll send. Your pledge is still waiting on one click — after this we'll stop emailing you about it."
+    : "Your pledge hasn't gone through yet. It needs one click to confirm, and it's easy to miss that step — you wouldn't be the first.";
+
+  const html = `
+    <div style="font-family: Georgia, serif; max-width: 560px; margin: 0 auto; color: #1C1C1C;">
+      ${emailHeader()}
+      <div style="background: #C45C26; padding: 40px 40px; text-align: center;">
+        <p style="margin: 0 0 16px; font-size: 13px; letter-spacing: 4px; font-family: sans-serif; font-weight: 700; color: #FFFFFF99;">PLEDGE NOT YET ACTIVE</p>
+        <h1 style="margin: 0 0 12px; font-size: 26px; font-weight: 600; color: #FFFFFF;">You're one click away, ${safeName}.</h1>
+        <p style="margin: 0; font-size: 15px; color: #FFFFFFDD; line-height: 1.6;">${opener}</p>
+      </div>
+      <div style="background: #FFFFFF; padding: 36px 40px; text-align: center;">
+        <p style="margin: 0 0 6px; font-size: 11px; letter-spacing: 3px; font-family: sans-serif; font-weight: 700; color: #8C8A87;">YOUR PLEDGE</p>
+        <p style="margin: 0 0 8px; font-size: 42px; font-weight: 600; color: #3D7A5A; letter-spacing: -1px;">US$${totalPledge.toFixed(2)}</p>
+        <p style="margin: 0 0 24px; font-size: 15px; color: #5C5C5C;">US${rate} &times; 2,650 miles &mdash; payable to the foundations when Paul finishes</p>
+        <a href="${verifyUrl}" style="display: inline-block; background: #3D7A5A; color: #FFFFFF; padding: 16px 48px; font-family: sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 2px; text-decoration: none;">CONFIRM MY PLEDGE</a>
+        <p style="margin: 16px 0 0; font-size: 12px; color: #8C8A87;">One click confirms your pledge and signs you in. Link works for 7 days.</p>
+      </div>
+      <div style="background: #F4F1EC; padding: 28px 40px; text-align: center;">
+        <p style="margin: 0; font-size: 13px; color: #8C8A87; line-height: 1.6;">
+          Changed your mind? Just ignore this &mdash; nothing is owed and no pledge exists until you confirm.${isLast ? "" : " We'll stop reminding you after a couple more."}
+        </p>
+      </div>
+      ${emailFooter()}
+    </div>
+  `;
+
+  return send(email, subject, html);
 }
 
 /**

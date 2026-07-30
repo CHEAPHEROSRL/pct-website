@@ -269,6 +269,21 @@ export interface UnconfirmedPledge {
   lastSentAt: number;
   /** How many verification emails have gone out, including the first. */
   sendCount: number;
+  /**
+   * Automated reminders sent so far, separate from sendCount so that a manual
+   * resend by Paul doesn't consume one of the automated slots. Absent on rows
+   * written before reminders existed and read as 0.
+   */
+  reminderCount?: number;
+  /** When the last automated reminder went out. */
+  lastReminderAt?: number;
+  /**
+   * Set when a reminder found no pending record left to confirm. Their details
+   * are gone, so no link can be issued and they need to pledge again — shown
+   * in admin so Paul knows to ask rather than waiting on an email that can
+   * never arrive.
+   */
+  expired?: boolean;
 }
 
 // Contact form types

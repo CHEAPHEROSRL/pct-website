@@ -1,14 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
-import { requireAdminAuth, generateEmailVerifyToken } from "@/lib/security";
+import { requireAdminAuth } from "@/lib/security";
 import { safeParse } from "@/lib/redis-safe";
 import { sendPledgeVerification } from "@/lib/email";
-import {
-  UNCONFIRMED_KEY,
-  PENDING_TTL_SECONDS,
-  VERIFY_TOKEN_TTL_SECONDS,
-  isMessagePublic,
-} from "@/lib/pledge-store";
+import { UNCONFIRMED_KEY, isMessagePublic } from "@/lib/pledge-store";
+import { issueFreshVerifyUrl, MAX_REMINDERS } from "@/lib/pledge-reminders";
 import type { PledgeRecord, UnconfirmedPledge } from "@/lib/types";
 
 /**
@@ -92,6 +88,7 @@ export async function GET(request: NextRequest) {
         confirmed: confirmed.length,
         unconfirmed: stillWaiting.length,
       },
+      maxReminders: MAX_REMINDERS,
     });
   } catch (err) {
     console.error("Failed to load pledges for admin:", err);
@@ -123,13 +120,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    // The pending record may have expired since they first submitted, in which
-    // case there's nothing for a fresh token to point at. Rebuilding the pledge
-    // from the follow-up list would mean inventing an interval and amount we
-    // didn't keep, so be honest: tell Paul to ask them to pledge again.
-    const pendingKey = `pending:${id}`;
-    const pending = await redis.get<string>(pendingKey);
-    if (!pending) {
+    // Same helper the reminder cron uses, so a manual resend and an automated
+    // reminder can never drift apart. Returns null when the pending record has
+    // expired — rebuilding the pledge from the follow-up list would mean
+    // inventing an interval and amount we didn't keep, so be honest instead.
+    const verifyUrl = await issueFreshVerifyUrl(redis, id);
+    if (!verifyUrl) {
+      await redis.hset(UNCONFIRMED_KEY, {
+        [id]: JSON.stringify({ ...entry, expired: true }),
+      });
       return NextResponse.json(
         {
           error:
@@ -138,18 +137,6 @@ export async function POST(request: NextRequest) {
         { status: 409 }
       );
     }
-
-    // Refresh the record's own TTL too, so the new link can't outlive it.
-    await redis.expire(pendingKey, PENDING_TTL_SECONDS);
-
-    const token = await generateEmailVerifyToken(
-      redis,
-      pendingKey,
-      "pledge",
-      VERIFY_TOKEN_TTL_SECONDS
-    );
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://yeschapter.com";
-    const verifyUrl = `${siteUrl}/api/pledges/verify?token=${token}`;
 
     const result = await sendPledgeVerification(
       entry.email,

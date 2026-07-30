@@ -38,6 +38,7 @@ import {
   sendMagicLink,
   sendNewPost,
   sendPledgeAlert,
+  sendPledgeReminder,
   sendWaitlistLaunchA,
   sendWaitlistLaunchB,
   sendWaitlistLaunchC,
@@ -178,6 +179,29 @@ export const EMAIL_TEMPLATES: EmailTemplateEntry[] = [
           "Sarah",
           "$0.25/mile",
           662.5
+        )
+      ),
+  },
+  {
+    id: "pledge-reminder",
+    name: "Pledge reminder (never confirmed)",
+    category: "pledger-lifecycle",
+    categoryLabel: "Pledger lifecycle",
+    trigger:
+      "Sent by a daily cron to anyone who filled in the pledge form but never clicked the confirmation link. Goes out 1 day after signup, then 2, 4 and 7 days later, then stops.",
+    recipient: "The person whose pledge is still unconfirmed.",
+    cron: "0 11 * * * (daily)",
+    dedupKey: "reminderCount on pledges:unconfirmed — max 4 per person",
+    render: () =>
+      withPreviewCapture(() =>
+        sendPledgeReminder(
+          PREVIEW_EMAIL,
+          "Sarah",
+          "$0.25/mile",
+          662.5,
+          "https://yeschapter.com/api/pledges/verify?token=preview",
+          1,
+          4
         )
       ),
   },
