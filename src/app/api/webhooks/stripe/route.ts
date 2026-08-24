@@ -5,6 +5,7 @@ import { avatarColor } from "@/lib/donor-utils";
 import { GIFT_ESTIMATES } from "@/lib/gift-estimates";
 import { snapToTrail } from "@/lib/trail";
 import { safeParse } from "@/lib/redis-safe";
+import { sendGiftAlert, sendGiftFailureAlert } from "@/lib/email";
 import type { SupportRecord } from "@/lib/types";
 import type Stripe from "stripe";
 
@@ -76,74 +77,119 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ received: true, duplicate: true });
     }
 
-    const meta = session.metadata || {};
-    const isTrailSupport = meta.type === "trail_support";
+    // Everything from here writes state. It is wrapped so that a failure
+    // after the payment has already been taken cannot pass silently: the
+    // supporter has been charged by this point, so a dropped record is money
+    // received for nothing visible.
+    try {
+      const meta = session.metadata || {};
+      const isTrailSupport = meta.type === "trail_support";
 
-    // Use separate Redis key namespaces for trail support vs legacy
-    const prefix = isTrailSupport ? "supporters" : "donors";
+      // Use separate Redis key namespaces for trail support vs legacy
+      const prefix = isTrailSupport ? "supporters" : "donors";
 
-    const amountDollars = (session.amount_total || 0) / 100;
-    const displayName = meta.anonymous === "true"
-      ? "Anonymous"
-      : `${meta.firstName || ""} ${meta.lastName || ""}`.trim() || "Supporter";
+      const amountDollars = (session.amount_total || 0) / 100;
+      const displayName = meta.anonymous === "true"
+        ? "Anonymous"
+        : `${meta.firstName || ""} ${meta.lastName || ""}`.trim() || "Supporter";
 
-    // Checkout only populates `customer_email` when it was pre-filled at
-    // session creation — we don't pre-fill it, so the address the buyer
-    // actually typed arrives in `customer_details.email`.
-    const email = meta.email || session.customer_details?.email || session.customer_email || "";
+      // Checkout only populates `customer_email` when it was pre-filled at
+      // session creation — we don't pre-fill it, so the address the buyer
+      // actually typed arrives in `customer_details.email`.
+      const email = meta.email || session.customer_details?.email || session.customer_email || "";
 
-    // Capture Paul's trail position at time of gift
-    let trailLat: number | undefined;
-    let trailLng: number | undefined;
-    let trailMile: number | undefined;
-    if (isTrailSupport) {
-      const locRaw = await redis.get<string>("location:current");
-      const loc = safeParse<{ lat?: number; lng?: number } | null>(locRaw, null);
-      if (loc && loc.lat && loc.lng) {
-        trailLat = loc.lat;
-        trailLng = loc.lng;
-        const snap = snapToTrail(loc.lat, loc.lng);
-        trailMile = Math.round(snap.miles);
+      // Capture Paul's trail position at time of gift
+      let trailLat: number | undefined;
+      let trailLng: number | undefined;
+      let trailMile: number | undefined;
+      if (isTrailSupport) {
+        const locRaw = await redis.get<string>("location:current");
+        const loc = safeParse<{ lat?: number; lng?: number } | null>(locRaw, null);
+        if (loc && loc.lat && loc.lng) {
+          trailLat = loc.lat;
+          trailLng = loc.lng;
+          const snap = snapToTrail(loc.lat, loc.lng);
+          trailMile = Math.round(snap.miles);
+        }
       }
-    }
 
-    const record: SupportRecord = {
-      id: session.id,
-      name: displayName,
-      email,
-      amount: amountDollars,
-      message: isTrailSupport ? (meta.message || meta.giftTitle || "Trail support gift") : (meta.message || ""),
-      anonymous: meta.anonymous === "true",
-      color: avatarColor(email || session.id),
-      giftTitle: meta.giftTitle || null,
-      createdAt: Date.now(),
-      trailLat,
-      trailLng,
-      trailMile,
-    };
+      const record: SupportRecord = {
+        id: session.id,
+        name: displayName,
+        email,
+        amount: amountDollars,
+        message: isTrailSupport ? (meta.message || meta.giftTitle || "Trail support gift") : (meta.message || ""),
+        anonymous: meta.anonymous === "true",
+        color: avatarColor(email || session.id),
+        giftTitle: meta.giftTitle || null,
+        createdAt: Date.now(),
+        trailLat,
+        trailLng,
+        trailMile,
+      };
 
-    await redis.lpush(`${prefix}:list`, JSON.stringify(record));
-    await redis.incr(`${prefix}:count`);
-    await redis.incrbyfloat(`${prefix}:total`, amountDollars);
+      await redis.lpush(`${prefix}:list`, JSON.stringify(record));
+      await redis.incr(`${prefix}:count`);
+      await redis.incrbyfloat(`${prefix}:total`, amountDollars);
 
-    const currentLargest = (await redis.get<number>(`${prefix}:largest`)) || 0;
-    if (amountDollars > currentLargest) {
-      await redis.set(`${prefix}:largest`, amountDollars);
-    }
+      const currentLargest = (await redis.get<number>(`${prefix}:largest`)) || 0;
+      if (amountDollars > currentLargest) {
+        await redis.set(`${prefix}:largest`, amountDollars);
+      }
 
-    // Track per-gift-type counts for progress bars
-    if (isTrailSupport && meta.giftTitle && meta.giftTitle in GIFT_ESTIMATES) {
-      await redis.incr(`supporters:gift-count:${meta.giftTitle}`);
-    }
+      // Track per-gift-type counts for progress bars
+      if (isTrailSupport && meta.giftTitle && meta.giftTitle in GIFT_ESTIMATES) {
+        await redis.incr(`supporters:gift-count:${meta.giftTitle}`);
+      }
 
-    // Unlocks the optional photo/video upload on /support/success.
-    // /api/support/media requires this marker, so media can only ever attach
-    // to a gift we actually recorded. TTL outlasts any realistic delay
-    // between paying and coming back to add a photo.
-    if (isTrailSupport) {
-      await redis.set(`supporters:processed:${session.id}`, "1", {
-        ex: 60 * 60 * 24 * 90,
-      });
+      // Unlocks the optional photo/video upload on /support/success.
+      // /api/support/media requires this marker, so media can only ever attach
+      // to a gift we actually recorded. TTL outlasts any realistic delay
+      // between paying and coming back to add a photo.
+      if (isTrailSupport) {
+        await redis.set(`supporters:processed:${session.id}`, "1", {
+          ex: 60 * 60 * 24 * 90,
+        });
+      }
+
+      // Tell Paul. Nothing did this before, so a gift could be paid for and
+      // sit unseen until the buyer emailed to ask whether it had arrived.
+      // Awaited, because Vercel can freeze the function the moment we respond
+      // and kill an in-flight Gmail request. Failure to send must never fail
+      // the webhook: the gift is already safely recorded above, and returning
+      // an error would make Stripe retry an event we have fully processed.
+      if (isTrailSupport) {
+        try {
+          const supporterCount = (await redis.get<number>("supporters:count")) || 0;
+          const totalGifts = Number(await redis.get("supporters:total")) || 0;
+          await sendGiftAlert(
+            record.giftTitle,
+            record.name,
+            record.email,
+            record.amount,
+            meta.message || "",
+            record.trailMile,
+            supporterCount,
+            totalGifts
+          );
+        } catch (err) {
+          console.error("Gift recorded but alert email failed:", err);
+        }
+      }
+    } catch (err) {
+      // The marker stays claimed, so Stripe's retries will short-circuit and
+      // this gift will not self-heal. Make it loud instead of silent, and
+      // include the session id so it can be reconciled by hand.
+      const reason = err instanceof Error ? err.message : String(err);
+      console.error("Failed to record paid gift:", session.id, reason);
+      await redis
+        .lpush(
+          "supporters:failed",
+          JSON.stringify({ sessionId: session.id, amount: (session.amount_total || 0) / 100, reason, at: Date.now() })
+        )
+        .catch(() => {});
+      await sendGiftFailureAlert(session.id, (session.amount_total || 0) / 100, reason).catch(() => {});
+      return NextResponse.json({ received: true, recorded: false }, { status: 500 });
     }
   }
 

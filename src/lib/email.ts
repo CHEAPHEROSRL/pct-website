@@ -929,6 +929,24 @@ function htmlEscape(s: string): string {
     .replace(/'/g, "&#39;");
 }
 
+/**
+ * Where operational alerts to Paul are delivered.
+ *
+ * IMPORTANT delivery caveat: this site sends mail *as* Paul's own Gmail
+ * account. If the recipient resolves to that same mailbox, Gmail treats the
+ * message as self-sent - it lands already marked read and raises no phone
+ * notification. That is exactly why a contact-form email sat unseen: it
+ * arrived correctly, and was silent.
+ *
+ * So ADMIN_NOTIFY_EMAIL should be an address that is NOT the connected Gmail
+ * account, and not an alias that forwards straight back into it. Any ordinary
+ * second inbox works. Until it is set we keep the historical default, which
+ * delivers but may not notify.
+ */
+export function adminNotifyRecipient(): string {
+  return process.env.ADMIN_NOTIFY_EMAIL || "paul@yeschapter.com";
+}
+
 export async function sendContactNotification(
   senderName: string,
   senderEmail: string,
@@ -936,7 +954,7 @@ export async function sendContactNotification(
   message: string,
   messageId: string
 ): Promise<SendResult> {
-  const recipient = "paul@yeschapter.com";
+  const recipient = adminNotifyRecipient();
   const safeName = htmlEscape(senderName);
   const safeEmail = htmlEscape(senderEmail);
   const safeSubject = htmlEscape(subject);
@@ -1073,7 +1091,7 @@ export async function sendPledgeAlert(
   pledgerCount: number,
   totalPledged: number
 ): Promise<SendResult> {
-  const recipient = process.env.ADMIN_NOTIFY_EMAIL || "paul@yeschapter.com";
+  const recipient = adminNotifyRecipient();
 
   const safeName = htmlEscape(record.anonymous ? `${record.name} (listed anonymously)` : record.name);
   const safeEmail = htmlEscape(record.email);
@@ -1138,6 +1156,132 @@ export async function sendPledgeAlert(
     html,
     record.email
   );
+}
+
+
+/**
+ * Admin alert - somebody bought Paul a trail support gift.
+ *
+ * Gift purchases previously notified nobody at all. The pledge flow got an
+ * alert; the one flow that actually moves money did not, so a supporter could
+ * pay and Paul would never learn of it unless he happened to open the
+ * supporters wall. Jennifer Campbell had to email him asking whether her gift
+ * had arrived.
+ *
+ * Not gated by bulkEmailsEnabled(): single-recipient operational alert, same
+ * class as the contact-form notification.
+ *
+ * Reply-To is the buyer when we captured an address, so Paul can thank them
+ * with one tap.
+ */
+export async function sendGiftAlert(
+  giftTitle: string | null,
+  buyerName: string,
+  buyerEmail: string,
+  amount: number,
+  message: string,
+  trailMile: number | undefined,
+  supporterCount: number,
+  totalGifts: number
+): Promise<SendResult> {
+  const recipient = adminNotifyRecipient();
+  const safeName = htmlEscape(buyerName);
+  const safeEmail = htmlEscape(buyerEmail);
+  const safeGift = htmlEscape(giftTitle || "Trail support gift");
+  const safeMessage = message ? htmlEscape(message).replace(/\n/g, "<br>") : "";
+  const money = (n: number) =>
+    `US$${n.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
+
+  const html = `
+    <div style="max-width: 600px; margin: 0 auto; background: #F4F1EC; font-family: Georgia, serif;">
+      ${emailHeader()}
+      <div style="background: #C45C26; padding: 28px 32px;">
+        <p style="margin: 0 0 6px; font-size: 11px; letter-spacing: 3px; font-family: sans-serif; font-weight: 700; color: #FFFFFFAA;">TRAIL SUPPORT GIFT</p>
+        <h1 style="margin: 0; font-size: 22px; font-weight: 600; color: #FFFFFF;">${safeName} bought you ${safeGift}</h1>
+      </div>
+      <div style="text-align: center; padding: 28px 32px; background: #FFFFFF;">
+        <div style="font-family: sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 3px; color: #8C8A87;">AMOUNT</div>
+        <div style="font-size: 44px; font-weight: 600; letter-spacing: -1px; color: #C45C26; margin: 6px 0;">${money(amount)}</div>
+        <div style="font-family: sans-serif; font-weight: 500; font-size: 11px; color: #8C8A87;">This one is yours, not the foundations' - it goes to your Stripe account${
+          typeof trailMile === "number" ? ` &middot; bought around mile ${trailMile}` : ""
+        }</div>
+      </div>
+      <div style="background: #FFFFFF; padding: 4px 32px 24px;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse: collapse;">
+          <tr>
+            <td style="padding: 8px 0; font-family: sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: #8C8A87; width: 110px; vertical-align: top;">FROM</td>
+            <td style="padding: 8px 0; font-size: 14px; color: #1C1C1C;">${safeName}${
+              safeEmail ? ` &lt;<a href="mailto:${safeEmail}" style="color: #C45C26; text-decoration: none;">${safeEmail}</a>&gt;` : ""
+            }</td>
+          </tr>
+        </table>
+        ${
+          safeMessage
+            ? `<hr style="border: 0; border-top: 1px solid #D9D7D4; margin: 20px 0;" />
+               <p style="margin: 0 0 8px; font-family: sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: #8C8A87;">THEIR MESSAGE</p>
+               <div style="font-size: 15px; line-height: 1.7; color: #1C1C1C;">${safeMessage}</div>`
+            : ""
+        }
+      </div>
+      <div style="background: #FEF3EC; padding: 20px 32px; text-align: center;">
+        <p style="margin: 0; font-family: sans-serif; font-size: 12px; letter-spacing: 1px; color: #C45C26; font-weight: 700;">
+          ${supporterCount} ${supporterCount === 1 ? "GIFT" : "GIFTS"} &middot; ${money(totalGifts)} TOTAL
+        </p>
+      </div>
+      <div style="background: #FEF3EC; padding: 0 32px 24px; text-align: center;">
+        <p style="margin: 0 0 16px; font-size: 13px; color: #5C5C5C; font-family: sans-serif; line-height: 1.5;">Hit reply to thank ${safeName} directly.</p>
+        <a href="${SITE}/supporters" style="display: inline-block; background: #C45C26; color: #FFFFFF; padding: 12px 28px; font-family: sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-decoration: none;">SEE ALL SUPPORTERS</a>
+      </div>
+      <div style="background: #1C1F1A; padding: 16px 32px; text-align: center;">
+        <p style="margin: 0; font-size: 10px; color: #FFFFFF55; font-family: sans-serif; letter-spacing: 0.5px;">Automatic alert &mdash; sent when a trail support gift is paid on yeschapter.com</p>
+      </div>
+    </div>
+  `;
+
+  return send(
+    recipient,
+    `[YesChapter] ${buyerName} bought you ${giftTitle || "a trail gift"} - ${money(amount)}`,
+    html,
+    buyerEmail || undefined
+  );
+}
+
+/**
+ * Admin alert - a paid gift could NOT be recorded.
+ *
+ * The webhook dedupes on Stripe's event id and deliberately prefers "stuck"
+ * over "duplicated". That tradeoff assumed somebody would notice a stuck
+ * event; nobody did. This makes the failure loud, because the money has
+ * already left the supporter's card by this point.
+ */
+export async function sendGiftFailureAlert(
+  sessionId: string,
+  amount: number,
+  reason: string
+): Promise<SendResult> {
+  const recipient = adminNotifyRecipient();
+  const html = `
+    <div style="max-width: 600px; margin: 0 auto; background: #F4F1EC; font-family: Georgia, serif;">
+      ${emailHeader()}
+      <div style="background: #B3261E; padding: 28px 32px;">
+        <p style="margin: 0 0 6px; font-size: 11px; letter-spacing: 3px; font-family: sans-serif; font-weight: 700; color: #FFFFFFAA;">ACTION NEEDED</p>
+        <h1 style="margin: 0; font-size: 22px; font-weight: 600; color: #FFFFFF;">A paid gift was not recorded</h1>
+      </div>
+      <div style="background: #FFFFFF; padding: 24px 32px;">
+        <p style="margin: 0 0 14px; font-size: 15px; line-height: 1.6; color: #1C1C1C;">
+          Somebody paid <strong>US$${amount}</strong> for a trail support gift and the site failed to save it. The payment itself went through, so they have been charged. They will not appear on the supporters wall until this is sorted.
+        </p>
+        <p style="margin: 0 0 6px; font-family: sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: #8C8A87;">STRIPE SESSION</p>
+        <div style="font-family: monospace; font-size: 13px; color: #1C1C1C; word-break: break-all;">${htmlEscape(sessionId)}</div>
+        <p style="margin: 14px 0 6px; font-family: sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: #8C8A87;">REASON</p>
+        <div style="font-size: 13px; color: #5C5C5C;">${htmlEscape(reason)}</div>
+      </div>
+      <div style="background: #1C1F1A; padding: 16px 32px; text-align: center;">
+        <p style="margin: 0; font-size: 10px; color: #FFFFFF55; font-family: sans-serif; letter-spacing: 0.5px;">Automatic alert &mdash; yeschapter.com</p>
+      </div>
+    </div>
+  `;
+  return send(recipient, `[YesChapter] ACTION NEEDED: paid gift not recorded (US$${amount})`, html);
 }
 
 export async function sendHonorReminder(
