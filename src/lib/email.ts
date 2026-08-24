@@ -944,7 +944,19 @@ function htmlEscape(s: string): string {
  * delivers but may not notify.
  */
 export function adminNotifyRecipient(): string {
-  return process.env.ADMIN_NOTIFY_EMAIL || "paul@yeschapter.com";
+  const configured = (process.env.ADMIN_NOTIFY_EMAIL || "").trim();
+  if (!configured) return "paul@yeschapter.com";
+  // Accepts one address or several separated by commas. The value lands
+  // straight in the RFC 2822 To header, which is already a comma-separated
+  // list, so "paul@yeschapter.com, paul@somewhere-else.com" delivers to both:
+  // the usual copy for the record, plus one that actually raises an alert.
+  // Normalised so a stray space or trailing comma can't produce a malformed
+  // header and silently kill every notification.
+  const addresses = configured
+    .split(",")
+    .map((a) => a.trim())
+    .filter(Boolean);
+  return addresses.length ? addresses.join(", ") : "paul@yeschapter.com";
 }
 
 export async function sendContactNotification(
